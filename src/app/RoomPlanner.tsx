@@ -2,7 +2,7 @@ import "./css/MainStyle.css"
 
 import React, { useLayoutEffect, useRef } from "react";
 
-import { BufferGeometry, Line, LineBasicMaterial, PerspectiveCamera, Scene, Shape, Vector3, WebGLRenderer } from "three";
+import { ExtrudeBufferGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, Shape, WebGLRenderer } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
@@ -27,11 +27,11 @@ export default function RoomPlanner() {
 
       renderer = new WebGLRenderer({ antialias: true });
       scene = new Scene();
-      camera = new PerspectiveCamera(75, width / height, 0.1, 1000);
+      camera = new PerspectiveCamera(50, width / height, 0.1, 1000);
 
       renderer.setSize(width, height);
   
-      camera.position.set(0, 0, 5);
+      camera.position.set(25, 25, 50);
       camera.lookAt(0, 0, 0);
 
       // camera controlls
@@ -39,61 +39,15 @@ export default function RoomPlanner() {
       controls.minZoom = 0.5;
       controls.maxZoom = 2;
 
-      function createRectangle(start: Vector3, end: Vector3) {
-        const points = [];
-        // console.log(start);
-        // console.log(end);
-        const startX = start.x;
-        const startY = start.y;
-        const endX = end.x;
-        const endY = end.y;
-        points.push(new Vector3(startX, startY, 0));
-        points.push(new Vector3(endX, startY, 0));
-        points.push(new Vector3(endX, endY, 0));
-        points.push(new Vector3(startX, endY, 0));
-        points.push(new Vector3(startX, startY, 0));
-        return points;
-      }
+      var wallLength = 8, wallThickness = 4;
 
-      const points = createRectangle(new Vector3(-10, 10, 0), new Vector3(10, -10, 0));
-      const geometry = new BufferGeometry().setFromPoints(points);
+      var mesh = createWall(wallLength, wallThickness, 1);
+      var mesh2 = createWall(wallLength, wallThickness, -1);
 
-      // const p2 = createRectangle(new Vector3(-10, -10, 0), new THREE.Vector3(-5, -20, 0));
-      // const g2 = new BufferGeometry().setFromPoints(p2);
+      scene.add(mesh, mesh2);
 
-      // const merge = BufferGeometryUtils.mergeBufferGeometries([geometry, g2]);
-
-
-      const material = new LineBasicMaterial({ color: 0xffaadd });
-      const line = new Line(geometry, material);
-      // const line = new Line(geometry, material);
-      // const l2 = new line(g2, material);
-
-
-
-      // var geometry = new BoxGeometry( 100, 100, 100 );
-      // var material = new MeshBasicMaterial( { color: 0x00ff00 } );
-      // var cube = new Mesh( geometry, material );
-      scene.add(line);
-
-      const lineLength = 20, lineWidth = 20;
-
-      const shape = new Shape();
-      shape.moveTo(0, 0);
-      shape.lineTo(0, lineWidth);
-      shape.lineTo(lineLength, lineWidth);
-      shape.lineTo(lineLength, 0);
-      shape.lineTo(0, 0);
-
-      const extrudeSettings = {
-        steps: 2,
-        depth: 1,
-        bevelEnabled: true,
-        bevelThickness: 1,
-        bevelSize: 1,
-        bevelOffset: 0,
-        bevelSegments: 1
-      };
+      console.log(mesh.position);
+      console.log(mesh2.position);
 
       mount?.current?.appendChild(renderer.domElement);
 
@@ -102,6 +56,29 @@ export default function RoomPlanner() {
       mount?.current?.addEventListener('click', handleOnClick);
 
       animate();
+    }
+
+    function createWall(wallLength: number, wallThickness: number, direction: 1 | -1) {
+      var shape = new Shape();
+      shape.moveTo(0, 0 + wallThickness);
+      shape.lineTo(0, - (wallLength + wallThickness));
+      shape.lineTo(wallThickness*direction, -wallLength);
+      shape.lineTo(wallThickness*direction, 0);
+      shape.lineTo(0, wallThickness);
+
+      var extrudeSettings = {
+        steps: 1,
+        depth: 16,
+        bevelEnabled: false
+      };
+
+      var geometry = new ExtrudeBufferGeometry(shape, extrudeSettings);
+      // geometry.center();
+      return new Mesh(geometry, [
+        new MeshBasicMaterial({ color: 0x00ff00 }),
+        new MeshBasicMaterial({ color: 0xffff00 }),
+        new MeshBasicMaterial({ color: 0xffffff })
+      ]);
     }
 
     function animate() {
