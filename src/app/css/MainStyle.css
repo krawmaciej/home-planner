@@ -1,0 +1,14 @@
+.MainView { 
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+}
+.Menu {
+  height: 100%;
+  background-color: grey;
+}
+.Render { 
+  height: 80vh;
+  background-color: #DDDDDD;
+  flex-grow : 1; 
+}
