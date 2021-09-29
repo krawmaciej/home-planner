@@ -1,0 +1,99 @@
+Algorithms(solutions to problems) to describe:
+ - creating a wall with a hole for window/door
+ - dissappearing of wall and ceiling when looking from given angle (vector dot product algorithms)
+ - save/caching state
+ - updating state from two places (renderer + UI)
+ - selecting object from the renderer (update scene)
+ - distinction between object that can be selected depending on selected menu
+ - keeping object inside wall/on the room scene (???? might be not needed)
+
+
+See if walls "sticked" together let light go through,
+does the ceiling and floor make any light artifacts if they are solid blocks
+above and below the walls
+
+
+Rotating walls (created new) (and models - TODO check):
+    rotating geometry of walls makes it so that the wall mesh default rotation
+    is the current rotation of wall's geometry
+
+
+Saving system (works same as cache system, implement first - before caching)
+    IT MIGHT BE BETTER TO MAKE IT A DIFFERENT OBJECT, IT SERVES A DIFFERENT PURPOSE, SEE DTOs
+    HOWEVER PROBLEM WITH THAT IS THAT EACH TIME YOU NEED TO STORE DUPLICATES IN CACHE, WHICH 
+    SHOULD ALWAYS BE UP TO DATE.
+
+    object knows id of the load object, and if object model reference is null then lazily initialize
+    it to model.clone(), this should work smartly, objects should be loaded only once (lazily)
+    and then cloned whenever a new one is needed (object factory or smth).
+
+    objects can be "restored" by storing their matrix4 (rotation + scale) + position.
+    example of Furniture array (all clickable objects per "menu" are stored in own arrays)
+    btw. JSON
+    furniture: [{modelId: 1, matrix: {...}, position: {...}, ...]
+
+
+Caching system (same mechanism as saving)
+
+
+
+
+componentWillUnmount
+Return a callback in useEffect's callback argument and it will be called before unmounting.
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // Return a callback in useEffect and it will be called before unmounting.
+    return () => {
+      console.log('componentWillUnmount!');
+    };
+  }, []);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+
+
+getDerivedStateFromProps
+Again, taken from the React docs
+
+function ScrollView({row}) {
+  let [isScrollingDown, setIsScrollingDown] = useState(false);
+  let [prevRow, setPrevRow] = useState(null);
+
+  if (row !== prevRow) {
+    // Row changed since last render. Update isScrollingDown.
+    setIsScrollingDown(prevRow !== null && row > prevRow);
+    setPrevRow(row);
+  }
+
+  return `Scrolling down: ${isScrollingDown}`;
+}
+
+
+
+save all important data in cache
+
+THE CANVAS DOESN'T CREATE MENU COMPONENT, THEY ARE CONNECTED BY STATE (React.useContext)
+don't use global state but rather pass needed props to rendered components
+
+
+menu components need to load what item is now active in them from main state, or to be singletons, to keep their state in them (and change state on updateObservers)
+
+
+
+
+maybe, because menu should change without user knowledge: each item needs to know what menu it belongs to
+
+
+
+LATER (never): optimization of rendering (also hookup listeners from menu to renderer):
+https://threejsfundamentals.org/threejs/lessons/threejs-rendering-on-demand.html

@@ -2,8 +2,9 @@ import "./css/MainStyle.css"
 
 import React, { useLayoutEffect, useRef } from "react";
 
-import { ExtrudeBufferGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, Shape, WebGLRenderer } from "three";
+import { Box3, Box3Helper, BoxBufferGeometry, BufferAttribute, BufferGeometry, Color, DoubleSide, ExtrudeBufferGeometry, MathUtils, Matrix4, Mesh, MeshBasicMaterial, MeshToonMaterial, PerspectiveCamera, PlaneGeometry, Quaternion, Scene, Shape, Vector3, WebGLRenderer } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import Wall from "./Wall";
 
 
 //TODO: DO RESIZE RENDERER ON RESIZE LISTENER HOOK W/E
@@ -31,7 +32,7 @@ export default function RoomPlanner() {
 
       renderer.setSize(width, height);
   
-      camera.position.set(25, 25, 50);
+      camera.position.set(0, 150, 300);
       camera.lookAt(0, 0, 0);
 
       // camera controlls
@@ -39,15 +40,82 @@ export default function RoomPlanner() {
       controls.minZoom = 0.5;
       controls.maxZoom = 2;
 
-      var wallLength = 8, wallThickness = 4;
+      var wallLength = 200, wallThickness = 20;
+
+      const wall = Wall.create({length: wallLength, height: 200, thickness: wallThickness});
+      scene.add(wall.wallFrame);
+      console.log("first", wall.wallFrame.geometry.attributes);
+
 
       var mesh = createWall(wallLength, wallThickness, 1);
-      var mesh2 = createWall(wallLength, wallThickness, -1);
+      // var mesh2 = createWall(wallLength, wallThickness, -1);
+      const face = createFace();
+      mesh.add(face);
 
-      scene.add(mesh, mesh2);
 
-      console.log(mesh.position);
-      console.log(mesh2.position);
+
+      const matrixToDisplay1 = mesh.matrix.clone().transpose().toArray();
+      for (let i = 0; i < 4; i++) {
+        let row: string = "[";
+        for (let j = 0; j < 4; j++) {
+          row+= matrixToDisplay1[i*4 + j] + ", ";
+        }
+        console.log(row + "]");
+      }
+
+      const v3 = new Vector3();
+      const vGetWorld = new Vector3();
+
+      console.log("world: " + JSON.stringify(v3) + " local: " + JSON.stringify(face.position));
+
+
+      mesh.rotateY(90);
+      mesh.position.set(3,3,3);
+      mesh.updateMatrix();
+      
+      
+      face.translateX(5);
+      face.translateY(5);
+
+
+      v3.copy(face.position);
+      v3.applyMatrix4(mesh.matrix);
+      
+      face.getWorldPosition(vGetWorld);
+
+      console.log(v3.equals(vGetWorld));
+
+      console.log("my world: " + JSON.stringify(v3) + " real world: " + JSON.stringify(vGetWorld));
+
+      console.log(face.matrix);
+      
+      const matrixToDisplay = mesh.matrix.clone().transpose().toArray();
+      for (let i = 0; i < 4; i++) {
+        let row: string = "[";
+        for (let j = 0; j < 4; j++) {
+          row+= matrixToDisplay[i*4 + j].toFixed(2) + "\t";
+        }
+        console.log(row + "]");
+      }
+
+      const pos = new Vector3();
+      const quat = new Quaternion();
+      const scale = new Vector3();
+      mesh.matrix.decompose(pos, quat, scale);
+      console.log(pos, quat, scale);
+
+
+
+      console.log("trans", mesh.matrix.clone().transpose());
+      console.log("mesh", mesh.matrix);
+     
+      
+      console.log(new Vector3(5, 5, 5).applyMatrix4(new Matrix4().makeRotationY(90)));
+
+
+
+      // scene.add(mesh);
+
 
       mount?.current?.appendChild(renderer.domElement);
 
@@ -68,17 +136,38 @@ export default function RoomPlanner() {
 
       var extrudeSettings = {
         steps: 1,
-        depth: 16,
+        depth: 200,
         bevelEnabled: false
       };
 
       var geometry = new ExtrudeBufferGeometry(shape, extrudeSettings);
+      geometry.computeBoundingBox();
       // geometry.center();
       return new Mesh(geometry, [
         new MeshBasicMaterial({ color: 0x00ff00 }),
         new MeshBasicMaterial({ color: 0xffff00 }),
         new MeshBasicMaterial({ color: 0xffffff })
       ]);
+    }
+
+    function createFace() {
+      const geometry = new BufferGeometry();
+      // create a simple square shape. We duplicate the top left and bottom right
+      // vertices because each vertex needs to appear once per triangle.
+      const vertices = new Float32Array([
+        -1.0, -1.0, 1.0,
+        1.0, -1.0, 1.0,
+        1.0, 1.0, 1.0,
+
+        1.0, 1.0, 1.0,
+        -1.0, 1.0, 1.0,
+        -1.0, -1.0, 1.0
+      ]);
+
+      // itemSize = 3 because there are 3 values (components) per vertex
+      geometry.setAttribute('position', new BufferAttribute(vertices, 3));
+      const material = new MeshBasicMaterial({ color: 0xff0000 });
+      return new Mesh(geometry, material);
     }
 
     function animate() {
