@@ -6,7 +6,7 @@ import Wall from "./Wall";
 export default class Window {
 
     public readonly mainWindowFrame: Mesh; // holds frame reference from the wall
-    public readonly windowObject: ImportedObject; // window 3d object
+    public readonly windowObject: ImportedObject; // window 3d object, will be a child of mainWindowFrame
     private readonly ownerWall: Wall; // wall parent
 
     private constructor(mainWindowFrame: Mesh, windowObject: ImportedObject, ownerWall: Wall) {
@@ -34,37 +34,38 @@ export default class Window {
 
     private static createWindowFrame({length: l, height: h, width: w}: Dimensions) {
         const vertices: Array<Attributes> = [
+            // those are different from wall, their normals face opposite directions
             // bottom
-            { position: [  0,   0,   0], normal: Facing.DOWN, uv: [  0,   0] },
-            { position: [  l,   0,   0], normal: Facing.DOWN, uv: [  l,   0] },
-            { position: [  l,   0,  -w], normal: Facing.DOWN, uv: [  l,   w] },
-            { position: [  l,   0,  -w], normal: Facing.DOWN, uv: [  l,   w] },
-            { position: [  0,   0,  -w], normal: Facing.DOWN, uv: [  0,   w] },
-            { position: [  0,   0,   0], normal: Facing.DOWN, uv: [  0,   0] },
+            { position: [  0,   0,   0], normal: Facing.UP, uv: [  0,   0] },
+            { position: [  l,   0,   0], normal: Facing.UP, uv: [  l,   0] },
+            { position: [  l,   0,  -w], normal: Facing.UP, uv: [  l,   w] },
+            { position: [  l,   0,  -w], normal: Facing.UP, uv: [  l,   w] },
+            { position: [  0,   0,  -w], normal: Facing.UP, uv: [  0,   w] },
+            { position: [  0,   0,   0], normal: Facing.UP, uv: [  0,   0] },
 
             // top
-            { position: [  0,   h,   0], normal: Facing.UP, uv: [  0,   0] },
-            { position: [  0,   h,  -w], normal: Facing.UP, uv: [  0,   w] },
-            { position: [  l,   h,  -w], normal: Facing.UP, uv: [  l,   w] },
-            { position: [  l,   h,  -w], normal: Facing.UP, uv: [  l,   w] },
-            { position: [  l,   h,   0], normal: Facing.UP, uv: [  l,   0] },
-            { position: [  0,   h,   0], normal: Facing.UP, uv: [  0,   0] },
+            { position: [  0,   h,   0], normal: Facing.DOWN, uv: [  0,   0] },
+            { position: [  0,   h,  -w], normal: Facing.DOWN, uv: [  0,   w] },
+            { position: [  l,   h,  -w], normal: Facing.DOWN, uv: [  l,   w] },
+            { position: [  l,   h,  -w], normal: Facing.DOWN, uv: [  l,   w] },
+            { position: [  l,   h,   0], normal: Facing.DOWN, uv: [  l,   0] },
+            { position: [  0,   h,   0], normal: Facing.DOWN, uv: [  0,   0] },
 
             // left
-            { position: [  0,   0,   0], normal: Facing.LEFT, uv: [  0,   0] },
-            { position: [  0,   0,  -w], normal: Facing.LEFT, uv: [  w,   0] },
-            { position: [  0,   h,  -w], normal: Facing.LEFT, uv: [  w,   h] },
-            { position: [  0,   h,  -w], normal: Facing.LEFT, uv: [  w,   h] },
-            { position: [  0,   h,   0], normal: Facing.LEFT, uv: [  0,   h] },
-            { position: [  0,   0,   0], normal: Facing.LEFT, uv: [  0,   0] },
+            { position: [  0,   0,   0], normal: Facing.RIGHT, uv: [  0,   0] },
+            { position: [  0,   0,  -w], normal: Facing.RIGHT, uv: [  w,   0] },
+            { position: [  0,   h,  -w], normal: Facing.RIGHT, uv: [  w,   h] },
+            { position: [  0,   h,  -w], normal: Facing.RIGHT, uv: [  w,   h] },
+            { position: [  0,   h,   0], normal: Facing.RIGHT, uv: [  0,   h] },
+            { position: [  0,   0,   0], normal: Facing.RIGHT, uv: [  0,   0] },
 
             // right
-            { position: [  l,   0,   0], normal: Facing.RIGHT, uv: [  0,   0] },
-            { position: [  l,   h,   0], normal: Facing.RIGHT, uv: [  h,   0] },
-            { position: [  l,   h,  -w], normal: Facing.RIGHT, uv: [  h,   w] },
-            { position: [  l,   h,  -w], normal: Facing.RIGHT, uv: [  h,   w] },
-            { position: [  l,   0,  -w], normal: Facing.RIGHT, uv: [  0,   w] },
-            { position: [  l,   0,   0], normal: Facing.RIGHT, uv: [  0,   0] },
+            { position: [  l,   0,   0], normal: Facing.LEFT, uv: [  0,   0] },
+            { position: [  l,   h,   0], normal: Facing.LEFT, uv: [  h,   0] },
+            { position: [  l,   h,  -w], normal: Facing.LEFT, uv: [  h,   w] },
+            { position: [  l,   h,  -w], normal: Facing.LEFT, uv: [  h,   w] },
+            { position: [  l,   0,  -w], normal: Facing.LEFT, uv: [  0,   w] },
+            { position: [  l,   0,   0], normal: Facing.LEFT, uv: [  0,   0] },
         ];
 
         const positions = [];
@@ -91,11 +92,6 @@ export default class Window {
 
     public translateY(y: number) {
         this.mainWindowFrame.translateY(y);
-        this.ownerWall.updateCutFrames();
-    }
-
-    public translateZ(z: number) {
-        this.mainWindowFrame.translateZ(z);
         this.ownerWall.updateCutFrames();
     }
 

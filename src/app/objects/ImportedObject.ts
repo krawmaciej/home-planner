@@ -2,7 +2,7 @@ import { Group } from "three";
 import { Dimensions } from "../constants/Types";
 
 export class ImportedObject {
-    public readonly dimensions: Dimensions = {length: 3, height: 5, width: 2};
+    public readonly dimensions: Dimensions = {length: 10, height: 18, width: 2};
     public readonly mainMesh: Group = new Group(); // TODO: now empty object, change to mesh
 }
 

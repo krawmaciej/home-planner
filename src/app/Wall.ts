@@ -103,8 +103,8 @@ export default class Wall {
 
     public addWindow(window: Window) {
         this.mainWallFrame.add(window.mainWindowFrame);
-        this.updateCutFrames();
         this.windows.push(window);
+        this.updateCutFrames();
     }
 
     public rotateGeometry() {
