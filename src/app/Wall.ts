@@ -1,4 +1,4 @@
-import { BufferAttribute, BufferGeometry, Material, Mesh, MeshBasicMaterial, Object3D, Scene, Shape, ShapeGeometry, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Material, Mesh, MeshBasicMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshLambertMaterial, MeshNormalMaterial, MeshPhongMaterial, Object3D, Scene, Shape, ShapeGeometry, Vector3 } from "three";
 import Window from "./Window";
 
 type Attributes = {
@@ -38,30 +38,25 @@ export default class Wall {
     private readonly dimensions: WallDimensions;
     public readonly wallFrame: Mesh;
     private front: Mesh;
-    private back: Mesh;
     private material: Material;
     public readonly windows: Array<Window> = new Array<Window>();
 
-    private constructor(dimensions: WallDimensions, wallFrame: Mesh, front: Mesh, back: Mesh, material: Material) {
+    private constructor(dimensions: WallDimensions, wallFrame: Mesh, front: Mesh, material: Material) {
         this.dimensions = dimensions;
         this.wallFrame = wallFrame;
         this.material = material;
         this.front = front;
-        this.back = back;        
     }
 
     public static create(dimensions: WallDimensions) {
-        const material = new MeshBasicMaterial({color: 0xfff000});
+        const material = new MeshPhongMaterial({color: 0x00ffff});
         const frameGeometry = this.createWallFrame(dimensions);
         const wallFrame = new Mesh(frameGeometry, material);
         const frontGeometry = this.createFace(dimensions);
         const front = new Mesh(frontGeometry, material);
-        const backGeometry = this.createFace(dimensions);
-        const back = new Mesh(backGeometry, material);
         wallFrame.add(front);
-        wallFrame.add(back);
 
-        return new Wall(dimensions, wallFrame, front, back, material);
+        return new Wall(dimensions, wallFrame, front, material);
     }
 
     private static createWallFrame({length: l, height: h, thickness: t}: WallDimensions) {
@@ -70,26 +65,26 @@ export default class Wall {
         const vertices: Array<Attributes> = [
             // bottom
             { position: [  0,   0,   0], normal: Facing.DOWN, uv: [  0,   0] },
-            { position: [ -t,   0,  -t], normal: Facing.UP, uv: [ -t,   t] },
-            { position: [t+l,   0,  -t], normal: Facing.RIGHT, uv: [t+l,   t] },
-            { position: [t+l,   0,  -t], normal: Facing.LEFT, uv: [t+l,   t] },
-            { position: [  l,   0,   0], normal: Facing.FRONT, uv: [  l,   0] },
-            { position: [  0,   0,   0], normal: Facing.BACK, uv: [  0,   0] },
+            { position: [ -t,   0,  -t], normal: Facing.DOWN, uv: [ -t,   t] },
+            { position: [t+l,   0,  -t], normal: Facing.DOWN, uv: [t+l,   t] },
+            { position: [t+l,   0,  -t], normal: Facing.DOWN, uv: [t+l,   t] },
+            { position: [  l,   0,   0], normal: Facing.DOWN, uv: [  l,   0] },
+            { position: [  0,   0,   0], normal: Facing.DOWN, uv: [  0,   0] },
 
             // top
-            { position: [  0,   h,   0], normal: Facing.DOWN, uv: [  0,   0] },
-            { position: [ -t,   h,  -t], normal: Facing.DOWN, uv: [ -t,   t] },
-            { position: [t+l,   h,  -t], normal: Facing.DOWN, uv: [t+l,   t] },
-            { position: [t+l,   h,  -t], normal: Facing.DOWN, uv: [t+l,   t] },
-            { position: [  l,   h,   0], normal: Facing.DOWN, uv: [  l,   0] },
-            { position: [  0,   h,   0], normal: Facing.DOWN, uv: [  0,   0] },
+            { position: [  0,   h,   0], normal: Facing.UP, uv: [  0,   0] },
+            { position: [  l,   h,   0], normal: Facing.UP, uv: [  l,   0] },
+            { position: [t+l,   h,  -t], normal: Facing.UP, uv: [t+l,   t] },
+            { position: [t+l,   h,  -t], normal: Facing.UP, uv: [t+l,   t] },
+            { position: [ -t,   h,  -t], normal: Facing.UP, uv: [ -t,   t] },
+            { position: [  0,   h,   0], normal: Facing.UP, uv: [  0,   0] },
 
             // left
             { position: [  0,   0,   0], normal: Facing.LEFT, uv: [  0,   0] },
-            { position: [ -t,   0,  -t], normal: Facing.LEFT, uv: [  0, t*s] },
-            { position: [ -t,   h,  -t], normal: Facing.LEFT, uv: [  l, t*s] },
-            { position: [ -t,   h,  -t], normal: Facing.LEFT, uv: [  l, t*s] },
             { position: [  0,   h,   0], normal: Facing.LEFT, uv: [  l,   0] },
+            { position: [ -t,   h,  -t], normal: Facing.LEFT, uv: [  l, t*s] },
+            { position: [ -t,   h,  -t], normal: Facing.LEFT, uv: [  l, t*s] },
+            { position: [ -t,   0,  -t], normal: Facing.LEFT, uv: [  0, t*s] },
             { position: [  0,   0,   0], normal: Facing.LEFT, uv: [  0,   0] },
 
             // right
@@ -119,18 +114,27 @@ export default class Wall {
     }
 
     private static createFace(dimensions: WallDimensions) {
-        const shape = this.createFaceOutline(dimensions);
+        const shape = this.createFaceFront(dimensions);
         const geometry = new ShapeGeometry(shape);
-        geometry.translate(0, 0, -dimensions.thickness);
         return geometry;
     }
 
-    private static createFaceOutline({length: l, height: h}: WallDimensions) {
+    private static createFaceFront({length: l, height: h}: WallDimensions) {
         const shape = new Shape();
         shape.moveTo(0, 0);
         shape.lineTo(0, h);
         shape.lineTo(l, h);
         shape.lineTo(l, 0);
+        shape.lineTo(0, 0);
+        return shape;
+    }
+
+    private static createFaceBack({length: l, height: h}: WallDimensions) {
+        const shape = new Shape();
+        shape.moveTo(0, 0);
+        shape.lineTo(l, 0);
+        shape.lineTo(l, h);
+        shape.lineTo(0, h);
         shape.lineTo(0, 0);
         return shape;
     }

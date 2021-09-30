@@ -1,13 +1,11 @@
 import "./css/MainStyle.css"
 
-import React, { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
-import { Box3, Box3Helper, BoxBufferGeometry, BufferAttribute, BufferGeometry, Color, DoubleSide, ExtrudeBufferGeometry, MathUtils, Matrix4, Mesh, MeshBasicMaterial, MeshToonMaterial, PerspectiveCamera, PlaneGeometry, Quaternion, Scene, Shape, Vector3, WebGLRenderer } from "three";
+import { BufferAttribute, BufferGeometry, DirectionalLight, ExtrudeBufferGeometry, HemisphereLight, Matrix4, Mesh, MeshBasicMaterial, PerspectiveCamera, Quaternion, Scene, Shape, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Wall from "./Wall";
 
-
-//TODO: DO RESIZE RENDERER ON RESIZE LISTENER HOOK W/E
 
 export default function RoomPlanner() {
 
@@ -19,6 +17,8 @@ export default function RoomPlanner() {
     let camera: PerspectiveCamera;
     let width: number;
     let height: number;
+    let hemiLight: HemisphereLight;
+    let directLight: DirectionalLight;
 
     init();
 
@@ -26,13 +26,24 @@ export default function RoomPlanner() {
       width = mount?.current?.clientWidth ?? 0;
       height = mount?.current?.clientHeight ?? 0;
 
-      renderer = new WebGLRenderer({ antialias: true });
+      const renderParams: WebGLRendererParameters = {
+        precision: "lowp",
+        // antialias: true,
+      }
+
+      renderer = new WebGLRenderer(renderParams);
       scene = new Scene();
       camera = new PerspectiveCamera(50, width / height, 0.1, 1000);
+      hemiLight = new HemisphereLight("white", "grey", 0.5);
+      directLight = new DirectionalLight("white", 1.0);
+      directLight.position.set(0, 30, 10);
+      directLight.target.position.set(0, 0, 10);
+
+      scene.add(hemiLight, directLight);
 
       renderer.setSize(width, height);
   
-      camera.position.set(0, 150, 300);
+      camera.position.set(0, 60, 50);
       camera.lookAt(0, 0, 0);
 
       // camera controlls
@@ -42,7 +53,7 @@ export default function RoomPlanner() {
 
       var wallLength = 200, wallThickness = 20;
 
-      const wall = Wall.create({length: wallLength, height: 200, thickness: wallThickness});
+      const wall = Wall.create({length: 50, height: 20, thickness: 2});
       scene.add(wall.wallFrame);
       console.log("first", wall.wallFrame.geometry.attributes);
 
