@@ -2,9 +2,10 @@ import "./css/MainStyle.css"
 
 import { useLayoutEffect, useRef } from "react";
 
-import { BufferAttribute, BufferGeometry, DirectionalLight, ExtrudeBufferGeometry, HemisphereLight, Matrix4, Mesh, MeshBasicMaterial, PerspectiveCamera, Quaternion, Scene, Shape, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
+import { BufferAttribute, BufferGeometry, DirectionalLight, ExtrudeBufferGeometry, HemisphereLight, Matrix4, Mesh, MeshBasicMaterial, PerspectiveCamera, Quaternion, Scene, Shape, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import Wall from "./Wall";
+import Window from "./Window";
 
 
 export default function RoomPlanner() {
@@ -53,10 +54,11 @@ export default function RoomPlanner() {
 
       var wallLength = 200, wallThickness = 20;
 
-      const wall = Wall.create({length: 50, height: 20, thickness: 2});
-      scene.add(wall.wallFrame);
-      console.log("first", wall.wallFrame.geometry.attributes);
+      const wall = Wall.create({length: 50, height: 20, width: 2});
+      scene.add(wall.mainWallFrame);
 
+      // create window for wall
+      const windowOfWall = Window.create({x: 10, y: 2}, wall);
 
       var mesh = createWall(wallLength, wallThickness, 1);
       // var mesh2 = createWall(wallLength, wallThickness, -1);

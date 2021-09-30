@@ -1,98 +1,71 @@
-import { BufferAttribute, BufferGeometry, Material, Mesh, MeshBasicMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshLambertMaterial, MeshNormalMaterial, MeshPhongMaterial, Object3D, Scene, Shape, ShapeGeometry, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Material, Mesh, MeshPhongMaterial, Shape, ShapeGeometry } from "three";
+import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing } from "./constants/Types";
 import Window from "./Window";
 
-type Attributes = {
-    position: Array<number>,
-    normal: Array<number>,
-    uv: Array<number>
-}
-
-enum AttributeName {
-    POSITION = "position",
-    NORMAL = "normal",
-    UV = "uv",
-}
-
-enum AttributeNumber {
-    POSITION = 3,
-    NORMAL = 3,
-    UV = 2,
-}
-
-class Facing {
-    public static readonly RIGHT = [1, 0, 0];
-    public static readonly UP = [0, 1, 0];
-    public static readonly FRONT = [0, 0, 1];
-    public static readonly LEFT = [-1, 0, 0];
-    public static readonly DOWN = [0, -1, 0];
-    public static readonly BACK = [0, 0, -1];
-}
-
-export type WallDimensions = {
-    length: number,
-    height: number,
-    thickness: number
-}
-
 export default class Wall {
-    private readonly dimensions: WallDimensions;
-    public readonly wallFrame: Mesh;
-    private front: Mesh;
-    private material: Material;
+
+    public readonly dimensions: Dimensions;
+    public readonly mainWallFrame: Mesh;
+    public material: Material; // TODO: add setters, so every child object changes it's material with wall parent
     public readonly windows: Array<Window> = new Array<Window>();
 
-    private constructor(dimensions: WallDimensions, wallFrame: Mesh, front: Mesh, material: Material) {
+    private readonly cacheFrontShape: Shape; // changes only on wall size change
+    private frontFace: Mesh; // kept to enable removing of old wall with old holes
+
+    private constructor(dimensions: Dimensions, wallFrame: Mesh, cacheFrontShape: Shape, frontFace: Mesh, material: Material) {
         this.dimensions = dimensions;
-        this.wallFrame = wallFrame;
+        this.mainWallFrame = wallFrame;
+        this.cacheFrontShape = cacheFrontShape;
+        this.frontFace = frontFace;
         this.material = material;
-        this.front = front;
     }
 
-    public static create(dimensions: WallDimensions) {
+    public static create(dimensions: Dimensions) {
         const material = new MeshPhongMaterial({color: 0x00ffff});
         const frameGeometry = this.createWallFrame(dimensions);
         const wallFrame = new Mesh(frameGeometry, material);
-        const frontGeometry = this.createFace(dimensions);
-        const front = new Mesh(frontGeometry, material);
-        wallFrame.add(front);
+        const frontShape = this.createFrontShape(dimensions);
+        const frontGeometry = this.createFace(frontShape);
+        const frontFace = new Mesh(frontGeometry, material);
+        wallFrame.add(frontFace);
 
-        return new Wall(dimensions, wallFrame, front, material);
+        return new Wall(dimensions, wallFrame, frontShape, frontFace, material);
     }
 
-    private static createWallFrame({length: l, height: h, thickness: t}: WallDimensions) {
+    private static createWallFrame({length: l, height: h, width: w}: Dimensions) {
         const s = Math.SQRT2;
 
         const vertices: Array<Attributes> = [
             // bottom
             { position: [  0,   0,   0], normal: Facing.DOWN, uv: [  0,   0] },
-            { position: [ -t,   0,  -t], normal: Facing.DOWN, uv: [ -t,   t] },
-            { position: [t+l,   0,  -t], normal: Facing.DOWN, uv: [t+l,   t] },
-            { position: [t+l,   0,  -t], normal: Facing.DOWN, uv: [t+l,   t] },
+            { position: [ -w,   0,  -w], normal: Facing.DOWN, uv: [ -w,   w] },
+            { position: [w+l,   0,  -w], normal: Facing.DOWN, uv: [w+l,   w] },
+            { position: [w+l,   0,  -w], normal: Facing.DOWN, uv: [w+l,   w] },
             { position: [  l,   0,   0], normal: Facing.DOWN, uv: [  l,   0] },
             { position: [  0,   0,   0], normal: Facing.DOWN, uv: [  0,   0] },
 
             // top
             { position: [  0,   h,   0], normal: Facing.UP, uv: [  0,   0] },
             { position: [  l,   h,   0], normal: Facing.UP, uv: [  l,   0] },
-            { position: [t+l,   h,  -t], normal: Facing.UP, uv: [t+l,   t] },
-            { position: [t+l,   h,  -t], normal: Facing.UP, uv: [t+l,   t] },
-            { position: [ -t,   h,  -t], normal: Facing.UP, uv: [ -t,   t] },
+            { position: [w+l,   h,  -w], normal: Facing.UP, uv: [w+l,   w] },
+            { position: [w+l,   h,  -w], normal: Facing.UP, uv: [w+l,   w] },
+            { position: [ -w,   h,  -w], normal: Facing.UP, uv: [ -w,   w] },
             { position: [  0,   h,   0], normal: Facing.UP, uv: [  0,   0] },
 
             // left
             { position: [  0,   0,   0], normal: Facing.LEFT, uv: [  0,   0] },
-            { position: [  0,   h,   0], normal: Facing.LEFT, uv: [  l,   0] },
-            { position: [ -t,   h,  -t], normal: Facing.LEFT, uv: [  l, t*s] },
-            { position: [ -t,   h,  -t], normal: Facing.LEFT, uv: [  l, t*s] },
-            { position: [ -t,   0,  -t], normal: Facing.LEFT, uv: [  0, t*s] },
+            { position: [  0,   h,   0], normal: Facing.LEFT, uv: [  h,   0] },
+            { position: [ -w,   h,  -w], normal: Facing.LEFT, uv: [  h, w*s] },
+            { position: [ -w,   h,  -w], normal: Facing.LEFT, uv: [  h, w*s] },
+            { position: [ -w,   0,  -w], normal: Facing.LEFT, uv: [  0, w*s] },
             { position: [  0,   0,   0], normal: Facing.LEFT, uv: [  0,   0] },
 
             // right
             { position: [  l,   0,   0], normal: Facing.RIGHT, uv: [  0,   0] },
-            { position: [t+l,   0,  -t], normal: Facing.RIGHT, uv: [  0, t*s] },
-            { position: [t+l,   h,  -t], normal: Facing.RIGHT, uv: [  l, t*s] },
-            { position: [t+l,   h,  -t], normal: Facing.RIGHT, uv: [  l, t*s] },
-            { position: [  l,   h,   0], normal: Facing.RIGHT, uv: [  l,   0] },
+            { position: [w+l,   0,  -w], normal: Facing.RIGHT, uv: [  0, w*s] },
+            { position: [w+l,   h,  -w], normal: Facing.RIGHT, uv: [  h, w*s] },
+            { position: [w+l,   h,  -w], normal: Facing.RIGHT, uv: [  h, w*s] },
+            { position: [  l,   h,   0], normal: Facing.RIGHT, uv: [  h,   0] },
             { position: [  l,   0,   0], normal: Facing.RIGHT, uv: [  0,   0] },
         ];
 
@@ -113,13 +86,12 @@ export default class Wall {
         return geometry;
     }
 
-    private static createFace(dimensions: WallDimensions) {
-        const shape = this.createFaceFront(dimensions);
+    private static createFace(shape: Shape) {
         const geometry = new ShapeGeometry(shape);
         return geometry;
     }
 
-    private static createFaceFront({length: l, height: h}: WallDimensions) {
+    private static createFrontShape({length: l, height: h}: Dimensions) {
         const shape = new Shape();
         shape.moveTo(0, 0);
         shape.lineTo(0, h);
@@ -129,34 +101,45 @@ export default class Wall {
         return shape;
     }
 
-    private static createFaceBack({length: l, height: h}: WallDimensions) {
-        const shape = new Shape();
-        shape.moveTo(0, 0);
-        shape.lineTo(l, 0);
-        shape.lineTo(l, h);
-        shape.lineTo(0, h);
-        shape.lineTo(0, 0);
-        return shape;
-    }
-
-    private createRectangleFace(bottomLeft: number, topRight: number, facing: Facing) {
-        return [
-            {}
-        ];
-    }
-
-    private createWallMesh(): Mesh {
-        return new Mesh();
+    public addWindow(window: Window) {
+        this.mainWallFrame.add(window.mainWindowFrame);
+        this.updateCutFrames();
+        this.windows.push(window);
     }
 
     public rotateGeometry() {
-
+        throw new Error("Method not implemented.");
     }
 
     updateCutFrames() {
+        const newShape = this.cacheFrontShape.clone();
+
         this.windows.forEach((value: Window) => {
-            //
+            // take below values from box3 of windowobject3d mesh
+            const x = value.mainWindowFrame.position.x;
+            const y = value.mainWindowFrame.position.y;
+            const l = value.windowObject.dimensions.length;
+            const h = value.windowObject.dimensions.height;
+
+            // maybe reuse createFrontShape(dimensions, positions)
+            const hole = new Shape();
+            // this won't be calculated using addition then
+            hole.moveTo(x, y);
+            hole.lineTo(x+l, y);
+            hole.lineTo(x+l, y+h);
+            hole.lineTo(x, y+h);
+            hole.lineTo(x, y);
+            newShape.holes.push(hole);
         });
-        throw new Error("Method not implemented.");
+
+        const geometry = Wall.createFace(newShape);
+        const newFrontFace = new Mesh(geometry, this.material);
+        this.updateFrontFace(newFrontFace);
+    }
+
+    private updateFrontFace(newFrontFace: Mesh) {
+        this.mainWallFrame.remove(this.frontFace);
+        this.mainWallFrame.add(newFrontFace);
+        this.frontFace = newFrontFace;
     }
 } 
