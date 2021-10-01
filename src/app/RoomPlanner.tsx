@@ -8,13 +8,16 @@ import Wall from "./Wall";
 import Window from "./Window";
 
 
-export default function RoomPlanner() {
+type Props = {
+  scene: Scene
+}
+
+export default function RoomPlanner({scene}: Props) {
 
   const mount = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     let renderer: WebGLRenderer;
-    let scene: Scene;
     let camera: PerspectiveCamera;
     let width: number;
     let height: number;
@@ -35,7 +38,6 @@ export default function RoomPlanner() {
       }
 
       renderer = new WebGLRenderer(renderParams);
-      scene = new Scene();
       camera = new PerspectiveCamera(50, width / height, 0.1, 1000);
       hemiLight = new HemisphereLight("white", "grey", 0.5);
       directLight = new DirectionalLight("white", 0.4);
@@ -57,11 +59,11 @@ export default function RoomPlanner() {
 
 
       // sample
-      const wall = Wall.create({length: 50, height: 20, width: 2});
-      scene.add(wall.mainWallFrame);
+      // const wall = Wall.create({length: 50, height: 20, width: 2});
+      // scene.add(wall.mainWallFrame);
 
       // create window in a wall
-      windowOfWall = Window.create({x: 10, y: 0}, wall);
+      // windowOfWall = Window.create({x: 10, y: 0}, wall);
       // windowOfWall.translateX(5);
 
 
