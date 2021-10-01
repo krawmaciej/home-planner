@@ -4,8 +4,6 @@ import { useLayoutEffect, useRef } from "react";
 
 import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import Wall from "./Wall";
-import Window from "./Window";
 
 
 type Props = {
@@ -23,8 +21,6 @@ export default function RoomPlanner({scene}: Props) {
     let height: number;
     let hemiLight: HemisphereLight;
     let directLight: DirectionalLight;
-
-    let windowOfWall: Window;
 
     init();
 

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Scene } from "three";
 import { Position2D } from "../constants/Types";
-import Wall from "../Wall";
-import Window from "../Window";
+import Wall from "../objects/Wall";
+import Window from "../objects/Window";
 
 type Props = {
     className?: string

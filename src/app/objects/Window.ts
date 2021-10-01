@@ -1,6 +1,6 @@
-import { BufferAttribute, BufferGeometry, Mesh, Scene, Vector2, Vector3 } from "three";
-import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing, Position2D } from "./constants/Types";
-import ObjectLoader, { ImportedObject } from "./objects/ImportedObject";
+import { BufferAttribute, BufferGeometry, Mesh } from "three";
+import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing, Position2D } from "../constants/Types";
+import ObjectLoader, { ImportedObject } from "./ImportedObject";
 import Wall from "./Wall";
 
 export default class Window {
