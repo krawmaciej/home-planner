@@ -10,7 +10,8 @@ type Props = {
   scene: Scene
 }
 
-export default function RoomPlanner({scene}: Props) {
+// this is canvas, if there are similarities between room planner canvas then refactor
+export default function PlanDrawerCanvas({scene}: Props) {
 
   const mount = useRef<HTMLDivElement>(null);
 
