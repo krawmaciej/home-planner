@@ -1,17 +1,18 @@
-import "./css/MainStyle.css"
+import "../css/MainStyle.css"
 
-import { useLayoutEffect, useRef } from "react";
+import { memo, useLayoutEffect, useRef } from "react";
 
-import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, WebGLRenderer, WebGLRendererParameters } from "three";
+import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, Vector2, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
 type Props = {
   scene: Scene
+  setPosition: React.Dispatch<React.SetStateAction<Vector2 | undefined>>
 }
 
 // this is canvas, if there are similarities between room planner canvas then refactor
-export default function FloorPlanCanvas({scene}: Props) {
+const FloorPlanCanvas: React.FC<Props> = ({scene, setPosition}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -69,8 +70,8 @@ export default function FloorPlanCanvas({scene}: Props) {
       mount?.current?.appendChild(renderer.domElement);
 
       // listeners
-      window.addEventListener('resize', handleResize);
-      mount?.current?.addEventListener('click', handleOnClick);
+      window.addEventListener("resize", handleResize);
+      mount?.current?.addEventListener("pointermove", handlePointerMove);
 
       animate();
     }
@@ -96,8 +97,12 @@ export default function FloorPlanCanvas({scene}: Props) {
       console.log("hei: " + height);
     }
 
-    function handleOnClick() {
-      
+    function handlePointerMove(event: MouseEvent) {
+      const x = (event.clientX / width) * 2 - 1;
+      const y = (event.clientY / height) * 2 + 1;
+      // new Vector2(x, y);
+      setPosition(new Vector2(x, y));
+
       // STATE.notifyListener();
       // console.log(STATE.getCurrentMenuKey());
     }
@@ -109,3 +114,5 @@ export default function FloorPlanCanvas({scene}: Props) {
   );
 
 }
+
+export default FloorPlanCanvas;

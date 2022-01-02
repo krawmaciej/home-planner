@@ -1,4 +1,4 @@
-import "./css/MainStyle.css"
+import "../css/MainStyle.css"
 
 import { useLayoutEffect, useRef } from "react";
 

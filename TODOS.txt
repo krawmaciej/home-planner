@@ -1,3 +1,8 @@
+top priority now:
+ - check if tracking mouse only in the bottom screen (no refreshing parent and canvas) also takes lot of cpu
+
+
+
 Algorithms(solutions to problems) to describe:
  - creating a wall with a hole for window/door
  - dissappearing of wall and ceiling when looking from given angle (vector dot product algorithms)
