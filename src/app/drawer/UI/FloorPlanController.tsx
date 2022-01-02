@@ -3,22 +3,21 @@ import { Scene } from "three";
 import { Position2D } from "../../arranger/constants/Types";
 import Wall from "../../arranger/objects/Wall";
 import Window from "../../arranger/objects/Window";
+import { Point } from "../constants/Types";
+import MousePosition from "../objects/MousePosition";
 
 type Props = {
     className?: string
     scene: Scene
 }
 
-const DrawerController: React.FC<Props> = ({scene}: Props) => {
-    
-    const [windowPosition, setWindowPosition] = useState<Position2D>({
-        x: 10,
-        y: 0
-    });
+const FloorPlanController: React.FC<Props> = ({scene}: Props) => {
 
-    const [wall, setWall] = useState<Wall>();
+    const [mousePosition, setMousePosition] = useState<MousePosition>(new MousePosition());
 
-    const [window, setWindow] = useState<Window>();
+    const changeMousePosition = (position: Point) => {
+        mousePosition.position = position;
+    }
 
     const addWall = () => {
       const wall = Wall.create({length: 50, height: 20, width: 2});
@@ -64,4 +63,4 @@ const DrawerController: React.FC<Props> = ({scene}: Props) => {
     );
 }
 
-export default DrawerController;
+export default FloorPlanController;

@@ -4,8 +4,8 @@ import React from 'react';
 import './App.css';
 
 import { Scene } from 'three';
-import PlanDrawerCanvas from "./app/drawer/PlanDrawerCanvas";
-import DrawerController from "./app/drawer/UI/DrawerController";
+import FloorPlanCanvas from "./app/drawer/FloorPlanCanvas";
+import FloorPlanController from "./app/drawer/UI/FloorPlanController";
 
 const App: React.FC<{}> = () => {
 
@@ -15,11 +15,10 @@ const App: React.FC<{}> = () => {
   return (
       <div className="MainView">
         <div>
-          <PlanDrawerCanvas scene={scene}/>
+          <FloorPlanCanvas scene={scene}/>
         </div>
         <div>
-          {/* wondering if this should be there in case of planDrawer */}
-          <DrawerController className={"Menu"} scene={scene}/>
+          <FloorPlanController className={"Menu"} scene={scene}/>
         </div>
       </div>
   );

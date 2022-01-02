@@ -11,7 +11,7 @@ type Props = {
 }
 
 // this is canvas, if there are similarities between room planner canvas then refactor
-export default function PlanDrawerCanvas({scene}: Props) {
+export default function FloorPlanCanvas({scene}: Props) {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -97,6 +97,7 @@ export default function PlanDrawerCanvas({scene}: Props) {
     }
 
     function handleOnClick() {
+      
       // STATE.notifyListener();
       // console.log(STATE.getCurrentMenuKey());
     }
