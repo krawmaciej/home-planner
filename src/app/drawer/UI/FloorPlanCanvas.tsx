@@ -1,4 +1,4 @@
-import "../css/MainStyle.css"
+import "../../css/MainStyle.css"
 
 import { memo, useLayoutEffect, useRef } from "react";
 
@@ -72,12 +72,12 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, setPosition}: Props) => {
       // listeners
       window.addEventListener("resize", handleResize);
       mount?.current?.addEventListener("pointermove", handlePointerMove);
+      mount?.current?.addEventListener("pointerdown", handlePointerDown);
 
       animate();
     }
 
     function animate() {
-      // windowOfWall.translateX(0.01);
       render();
       requestAnimationFrame(animate);
     };
@@ -97,14 +97,17 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, setPosition}: Props) => {
       console.log("hei: " + height);
     }
 
-    function handlePointerMove(event: MouseEvent) {
+    function handlePointerMove(event: PointerEvent) {
       const x = (event.clientX / width) * 2 - 1;
       const y = (event.clientY / height) * 2 + 1;
-      // new Vector2(x, y);
       setPosition(new Vector2(x, y));
+    }
 
-      // STATE.notifyListener();
-      // console.log(STATE.getCurrentMenuKey());
+    function handlePointerDown(event: PointerEvent) {
+      
+      const x = (event.clientX / width) * 2 - 1;
+      const y = (event.clientY / height) * 2 + 1;
+      setPosition(new Vector2(x, y));
     }
 
   }, []);
@@ -115,4 +118,4 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, setPosition}: Props) => {
 
 }
 
-export default FloorPlanCanvas;
+export default memo(FloorPlanCanvas);

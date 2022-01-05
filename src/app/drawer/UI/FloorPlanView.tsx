@@ -12,7 +12,7 @@ type Props = {
     mousePosition: Vector2 | undefined
 }
 
-const FloorPlanController: React.FC<Props> = ({scene, mousePosition}: Props) => {
+const FloorPlanView: React.FC<Props> = ({scene, mousePosition}: Props) => {
 
     useEffect(() => {
         
@@ -46,4 +46,4 @@ const FloorPlanController: React.FC<Props> = ({scene, mousePosition}: Props) => 
     );
 }
 
-export default FloorPlanController;
+export default FloorPlanView;
