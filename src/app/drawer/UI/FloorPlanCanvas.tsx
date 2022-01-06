@@ -2,17 +2,17 @@ import "../../css/MainStyle.css"
 
 import { memo, useLayoutEffect, useRef } from "react";
 
-import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, Vector2, WebGLRenderer, WebGLRendererParameters } from "three";
+import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
 type Props = {
   scene: Scene
-  setPosition: React.Dispatch<React.SetStateAction<Vector2 | undefined>>
+  clickToDraw: (point: Vector3) => void
 }
 
 // this is canvas, if there are similarities between room planner canvas then refactor
-const FloorPlanCanvas: React.FC<Props> = ({scene, setPosition}: Props) => {
+const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -100,14 +100,18 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, setPosition}: Props) => {
     function handlePointerMove(event: PointerEvent) {
       const x = (event.clientX / width) * 2 - 1;
       const y = (event.clientY / height) * 2 + 1;
-      setPosition(new Vector2(x, y));
     }
 
     function handlePointerDown(event: PointerEvent) {
-      
       const x = (event.clientX / width) * 2 - 1;
-      const y = (event.clientY / height) * 2 + 1;
-      setPosition(new Vector2(x, y));
+      const y = -(event.clientY / height) * 2 + 1;
+      const v = new Vector3(x, y, 1);
+      // const v = new Vector3(
+        // (event.clientX / width) * 2 - 1,
+        // -(event.clientY / height) * 2 + 1,
+        // (camera.near + camera.far) / (camera.near - camera.far)
+      // );
+      clickToDraw(v.unproject(camera));
     }
 
   }, []);
