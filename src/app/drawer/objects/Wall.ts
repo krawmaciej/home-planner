@@ -28,7 +28,23 @@ export default class Wall {
     }
 
 
+    public move(newStop: Vector3) {
+        // lazy initialize
+        const stopXIndex = this.findStopXIndex();
 
+        this.line.geometry.attributes.position.needsUpdate = true;
+    }
+
+    private findStopXIndex() {
+        const positions = this.line.geometry.attributes.position.array;
+        for (let i = 0; i < positions.length; i+=3) {
+            if (positions[i] === this.stop.x) {
+                return i;
+            }
+        }
+
+        throw new Error("The point that should be there was not.");
+    }
 
 
 }

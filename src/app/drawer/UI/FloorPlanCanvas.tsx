@@ -2,17 +2,17 @@ import "../../css/MainStyle.css"
 
 import { memo, useLayoutEffect, useRef } from "react";
 
-import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 
 
 type Props = {
   scene: Scene
   clickToDraw: (point: Vector3) => void
+  clickToSwitch: (point: Vector3) => void
 }
 
 // this is canvas, if there are similarities between room planner canvas then refactor
-const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw}: Props) => {
+const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -49,10 +49,6 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw}: Props) => {
       camera.position.set(0, 60, 50);
       camera.lookAt(0, 0, 0);
 
-      // camera controlls
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.minZoom = 0.5;
-      controls.maxZoom = 2;
 
 
 
@@ -99,7 +95,14 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw}: Props) => {
 
     function handlePointerMove(event: PointerEvent) {
       const x = (event.clientX / width) * 2 - 1;
-      const y = (event.clientY / height) * 2 + 1;
+      const y = -(event.clientY / height) * 2 + 1;
+      const v = new Vector3(x, y, 1);
+      // const v = new Vector3(
+        // (event.clientX / width) * 2 - 1,
+        // -(event.clientY / height) * 2 + 1,
+        // (camera.near + camera.far) / (camera.near - camera.far)
+      // );
+      clickToDraw(v.unproject(camera));
     }
 
     function handlePointerDown(event: PointerEvent) {
@@ -111,7 +114,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw}: Props) => {
         // -(event.clientY / height) * 2 + 1,
         // (camera.near + camera.far) / (camera.near - camera.far)
       // );
-      clickToDraw(v.unproject(camera));
+      clickToSwitch(v);
     }
 
   }, []);

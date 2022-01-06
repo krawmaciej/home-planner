@@ -28,19 +28,29 @@ const FloorPlanController: React.FC<{}> = () => {
     const [mousePosition, setMousePosition] = useState<Vector2>();
     const [scene, setScene] = useState<Scene>(new Scene());
 
-    const clickToDraw = (point: Vector3) => {
-        // collisionDetection.check(event);
-        
+    const clickToSwitch = (point: Vector3) => {
         if (drawState === DrawState.SELECTING) {
             drawState = DrawState.DRAWING;
             startingPoint = point;
-            console.log("starting Point: ", startingPoint);
         } else if (drawState === DrawState.DRAWING) {
             drawState = DrawState.SELECTING;
+        }
+    }
+
+    const clickToDraw = (point: Vector3) => {
+        // collisionDetection.check(event);
+        
+        if (drawState === DrawState.DRAWING) {
+
+            if (lines.length > 0) {
+                const toRemove = lines.pop()?.line;
+                if (toRemove !== undefined) {
+                    scene.remove(toRemove);
+                }
+            }
+
+
             endingPoint = point;
-            console.log("Drawing line between: ");
-            console.log(startingPoint);
-            console.log(endingPoint);
             // draw line between starting and ending
             if (startingPoint === undefined) {
                 throw new Error("Starting point not set!");
@@ -55,7 +65,7 @@ const FloorPlanController: React.FC<{}> = () => {
     return (
         <div className="MainView">
             <div>
-                <FloorPlanCanvas scene={scene} clickToDraw={clickToDraw} />
+                <FloorPlanCanvas scene={scene} clickToDraw={clickToDraw} clickToSwitch={clickToSwitch}/>
             </div>
             <div>
                 <FloorPlanView className={"Menu"} scene={scene} mousePosition={mousePosition} />
