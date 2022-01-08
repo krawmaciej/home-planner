@@ -39,6 +39,7 @@ const FloorPlanController: React.FC<{}> = () => {
 
     const clickToDraw = (point: Vector3) => {
         // collisionDetection.check(event);
+        console.log(point);
         
         if (drawState === DrawState.DRAWING) {
 

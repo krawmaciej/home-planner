@@ -2,7 +2,8 @@ import "../../css/MainStyle.css"
 
 import { memo, useLayoutEffect, useRef } from "react";
 
-import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
+import { DirectionalLight, GridHelper, HemisphereLight, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 
 type Props = {
@@ -18,11 +19,16 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
 
   useLayoutEffect(() => {
     let renderer: WebGLRenderer;
-    let camera: PerspectiveCamera;
+    let camera: OrthographicCamera;
     let width: number;
     let height: number;
     let hemiLight: HemisphereLight;
     let directLight: DirectionalLight;
+
+    const frustumSize = 1000;
+
+    const pointerMovingPosition = new Vector2();
+    const pointerDownPosition = new Vector2();
 
     init();
 
@@ -36,19 +42,22 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
       }
 
       renderer = new WebGLRenderer(renderParams);
-      camera = new PerspectiveCamera(50, width / height, 0.1, 1000);
+      const aspect = window.innerWidth / window.innerHeight;
+      camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 1, 2000);
       hemiLight = new HemisphereLight("white", "grey", 0.5);
       directLight = new DirectionalLight("white", 0.4);
       directLight.position.set(0, 30, 10);
       directLight.target.position.set(0, 0, 10);
 
       scene.add(hemiLight, directLight);
+      scene.add(new GridHelper(5000, 5000/50, 0x222222, 0x222222));
 
       renderer.setSize(width, height);
   
-      camera.position.set(0, 60, 50);
+      camera.position.set(0, 2, 0);
       camera.lookAt(0, 0, 0);
-
+      
+      const controls = new OrbitControls( camera, renderer.domElement );
 
 
 
@@ -71,6 +80,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
       mount?.current?.addEventListener("pointerdown", handlePointerDown);
 
       animate();
+      handleResize();
     }
 
     function animate() {
@@ -85,18 +95,22 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
     function handleResize() {
       width = mount?.current?.clientWidth ?? 0;
       height = mount?.current?.clientHeight ?? 0;
-      renderer.setSize(width, height);
-      camera.aspect = width / height;
+      const aspect = width / height;
+
+      camera.left = - frustumSize * aspect / 2;
+      camera.right = frustumSize * aspect / 2;
+      camera.top = frustumSize / 2;
+      camera.bottom = - frustumSize / 2;
       camera.updateProjectionMatrix();
+
+      renderer.setSize(width, height);
       render();
-      console.log("wid: " + width);
-      console.log("hei: " + height);
     }
 
     function handlePointerMove(event: PointerEvent) {
       const x = (event.clientX / width) * 2 - 1;
       const y = -(event.clientY / height) * 2 + 1;
-      const v = new Vector3(x, y, 1);
+      const v = new Vector3(x, y, 0);
       // const v = new Vector3(
         // (event.clientX / width) * 2 - 1,
         // -(event.clientY / height) * 2 + 1,
@@ -108,13 +122,13 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
     function handlePointerDown(event: PointerEvent) {
       const x = (event.clientX / width) * 2 - 1;
       const y = -(event.clientY / height) * 2 + 1;
-      const v = new Vector3(x, y, 1);
+      const v = new Vector3(x, y, 0);
       // const v = new Vector3(
         // (event.clientX / width) * 2 - 1,
         // -(event.clientY / height) * 2 + 1,
         // (camera.near + camera.far) / (camera.near - camera.far)
       // );
-      clickToSwitch(v);
+      clickToSwitch(v.unproject(camera));
     }
 
   }, []);
