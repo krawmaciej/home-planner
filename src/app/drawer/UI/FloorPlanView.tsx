@@ -40,8 +40,6 @@ const FloorPlanView: React.FC<Props> = ({scene, mousePosition}: Props) => {
             <button onClick={addWall}>Rysowanie ścian</button>
             <button onClick={addWindow}>Edycja ścian [przesuwanie, usuwanie, zmiana długości]</button>
             <button onClick={addWindow}>Usunięcie zaznaczonej ściany</button>
-            <p>Długość zaznaczonej ściany (tylko podczas edycji ściany, bez edycji długości): </p>
-            <p>mouse position: {JSON.stringify(mousePosition)}</p>
         </>
     );
 }

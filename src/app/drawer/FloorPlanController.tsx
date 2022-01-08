@@ -2,7 +2,7 @@ import "../css/MainStyle.css"
 
 import React, { useEffect, useState } from 'react';
 
-import { Color, Scene, Vector2, Vector3 } from 'three';
+import { Color, Line, Scene, Vector2, Vector3 } from 'three';
 import FloorPlanCanvas from "./UI/FloorPlanCanvas";
 import FloorPlanView from "./UI/FloorPlanView";
 import { Point } from "./constants/Types";
@@ -24,8 +24,8 @@ const FloorPlanController: React.FC<{}> = () => {
     let startingPoint: Vector3 | undefined;
     let endingPoint: Vector3 | undefined;
 
-    const lines = new Array<Wall>();
-
+    let drawingLine: Wall;
+    const walls = new Array<Wall>();
 
     const [mousePosition, setMousePosition] = useState<Vector2>();
     const [scene, setScene] = useState<Scene>(new Scene());
@@ -35,7 +35,7 @@ const FloorPlanController: React.FC<{}> = () => {
     }, []);
 
     const clickToSwitch = (point: Vector3) => {
-        const x =  Math.floor(point.x / snapStep) * snapStep;
+        const x = Math.floor(point.x / snapStep) * snapStep;
         const y = point.y;
         const z =  Math.floor(point.z / snapStep) * snapStep;
         point.set(x, y, z);
@@ -49,39 +49,65 @@ const FloorPlanController: React.FC<{}> = () => {
             if (startingPoint === undefined) {
                 throw new Error("Starting point not set!");
             }
-            const wall = new Wall(startingPoint, endingPoint);
-            lines.push(wall);
+            let wall = new Wall(startingPoint, endingPoint);
+            wall = checkCollisions(wall);
+            walls.push(wall);
             scene.add(wall.line);
         }
     }
 
     const clickToDraw = (point: Vector3) => {
-        // collisionDetection.check(event);
         const x =  Math.floor(point.x / snapStep) * snapStep;
         const y = point.y;
         const z =  Math.floor(point.z / snapStep) * snapStep;
         point.set(x, y, z);
         
-        if (drawState === DrawState.DRAWING) {
+        if (drawState === DrawState.DRAWING) { // meaning startPoint is set so it can be replaced to startPointCheck
+            // collisionDetection.check(event);
 
-            if (lines.length > 0) {
-                const toRemove = lines.pop()?.line;
-                if (toRemove !== undefined) {
-                    scene.remove(toRemove);
-                }
+            if (drawingLine !== undefined) {
+                scene.remove(drawingLine.line);
             }
-
 
             endingPoint = point;
             // draw line between starting and ending
             if (startingPoint === undefined) {
                 throw new Error("Starting point not set!");
             }
-            const wall = new Wall(startingPoint, endingPoint);
-            lines.push(wall);
+            let wall = new Wall(startingPoint, endingPoint);
+            
+            // wall = checkCollisions(wall);
+
+
+            drawingLine = wall;
             scene.add(wall.line);
         }
 
+    }
+
+    // change to Vector3
+    const checkCollisions = (wall: Wall) => {
+        const endPoints = walls.filter((otherWall) => {
+            const ip = wall.intersectionPoint(otherWall);
+            console.log("IPoint: ", ip);
+            const belongs = doesBelongTo(ip, wall);
+            console.log("Wall this with other wall: ", wall);
+            console.log("Other wall: ", otherWall);
+            console.log("belongs: ", belongs);
+            return belongs;
+        });
+
+        console.log(endPoints.length);
+        if (endPoints.length === 0) {
+            // console.log("Its empty");
+            return wall;
+        }
+
+        const slicedEndPoint = endPoints.pop()?.intersectionPoint(wall);
+        const startPoint = wall.start;
+        const endPoint = new Vector3(slicedEndPoint?.x, wall.stop.y, slicedEndPoint?.y);
+
+        return new Wall(startPoint, endPoint);
     }
 
     return (
@@ -97,3 +123,15 @@ const FloorPlanController: React.FC<{}> = () => {
 }
 
 export default FloorPlanController;
+
+function doesBelongTo(ip: Vector2, wall: Wall) {
+    const x1 = Math.min(wall.start.x, wall.stop.x);
+    const y1 = Math.min(wall.start.z, wall.stop.z);
+    const x2 = Math.max(wall.start.x, wall.stop.x);
+    const y2 = Math.max(wall.start.z, wall.stop.z);
+
+    const checkResult = (ip.x >= x1 && ip.x <= x2) &&
+                        (ip.y >= y1 && ip.y <= y2);
+
+    return checkResult;
+}

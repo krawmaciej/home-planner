@@ -39,8 +39,8 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
       height = mount?.current?.clientHeight ?? 0;
 
       const renderParams: WebGLRendererParameters = {
-        precision: "lowp",
-        // antialias: true,
+        precision: "highp",
+        antialias: true,
       }
 
       renderer = new WebGLRenderer(renderParams);
@@ -53,12 +53,13 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
 
       scene.add(hemiLight, directLight);
       const grid = new GridHelper(5000, 5000 / 50, 0xbbbbbb, 0xbbbbbb);
-      console.log(scene.getWorldPosition(grid.position));
+      // console.log(scene.getWorldPosition(grid.position));
+      // grid.translateY(-5);
       scene.add(grid);
 
       renderer.setSize(width, height);
   
-      camera.position.set(0, 2, 0);
+      camera.position.set(0, -2, 0);
       camera.lookAt(0, 0, 0);
       
       // controls = new OrbitControls(camera, renderer.domElement);
