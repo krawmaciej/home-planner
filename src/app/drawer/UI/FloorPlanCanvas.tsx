@@ -30,7 +30,6 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
 
     const pointerMovingPosition = new Vector2();
     const pointerDownPosition = new Vector2();
-    const middleCanvasPosition = new Vector3();
 
     init();
 
@@ -109,13 +108,9 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
     }
 
     function handlePointerMove(event: PointerEvent) {
-      const middle = new Vector3(0, 0, 0);
-      // console.log(middle.project(camera));
-
-
-      const x = ( event.clientX / width ) * 2 - 1;
-			const	y = - ( event.clientY / height ) * 2 + 1;
-      const v = new Vector3(x, y, ((camera.near + camera.far) / (camera.near - camera.far)) / 2);
+      const x = (event.clientX / width) * 2 - 1;
+			const	y = -(event.clientY / height) * 2 + 1;
+      const v = new Vector3(x, y, 0);
       // const v = new Vector3(
         // (event.clientX / width) * 2 - 1,
         // -(event.clientY / height) * 2 + 1,
@@ -127,7 +122,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
     function handlePointerDown(event: PointerEvent) {
       const x = (event.clientX / width) * 2 - 1;
       const y = -(event.clientY / height) * 2 + 1;
-      const v = new Vector3(x, y, );
+      const v = new Vector3(x, y, 0);
       // const v = new Vector3(
         // (event.clientX / width) * 2 - 1,
         // -(event.clientY / height) * 2 + 1,

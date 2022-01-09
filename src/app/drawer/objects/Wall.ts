@@ -62,18 +62,6 @@ export default class Wall {
         const x = ((b1 * c2) - (b2 * c1)) / ((a1 * b2) - (a2 * b1));
         const y = ((c1 * a2) - (c2 * a1)) / ((a1 * b2) - (a2 * b1));
 
-        console.log("calculate intersection point:");
-        console.log(a1);
-        console.log(b1);
-        console.log(c1);
-
-        console.log(a2);
-        console.log(b2);
-        console.log(c2);
-
-        console.log(x);
-        console.log(y);
-
         return new Vector2(x, y);
     }
 

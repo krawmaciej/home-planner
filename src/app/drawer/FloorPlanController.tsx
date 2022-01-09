@@ -35,7 +35,7 @@ const FloorPlanController: React.FC<{}> = () => {
         scene.background = new Color(0x999999);
     }, [scene]);
 
-    const clickToSwitch = (point: Vector3) => {
+    const clickToSwitchSimpleLines = (point: Vector3) => {
         const x = Math.round(point.x);
         const y = point.y;
         const z =  Math.round(point.z);
@@ -45,7 +45,7 @@ const FloorPlanController: React.FC<{}> = () => {
             startingPoint = point;
         } else if (drawState === DrawState.DRAWING) {
             drawState = DrawState.SELECTING;
-            endingPoint = point;
+            endingPoint = getSimpleAxisPoint(point);
             // draw line between starting and ending
             if (startingPoint === undefined) {
                 throw new Error("Starting point not set!");
@@ -57,7 +57,7 @@ const FloorPlanController: React.FC<{}> = () => {
         }
     }
 
-    const clickToDraw = (point: Vector3) => {
+    const moveToDrawSimpleLines = (point: Vector3) => {
         const x = Math.round(point.x);
         const y = point.y;
         const z =  Math.round(point.z);
@@ -70,7 +70,7 @@ const FloorPlanController: React.FC<{}> = () => {
                 scene.remove(drawingLine.line);
             }
 
-            endingPoint = point;
+            endingPoint = getSimpleAxisPoint(point);
             // draw line between starting and ending
             if (startingPoint === undefined) {
                 throw new Error("Starting point not set!");
@@ -78,6 +78,7 @@ const FloorPlanController: React.FC<{}> = () => {
             let wall = new Wall(startingPoint, endingPoint);
             
             wall = checkCollisions(wall);
+            // snapping colided point won't work in case of angled lines
 
             drawingLine = wall;
             scene.add(wall.line);
@@ -87,32 +88,55 @@ const FloorPlanController: React.FC<{}> = () => {
 
     // change to Vector3
     const checkCollisions = (wall: Wall) => {
-        const mappedEndPoints = walls.map((otherWall) => {
+        const mappedEndPoints = walls.map((otherWall): [Wall, Vector2 | undefined] => {
             const ip = wall.intersectionPoint(otherWall);
             const belongs = doesBelongTo(ip, otherWall) && doesBelongTo(ip, wall);
-            if (belongs) {
-                return ip;
-            } else {
-                return undefined;
-            }
+            return [otherWall, belongs ? ip : undefined];
         });
-        const endPoints = mappedEndPoints.filter(otherWall => otherWall !== undefined);
+
+        const endPoints = mappedEndPoints.filter(([otherWall, intersectionPoint]): boolean => {
+            if (intersectionPoint === undefined) {
+                return false;
+            }
+            const isSameAsNewWallStartPoint: boolean = intersectionPoint.x === wall.start.x &&
+                                                intersectionPoint.y === wall.start.z;
+            const isSameAsCheckedWallEndPoint: boolean = intersectionPoint.x === otherWall.stop.x &&
+                                              intersectionPoint.y === otherWall.stop.z;
+            console.log("ip: ", intersectionPoint);
+            console.log("wall: ", wall);
+            console.log(isSameAsNewWallStartPoint);
+            console.log(isSameAsCheckedWallEndPoint);
+            return !(isSameAsNewWallStartPoint || isSameAsCheckedWallEndPoint);
+        });
 
         if (endPoints.length === 0) {
             return wall;
         }
 
-        const slicedEndPoint = endPoints.pop();
+        const slicedEndPoint = endPoints.pop()?.[1];
         const startPoint = wall.start;
         const endPoint = new Vector3(slicedEndPoint?.x, wall.stop.y, slicedEndPoint?.y);
 
         return new Wall(startPoint, endPoint);
     }
 
+    const getSimpleAxisPoint = (point: Vector3) => {
+        // return point;
+        if (startingPoint === undefined) {
+            throw new Error("Unexpected error while drawing a wall");
+        }
+        if (Math.abs(point.x - startingPoint.x) > Math.abs(point.z - startingPoint.z)) {
+            point.z = startingPoint.z;
+        } else {
+            point.x = startingPoint.x;
+        }
+        return point;
+    }
+
     return (
         <div className="MainView">
             <div>
-                <FloorPlanCanvas scene={scene} clickToDraw={clickToDraw} clickToSwitch={clickToSwitch}/>
+                <FloorPlanCanvas scene={scene} clickToDraw={moveToDrawSimpleLines} clickToSwitch={clickToSwitchSimpleLines}/>
             </div>
             <div>
                 <FloorPlanView className={"Menu"} scene={scene} mousePosition={mousePosition} />
