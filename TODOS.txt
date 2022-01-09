@@ -1,4 +1,10 @@
 top priority now:
+ - move drawing to render instead of spamming every mouse movement
+ - fix so that a wall can be drawn with only clickToDraw, not by using move
+ - fix collision so it gets all the intersection points, and splits the drawn wall properly
+
+
+ 
  - fix: cannot draw a line when starting from other line
  - fix: can draw a line that goes through line with the same a b c, (infinite intersection points)
  - check: what happens when checking intersection of parallel lines
@@ -91,6 +97,7 @@ function ScrollView({row}) {
 save all important data in cache
 
 THE CANVAS DOESN'T CREATE MENU COMPONENT, THEY ARE CONNECTED BY STATE (React.useContext)
+before using context (if ever, check): https://reactjs.org/docs/context.html
 don't use global state but rather pass needed props to rendered components
 
 

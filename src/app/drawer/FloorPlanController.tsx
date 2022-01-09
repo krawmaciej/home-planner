@@ -98,14 +98,11 @@ const FloorPlanController: React.FC<{}> = () => {
             if (intersectionPoint === undefined) {
                 return false;
             }
+            // this might be moved somewhere else, at least I know it works
             const isSameAsNewWallStartPoint: boolean = intersectionPoint.x === wall.start.x &&
                                                 intersectionPoint.y === wall.start.z;
             const isSameAsCheckedWallEndPoint: boolean = intersectionPoint.x === otherWall.stop.x &&
                                               intersectionPoint.y === otherWall.stop.z;
-            console.log("ip: ", intersectionPoint);
-            console.log("wall: ", wall);
-            console.log(isSameAsNewWallStartPoint);
-            console.log(isSameAsCheckedWallEndPoint);
             return !(isSameAsNewWallStartPoint || isSameAsCheckedWallEndPoint);
         });
 
