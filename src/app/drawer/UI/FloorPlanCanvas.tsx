@@ -26,7 +26,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
     let directLight: DirectionalLight;
     let controls: OrbitControls;
 
-    const frustumSize = 1000;
+    const frustumSize = 20;
 
     const pointerMovingPosition = new Vector2();
     const pointerDownPosition = new Vector2();
@@ -46,16 +46,10 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
       renderer = new WebGLRenderer(renderParams);
       const aspect = window.innerWidth / window.innerHeight;
       camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 1, 3);
-      hemiLight = new HemisphereLight("white", "grey", 0.5);
-      directLight = new DirectionalLight("white", 0.4);
-      directLight.position.set(0, 30, 10);
-      directLight.target.position.set(0, 0, 10);
 
-      scene.add(hemiLight, directLight);
-      const grid = new GridHelper(5000, 5000 / 50, 0xbbbbbb, 0xbbbbbb);
       // console.log(scene.getWorldPosition(grid.position));
       // grid.translateY(-5);
-      scene.add(grid);
+      scene.add(new GridHelper(100, 100, 0xbbbbbb, 0xbbbbbb));
 
       renderer.setSize(width, height);
   

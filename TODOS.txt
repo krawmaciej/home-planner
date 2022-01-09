@@ -1,5 +1,8 @@
 top priority now:
- - check if tracking mouse only in the bottom screen (no refreshing parent and canvas) also takes lot of cpu
+ - fix: cannot draw a line when starting from other line
+ - fix: can draw a line that goes through line with the same a b c, (infinite intersection points)
+ - check: what happens when checking intersection of parallel lines
+ - handle: lines starting and ending on the same point
 
 
 

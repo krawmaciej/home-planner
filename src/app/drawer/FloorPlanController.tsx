@@ -7,6 +7,7 @@ import FloorPlanCanvas from "./UI/FloorPlanCanvas";
 import FloorPlanView from "./UI/FloorPlanView";
 import { Point } from "./constants/Types";
 import Wall from "./objects/Wall";
+import { isConstructorDeclaration } from "typescript";
 
 enum DrawState {
     DRAWING,
@@ -17,7 +18,7 @@ const FloorPlanController: React.FC<{}> = () => {
 
     // it might be that a single shared object will be scene (depends on how to move from drawer to planner)
     // model
-    let snapStep = 50;
+    let snapStep = 1;
 
     let drawState = DrawState.SELECTING;
     
@@ -32,12 +33,12 @@ const FloorPlanController: React.FC<{}> = () => {
 
     useEffect(() => {
         scene.background = new Color(0x999999);
-    }, []);
+    }, [scene]);
 
     const clickToSwitch = (point: Vector3) => {
-        const x = Math.floor(point.x / snapStep) * snapStep;
+        const x = Math.round(point.x);
         const y = point.y;
-        const z =  Math.floor(point.z / snapStep) * snapStep;
+        const z =  Math.round(point.z);
         point.set(x, y, z);
         if (drawState === DrawState.SELECTING) {
             drawState = DrawState.DRAWING;
@@ -57,9 +58,9 @@ const FloorPlanController: React.FC<{}> = () => {
     }
 
     const clickToDraw = (point: Vector3) => {
-        const x =  Math.floor(point.x / snapStep) * snapStep;
+        const x = Math.round(point.x);
         const y = point.y;
-        const z =  Math.floor(point.z / snapStep) * snapStep;
+        const z =  Math.round(point.z);
         point.set(x, y, z);
         
         if (drawState === DrawState.DRAWING) { // meaning startPoint is set so it can be replaced to startPointCheck
@@ -76,8 +77,7 @@ const FloorPlanController: React.FC<{}> = () => {
             }
             let wall = new Wall(startingPoint, endingPoint);
             
-            // wall = checkCollisions(wall);
-
+            wall = checkCollisions(wall);
 
             drawingLine = wall;
             scene.add(wall.line);
@@ -87,23 +87,22 @@ const FloorPlanController: React.FC<{}> = () => {
 
     // change to Vector3
     const checkCollisions = (wall: Wall) => {
-        const endPoints = walls.filter((otherWall) => {
+        const mappedEndPoints = walls.map((otherWall) => {
             const ip = wall.intersectionPoint(otherWall);
-            console.log("IPoint: ", ip);
-            const belongs = doesBelongTo(ip, wall);
-            console.log("Wall this with other wall: ", wall);
-            console.log("Other wall: ", otherWall);
-            console.log("belongs: ", belongs);
-            return belongs;
+            const belongs = doesBelongTo(ip, otherWall) && doesBelongTo(ip, wall);
+            if (belongs) {
+                return ip;
+            } else {
+                return undefined;
+            }
         });
+        const endPoints = mappedEndPoints.filter(otherWall => otherWall !== undefined);
 
-        console.log(endPoints.length);
         if (endPoints.length === 0) {
-            // console.log("Its empty");
             return wall;
         }
 
-        const slicedEndPoint = endPoints.pop()?.intersectionPoint(wall);
+        const slicedEndPoint = endPoints.pop();
         const startPoint = wall.start;
         const endPoint = new Vector3(slicedEndPoint?.x, wall.stop.y, slicedEndPoint?.y);
 
