@@ -100,9 +100,9 @@ const FloorPlanController: React.FC<{}> = () => {
             }
             // this might be moved somewhere else, at least I know it works
             const isSameAsNewWallStartPoint: boolean = intersectionPoint.x === wall.start.x &&
-                                                intersectionPoint.y === wall.start.z;
+                                                       intersectionPoint.y === wall.start.z;
             const isSameAsCheckedWallEndPoint: boolean = intersectionPoint.x === otherWall.stop.x &&
-                                              intersectionPoint.y === otherWall.stop.z;
+                                                         intersectionPoint.y === otherWall.stop.z;
             return !(isSameAsNewWallStartPoint || isSameAsCheckedWallEndPoint);
         });
 

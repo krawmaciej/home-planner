@@ -26,7 +26,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
     let directLight: DirectionalLight;
     let controls: OrbitControls;
 
-    const frustumSize = 20;
+    const frustumSize = 18;
 
     const pointerMovingPosition = new Vector2();
     const pointerDownPosition = new Vector2();
