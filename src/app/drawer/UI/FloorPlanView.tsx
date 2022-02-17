@@ -3,13 +3,12 @@ import { Scene, Vector2 } from "three";
 import { Position2D } from "../../arranger/constants/Types";
 import Wall from "../../arranger/objects/Wall";
 import Window from "../../arranger/objects/Window";
-import { Point } from "../constants/Types";
-import MousePosition from "../objects/MousePosition";
+import { PointerPosition } from "../constants/Types";
 
 type Props = {
     className?: string
     scene: Scene
-    mousePosition: Vector2 | undefined
+    mousePosition: PointerPosition | undefined
 }
 
 const FloorPlanView: React.FC<Props> = ({scene, mousePosition}: Props) => {

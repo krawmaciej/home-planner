@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Color, Line, Scene, Vector2, Vector3 } from 'three';
 import FloorPlanCanvas from "./UI/FloorPlanCanvas";
 import FloorPlanView from "./UI/FloorPlanView";
-import { Point } from "./constants/Types";
+import { PointerPosition } from "./constants/Types";
 import Wall from "./objects/Wall";
 import { isConstructorDeclaration } from "typescript";
 
@@ -28,7 +28,6 @@ const FloorPlanController: React.FC<{}> = () => {
     let drawingLine: Wall;
     const walls = new Array<Wall>();
 
-    const [mousePosition, setMousePosition] = useState<Vector2>();
     const [scene, setScene] = useState<Scene>(new Scene());
 
     useEffect(() => {

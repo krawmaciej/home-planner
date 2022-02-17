@@ -4,16 +4,17 @@ import { memo, useLayoutEffect, useRef } from "react";
 
 import { DirectionalLight, GridHelper, HemisphereLight, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { DrawingState, Pointer } from "./Pointer";
 
 
 type Props = {
   scene: Scene
-  clickToDraw: (point: Vector3) => void
-  clickToSwitch: (point: Vector3) => void
+  clickToDraw: (start: Vector3, end: Vector3) => void
+  clickToSwitch: (start: Vector3, end: Vector3) => void
 }
 
 // this is canvas, if there are similarities between room planner canvas then refactor
-const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: Props) => {
+const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw: drawWall, clickToSwitch: moveDrawedWall}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -28,8 +29,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
 
     const frustumSize = 18;
 
-    const pointerMovingPosition = new Vector2();
-    const pointerDownPosition = new Vector2();
+    let pointer: Pointer = new Pointer();
 
     init();
 
@@ -87,6 +87,42 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
     };
 
     function render() {
+      if (pointer.state === DrawingState.NONE) {
+        // no op
+      } else if (pointer.state === DrawingState.DRAWING) {
+        const z = (camera.near + camera.far) / (camera.near - camera.far);
+
+        // todo: start will be always the same, unprojection can be cached
+        const start = new Vector3(
+          pointer.startPosition.x,
+          pointer.startPosition.y,
+          z
+        );
+
+        const end = new Vector3(
+          pointer.endPosition.x,
+          pointer.endPosition.y,
+          z
+        );
+
+        moveDrawedWall(start.unproject(camera), end.unproject(camera));
+
+      } else if (pointer.state === DrawingState.DRAW) {
+        const z = (camera.near + camera.far) / (camera.near - camera.far);
+        const start = new Vector3(
+          pointer.startPosition.x,
+          pointer.startPosition.y,
+          z
+        );
+        const end = new Vector3(
+          pointer.endPosition.x,
+          pointer.endPosition.y,
+          z
+        );
+        pointer = pointer.draw();
+        drawWall(start.unproject(camera), end.unproject(camera));
+      }
+
       renderer.render(scene, camera);
     };
 
@@ -107,30 +143,47 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw, clickToSwitch}: P
       render();
     }
 
+    /**
+     * Keeps track of pointer position.
+     * @param event move event
+     */
     function handlePointerMove(event: PointerEvent) {
       const x = (event.clientX / width) * 2 - 1;
 			const	y = -(event.clientY / height) * 2 + 1;
-      const v = new Vector3(x, y, 0);
+      pointer = pointer.changePosition({ x: x, y: y });
       // const v = new Vector3(
         // (event.clientX / width) * 2 - 1,
         // -(event.clientY / height) * 2 + 1,
         // (camera.near + camera.far) / (camera.near - camera.far)
       // );
-      clickToDraw(v.unproject(camera));
+      // clickToDraw(v.unproject(camera));
     }
 
+    /**
+     * Switches pointer down and sets pointer position.
+     * @param event down event
+     */
     function handlePointerDown(event: PointerEvent) {
       const x = (event.clientX / width) * 2 - 1;
       const y = -(event.clientY / height) * 2 + 1;
-      const v = new Vector3(x, y, 0);
+
+      if (pointer.state === DrawingState.NONE) {
+        pointer = pointer.startDrawing({ x: x, y: y });
+      } else if (pointer.state === DrawingState.DRAWING) {
+        pointer = pointer.stopDrawing({ x: x, y: y });
+      }
+      // DO NOT HANDLE DRAW STATE
+
+      // const v = new Vector3(x, y, 0);
       // const v = new Vector3(
         // (event.clientX / width) * 2 - 1,
         // -(event.clientY / height) * 2 + 1,
         // (camera.near + camera.far) / (camera.near - camera.far)
       // );
-      clickToSwitch(v.unproject(camera));
+      // clickToSwitch(v.unproject(camera));
     }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
