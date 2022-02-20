@@ -9,12 +9,12 @@ import { DrawingState, Pointer } from "./Pointer";
 
 type Props = {
   scene: Scene
-  clickToDraw: (start: Vector3, end: Vector3) => void
-  clickToSwitch: (start: Vector3, end: Vector3) => void
+  drawWall: (start: Vector3, end: Vector3) => void
+  moveDrawedWall: (start: Vector3, end: Vector3) => void
 }
 
 // this is canvas, if there are similarities between room planner canvas then refactor
-const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw: drawWall, clickToSwitch: moveDrawedWall}: Props) => {
+const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -104,7 +104,6 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw: drawWall, clickTo
           pointer.endPosition.y,
           z
         );
-
         moveDrawedWall(start.unproject(camera), end.unproject(camera));
 
       } else if (pointer.state === DrawingState.DRAW) {
@@ -168,7 +167,10 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, clickToDraw: drawWall, clickTo
       const y = -(event.clientY / height) * 2 + 1;
 
       if (pointer.state === DrawingState.NONE) {
+        console.log(pointer);
         pointer = pointer.startDrawing({ x: x, y: y });
+        console.log(pointer.startDrawing({ x: x, y: y }));
+        console.log(pointer);
       } else if (pointer.state === DrawingState.DRAWING) {
         pointer = pointer.stopDrawing({ x: x, y: y });
       }

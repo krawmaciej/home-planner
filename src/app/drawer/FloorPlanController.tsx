@@ -8,6 +8,7 @@ import FloorPlanView from "./UI/FloorPlanView";
 import { PointerPosition } from "./constants/Types";
 import Wall from "./objects/Wall";
 import { isConstructorDeclaration } from "typescript";
+import WallCreator from "./objects/WallCreator";
 
 enum DrawState {
     DRAWING,
@@ -20,68 +21,75 @@ const FloorPlanController: React.FC<{}> = () => {
     // model
     let snapStep = 1;
 
-    let drawState = DrawState.SELECTING;
-    
-    let startingPoint: Vector3 | undefined;
-    let endingPoint: Vector3 | undefined;
-
-    let drawingLine: Wall;
-    const walls = new Array<Wall>();
+    let drawedWall: Wall | undefined; // after wall is drawn there is no more wall being drawn
+    const walls = new Array<Wall>(); // walls used to detect collisions
 
     const [scene, setScene] = useState<Scene>(new Scene());
 
     useEffect(() => {
         scene.background = new Color(0x999999);
-    }, [scene]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const clickToSwitchSimpleLines = (point: Vector3) => {
-        const x = Math.round(point.x);
-        const y = point.y;
-        const z =  Math.round(point.z);
-        point.set(x, y, z);
-        if (drawState === DrawState.SELECTING) {
-            drawState = DrawState.DRAWING;
-            startingPoint = point;
-        } else if (drawState === DrawState.DRAWING) {
-            drawState = DrawState.SELECTING;
-            endingPoint = getSimpleAxisPoint(point);
-            // draw line between starting and ending
-            if (startingPoint === undefined) {
-                throw new Error("Starting point not set!");
-            }
-            let wall = new Wall(startingPoint, endingPoint);
-            wall = checkCollisions(wall);
-            walls.push(wall);
-            scene.add(wall.line);
-        }
+    /**
+     * Draw wall which is being currently drawn by the user.
+     * @param start pointer starting point
+     * @param end pointer ending point
+     */
+    const moveDrawedWall = (start: Vector3, end: Vector3) => {
+        // start.set(Math.round(start.x), start.y, Math.round(start.z));
+        // end.set(Math.round(end.x), end.y, Math.round(end.z));
+
+        WallCreator.createWall(start, end);
+        // wall = checkCollisions(wall); // DO NOT CHECK COLLISIONS ON MOVING DRAWED WALL
+        // todo: need two walls or something to keep track if there is a wall being drawn now (it should be, cause it should)
+        // walls.push(wall);
+        // scene.add(wall.line);
+        // if (drawState === DrawState.SELECTING) {
+        //     drawState = DrawState.DRAWING;
+        //     startingPoint = start;
+        // } else if (drawState === DrawState.DRAWING) {
+        //     drawState = DrawState.SELECTING;
+        //     endingPoint = getSimpleAxisPoint(start);
+        //     // draw line between starting and ending
+        //     if (startingPoint === undefined) {
+        //         throw new Error("Starting point not set!");
+        //     }
+        //     let wall = new Wall(startingPoint, endingPoint);
+        //     wall = checkCollisions(wall);
+        //     walls.push(wall);
+        //     scene.add(wall.line);
+        
     }
 
-    const moveToDrawSimpleLines = (point: Vector3) => {
-        const x = Math.round(point.x);
-        const y = point.y;
-        const z =  Math.round(point.z);
-        point.set(x, y, z);
+    const moveToDrawSimpleLines = (start: Vector3, end: Vector3) => {
+        // const x = Math.round(point.x);
+        // const y = point.y;
+        // const z =  Math.round(point.z);
+        // point.set(x, y, z);
+
         
-        if (drawState === DrawState.DRAWING) { // meaning startPoint is set so it can be replaced to startPointCheck
-            // collisionDetection.check(event);
 
-            if (drawingLine !== undefined) {
-                scene.remove(drawingLine.line);
-            }
+        // if (drawState === DrawState.DRAWING) { // meaning startPoint is set so it can be replaced to startPointCheck
+        //     // collisionDetection.check(event);
 
-            endingPoint = getSimpleAxisPoint(point);
-            // draw line between starting and ending
-            if (startingPoint === undefined) {
-                throw new Error("Starting point not set!");
-            }
-            let wall = new Wall(startingPoint, endingPoint);
+        //     if (drawedWall !== undefined) {
+        //         scene.remove(drawedWall.line);
+        //     }
+
+        //     endingPoint = getSimpleAxisPoint(point);
+        //     // draw line between starting and ending
+        //     if (startingPoint === undefined) {
+        //         throw new Error("Starting point not set!");
+        //     }
+        //     let wall = new Wall(startingPoint, endingPoint);
             
-            wall = checkCollisions(wall);
-            // snapping colided point won't work in case of angled lines
+        //     wall = checkCollisions(wall);
+        //     // snapping colided point won't work in case of angled lines which won't be supported
 
-            drawingLine = wall;
-            scene.add(wall.line);
-        }
+        //     drawedWall = wall;
+        //     scene.add(wall.line);
+        // }
 
     }
 
@@ -116,26 +124,23 @@ const FloorPlanController: React.FC<{}> = () => {
         return new Wall(startPoint, endPoint);
     }
 
-    const getSimpleAxisPoint = (point: Vector3) => {
-        // return point;
-        if (startingPoint === undefined) {
-            throw new Error("Unexpected error while drawing a wall");
-        }
-        if (Math.abs(point.x - startingPoint.x) > Math.abs(point.z - startingPoint.z)) {
-            point.z = startingPoint.z;
+    const getSimpleAxisPoint = (start: Vector3, end: Vector3) => {
+        // todo: make immutable
+        if (Math.abs(end.x - start.x) > Math.abs(end.z - start.z)) {
+            end.z = start.z;
         } else {
-            point.x = startingPoint.x;
+            end.x = start.x;
         }
-        return point;
+        return end;
     }
 
     return (
         <div className="MainView">
             <div>
-                <FloorPlanCanvas scene={scene} clickToDraw={moveToDrawSimpleLines} clickToSwitch={clickToSwitchSimpleLines}/>
+                <FloorPlanCanvas scene={scene} drawWall={moveToDrawSimpleLines} moveDrawedWall={moveDrawedWall}/>
             </div>
             <div>
-                <FloorPlanView className={"Menu"} scene={scene} mousePosition={mousePosition} />
+                <FloorPlanView className={"Menu"} scene={scene} />
             </div>
         </div>
     );

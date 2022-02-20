@@ -8,10 +8,10 @@ import { PointerPosition } from "../constants/Types";
 type Props = {
     className?: string
     scene: Scene
-    mousePosition: PointerPosition | undefined
+    // mousePosition: PointerPosition | undefined
 }
 
-const FloorPlanView: React.FC<Props> = ({scene, mousePosition}: Props) => {
+const FloorPlanView: React.FC<Props> = ({scene}: Props) => {
 
     useEffect(() => {
         

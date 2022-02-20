@@ -17,7 +17,7 @@ export default class Wall {
     public start: Vector3;
     public stop: Vector3;
     public lineEquation: LineEquation;
-    public line: Line<BufferGeometry>; // wondering if this can be updated
+    public line: Line<BufferGeometry>; // wondering if this can be updated 
 
 
     public constructor(start: Vector3, stop: Vector3) {
