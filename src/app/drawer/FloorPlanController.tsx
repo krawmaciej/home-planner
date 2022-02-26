@@ -39,6 +39,8 @@ const FloorPlanController: React.FC<{}> = () => {
     const moveDrawedWall = (start: Vector3, end: Vector3) => {
         // start.set(Math.round(start.x), start.y, Math.round(start.z));
         // end.set(Math.round(end.x), end.y, Math.round(end.z));
+        console.log("start: ", start);
+        console.log("end: ", end);
 
         WallCreator.createWall(start, end);
         // wall = checkCollisions(wall); // DO NOT CHECK COLLISIONS ON MOVING DRAWED WALL

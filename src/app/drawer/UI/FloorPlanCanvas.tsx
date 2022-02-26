@@ -167,10 +167,10 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
       const y = -(event.clientY / height) * 2 + 1;
 
       if (pointer.state === DrawingState.NONE) {
-        console.log(pointer);
+        // console.log(pointer);
         pointer = pointer.startDrawing({ x: x, y: y });
-        console.log(pointer.startDrawing({ x: x, y: y }));
-        console.log(pointer);
+        // console.log(pointer.startDrawing({ x: x, y: y }));
+        // console.log(pointer);
       } else if (pointer.state === DrawingState.DRAWING) {
         pointer = pointer.stopDrawing({ x: x, y: y });
       }
