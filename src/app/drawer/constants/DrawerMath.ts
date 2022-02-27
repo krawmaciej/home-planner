@@ -1,6 +1,6 @@
 import { Vector3 } from "three";
 import Direction from "../objects/Direction";
-import { CornerPoints } from "../objects/WallCreator";
+import { CornerPoints } from "../objects/DrawedWall";
 import { Vector2D } from "./Types";
 
 export default class DrawerMath {

@@ -119,7 +119,11 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
           z
         );
         pointer = pointer.draw();
-        drawWall(start.unproject(camera), end.unproject(camera));
+const us = start.unproject(camera);
+const ue = end.unproject(camera);
+console.log("us: ", us);
+console.log("ue: ", ue);
+        drawWall(us, ue);
       }
 
       renderer.render(scene, camera);

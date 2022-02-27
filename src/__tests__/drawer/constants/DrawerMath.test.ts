@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 import DrawerMath from "../../../app/drawer/constants/DrawerMath";
 import Direction from "../../../app/drawer/objects/Direction";
-import WallCreator, { CornerPoints } from "../../../app/drawer/objects/WallCreator";
+import DrawedWall, { CornerPoints } from "../../../app/drawer/objects/DrawedWall";
 
 describe("test add function", () => {
   test("calculateDirection should be right", () => {
@@ -50,7 +50,6 @@ describe("test add function", () => {
     const result = DrawerMath.calculateCornerPoints(start, end);
 
     // then
-    console.log("up result: ", result);
     expect(result.direction).toBe(expectedDirection);
     expect(result.topLeft.x < result.bottomRight.x).toBeTruthy();
     expect(result.topLeft.z > result.bottomRight.z).toBeTruthy();
@@ -67,7 +66,6 @@ describe("test add function", () => {
     const result = DrawerMath.calculateCornerPoints(start, end);
 
     // then
-    console.log("down result: ", result);
     expect(result.direction).toBe(expectedDirection);
     expect(result.topLeft.x < result.bottomRight.x).toBeTruthy();
     expect(result.topLeft.z > result.bottomRight.z).toBeTruthy();
@@ -84,7 +82,6 @@ describe("test add function", () => {
     const result = DrawerMath.calculateCornerPoints(start, end);
 
     // then
-    console.log("right result: ", result);
     expect(result.direction).toBe(expectedDirection);
     expect(result.topLeft.x < result.bottomRight.x).toBeTruthy();
     expect(result.topLeft.z > result.bottomRight.z).toBeTruthy();
@@ -101,7 +98,6 @@ describe("test add function", () => {
     const result = DrawerMath.calculateCornerPoints(start, end);
 
     // then
-    console.log("left result: ", result);
     expect(result.direction).toBe(expectedDirection);
     expect(result.topLeft.x < result.bottomRight.x).toBeTruthy();
     expect(result.topLeft.z > result.bottomRight.z).toBeTruthy();

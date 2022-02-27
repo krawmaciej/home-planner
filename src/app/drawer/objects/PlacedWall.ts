@@ -6,7 +6,7 @@ type LineEquation = {
     c: number
 }
 
-export default class Wall {
+export default class PlacedWall {
 
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
@@ -23,8 +23,8 @@ export default class Wall {
     public constructor(start: Vector3, stop: Vector3) {
         this.start = start;
         this.stop = stop;
-        this.line = Wall.createLine(start, stop);
-        this.lineEquation = Wall.calculateLineEquation(start, stop);
+        this.line = PlacedWall.createLine(start, stop);
+        this.lineEquation = PlacedWall.calculateLineEquation(start, stop);
     }
 
     private static createLine(start: Vector3, stop: Vector3) {
@@ -33,7 +33,7 @@ export default class Wall {
         points.push(stop);
 
         const geometry = new BufferGeometry().setFromPoints(points);
-        const line = new Line(geometry, Wall.material);
+        const line = new Line(geometry, PlacedWall.material);
         line.renderOrder = 1;
         return line;
     }
@@ -50,7 +50,7 @@ export default class Wall {
         return {a: a, b: b, c: c};
     }
 
-    public intersectionPoint(other: Wall) {
+    public intersectionPoint(other: PlacedWall) {
         const a1 = this.lineEquation.a;
         const b1 = this.lineEquation.b;
         const c1 = this.lineEquation.c;

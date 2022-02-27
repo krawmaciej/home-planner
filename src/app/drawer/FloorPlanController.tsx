@@ -6,9 +6,9 @@ import { Color, Line, Scene, Vector2, Vector3 } from 'three';
 import FloorPlanCanvas from "./UI/FloorPlanCanvas";
 import FloorPlanView from "./UI/FloorPlanView";
 import { PointerPosition } from "./constants/Types";
-import Wall from "./objects/Wall";
+import PlacedWall from "./objects/PlacedWall";
 import { isConstructorDeclaration } from "typescript";
-import WallCreator from "./objects/WallCreator";
+import DrawedWall from "./objects/DrawedWall";
 
 enum DrawState {
     DRAWING,
@@ -21,8 +21,8 @@ const FloorPlanController: React.FC<{}> = () => {
     // model
     let snapStep = 1;
 
-    let drawedWall: Wall | undefined; // after wall is drawn there is no more wall being drawn
-    const walls = new Array<Wall>(); // walls used to detect collisions
+    let drawedWall: DrawedWall | undefined; // after wall is drawn there is no more wall being drawn
+    const walls = new Array<PlacedWall>(); // walls used to detect collisions
 
     const [scene, setScene] = useState<Scene>(new Scene());
 
@@ -39,10 +39,20 @@ const FloorPlanController: React.FC<{}> = () => {
     const moveDrawedWall = (start: Vector3, end: Vector3) => {
         // start.set(Math.round(start.x), start.y, Math.round(start.z));
         // end.set(Math.round(end.x), end.y, Math.round(end.z));
-        console.log("start: ", start);
-        console.log("end: ", end);
 
-        WallCreator.createWall(start, end);
+        const wally = new PlacedWall(start, end);
+        scene.add(wally.line);
+
+        // const dWall = DrawedWall.createWall(start, end);
+        // console.log("move drawed wall: ", dWall);
+        // if (drawedWall?.line !== undefined) {
+        //     scene.remove(drawedWall.line);
+        // }
+        // scene.add(dWall.line);
+        // drawedWall = dWall;
+
+        // console.log(scene.children.length);
+
         // wall = checkCollisions(wall); // DO NOT CHECK COLLISIONS ON MOVING DRAWED WALL
         // todo: need two walls or something to keep track if there is a wall being drawn now (it should be, cause it should)
         // walls.push(wall);
@@ -64,7 +74,7 @@ const FloorPlanController: React.FC<{}> = () => {
         
     }
 
-    const moveToDrawSimpleLines = (start: Vector3, end: Vector3) => {
+    const drawWall = (start: Vector3, end: Vector3) => {
         // const x = Math.round(point.x);
         // const y = point.y;
         // const z =  Math.round(point.z);
@@ -96,8 +106,8 @@ const FloorPlanController: React.FC<{}> = () => {
     }
 
     // change to Vector3
-    const checkCollisions = (wall: Wall) => {
-        const mappedEndPoints = walls.map((otherWall): [Wall, Vector2 | undefined] => {
+    const checkCollisions = (wall: PlacedWall) => {
+        const mappedEndPoints = walls.map((otherWall): [PlacedWall, Vector2 | undefined] => {
             const ip = wall.intersectionPoint(otherWall);
             const belongs = doesBelongTo(ip, otherWall) && doesBelongTo(ip, wall);
             return [otherWall, belongs ? ip : undefined];
@@ -123,7 +133,7 @@ const FloorPlanController: React.FC<{}> = () => {
         const startPoint = wall.start;
         const endPoint = new Vector3(slicedEndPoint?.x, wall.stop.y, slicedEndPoint?.y);
 
-        return new Wall(startPoint, endPoint);
+        return new PlacedWall(startPoint, endPoint);
     }
 
     const getSimpleAxisPoint = (start: Vector3, end: Vector3) => {
@@ -139,7 +149,7 @@ const FloorPlanController: React.FC<{}> = () => {
     return (
         <div className="MainView">
             <div>
-                <FloorPlanCanvas scene={scene} drawWall={moveToDrawSimpleLines} moveDrawedWall={moveDrawedWall}/>
+                <FloorPlanCanvas scene={scene} drawWall={drawWall} moveDrawedWall={moveDrawedWall}/>
             </div>
             <div>
                 <FloorPlanView className={"Menu"} scene={scene} />
@@ -150,7 +160,7 @@ const FloorPlanController: React.FC<{}> = () => {
 
 export default FloorPlanController;
 
-function doesBelongTo(ip: Vector2, wall: Wall) {
+function doesBelongTo(ip: Vector2, wall: PlacedWall) {
     const x1 = Math.min(wall.start.x, wall.stop.x);
     const y1 = Math.min(wall.start.z, wall.stop.z);
     const x2 = Math.max(wall.start.x, wall.stop.x);
