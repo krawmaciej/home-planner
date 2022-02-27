@@ -90,39 +90,36 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
       if (pointer.state === DrawingState.NONE) {
         // no op
       } else if (pointer.state === DrawingState.DRAWING) {
-        const z = (camera.near + camera.far) / (camera.near - camera.far);
-
         // todo: start will be always the same, unprojection can be cached
         const start = new Vector3(
           pointer.startPosition.x,
           pointer.startPosition.y,
-          z
+          0
         );
 
         const end = new Vector3(
           pointer.endPosition.x,
           pointer.endPosition.y,
-          z
+          0
         );
         moveDrawedWall(start.unproject(camera), end.unproject(camera));
 
       } else if (pointer.state === DrawingState.DRAW) {
-        const z = (camera.near + camera.far) / (camera.near - camera.far);
         const start = new Vector3(
           pointer.startPosition.x,
           pointer.startPosition.y,
-          z
+          0
         );
         const end = new Vector3(
           pointer.endPosition.x,
           pointer.endPosition.y,
-          z
+          0
         );
         pointer = pointer.draw();
-const us = start.unproject(camera);
-const ue = end.unproject(camera);
-console.log("us: ", us);
-console.log("ue: ", ue);
+        const us = start.unproject(camera);
+        const ue = end.unproject(camera);
+        // console.log("us: ", us);
+        // console.log("ue: ", ue);
         drawWall(us, ue);
       }
 

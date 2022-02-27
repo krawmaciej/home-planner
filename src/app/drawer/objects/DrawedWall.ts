@@ -34,18 +34,12 @@ export default class DrawedWall {
     }
 
     private static wallFrom4Sides({topLeft: topLeft, bottomRight: bottomRight}: CornerPoints): DrawedWall {
-        // const points = [];
-        // points.push(topLeft.clone());
-        // points.push(new Vector3(bottomRight.x, topLeft.y, topLeft.z));
-        // points.push(bottomRight.clone());
-        // points.push(new Vector3(topLeft.x, bottomRight.y, bottomRight.z));
-
-        // const geometry = new BufferGeometry().setFromPoints(points);
-        // const line = new Line(geometry, DrawedWall.material);
-        // line.renderOrder = 1;
         const points = [];
-        points.push(topLeft);
-        points.push(bottomRight);
+        points.push(topLeft.clone());
+        points.push(new Vector3(bottomRight.x, topLeft.y, topLeft.z));
+        points.push(bottomRight.clone());
+        points.push(new Vector3(topLeft.x, bottomRight.y, bottomRight.z));
+        points.push(topLeft.clone());
 
         const geometry = new BufferGeometry().setFromPoints(points);
         const line = new Line(geometry, DrawedWall.material);

@@ -40,16 +40,14 @@ const FloorPlanController: React.FC<{}> = () => {
         // start.set(Math.round(start.x), start.y, Math.round(start.z));
         // end.set(Math.round(end.x), end.y, Math.round(end.z));
 
-        const wally = new PlacedWall(start, end);
-        scene.add(wally.line);
 
-        // const dWall = DrawedWall.createWall(start, end);
-        // console.log("move drawed wall: ", dWall);
-        // if (drawedWall?.line !== undefined) {
-        //     scene.remove(drawedWall.line);
-        // }
-        // scene.add(dWall.line);
-        // drawedWall = dWall;
+        const dWall = DrawedWall.createWall(start, end);
+        console.log("move drawed wall: ", dWall);
+        if (drawedWall?.line !== undefined) {
+            scene.remove(drawedWall.line);
+        }
+        scene.add(dWall.line);
+        drawedWall = dWall;
 
         // console.log(scene.children.length);
 
