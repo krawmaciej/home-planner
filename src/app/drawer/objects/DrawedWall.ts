@@ -1,4 +1,4 @@
-import { BufferGeometry, Line, LineBasicMaterial, Vector2, Vector3 } from "three";
+import { BufferGeometry, Line, LineBasicMaterial, Vector3 } from "three";
 import DrawerMath from "../constants/DrawerMath";
 import { Vector2D } from "../constants/Types";
 
@@ -6,6 +6,11 @@ export type CornerPoints = {
     topLeft: Vector3,
     bottomRight: Vector3,
     direction: Vector2D
+}
+
+export type MiddlePoints = {
+    top: Vector3,
+    bottom: Vector3
 }
 
 export default class DrawedWall {
@@ -22,9 +27,8 @@ export default class DrawedWall {
     }
 
     public static createWall(start: Vector3, end: Vector3): DrawedWall {
-
-        // calculate 4 corner points
         const cornerPoints = DrawerMath.calculateCornerPoints(start, end);
+        const middlePoints = DrawerMath.calculateMiddlePoints(cornerPoints);
 
 
         return this.wallFrom4Sides(cornerPoints);
@@ -33,7 +37,7 @@ export default class DrawedWall {
         // return created wall with direction and 4 corner points
     }
 
-    private static wallFrom4Sides({topLeft: topLeft, bottomRight: bottomRight}: CornerPoints): DrawedWall {
+    private static wallFrom4Sides({topLeft, bottomRight}: CornerPoints): DrawedWall {
         const points = [];
         points.push(topLeft.clone());
         points.push(new Vector3(bottomRight.x, topLeft.y, topLeft.z));

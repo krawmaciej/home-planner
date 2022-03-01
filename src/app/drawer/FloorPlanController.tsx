@@ -9,6 +9,7 @@ import { PointerPosition } from "./constants/Types";
 import PlacedWall from "./objects/PlacedWall";
 import { isConstructorDeclaration } from "typescript";
 import DrawedWall from "./objects/DrawedWall";
+import WallThickness from "./objects/WallThickness";
 
 enum DrawState {
     DRAWING,
@@ -17,14 +18,11 @@ enum DrawState {
 
 const FloorPlanController: React.FC<{}> = () => {
 
-    // it might be that a single shared object will be scene (depends on how to move from drawer to planner)
-    // model
-    let snapStep = 1;
-
     let drawedWall: DrawedWall | undefined; // after wall is drawn there is no more wall being drawn
     const walls = new Array<PlacedWall>(); // walls used to detect collisions
 
-    const [scene, setScene] = useState<Scene>(new Scene());
+    const [scene] = useState<Scene>(new Scene());
+    const [wallThickness, setWallThickness] = useState<WallThickness>(new WallThickness(1.0));
 
     useEffect(() => {
         scene.background = new Color(0x999999);
@@ -39,10 +37,7 @@ const FloorPlanController: React.FC<{}> = () => {
     const moveDrawedWall = (start: Vector3, end: Vector3) => {
         // start.set(Math.round(start.x), start.y, Math.round(start.z));
         // end.set(Math.round(end.x), end.y, Math.round(end.z));
-
-
         const dWall = DrawedWall.createWall(start, end);
-        console.log("move drawed wall: ", dWall);
         if (drawedWall?.line !== undefined) {
             scene.remove(drawedWall.line);
         }
@@ -73,6 +68,11 @@ const FloorPlanController: React.FC<{}> = () => {
     }
 
     const drawWall = (start: Vector3, end: Vector3) => {
+        if (drawedWall !== undefined) {
+            scene.remove(drawedWall.line);
+        }
+
+        
         // const x = Math.round(point.x);
         // const y = point.y;
         // const z =  Math.round(point.z);

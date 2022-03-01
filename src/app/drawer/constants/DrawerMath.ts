@@ -1,6 +1,7 @@
 import { Vector3 } from "three";
 import Direction from "../objects/Direction";
-import { CornerPoints } from "../objects/DrawedWall";
+import { CornerPoints, MiddlePoints } from "../objects/DrawedWall";
+import WallThickness from "../objects/WallThickness";
 import { Vector2D } from "./Types";
 
 export default class DrawerMath {
@@ -82,5 +83,12 @@ export default class DrawerMath {
         bottomRight.x = Math.ceil(end.x);
         bottomRight.z = Math.floor(start.z);
         return { topLeft: topLeft, bottomRight: bottomRight, direction: direction };
+    }
+
+    // todo: need direction here
+    public static calculateMiddlePoints({topLeft, bottomRight}: CornerPoints, wallThickness: WallThickness) {
+        const x = topLeft.x + wallThickness.halfThickness;
+        const top = topLeft.z 
+        const middleTop = new Vector3(middleX)
     }
 }
