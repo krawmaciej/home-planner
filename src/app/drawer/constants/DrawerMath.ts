@@ -1,12 +1,28 @@
+import { Dir } from "fs";
 import { Vector3 } from "three";
 import Direction from "../objects/Direction";
-import { CornerPoints, MiddlePoints } from "../objects/DrawedWall";
 import WallThickness from "../objects/WallThickness";
 import { Vector2D } from "./Types";
 
+export type WallPoints = {
+    cornerPoints: CornerPoints,
+    middlePoints: MiddlePoints
+}
+
+export type CornerPoints = {
+    topLeft: Vector3,
+    bottomRight: Vector3,
+    direction: Vector2D
+}
+
+export type MiddlePoints = {
+    start: Vector3,
+    end: Vector3
+}
+
 export default class DrawerMath {
 
-    public static calculateDirection(start: Vector3, end: Vector3) {
+    public static calculateDirection(start: Vector3, end: Vector3): Vector2D {
         if (Math.abs(end.x - start.x) > Math.abs(end.z - start.z)) {
 
             if (start.x < end.x) {
@@ -26,9 +42,14 @@ export default class DrawerMath {
         }
     }
 
-    public static calculateCornerPoints(start: Vector3, end: Vector3) {
+    public static calculateWallPoints(start: Vector3, end: Vector3, wallThickness: WallThickness): WallPoints {
         const direction = this.calculateDirection(start, end);
+        const cornerPoints = this.calculateCornerPoints(start, end, direction);
+        const middlePoints = this.calculateMiddlePoints(cornerPoints, direction, wallThickness);
+        return { cornerPoints, middlePoints };
+    }
 
+    private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): CornerPoints {
         if (direction === Direction.DOWN) {
             return this.handleDownDirection(start, end, direction);
         } else if (direction === Direction.UP) {
@@ -85,10 +106,23 @@ export default class DrawerMath {
         return { topLeft: topLeft, bottomRight: bottomRight, direction: direction };
     }
 
-    // todo: need direction here
-    public static calculateMiddlePoints({topLeft, bottomRight}: CornerPoints, wallThickness: WallThickness) {
-        const x = topLeft.x + wallThickness.halfThickness;
-        const top = topLeft.z 
-        const middleTop = new Vector3(middleX)
+    private static calculateMiddlePoints(
+        {topLeft, bottomRight}: CornerPoints, direction: Direction, wallThickness: WallThickness
+    ): MiddlePoints {
+        if (direction === Direction.DOWN || direction === Direction.UP) {
+            const x = topLeft.x + wallThickness.halfThickness;
+            const topZ = topLeft.z - wallThickness.halfThickness;
+            const bottomZ = bottomRight.z + wallThickness.halfThickness;
+            const middleTop = new Vector3(x, topLeft.y, topZ);
+            const middleBottom = new Vector3(x, bottomRight.y, bottomZ);
+            return { start: middleTop, end: middleBottom };
+        } else { // LEFT or RIGHT
+            const z = topLeft.z - wallThickness.halfThickness;
+            const leftX = topLeft.x + wallThickness.halfThickness;
+            const rightX = bottomRight.x - wallThickness.halfThickness;
+            const middleLeft = new Vector3(leftX, topLeft.y, z);
+            const middleRight = new Vector3(rightX, bottomRight.y, z);
+            return { start: middleLeft, end: middleRight };
+        }
     }
 }

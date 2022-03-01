@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 import DrawerMath from "../../../app/drawer/constants/DrawerMath";
 import Direction from "../../../app/drawer/objects/Direction";
-import DrawedWall, { CornerPoints } from "../../../app/drawer/objects/DrawedWall";
+import WallThickness from "../../../app/drawer/objects/WallThickness";
 
 describe("test add function", () => {
   test("calculateDirection should be right", () => {
@@ -43,11 +43,12 @@ describe("test add function", () => {
     // given
     const start = new Vector3(0.1, 0, 0.1);
     const end = new Vector3(0.5, 0, 1);
+    const wT = new WallThickness(1.0);
 
     const expectedDirection = Direction.UP;
 
     // when
-    const result = DrawerMath.calculateCornerPoints(start, end);
+    const {cornerPoints: result} = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(result.direction).toBe(expectedDirection);
@@ -59,11 +60,12 @@ describe("test add function", () => {
     // given
     const start = new Vector3(0.1, 0, 0.1);
     const end = new Vector3(1, 0, -1);
+    const wT = new WallThickness(1.0);
 
     const expectedDirection = Direction.DOWN;
 
     // when
-    const result = DrawerMath.calculateCornerPoints(start, end);
+    const { cornerPoints: result } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(result.direction).toBe(expectedDirection);
@@ -75,11 +77,12 @@ describe("test add function", () => {
     // given
     const start = new Vector3(0.1, 0, 0.1);
     const end = new Vector3(0.8, 0, 0.2);
+    const wT = new WallThickness(1.0);
 
     const expectedDirection = Direction.RIGHT;
 
     // when
-    const result = DrawerMath.calculateCornerPoints(start, end);
+    const { cornerPoints: result } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(result.direction).toBe(expectedDirection);
@@ -91,11 +94,12 @@ describe("test add function", () => {
     // given
     const start = new Vector3(1, 0, 0.1);
     const end = new Vector3(0.8, 0, 0);
+    const wT = new WallThickness(1.0);
 
     const expectedDirection = Direction.LEFT;
 
     // when
-    const result = DrawerMath.calculateCornerPoints(start, end);
+    const { cornerPoints: result } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(result.direction).toBe(expectedDirection);
@@ -107,13 +111,14 @@ describe("test add function", () => {
     // given
     const start = new Vector3(0.5, 0, -0.1);
     const end = new Vector3(0.6, 0, 0.1);
+    const wT = new WallThickness(1.0);
 
     const expectedDirection = Direction.UP;
     const expectedTopLeft = new Vector3(0, 0, 1);
     const expectedBottomRight = new Vector3(1, 0, -1);
 
     // when
-    const result = DrawerMath.calculateCornerPoints(start, end);
+    const { cornerPoints: result } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(result.direction).toBe(expectedDirection);

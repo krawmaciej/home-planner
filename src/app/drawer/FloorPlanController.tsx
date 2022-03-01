@@ -37,11 +37,11 @@ const FloorPlanController: React.FC<{}> = () => {
     const moveDrawedWall = (start: Vector3, end: Vector3) => {
         // start.set(Math.round(start.x), start.y, Math.round(start.z));
         // end.set(Math.round(end.x), end.y, Math.round(end.z));
-        const dWall = DrawedWall.createWall(start, end);
-        if (drawedWall?.line !== undefined) {
-            scene.remove(drawedWall.line);
+        const dWall = DrawedWall.createWall(start, end, wallThickness);
+        if (drawedWall?.wall !== undefined) {
+            scene.remove(drawedWall.wall);
         }
-        scene.add(dWall.line);
+        scene.add(dWall.wall);
         drawedWall = dWall;
 
         // console.log(scene.children.length);
@@ -69,7 +69,7 @@ const FloorPlanController: React.FC<{}> = () => {
 
     const drawWall = (start: Vector3, end: Vector3) => {
         if (drawedWall !== undefined) {
-            scene.remove(drawedWall.line);
+            scene.remove(drawedWall.wall);
         }
 
         
