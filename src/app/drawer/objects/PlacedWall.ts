@@ -34,7 +34,6 @@ export default class PlacedWall {
 
         const geometry = new BufferGeometry().setFromPoints(points);
         const line = new Line(geometry, PlacedWall.material);
-        line.renderOrder = 1;
         return line;
     }
 

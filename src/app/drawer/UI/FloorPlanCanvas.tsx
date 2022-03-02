@@ -2,7 +2,7 @@ import "../../css/MainStyle.css"
 
 import { memo, useLayoutEffect, useRef } from "react";
 
-import { DirectionalLight, GridHelper, HemisphereLight, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
+import { AxesHelper, CircleGeometry, DirectionalLight, GridHelper, HemisphereLight, Mesh, MeshBasicMaterial, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DrawingState, Pointer } from "./Pointer";
 
@@ -44,17 +44,28 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
 
       renderer = new WebGLRenderer(renderParams);
       const aspect = window.innerWidth / window.innerHeight;
-      camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 1, 3);
+      camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 0.1, 500);
 
-      // console.log(scene.getWorldPosition(grid.position));
-      // grid.translateY(-5);
-      scene.add(new GridHelper(100, 100, 0xbbbbbb, 0xbbbbbb));
+      const grid = new GridHelper(100, 100, 0xbbbbbb, 0xbbbbbb);
+      grid.renderOrder = -1;
+      scene.add(grid);
 
       renderer.setSize(width, height);
   
-      camera.position.set(0, -2, 0);
+      camera.position.set(0.0, 2.0, 0.0);
       camera.lookAt(0, 0, 0);
-      
+
+      const geometry = new CircleGeometry(20, 32);
+      const material = new MeshBasicMaterial({ color: 0x000000 });
+      const circle = new Mesh(geometry, material);
+      // scene.add(circle);
+      // circle.position.set(1,-5,1);
+      // circle.rotateX(3 * Math.PI / 2);
+      // circle.translateY(1);
+
+      const axesHelper = new AxesHelper(5);
+      scene.add(axesHelper);
+
       // controls = new OrbitControls(camera, renderer.domElement);
 
 
@@ -118,8 +129,6 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
         pointer = pointer.draw();
         const us = start.unproject(camera);
         const ue = end.unproject(camera);
-        // console.log("us: ", us);
-        // console.log("ue: ", ue);
         drawWall(us, ue);
       }
 
@@ -168,10 +177,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
       const y = -(event.clientY / height) * 2 + 1;
 
       if (pointer.state === DrawingState.NONE) {
-        // console.log(pointer);
         pointer = pointer.startDrawing({ x: x, y: y });
-        // console.log(pointer.startDrawing({ x: x, y: y }));
-        // console.log(pointer);
       } else if (pointer.state === DrawingState.DRAWING) {
         pointer = pointer.stopDrawing({ x: x, y: y });
       }

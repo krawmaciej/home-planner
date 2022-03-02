@@ -16,8 +16,8 @@ export type CornerPoints = {
 }
 
 export type MiddlePoints = {
-    start: Vector3,
-    end: Vector3
+    top: Vector3,
+    bottom: Vector3
 }
 
 export default class DrawerMath {
@@ -115,14 +115,14 @@ export default class DrawerMath {
             const bottomZ = bottomRight.z + wallThickness.halfThickness;
             const middleTop = new Vector3(x, topLeft.y, topZ);
             const middleBottom = new Vector3(x, bottomRight.y, bottomZ);
-            return { start: middleTop, end: middleBottom };
+            return { top: middleTop, bottom: middleBottom };
         } else { // LEFT or RIGHT
             const z = topLeft.z - wallThickness.halfThickness;
             const leftX = topLeft.x + wallThickness.halfThickness;
             const rightX = bottomRight.x - wallThickness.halfThickness;
             const middleLeft = new Vector3(leftX, topLeft.y, z);
             const middleRight = new Vector3(rightX, bottomRight.y, z);
-            return { start: middleLeft, end: middleRight };
+            return { top: middleLeft, bottom: middleRight };
         }
     }
 }

@@ -10,6 +10,7 @@ import PlacedWall from "./objects/PlacedWall";
 import { isConstructorDeclaration } from "typescript";
 import DrawedWall from "./objects/DrawedWall";
 import WallThickness from "./objects/WallThickness";
+import { ENFILE } from "constants";
 
 enum DrawState {
     DRAWING,
@@ -24,6 +25,9 @@ const FloorPlanController: React.FC<{}> = () => {
     const [scene] = useState<Scene>(new Scene());
     const [wallThickness, setWallThickness] = useState<WallThickness>(new WallThickness(1.0));
 
+    // tests
+    let y = 0.0;
+
     useEffect(() => {
         scene.background = new Color(0x999999);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,6 +41,13 @@ const FloorPlanController: React.FC<{}> = () => {
     const moveDrawedWall = (start: Vector3, end: Vector3) => {
         // start.set(Math.round(start.x), start.y, Math.round(start.z));
         // end.set(Math.round(end.x), end.y, Math.round(end.z));
+        // start.y = y;
+        // end.y = y;
+        // y-=0.01;
+
+        start.y = 1;
+        end.y = 1;
+
         const dWall = DrawedWall.createWall(start, end, wallThickness);
         if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);
@@ -68,9 +79,14 @@ const FloorPlanController: React.FC<{}> = () => {
     }
 
     const drawWall = (start: Vector3, end: Vector3) => {
-        if (drawedWall !== undefined) {
+        const dWall = DrawedWall.createWall(start, end, wallThickness);
+        if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);
         }
+        scene.add(dWall.wall);
+        drawedWall = undefined;
+
+
 
         
         // const x = Math.round(point.x);

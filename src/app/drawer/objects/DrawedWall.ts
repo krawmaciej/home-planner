@@ -28,14 +28,15 @@ export default class DrawedWall {
         middle.add(anchorStart);
         middle.add(anchorEnd);
         wall.add(middle);
-        anchorStart.renderOrder = 1;
-        anchorEnd.renderOrder = 1;
-        middle.renderOrder = 1;
-        wall.renderOrder = 1;
+        // anchorStart.renderOrder = 1;
+        // anchorEnd.renderOrder = 1;
+        // middle.renderOrder = 1;
+        // wall.renderOrder = 1;
     }
 
     public static createWall(start: Vector3, end: Vector3, wallThickness: WallThickness): DrawedWall {
         const wallPoints = DrawerMath.calculateWallPoints(start, end, wallThickness);
+        console.log(wallPoints)
 
 
         return this.wallFromPoints(wallPoints);
@@ -52,12 +53,19 @@ export default class DrawedWall {
         const middleGeometry = new BufferGeometry().setFromPoints(this.getMiddlePoints(middlePoints));
         const middle = new Line(middleGeometry, DrawedWall.material);
 
-        const geometry = new CircleGeometry(1);
+        const geometry = new CircleGeometry(0.1);
         const material = new MeshBasicMaterial({ color: 0x000000 });
         const p1 = new Mesh(geometry, material);
-        // p1.position.copy(middlePoints.start);
+        // p1.position.set(middlePoints.bottom.x, 0, middlePoints.bottom.z);
+        p1.position.copy(middlePoints.bottom);
+        // p1.translateY(1);
+        p1.rotateX(Math.PI*1.5);
 
-        return new DrawedWall(wall, middle, p1, p1);
+        const p2 = p1.clone();
+        p2.position.copy(middlePoints.top);
+        // p1.renderOrder = 1;
+
+        return new DrawedWall(wall, middle, p1, p2);
         // console.log(cornerPoints);
         // console.log(direction);
     }
@@ -72,7 +80,7 @@ export default class DrawedWall {
         return points;
     }
 
-    private static getMiddlePoints({start, end}: MiddlePoints): Vector3[] {
+    private static getMiddlePoints({top: start, bottom: end}: MiddlePoints): Vector3[] {
         return [ start, end ];
     }
 
