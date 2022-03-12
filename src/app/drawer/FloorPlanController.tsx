@@ -11,6 +11,7 @@ import { isConstructorDeclaration } from "typescript";
 import DrawedWall from "./objects/DrawedWall";
 import WallThickness from "./objects/WallThickness";
 import { ENFILE } from "constants";
+import { ComponentElevation, RenderOrder } from "../arranger/constants/Types";
 
 enum DrawState {
     DRAWING,
@@ -45,13 +46,14 @@ const FloorPlanController: React.FC<{}> = () => {
         // end.y = y;
         // y-=0.01;
 
-        start.y = 1;
-        end.y = 1;
+        start.y = ComponentElevation.WALL;
+        end.y = ComponentElevation.WALL;
 
         const dWall = DrawedWall.createWall(start, end, wallThickness);
         if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);
         }
+        dWall.wall.renderOrder = RenderOrder.WALL;
         scene.add(dWall.wall);
         drawedWall = dWall;
 
@@ -79,6 +81,8 @@ const FloorPlanController: React.FC<{}> = () => {
     }
 
     const drawWall = (start: Vector3, end: Vector3) => {
+        start.y = ComponentElevation.WALL;
+        end.y = ComponentElevation.WALL;
         const dWall = DrawedWall.createWall(start, end, wallThickness);
         if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);

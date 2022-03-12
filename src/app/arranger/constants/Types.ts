@@ -36,3 +36,14 @@ export class Facing {
     public static readonly DOWN = [0, -1, 0];
     public static readonly BACK = [0, 0, -1];
 }
+
+export enum RenderOrder {
+    GRID = -1,
+    WALL = 1,
+    COMPONENT = 2
+}
+
+export enum ComponentElevation {
+    WALL = 1,
+    COMPONENT = 2
+}

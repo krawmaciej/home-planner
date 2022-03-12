@@ -5,6 +5,7 @@ import { memo, useLayoutEffect, useRef } from "react";
 import { AxesHelper, CircleGeometry, DirectionalLight, GridHelper, HemisphereLight, Mesh, MeshBasicMaterial, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DrawingState, Pointer } from "./Pointer";
+import { RenderOrder } from "../../arranger/constants/Types";
 
 
 type Props = {
@@ -47,12 +48,12 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
       camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 0.1, 500);
 
       const grid = new GridHelper(100, 100, 0xbbbbbb, 0xbbbbbb);
-      grid.renderOrder = -1;
+      grid.renderOrder = RenderOrder.GRID;
       scene.add(grid);
 
       renderer.setSize(width, height);
   
-      camera.position.set(0.0, 2.0, 0.0);
+      camera.position.set(0.0, 3.0, 0.0);
       camera.lookAt(0, 0, 0);
 
       const geometry = new CircleGeometry(20, 32);
