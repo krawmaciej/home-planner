@@ -3,13 +3,15 @@ import { Vector3 } from "three";
 export type NewPoints = {
     p0: Vector3,
     p1: Vector3,
-    visible: boolean
+    collidesWithBox: boolean,
+    isOnBoxEdge: boolean 
 }
 
 export default class LiangBarsky {
 
     private tE = 0.0;
     private tL = 1.0;
+    private isOnBoxEdge = false;
 
     public clip2DLine(p0: Vector3, p1: Vector3, min: Vector3, max: Vector3): NewPoints {
         const dx = p1.x - p0.x;
@@ -35,14 +37,16 @@ export default class LiangBarsky {
                                 p0.z + this.tE * dz
                             );
                         }
-                        return { p0: np0, p1: np1, visible: true };
+                        return { p0: np0, p1: np1, collidesWithBox: true, isOnBoxEdge: this.isOnBoxEdge };
                     }
                 }
             }
         }
+        const result = { p0, p1, collidesWithBox: false, isOnBoxEdge: this.isOnBoxEdge };
         this.tE = 0.0;
         this.tL = 1.0;
-        return { p0, p1, visible: false };
+        this.isOnBoxEdge = false;
+        return result;
     }
 
     private calculateNewTs(denom: number, number: number): boolean {
@@ -57,12 +61,17 @@ export default class LiangBarsky {
             const t = number / denom;
             if (t < this.tE) {
                 return false;
-            } else { // todo: fix this by adding else if
+            } else if (t < this.tL) { // todo: fix this by adding else if (t < this.tL)
                 this.tL = t;
             }
         } else if (number > 0) {
             return false;
         }
+        // denom is delta, if delta is 0 then two points lay on same x or y coordinate
+        // and if any of the points matches with any of the box edges then number will be equal to 0
+        if (number === 0.0) {
+            this.isOnBoxEdge = true;
+        }  
         return true;
     }
 
