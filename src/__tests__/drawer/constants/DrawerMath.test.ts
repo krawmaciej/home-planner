@@ -18,7 +18,7 @@ describe("test add function", () => {
     )).toBe(Direction.LEFT);
   });
 
-  test("calculateDirection should be left", () => {
+  test("calculateDirection should be left2", () => {
     expect(DrawerMath.calculateDirection(
         new Vector3(0, 0, 0.9),
         new Vector3(-1, 0, 0)
