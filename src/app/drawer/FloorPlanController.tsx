@@ -8,7 +8,7 @@ import FloorPlanView from "./UI/FloorPlanView";
 import { PointerPosition } from "./constants/Types";
 import PlacedWall from "./objects/PlacedWall";
 import { isConstructorDeclaration } from "typescript";
-import DrawedWall from "./objects/DrawedWall";
+import DrawedWallBuilder from "./objects/DrawedWallBuilder";
 import WallThickness from "./objects/WallThickness";
 import { ENFILE } from "constants";
 import { ComponentElevation, RenderOrder } from "../arranger/constants/Types";
@@ -20,7 +20,7 @@ enum DrawState {
 
 const FloorPlanController: React.FC<{}> = () => {
 
-    let drawedWall: DrawedWall | undefined; // after wall is drawn there is no more wall being drawn
+    let drawedWall: DrawedWallBuilder | undefined; // after wall is drawn there is no more wall being drawn
     const walls = new Array<PlacedWall>(); // walls used to detect collisions
 
     const [scene] = useState<Scene>(new Scene());
@@ -43,7 +43,7 @@ const FloorPlanController: React.FC<{}> = () => {
         start.y = ComponentElevation.WALL;
         end.y = ComponentElevation.WALL;
 
-        const dWall = DrawedWall.createWall(start, end, wallThickness);
+        const dWall = DrawedWallBuilder.createWall(start, end, wallThickness);
         if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);
         }
@@ -77,7 +77,7 @@ const FloorPlanController: React.FC<{}> = () => {
     const drawWall = (start: Vector3, end: Vector3) => {
         start.y = ComponentElevation.WALL;
         end.y = ComponentElevation.WALL;
-        const dWall = DrawedWall.createWall(start, end, wallThickness);
+        const dWall = DrawedWallBuilder.createWall(start, end, wallThickness);
         if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);
         }

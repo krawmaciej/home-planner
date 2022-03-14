@@ -1,10 +1,9 @@
-import { BufferGeometry, CircleGeometry, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Vector3 } from "three";
-import DrawerMath, { CornerPoints, MiddlePoints, WallPoints } from "../constants/DrawerMath";
-import { Vector2D } from "../constants/Types";
-import WallThickness from "./WallThickness";
+import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3 } from "three";
+import { WallConstruction, MiddlePoints } from "../constants/DrawerMath";
 
-export default class DrawedWall {
-    
+
+export default class Drawed {
+
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
         depthTest: false
@@ -15,7 +14,7 @@ export default class DrawedWall {
     public readonly anchorStart: Mesh<CircleGeometry, MeshBasicMaterial>;
     public readonly anchorEnd: Mesh<CircleGeometry, MeshBasicMaterial>;
 
-    public constructor(
+    private constructor(
         wall: Line<BufferGeometry>,
         middle: Line<BufferGeometry>,
         anchorStart: Mesh<CircleGeometry, MeshBasicMaterial>,
@@ -34,24 +33,13 @@ export default class DrawedWall {
         // wall.renderOrder = 1;
     }
 
-    public static createWall(start: Vector3, end: Vector3, wallThickness: WallThickness): DrawedWall {
-        const wallPoints = DrawerMath.calculateWallPoints(start, end, wallThickness);
-        console.log(wallPoints)
-
-
-        return this.wallFromPoints(wallPoints);
-        // might create 4 sides here
-        // IMPORTANT: sides will have their own manipulation logic called from wall when there's collision
-        // return created wall with direction and 4 corner points
-    }
-
-    private static wallFromPoints({cornerPoints, middlePoints}: WallPoints): DrawedWall {
+    public static wallFromPoints({points, middlePoints}: WallConstruction): Drawed {
         
-        const wallGeometry = new BufferGeometry().setFromPoints(this.getLinePoints(cornerPoints));
-        const wall = new Line(wallGeometry, DrawedWall.material);
+        const wallGeometry = new BufferGeometry().setFromPoints(points);
+        const wall = new Line(wallGeometry, Drawed.material);
         
         const middleGeometry = new BufferGeometry().setFromPoints(this.getMiddlePoints(middlePoints));
-        const middle = new Line(middleGeometry, DrawedWall.material);
+        const middle = new Line(middleGeometry, Drawed.material);
 
         const geometry = new CircleGeometry(0.1);
         const material = new MeshBasicMaterial({ color: 0x000000 });
@@ -65,19 +53,9 @@ export default class DrawedWall {
         p2.position.copy(middlePoints.top);
         // p1.renderOrder = 1;
 
-        return new DrawedWall(wall, middle, p1, p2);
+        return new Drawed(wall, middle, p1, p2);
         // console.log(cornerPoints);
         // console.log(direction);
-    }
-
-    private static getLinePoints({topLeft, bottomRight}: CornerPoints): Vector3[] {
-        const points = new Array<Vector3>();
-        points.push(topLeft.clone());
-        points.push(new Vector3(bottomRight.x, topLeft.y, topLeft.z));
-        points.push(bottomRight.clone());
-        points.push(new Vector3(topLeft.x, bottomRight.y, bottomRight.z));
-        points.push(topLeft.clone());
-        return points;
     }
 
     private static getMiddlePoints({top: start, bottom: end}: MiddlePoints): Vector3[] {

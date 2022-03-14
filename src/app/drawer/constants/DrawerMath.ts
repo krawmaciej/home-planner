@@ -1,23 +1,21 @@
-import { Dir } from "fs";
 import { Vector3 } from "three";
 import Direction from "../objects/Direction";
 import WallThickness from "../objects/WallThickness";
 import { Vector2D } from "./Types";
 
-export type WallPoints = {
-    cornerPoints: CornerPoints,
-    middlePoints: MiddlePoints
-}
-
-export type CornerPoints = {
-    topLeft: Vector3,
-    bottomRight: Vector3,
+export type WallConstruction = {
+    points: [Vector3, Vector3, Vector3, Vector3],
+    middlePoints: MiddlePoints,
     direction: Vector2D
 }
 
 export type MiddlePoints = {
     top: Vector3,
     bottom: Vector3
+}
+
+export enum WallPoint {
+    TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT
 }
 
 export default class DrawerMath {
@@ -42,27 +40,27 @@ export default class DrawerMath {
         }
     }
 
-    public static calculateWallPoints(start: Vector3, end: Vector3, wallThickness: WallThickness): WallPoints {
-        const direction = this.calculateDirection(start, end);
-        const cornerPoints = this.calculateCornerPoints(start, end, direction);
-        const middlePoints = this.calculateMiddlePoints(cornerPoints, direction, wallThickness);
-        return { cornerPoints, middlePoints };
+    public static calculateWallPoints(start: Vector3, end: Vector3, wallThickness: WallThickness): WallConstruction {
+        const direction = DrawerMath.calculateDirection(start, end);
+        const points = DrawerMath.calculateCornerPoints(start, end, direction);
+        const middlePoints = DrawerMath.calculateMiddlePoints(points, direction, wallThickness);
+        return { points: points, direction, middlePoints };
     }
 
-    private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): CornerPoints {
+    private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
         if (direction === Direction.DOWN) {
-            return this.handleDownDirection(start, end, direction);
+            return DrawerMath.handleDownDirection(start, end, direction);
         } else if (direction === Direction.UP) {
-            return this.handleUpDirection(start, end, direction);
+            return DrawerMath.handleUpDirection(start, end, direction);
         } else if (direction === Direction.LEFT) {
-            return this.handleLeftDirection(start, end, direction);
+            return DrawerMath.handleLeftDirection(start, end, direction);
         } else if (direction === Direction.RIGHT) {
-            return this.handleRightDirection(start, end, direction);
+            return DrawerMath.handleRightDirection(start, end, direction);
         }
         throw new Error("Drawed wall has no direction");
     }
 
-    private static handleDownDirection(start: Vector3, end: Vector3, direction: Vector2D): CornerPoints {
+    private static handleDownDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
         const topLeft = start.clone();
         topLeft.x = Math.floor(start.x);
         topLeft.z = Math.ceil(start.z);
@@ -70,10 +68,17 @@ export default class DrawerMath {
         const bottomRight = end.clone();
         bottomRight.x = Math.ceil(start.x);
         bottomRight.z = Math.floor(end.z);
-        return { topLeft: topLeft, bottomRight: bottomRight, direction: direction };
+
+        const topRight = topLeft.clone();
+        topRight.x = bottomRight.x;
+
+        const bottomLeft = bottomRight.clone();
+        bottomLeft.x = topLeft.x;
+
+        return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleUpDirection(start: Vector3, end: Vector3, direction: Vector2D): CornerPoints {
+    private static handleUpDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
         const bottomRight = start.clone();
         bottomRight.x = Math.ceil(start.x);
         bottomRight.z = Math.floor(start.z);
@@ -81,10 +86,17 @@ export default class DrawerMath {
         const topLeft = end.clone();
         topLeft.x = Math.floor(start.x);
         topLeft.z = Math.ceil(end.z);
-        return { topLeft: topLeft, bottomRight: bottomRight, direction: direction };
+
+        const topRight = topLeft.clone();
+        topRight.x = bottomRight.x;
+
+        const bottomLeft = bottomRight.clone();
+        bottomLeft.x = topLeft.x;
+
+        return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleLeftDirection(start: Vector3, end: Vector3, direction: Vector2D): CornerPoints {
+    private static handleLeftDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
         const bottomRight = start.clone();
         bottomRight.x = Math.ceil(start.x);
         bottomRight.z = Math.floor(start.z);
@@ -92,10 +104,17 @@ export default class DrawerMath {
         const topLeft = end.clone();
         topLeft.x = Math.floor(end.x);
         topLeft.z = Math.ceil(start.z);
-        return { topLeft: topLeft, bottomRight: bottomRight, direction: direction };
+
+        const topRight = topLeft.clone();
+        topRight.x = bottomRight.x;
+
+        const bottomLeft = bottomRight.clone();
+        bottomLeft.x = topLeft.x;
+
+        return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleRightDirection(start: Vector3, end: Vector3, direction: Vector2D): CornerPoints {
+    private static handleRightDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
         const topLeft = start.clone();
         topLeft.x = Math.floor(start.x);
         topLeft.z = Math.ceil(start.z);
@@ -103,12 +122,22 @@ export default class DrawerMath {
         const bottomRight = end.clone();
         bottomRight.x = Math.ceil(end.x);
         bottomRight.z = Math.floor(start.z);
-        return { topLeft: topLeft, bottomRight: bottomRight, direction: direction };
+
+        const topRight = topLeft.clone();
+        topRight.x = bottomRight.x;
+
+        const bottomLeft = bottomRight.clone();
+        bottomLeft.x = topLeft.x;
+
+        return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
     private static calculateMiddlePoints(
-        {topLeft, bottomRight}: CornerPoints, direction: Direction, wallThickness: WallThickness
+        points: [Vector3, Vector3, Vector3, Vector3], direction: Direction, wallThickness: WallThickness
     ): MiddlePoints {
+        const topLeft = points[WallPoint.TOP_LEFT];
+        const bottomRight = points[WallPoint.BOTTOM_RIGHT];
+
         if (direction === Direction.DOWN || direction === Direction.UP) {
             const x = topLeft.x + wallThickness.halfThickness;
             const topZ = topLeft.z - wallThickness.halfThickness;
