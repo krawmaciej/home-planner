@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 import Direction from "../objects/Direction";
 import WallThickness from "../objects/WallThickness";
-import { Vector2D } from "./Types";
+import { Vector2D } from "../constants/Types";
 
 export type WallConstruction = {
     points: [Vector3, Vector3, Vector3, Vector3],

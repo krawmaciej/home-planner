@@ -12,6 +12,9 @@ import DrawedWallBuilder from "./objects/DrawedWallBuilder";
 import WallThickness from "./objects/WallThickness";
 import { ENFILE } from "constants";
 import { ComponentElevation, RenderOrder } from "../arranger/constants/Types";
+import LiangBarsky from "./components/LiangBarsky";
+import CollisionDetector from "./components/CollisionDetector";
+import Drawed from "./objects/Drawed";
 
 enum DrawState {
     DRAWING,
@@ -20,8 +23,12 @@ enum DrawState {
 
 const FloorPlanController: React.FC<{}> = () => {
 
-    let drawedWall: DrawedWallBuilder | undefined; // after wall is drawn there is no more wall being drawn
+    let drawedWall: Drawed | undefined; // after wall is drawn there is no more wall being drawn
     const walls = new Array<PlacedWall>(); // walls used to detect collisions
+
+    const testWalls = new Array<Drawed>();
+
+    const collisionDetector = new CollisionDetector();
 
     const [scene] = useState<Scene>(new Scene());
     const [wallThickness, setWallThickness] = useState<WallThickness>(new WallThickness(1.0));
@@ -43,9 +50,13 @@ const FloorPlanController: React.FC<{}> = () => {
         start.y = ComponentElevation.WALL;
         end.y = ComponentElevation.WALL;
 
-        const dWall = DrawedWallBuilder.createWall(start, end, wallThickness);
-        if (drawedWall?.wall !== undefined) {
-            scene.remove(drawedWall.wall);
+        const wallBuilder = DrawedWallBuilder.createWall(start, end, wallThickness);
+
+        const collided = collisionDetector.detectDrawedCollisions(wallBuilder.props, testWalls);
+        const dWall = wallBuilder.setCollided(collided).build();
+
+        if (dWall?.wall !== undefined) {
+            scene.remove(dWall.wall);
         }
         dWall.wall.renderOrder = RenderOrder.WALL;
         scene.add(dWall.wall);
@@ -77,11 +88,23 @@ const FloorPlanController: React.FC<{}> = () => {
     const drawWall = (start: Vector3, end: Vector3) => {
         start.y = ComponentElevation.WALL;
         end.y = ComponentElevation.WALL;
-        const dWall = DrawedWallBuilder.createWall(start, end, wallThickness);
+        const wallBuilder = DrawedWallBuilder.createWall(start, end, wallThickness);
+
+        const collided = collisionDetector.detectDrawedCollisions(wallBuilder.props, testWalls);
+
+        if (collided) {
+            console.log("wall collides!");
+            return; // do not draw the wall
+        }
+
+        const dWall = wallBuilder.build();
+
+
         if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);
         }
         scene.add(dWall.wall);
+        testWalls.push(dWall);
         drawedWall = undefined;
 
 

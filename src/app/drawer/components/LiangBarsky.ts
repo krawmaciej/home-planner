@@ -3,8 +3,8 @@ import { Vector3 } from "three";
 export type CollisionResult = {
     p0: Vector3,
     p1: Vector3,
-    collision: boolean,
-    edgeCollision: boolean
+    isCollision: boolean,
+    isEdgeCollision: boolean
 }
 
 export default class LiangBarsky {
@@ -47,12 +47,12 @@ export default class LiangBarsky {
                                 p0.z + this.tE * dz
                             );
                         }
-                        return { p0: np0, p1: np1, collision: true, edgeCollision: this.edgeCollision };
+                        return { p0: np0, p1: np1, isCollision: true, isEdgeCollision: this.edgeCollision };
                     }
                 }
             }
         }
-        return { p0, p1, collision: false, edgeCollision: this.edgeCollision };
+        return { p0, p1, isCollision: false, isEdgeCollision: this.edgeCollision };
     }
 
     private calculateNewTs(denom: number, number: number): boolean {

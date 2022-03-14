@@ -1,39 +1,39 @@
 import { Vector3 } from "three";
-import DrawerMath from "../../../app/drawer/constants/DrawerMath";
+import DrawerMath from "../../../app/drawer/components/DrawerMath";
 import Direction from "../../../app/drawer/objects/Direction";
 import WallThickness from "../../../app/drawer/objects/WallThickness";
 
 describe("test add function", () => {
   test("calculateDirection should be right", () => {
-    expect(DrawerMath.calculateDirection(
+    expect(DrawerMath.calculateDelta(
         new Vector3(0, 0, 0),
         new Vector3(1, 0, 0)
     )).toBe(Direction.RIGHT);
   });
 
   test("calculateDirection should be left", () => {
-    expect(DrawerMath.calculateDirection(
+    expect(DrawerMath.calculateDelta(
         new Vector3(1, 0, 0),
         new Vector3(0, 0, 0)
     )).toBe(Direction.LEFT);
   });
 
   test("calculateDirection should be left2", () => {
-    expect(DrawerMath.calculateDirection(
+    expect(DrawerMath.calculateDelta(
         new Vector3(0, 0, 0.9),
         new Vector3(-1, 0, 0)
     )).toBe(Direction.LEFT);
   });
 
   test("calculateDirection should be up", () => {
-    expect(DrawerMath.calculateDirection(
+    expect(DrawerMath.calculateDelta(
         new Vector3(0, 0, 0),
         new Vector3(0.8, 0, 0.9)
     )).toBe(Direction.UP);
   });
 
   test("calculateDirection should be down", () => {
-    expect(DrawerMath.calculateDirection(
+    expect(DrawerMath.calculateDelta(
         new Vector3(0, 0, 0),
         new Vector3(1, 0, -1.1)
     )).toBe(Direction.DOWN);

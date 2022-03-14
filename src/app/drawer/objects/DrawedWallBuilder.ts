@@ -1,12 +1,12 @@
-import { BufferGeometry, CircleGeometry, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Vector3 } from "three";
-import DrawerMath, { CornerPoints, MiddlePoints, WallConstruction } from "../constants/DrawerMath";
-import { Vector2D } from "../constants/Types";
+import { Vector3 } from "three";
+import DrawerMath, { WallConstruction } from "../components/DrawerMath";
 import Drawed from "./Drawed";
 import WallThickness from "./WallThickness";
 
 export default class DrawedWallBuilder {
 
-    private props: WallConstruction;
+    public props: WallConstruction;
+    public isCollided: boolean = false;
 
     public constructor(props: WallConstruction) {
         this.props = props;
@@ -20,11 +20,17 @@ export default class DrawedWallBuilder {
         // return created wall with direction and 4 corner points
     }
 
-    public changeProps(props: WallConstruction) {
+    public changeProps(props: WallConstruction): DrawedWallBuilder {
         this.props = props;
+        return this;
+    }
+
+    public setCollided(collided: boolean): DrawedWallBuilder {
+        this.isCollided = collided;
+        return this;
     }
 
     public build(): Drawed {
-        return Drawed.wallFromPoints(this.props);
+        return Drawed.wallFromPoints(this.props, this.isCollided);
     }
 }
