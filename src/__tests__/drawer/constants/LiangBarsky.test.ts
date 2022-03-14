@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 import LiangBarsky from "../../../app/drawer/constants/LiangBarsky";
 
-describe("Test Liang Barsky clipping", () => {
+describe("Test Liang LiangBarsky clipping", () => {
   test("calculate collision and intersection points for bottom edge line fully contained in box", () => {
     // given
     const p0 = new Vector3(2, 0, 0);
@@ -10,14 +10,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(true);
-    expect(result.isOnBoxEdge).toBe(true);
+    expect(result.collision).toBe(true);
+    expect(result.edgeCollision).toBe(true);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -30,14 +28,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(true);
-    expect(result.isOnBoxEdge).toBe(true);
+    expect(result.collision).toBe(true);
+    expect(result.edgeCollision).toBe(true);
     expect(result.p0).toBe(p0);
     expect(result.p1).toStrictEqual(new Vector3(10, 0, 0));
   });
@@ -50,14 +46,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(true);
-    expect(result.isOnBoxEdge).toBe(true);
+    expect(result.collision).toBe(true);
+    expect(result.edgeCollision).toBe(true);
     expect(result.p0).toStrictEqual(new Vector3(0, 0, 0));
     expect(result.p1).toBe(p1);
   });
@@ -70,14 +64,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(true);
-    expect(result.isOnBoxEdge).toBe(true);
+    expect(result.collision).toBe(true);
+    expect(result.edgeCollision).toBe(true);
     expect(result.p0).toStrictEqual(new Vector3(0, 0, 0));
     expect(result.p1).toStrictEqual(new Vector3(10, 0, 0));
   });
@@ -90,14 +82,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(true);
-    expect(result.isOnBoxEdge).toBe(true);
+    expect(result.collision).toBe(true);
+    expect(result.edgeCollision).toBe(true);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -110,14 +100,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(true);
-    expect(result.isOnBoxEdge).toBe(true);
+    expect(result.collision).toBe(true);
+    expect(result.edgeCollision).toBe(true);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -132,14 +120,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(false);
-    expect(result.isOnBoxEdge).toBe(false);
+    expect(result.collision).toBe(false);
+    expect(result.edgeCollision).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -152,14 +138,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(false);
-    expect(result.isOnBoxEdge).toBe(false);
+    expect(result.collision).toBe(false);
+    expect(result.edgeCollision).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -172,14 +156,12 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(false);
-    expect(result.isOnBoxEdge).toBe(false);
+    expect(result.collision).toBe(false);
+    expect(result.edgeCollision).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -192,16 +174,13 @@ describe("Test Liang Barsky clipping", () => {
     const min = new Vector3(0, 0, 0);
     const max = new Vector3(10, 0, 10);
 
-    const barsky = new LiangBarsky();
-    
     // when
-    const result = barsky.clip2DLine(p0, p1, min, max);
+    const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.collidesWithBox).toBe(false);
-    expect(result.isOnBoxEdge).toBe(false);
+    expect(result.collision).toBe(false);
+    expect(result.edgeCollision).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
-
 });

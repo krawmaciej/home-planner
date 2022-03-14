@@ -40,12 +40,6 @@ const FloorPlanController: React.FC<{}> = () => {
      * @param end pointer ending point
      */
     const moveDrawedWall = (start: Vector3, end: Vector3) => {
-        // start.set(Math.round(start.x), start.y, Math.round(start.z));
-        // end.set(Math.round(end.x), end.y, Math.round(end.z));
-        // start.y = y;
-        // end.y = y;
-        // y-=0.01;
-
         start.y = ComponentElevation.WALL;
         end.y = ComponentElevation.WALL;
 

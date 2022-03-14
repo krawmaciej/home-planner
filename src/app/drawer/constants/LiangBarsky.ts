@@ -1,19 +1,29 @@
 import { Vector3 } from "three";
 
-export type NewPoints = {
+export type CollisionResult = {
     p0: Vector3,
     p1: Vector3,
-    collidesWithBox: boolean,
-    isOnBoxEdge: boolean 
+    collision: boolean,
+    edgeCollision: boolean
 }
 
 export default class LiangBarsky {
+    private firedMoreThanOnce = false;
 
     private tE = 0.0;
     private tL = 1.0;
-    private isOnBoxEdge = false;
+    private edgeCollision = false;
 
-    public clip2DLine(p0: Vector3, p1: Vector3, min: Vector3, max: Vector3): NewPoints {
+    public static checkCollision(p0: Vector3, p1: Vector3, min: Vector3, max: Vector3): CollisionResult {
+        return new LiangBarsky().clip2DLine(p0, p1, min, max);
+    }
+
+    private clip2DLine(p0: Vector3, p1: Vector3, min: Vector3, max: Vector3): CollisionResult {
+        if (this.firedMoreThanOnce) {
+            throw new Error("Should not happen, Liang Barsky's object was used twice!");
+        }
+        this.firedMoreThanOnce = true;
+
         const dx = p1.x - p0.x;
         const dz = p1.z - p0.z;
 
@@ -37,16 +47,12 @@ export default class LiangBarsky {
                                 p0.z + this.tE * dz
                             );
                         }
-                        return { p0: np0, p1: np1, collidesWithBox: true, isOnBoxEdge: this.isOnBoxEdge };
+                        return { p0: np0, p1: np1, collision: true, edgeCollision: this.edgeCollision };
                     }
                 }
             }
         }
-        const result = { p0, p1, collidesWithBox: false, isOnBoxEdge: this.isOnBoxEdge };
-        this.tE = 0.0;
-        this.tL = 1.0;
-        this.isOnBoxEdge = false;
-        return result;
+        return { p0, p1, collision: false, edgeCollision: this.edgeCollision };
     }
 
     private calculateNewTs(denom: number, number: number): boolean {
@@ -70,9 +76,8 @@ export default class LiangBarsky {
         // denom is delta, if delta is 0 then two points lay on same x or y coordinate
         // and if any of the points matches with any of the box edges then number will be equal to 0
         if (number === 0.0) {
-            this.isOnBoxEdge = true;
+            this.edgeCollision = true;
         }  
         return true;
     }
-
 }
