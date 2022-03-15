@@ -55,8 +55,8 @@ const FloorPlanController: React.FC<{}> = () => {
         const collided = collisionDetector.detectDrawedCollisions(wallBuilder.props, testWalls);
         const dWall = wallBuilder.setCollided(collided).build();
 
-        if (dWall?.wall !== undefined) {
-            scene.remove(dWall.wall);
+        if (drawedWall?.wall !== undefined) {
+            scene.remove(drawedWall.wall);
         }
         dWall.wall.renderOrder = RenderOrder.WALL;
         scene.add(dWall.wall);

@@ -1,5 +1,5 @@
 import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3 } from "three";
-import { WallConstruction, MiddlePoints } from "../components/DrawerMath";
+import { WallConstruction, MiddlePoints, WallPoint } from "../components/DrawerMath";
 
 
 export default class Drawed {
@@ -47,7 +47,7 @@ export default class Drawed {
     public static wallFromPoints(props: WallConstruction, isCollided: boolean): Drawed {
         const material = isCollided ? Drawed.collidedMaterial : Drawed.material;
         
-        const wallGeometry = new BufferGeometry().setFromPoints(props.points);
+        const wallGeometry = new BufferGeometry().setFromPoints(this.getWallPoints(props));
         const wall = new Line(wallGeometry, material);
         
         const middleGeometry = new BufferGeometry().setFromPoints(this.getMiddlePoints(props.middlePoints));
@@ -70,8 +70,12 @@ export default class Drawed {
         // console.log(direction);
     }
 
+    private static getWallPoints({points}: WallConstruction): Vector3[] {
+        return [...points, points[WallPoint.TOP_LEFT]];
+    }
+
     private static getMiddlePoints({top: start, bottom: end}: MiddlePoints): Vector3[] {
-        return [ start, end ];
+        return [start, end];
     }
 
 }
