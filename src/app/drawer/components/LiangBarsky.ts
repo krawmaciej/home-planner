@@ -75,9 +75,9 @@ export default class LiangBarsky {
         }
         // denom is delta, if delta is 0 then two points lay on same x or y coordinate
         // and if any of the points matches with any of the box edges then number will be equal to 0
-        if (number === 0.0) {
+        else if (number === 0.0) {
             this.edgeCollision = true;
-        }  
+        }
         return true;
     }
 }
