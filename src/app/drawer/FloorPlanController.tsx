@@ -5,28 +5,19 @@ import React, { useEffect, useState } from 'react';
 import { Color, Line, Scene, Vector2, Vector3 } from 'three';
 import FloorPlanCanvas from "./UI/FloorPlanCanvas";
 import FloorPlanView from "./UI/FloorPlanView";
-import { PointerPosition } from "./constants/Types";
 import PlacedWall from "./objects/PlacedWall";
-import { isConstructorDeclaration } from "typescript";
 import DrawedWallBuilder from "./objects/DrawedWallBuilder";
 import WallThickness from "./objects/WallThickness";
-import { ENFILE } from "constants";
-import { ComponentElevation, RenderOrder } from "../arranger/constants/Types";
-import LiangBarsky from "./components/LiangBarsky";
+import { ComponentElevation, RenderOrder } from "./constants/Types";
 import CollisionDetector from "./components/CollisionDetector";
-import Drawed from "./objects/Drawed";
-
-enum DrawState {
-    DRAWING,
-    SELECTING
-}
+import DrawedWall from "./objects/DrawedWall";
 
 const FloorPlanController: React.FC<{}> = () => {
 
-    let drawedWall: Drawed | undefined; // after wall is drawn there is no more wall being drawn
+    let drawedWall: DrawedWall | undefined; // after wall is drawn there is no more wall being drawn
     const walls = new Array<PlacedWall>(); // walls used to detect collisions
 
-    const testWalls = new Array<Drawed>();
+    const testWalls = new Array<DrawedWall>();
 
     const collisionDetector = new CollisionDetector();
 
@@ -52,8 +43,8 @@ const FloorPlanController: React.FC<{}> = () => {
 
         const wallBuilder = DrawedWallBuilder.createWall(start, end, wallThickness);
 
-        const collided = collisionDetector.detectAxisAlignedRectangleCollisions(wallBuilder.props, testWalls);
-        const dWall = wallBuilder.setCollided(collided).build();
+        const collision = collisionDetector.detectDrawedCollisions(wallBuilder.getProps(), testWalls);
+        const dWall = wallBuilder.setCollided(collision).build();
 
         if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);
@@ -90,13 +81,14 @@ const FloorPlanController: React.FC<{}> = () => {
         end.y = ComponentElevation.WALL;
         const wallBuilder = DrawedWallBuilder.createWall(start, end, wallThickness);
 
-        const collided = collisionDetector.detectAxisAlignedRectangleCollisions(wallBuilder.props, testWalls);
+        const collided = collisionDetector.detectDrawedCollisions(wallBuilder.getProps(), testWalls);
+        console.log(collided);
 
         if (drawedWall?.wall !== undefined) {
             scene.remove(drawedWall.wall);
         }
         
-        if (collided) {
+        if (collided.isCollision) {
             console.log("wall collides!");
             return; // do not draw the wall
         }

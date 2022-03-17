@@ -1,4 +1,7 @@
 
+/**
+ * Used to automatically calculate the halfThickness.
+ */
 export default class WallThickness {
     public readonly thickness: number;
     public readonly halfThickness: number; // cached

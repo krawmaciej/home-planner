@@ -16,7 +16,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -34,7 +34,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toBe(p0);
     expect(result.p1).toStrictEqual(new Vector3(10, 0, 0));
   });
@@ -52,7 +52,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toStrictEqual(new Vector3(0, 0, 0));
     expect(result.p1).toBe(p1);
   });
@@ -70,7 +70,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toStrictEqual(new Vector3(0, 0, 0));
     expect(result.p1).toStrictEqual(new Vector3(10, 0, 0));
   });
@@ -88,7 +88,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -106,7 +106,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -124,7 +124,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(false);
+    expect(result.edgeCollisionsCount).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -142,7 +142,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(false);
+    expect(result.edgeCollisionsCount).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -160,7 +160,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(false);
+    expect(result.edgeCollisionsCount).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -179,7 +179,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toStrictEqual(p0);
     expect(result.p1).toStrictEqual(p0);
   });
@@ -197,7 +197,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toStrictEqual(p0);
     expect(result.p1).toStrictEqual(p0);
   });
@@ -215,7 +215,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toStrictEqual(p1);
     expect(result.p1).toStrictEqual(p1);
   });
@@ -233,7 +233,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(true);
+    expect(result.edgeCollisionsCount).toBe(true);
     expect(result.p0).toStrictEqual(p1);
     expect(result.p1).toStrictEqual(p1);
   });
@@ -252,7 +252,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(false);
-    expect(result.isEdgeCollision).toBe(false);
+    expect(result.edgeCollisionsCount).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -270,7 +270,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(false);
-    expect(result.isEdgeCollision).toBe(false);
+    expect(result.edgeCollisionsCount).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -288,7 +288,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(false);
-    expect(result.isEdgeCollision).toBe(false);
+    expect(result.edgeCollisionsCount).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -306,7 +306,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(false);
-    expect(result.isEdgeCollision).toBe(false);
+    expect(result.edgeCollisionsCount).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -329,7 +329,7 @@ describe("Test Liang LiangBarsky clipping", () => {
 
     // then
     expect(result.isCollision).toBe(true);
-    expect(result.isEdgeCollision).toBe(false);
+    expect(result.edgeCollisionsCount).toBe(false);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });

@@ -1,12 +1,18 @@
 import { Vector3 } from "three";
+import { Collision } from "../components/CollisionDetector";
 import DrawerMath, { WallConstruction } from "../components/DrawerMath";
-import Drawed from "./Drawed";
+import DrawedWall from "./DrawedWall";
 import WallThickness from "./WallThickness";
 
+/**
+ * Creates a wall properties from which the meshes will be created.
+ * Used for collision detection and calculations which do not require meshes.
+ */
 export default class DrawedWallBuilder {
 
-    public props: WallConstruction;
-    public isCollided: boolean = false;
+    private props: WallConstruction;
+    private isCollided: boolean = false;
+    private contactPoints: Vector3[] = [];
 
     public constructor(props: WallConstruction) {
         this.props = props;
@@ -25,12 +31,18 @@ export default class DrawedWallBuilder {
         return this;
     }
 
-    public setCollided(collided: boolean): DrawedWallBuilder {
-        this.isCollided = collided;
+    public setCollided(collision: Collision): DrawedWallBuilder {
+        this.isCollided = collision.isCollision;
+        this.contactPoints = collision.adjecentWalls.flatMap(wall => wall.points);
         return this;
     }
 
-    public build(): Drawed {
-        return Drawed.wallFromPoints(this.props, this.isCollided);
+    public build(): DrawedWall {
+        return DrawedWall.wallFromPoints(this.props, this.isCollided, this.contactPoints);
+    }
+
+    // getters
+    public getProps(): WallConstruction {
+        return this.props;
     }
 }
