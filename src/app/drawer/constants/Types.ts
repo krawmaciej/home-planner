@@ -25,3 +25,6 @@ export enum ComponentElevation {
     COMPONENT = 2,
     UI = 3
 }
+
+export enum WallSide {
+}

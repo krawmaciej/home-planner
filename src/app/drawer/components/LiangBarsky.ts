@@ -9,12 +9,12 @@ export type LiangBarskyResult = {
 export enum CollisionType {
     NONE = 0,
     NORMAL = 1,
-    EDGE = 2,
-    POINT = 4,
-    NORMAL_EDGE = 3,
-    NORMAL_POINT = 5,
-    EDGE_POINT = 6,
-    ALL = 7
+    EDGE = 2, // only edge should not happen, use normal edge
+    POINT = 4, // only point should not happen, use normal point
+    NORMAL_EDGE = NORMAL | EDGE,
+    NORMAL_POINT = NORMAL | POINT,
+    EDGE_POINT = EDGE | POINT, // should not happen, use all instead
+    ALL = NORMAL | EDGE | POINT
 }
 
 export default class LiangBarsky {

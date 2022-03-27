@@ -1,7 +1,7 @@
 import { Scene, Vector3 } from "three";
 import { ComponentElevation, RenderOrder } from "../constants/Types";
 import DrawedWall from "../objects/wall/DrawedWall";
-import DrawedWallBuilder from "../objects/wall/DrawedWallBuilder";
+import WallBuilder from "../objects/wall/WallBuilder";
 import IDrawedWall from "../objects/wall/IDrawedWall";
 import NoDrawedWall from "../objects/wall/NoDrawedWall";
 import WallThickness from "../objects/wall/WallThickness";
@@ -36,10 +36,10 @@ export default class WallDrawer {
         start.y = ComponentElevation.WALL;
         end.y = ComponentElevation.WALL;
 
-        const wallBuilder = DrawedWallBuilder.createWall(start, end, this.wallThickness);
+        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
         const collision = this.collisionDetector.detectDrawedCollisions(wallBuilder.getProps(), this.testWalls);
-        const dWall = wallBuilder.setCollided(collision).build();
+        const dWall = wallBuilder.setCollision(collision).build();
 
         this.drawedWall.removeFrom(this.scene);
         dWall.wall.renderOrder = RenderOrder.WALL;
@@ -50,7 +50,7 @@ export default class WallDrawer {
     public drawWall(start: Vector3, end: Vector3) {
         start.y = ComponentElevation.WALL;
         end.y = ComponentElevation.WALL;
-        const wallBuilder = DrawedWallBuilder.createWall(start, end, this.wallThickness);
+        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
         const collided = this.collisionDetector.detectDrawedCollisions(wallBuilder.getProps(), this.testWalls);
         console.log(collided);
@@ -62,7 +62,7 @@ export default class WallDrawer {
             return; // do not draw the wall
         }
 
-        const dWall = wallBuilder.build();
+        const dWall = wallBuilder.setCollision(collided).build();
 
 
         this.scene.add(dWall.wall);

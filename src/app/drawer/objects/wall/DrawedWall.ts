@@ -20,13 +20,13 @@ export default class DrawedWall implements IDrawedWall {
     }
 
     private static readonly material = new LineBasicMaterial({
-        color: 0x000000
-        // depthTest: false
+        color: 0x000000,
+        depthTest: false
     });
 
     private static readonly collidedMaterial = new LineBasicMaterial({
-        color: 0xff0000
-        // depthTest: false
+        color: 0xff0000,
+        depthTest: false
     });
 
     public readonly props: WallConstruction;

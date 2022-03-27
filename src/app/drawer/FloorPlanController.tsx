@@ -6,7 +6,7 @@ import { Color, Line, Scene, Vector2, Vector3 } from 'three';
 import FloorPlanCanvas from "./UI/FloorPlanCanvas";
 import FloorPlanView from "./UI/FloorPlanView";
 import PlacedWall from "./objects/wall/PlacedWall";
-import DrawedWallBuilder from "./objects/wall/DrawedWallBuilder";
+import WallBuilder from "./objects/wall/WallBuilder";
 import WallThickness from "./objects/wall/WallThickness";
 import { ComponentElevation, RenderOrder } from "./constants/Types";
 import CollisionDetector from "./components/CollisionDetector";
@@ -46,15 +46,3 @@ const FloorPlanController: React.FC<{}> = () => {
 }
 
 export default FloorPlanController;
-
-function doesBelongTo(ip: Vector2, wall: PlacedWall) {
-    const x1 = Math.min(wall.start.x, wall.stop.x);
-    const y1 = Math.min(wall.start.z, wall.stop.z);
-    const x2 = Math.max(wall.start.x, wall.stop.x);
-    const y2 = Math.max(wall.start.z, wall.stop.z);
-
-    const checkResult = (ip.x >= x1 && ip.x <= x2) &&
-                        (ip.y >= y1 && ip.y <= y2);
-
-    return checkResult;
-}
