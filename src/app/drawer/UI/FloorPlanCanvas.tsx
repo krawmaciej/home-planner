@@ -6,16 +6,16 @@ import { AxesHelper, CircleGeometry, DirectionalLight, GridHelper, HemisphereLig
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { DrawingState, Pointer } from "./Pointer";
 import { RenderOrder } from "../constants/Types";
+import WallDrawer from "../components/WallDrawer";
 
 
 type Props = {
   scene: Scene
-  drawWall: (start: Vector3, end: Vector3) => void
-  moveDrawedWall: (start: Vector3, end: Vector3) => void
+  wallDrawer: WallDrawer
 }
 
 // this is canvas, if there are similarities between room planner canvas then refactor
-const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Props) => {
+const FloorPlanCanvas: React.FC<Props> = ({scene, wallDrawer}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -103,7 +103,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
           pointer.endPosition.y,
           0
         );
-        moveDrawedWall(start.unproject(camera), end.unproject(camera));
+        wallDrawer.moveDrawedWall(start.unproject(camera), end.unproject(camera));
 
       } else if (pointer.state === DrawingState.DRAW) {
         const start = new Vector3(
@@ -119,7 +119,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
         pointer = pointer.draw();
         const us = start.unproject(camera);
         const ue = end.unproject(camera);
-        drawWall(us, ue);
+        wallDrawer.drawWall(us, ue);
       }
 
       renderer.render(scene, camera);

@@ -25,8 +25,6 @@ export default class WallDrawer {
         this.collisionDetector = collisionDetector;
         this.testWalls = walls;
         this.wallThickness = wallThickness;
-        console.log(scene);
-        console.log(wallThickness);
     }
 
     /**

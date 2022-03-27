@@ -36,7 +36,7 @@ const FloorPlanController: React.FC<{}> = () => {
     return (
         <div className="MainView">
             <div>
-                <FloorPlanCanvas scene={scene} drawWall={wallDrawer.drawWall} moveDrawedWall={wallDrawer.moveDrawedWall}/>
+                <FloorPlanCanvas scene={scene} wallDrawer={wallDrawer}/>
             </div>
             <div>
                 <FloorPlanView className={"Menu"} scene={scene} />
