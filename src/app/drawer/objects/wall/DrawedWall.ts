@@ -1,11 +1,12 @@
-import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3, MeshBasicMaterialParameters } from "three";
-import { WallConstruction, MiddlePoints, WallPoint } from "../components/DrawerMath";
-import { ComponentElevation, RenderOrder } from "../constants/Types";
+import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3, MeshBasicMaterialParameters, Scene } from "three";
+import { WallConstruction, MiddlePoints, WallPoint } from "../../components/DrawerMath";
+import { ComponentElevation, RenderOrder } from "../../constants/Types";
+import IDrawedWall from "./IDrawedWall";
 
 /**
  * Creates Meshes from properties provided by {@link DrawedWallBuilder}.
  */
-export default class DrawedWall {
+export default class DrawedWall implements IDrawedWall {
 
     private static readonly contactPointMesh = DrawedWall.createPointMesh({ color: 0xffff00 });
     private static readonly middlePointMesh = DrawedWall.createPointMesh({ color: 0x000000 });
@@ -19,13 +20,13 @@ export default class DrawedWall {
     }
 
     private static readonly material = new LineBasicMaterial({
-        color: 0x000000,
-        depthTest: false
+        color: 0x000000
+        // depthTest: false
     });
 
     private static readonly collidedMaterial = new LineBasicMaterial({
-        color: 0xff0000,
-        depthTest: false
+        color: 0xff0000
+        // depthTest: false
     });
 
     public readonly props: WallConstruction;
@@ -102,4 +103,7 @@ export default class DrawedWall {
         return [start, end];
     }
 
+    public removeFrom(scene: Scene): void {
+        scene.remove(this.wall);
+    }
 }

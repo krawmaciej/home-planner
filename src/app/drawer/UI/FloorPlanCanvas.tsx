@@ -56,17 +56,6 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, drawWall, moveDrawedWall}: Pro
       camera.position.set(0.0, 4.0, 0.0);
       camera.lookAt(0, 0, 0);
 
-      const geometry = new CircleGeometry(20, 32);
-      const material = new MeshBasicMaterial({ color: 0x000000 });
-      const circle = new Mesh(geometry, material);
-      // scene.add(circle);
-      // circle.position.set(1,-5,1);
-      // circle.rotateX(3 * Math.PI / 2);
-      // circle.translateY(1);
-
-      const axesHelper = new AxesHelper(5);
-      scene.add(axesHelper);
-
       // controls = new OrbitControls(camera, renderer.domElement);
 
 

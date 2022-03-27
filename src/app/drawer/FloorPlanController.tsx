@@ -5,179 +5,38 @@ import React, { useEffect, useState } from 'react';
 import { Color, Line, Scene, Vector2, Vector3 } from 'three';
 import FloorPlanCanvas from "./UI/FloorPlanCanvas";
 import FloorPlanView from "./UI/FloorPlanView";
-import PlacedWall from "./objects/PlacedWall";
-import DrawedWallBuilder from "./objects/DrawedWallBuilder";
-import WallThickness from "./objects/WallThickness";
+import PlacedWall from "./objects/wall/PlacedWall";
+import DrawedWallBuilder from "./objects/wall/DrawedWallBuilder";
+import WallThickness from "./objects/wall/WallThickness";
 import { ComponentElevation, RenderOrder } from "./constants/Types";
 import CollisionDetector from "./components/CollisionDetector";
-import DrawedWall from "./objects/DrawedWall";
+import DrawedWall from "./objects/wall/DrawedWall";
+import NoDrawedWall from "./objects/wall/NoDrawedWall";
+import IDrawedWall from "./objects/wall/IDrawedWall";
+import WallDrawer from "./components/WallDrawer";
 
 const FloorPlanController: React.FC<{}> = () => {
 
-    let drawedWall: DrawedWall | undefined; // after wall is drawn there is no more wall being drawn
-    const walls = new Array<PlacedWall>(); // walls used to detect collisions
-
-    const testWalls = new Array<DrawedWall>();
-
-    const collisionDetector = new CollisionDetector();
 
     const [scene] = useState<Scene>(new Scene());
     const [wallThickness, setWallThickness] = useState<WallThickness>(new WallThickness(1.0));
 
-    // tests
-    let y = 0.0;
+    const walls = new Array<PlacedWall>(); // walls used to detect collisions
+    const testWalls = new Array<DrawedWall>();
+    const collisionDetector = new CollisionDetector();
+    const wallDrawer = new WallDrawer(scene, collisionDetector, testWalls, wallThickness);
+
 
     useEffect(() => {
         scene.background = new Color(0x999999);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    /**
-     * Draw wall which is being currently drawn by the user.
-     * @param start pointer starting point
-     * @param end pointer ending point
-     */
-    const moveDrawedWall = (start: Vector3, end: Vector3) => {
-        start.y = ComponentElevation.WALL;
-        end.y = ComponentElevation.WALL;
-
-        const wallBuilder = DrawedWallBuilder.createWall(start, end, wallThickness);
-
-        const collision = collisionDetector.detectDrawedCollisions(wallBuilder.getProps(), testWalls);
-        const dWall = wallBuilder.setCollided(collision).build();
-
-        if (drawedWall?.wall !== undefined) {
-            scene.remove(drawedWall.wall);
-        }
-        dWall.wall.renderOrder = RenderOrder.WALL;
-        scene.add(dWall.wall);
-        drawedWall = dWall;
-
-        // console.log(scene.children.length);
-
-        // wall = checkCollisions(wall); // DO NOT CHECK COLLISIONS ON MOVING DRAWED WALL
-        // todo: need two walls or something to keep track if there is a wall being drawn now (it should be, cause it should)
-        // walls.push(wall);
-        // scene.add(wall.line);
-        // if (drawState === DrawState.SELECTING) {
-        //     drawState = DrawState.DRAWING;
-        //     startingPoint = start;
-        // } else if (drawState === DrawState.DRAWING) {
-        //     drawState = DrawState.SELECTING;
-        //     endingPoint = getSimpleAxisPoint(start);
-        //     // draw line between starting and ending
-        //     if (startingPoint === undefined) {
-        //         throw new Error("Starting point not set!");
-        //     }
-        //     let wall = new Wall(startingPoint, endingPoint);
-        //     wall = checkCollisions(wall);
-        //     walls.push(wall);
-        //     scene.add(wall.line);
-        
-    }
-
-    const drawWall = (start: Vector3, end: Vector3) => {
-        start.y = ComponentElevation.WALL;
-        end.y = ComponentElevation.WALL;
-        const wallBuilder = DrawedWallBuilder.createWall(start, end, wallThickness);
-
-        const collided = collisionDetector.detectDrawedCollisions(wallBuilder.getProps(), testWalls);
-        console.log(collided);
-
-        if (drawedWall?.wall !== undefined) {
-            scene.remove(drawedWall.wall);
-        }
-        
-        if (collided.isCollision) {
-            console.log("wall collides!");
-            return; // do not draw the wall
-        }
-
-        const dWall = wallBuilder.build();
-
-
-        scene.add(dWall.wall);
-        testWalls.push(dWall);
-        drawedWall = undefined;
-
-
-
-        
-        // const x = Math.round(point.x);
-        // const y = point.y;
-        // const z =  Math.round(point.z);
-        // point.set(x, y, z);
-
-        
-
-        // if (drawState === DrawState.DRAWING) { // meaning startPoint is set so it can be replaced to startPointCheck
-        //     // collisionDetection.check(event);
-
-        //     if (drawedWall !== undefined) {
-        //         scene.remove(drawedWall.line);
-        //     }
-
-        //     endingPoint = getSimpleAxisPoint(point);
-        //     // draw line between starting and ending
-        //     if (startingPoint === undefined) {
-        //         throw new Error("Starting point not set!");
-        //     }
-        //     let wall = new Wall(startingPoint, endingPoint);
-            
-        //     wall = checkCollisions(wall);
-        //     // snapping colided point won't work in case of angled lines which won't be supported
-
-        //     drawedWall = wall;
-        //     scene.add(wall.line);
-        // }
-
-    }
-
-    // change to Vector3
-    const checkCollisions = (wall: PlacedWall) => {
-        const mappedEndPoints = walls.map((otherWall): [PlacedWall, Vector2 | undefined] => {
-            const ip = wall.intersectionPoint(otherWall);
-            const belongs = doesBelongTo(ip, otherWall) && doesBelongTo(ip, wall);
-            return [otherWall, belongs ? ip : undefined];
-        });
-
-        const endPoints = mappedEndPoints.filter(([otherWall, intersectionPoint]): boolean => {
-            if (intersectionPoint === undefined) {
-                return false;
-            }
-            // this might be moved somewhere else, at least I know it works
-            const isSameAsNewWallStartPoint: boolean = intersectionPoint.x === wall.start.x &&
-                                                       intersectionPoint.y === wall.start.z;
-            const isSameAsCheckedWallEndPoint: boolean = intersectionPoint.x === otherWall.stop.x &&
-                                                         intersectionPoint.y === otherWall.stop.z;
-            return !(isSameAsNewWallStartPoint || isSameAsCheckedWallEndPoint);
-        });
-
-        if (endPoints.length === 0) {
-            return wall;
-        }
-
-        const slicedEndPoint = endPoints.pop()?.[1];
-        const startPoint = wall.start;
-        const endPoint = new Vector3(slicedEndPoint?.x, wall.stop.y, slicedEndPoint?.y);
-
-        return new PlacedWall(startPoint, endPoint);
-    }
-
-    const getSimpleAxisPoint = (start: Vector3, end: Vector3) => {
-        // todo: make immutable
-        if (Math.abs(end.x - start.x) > Math.abs(end.z - start.z)) {
-            end.z = start.z;
-        } else {
-            end.x = start.x;
-        }
-        return end;
-    }
 
     return (
         <div className="MainView">
             <div>
-                <FloorPlanCanvas scene={scene} drawWall={drawWall} moveDrawedWall={moveDrawedWall}/>
+                <FloorPlanCanvas scene={scene} drawWall={wallDrawer.drawWall} moveDrawedWall={wallDrawer.moveDrawedWall}/>
             </div>
             <div>
                 <FloorPlanView className={"Menu"} scene={scene} />

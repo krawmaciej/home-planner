@@ -1,6 +1,6 @@
 import { Vector3 } from "three";
-import { Collision } from "../components/CollisionDetector";
-import DrawerMath, { WallConstruction } from "../components/DrawerMath";
+import { Collision } from "../../components/CollisionDetector";
+import DrawerMath, { WallConstruction } from "../../components/DrawerMath";
 import DrawedWall from "./DrawedWall";
 import WallThickness from "./WallThickness";
 

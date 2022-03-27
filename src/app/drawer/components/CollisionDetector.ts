@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import DrawedWall from "../objects/DrawedWall";
+import DrawedWall from "../objects/wall/DrawedWall";
 import { WallConstruction, WallPoint } from "./DrawerMath";
 import LiangBarsky, { LiangBarskyResult, CollisionType } from "./LiangBarsky";
 
