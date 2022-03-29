@@ -6,24 +6,25 @@ import IDrawedWall from "../objects/wall/IDrawedWall";
 import NoDrawedWall from "../objects/wall/NoDrawedWall";
 import WallThickness from "../objects/wall/WallThickness";
 import CollisionDetector from "./CollisionDetector";
+import PlacedWall from "../objects/wall/PlacedWall";
 
 export default class WallDrawer {
 
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;
-    private readonly testWalls: Array<DrawedWall>;
+    private readonly placedWalls: Array<PlacedWall>;
     private wallThickness: WallThickness;
     private drawedWall: IDrawedWall = NoDrawedWall.getInstance(); // after wall is drawn there is no more wall being drawn
 
     public constructor(
         scene: Scene,
         collisionDetector: CollisionDetector,
-        walls: Array<DrawedWall>,
+        walls: Array<PlacedWall>,
         wallThickness: WallThickness
     ) {
         this.scene = scene;
         this.collisionDetector = collisionDetector;
-        this.testWalls = walls;
+        this.placedWalls = walls;
         this.wallThickness = wallThickness;
     }
 
@@ -38,8 +39,8 @@ export default class WallDrawer {
 
         const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
-        const collision = this.collisionDetector.detectDrawedCollisions(wallBuilder.getProps(), this.testWalls);
-        const dWall = wallBuilder.setCollision(collision).build();
+        const collision = this.collisionDetector.detectWallCollisions(wallBuilder.getProps(), this.placedWalls);
+        const dWall = wallBuilder.setCollision(collision).createDrawedWall();
 
         this.drawedWall.removeFrom(this.scene);
         dWall.wall.renderOrder = RenderOrder.WALL;
@@ -52,21 +53,39 @@ export default class WallDrawer {
         end.y = ComponentElevation.WALL;
         const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
-        const collided = this.collisionDetector.detectDrawedCollisions(wallBuilder.getProps(), this.testWalls);
-        console.log(collided);
+        const collisionResult = this.collisionDetector.detectWallCollisions(wallBuilder.getProps(), this.placedWalls);
+        console.log(collisionResult);
 
         this.drawedWall.removeFrom(this.scene);
+        this.drawedWall = NoDrawedWall.getInstance();
         
-        if (collided.isCollision) {
+        if (collisionResult.isCollision) {
             console.log("wall collides!");
             return; // do not draw the wall
         }
 
-        const dWall = wallBuilder.setCollision(collided).build();
+        const placedWall = wallBuilder.setCollision(collisionResult).createPlacedWall();
+
+        collisionResult.adjecentWalls.forEach(aw => {
+            const collision = this.collisionDetector.detectWallCollisions(aw.adjecent.props, [ placedWall ]);
+            if (collision.adjecentWalls.length !== 1) {
+                throw new Error("Collided wall should also collide with new wall but did not!");
+            }
+            if (collision.adjecentWalls[0].points.toString() !== aw.points.toString()) {
+                console.warn("Colided points should be the same both ways!");
+            }
+            const { toSide, points } = collision.adjecentWalls[0];
+            const replaced = aw.adjecent.collidedWithWall(toSide, points);
+
+            aw.adjecent.removeFrom(this.scene);
+            replaced.addTo(this.scene);
+
+            const index = this.placedWalls.indexOf(aw.adjecent); // replace in array
+            this.placedWalls[index] = replaced;
+        });
 
 
-        this.scene.add(dWall.wall);
-        this.testWalls.push(dWall);
-        this.drawedWall = NoDrawedWall.getInstance();
+        placedWall.addTo(this.scene);
+        this.placedWalls.push(placedWall);
     }
 }

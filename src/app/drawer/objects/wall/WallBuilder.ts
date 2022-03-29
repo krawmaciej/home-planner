@@ -37,12 +37,12 @@ export default class WallBuilder {
         return this;
     }
 
-    public build(): DrawedWall {
+    public createDrawedWall(): DrawedWall {
         const contactPoints = this.collision.adjecentWalls.flatMap(wall => wall.points);
         return DrawedWall.wallFromPoints(this.props, this.collision.isCollision, contactPoints);
     }
 
-    public placeWall(): PlacedWall {
+    public createPlacedWall(): PlacedWall {
         return PlacedWall.create(this.props, this.collision.adjecentWalls);
     }
 

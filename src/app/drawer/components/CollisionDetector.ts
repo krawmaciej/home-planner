@@ -1,6 +1,8 @@
 import { Vector3 } from "three";
 import DrawedWall from "../objects/wall/DrawedWall";
+import PlacedWall from "../objects/wall/PlacedWall";
 import WallSide from "../objects/wall/WallSide";
+import { WallSideType } from "../objects/wall/WallSides";
 import { WallConstruction, WallPoint } from "./DrawerMath";
 import LiangBarsky, { LiangBarskyResult, CollisionType } from "./LiangBarsky";
 
@@ -10,8 +12,8 @@ export type Collision = {
 }
 
 export type AdjecentWall = {
-    toSide: WallSide
-    adjecent: DrawedWall,
+    toSide: WallSideType
+    adjecent: PlacedWall,
     points: Array<Vector3>
 }
 
@@ -40,7 +42,7 @@ export default class CollisionDetector {
      * @param walls 
      * @returns 
      */
-    public detectDrawedCollisions(checked: WallConstruction, walls: Array<DrawedWall>): Collision {
+    public detectWallCollisions(checked: WallConstruction, walls: Array<PlacedWall>): Collision {
         const topLeft = checked.points[WallPoint.TOP_LEFT];
         const topRight = checked.points[WallPoint.TOP_RIGHT];
         const bottomRight = checked.points[WallPoint.BOTTOM_RIGHT];
@@ -51,15 +53,13 @@ export default class CollisionDetector {
         for (let wall of walls) {
             const collisionPoints = new Array<Vector3>();
             let edgeCollisionsCount = 0;
-            let collidingSideStart: Vector3 = topLeft;
-            let collidingSideEnd: Vector3 = topLeft;
+            let wallSideType = WallSideType.TOP;
 
             // top
             let check = this.checkLineCollision(topLeft, topRight, wall);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
-                collidingSideStart = topLeft;
-                collidingSideEnd = topRight;
+                wallSideType = WallSideType.TOP;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
@@ -70,8 +70,7 @@ export default class CollisionDetector {
             check = this.checkLineCollision(bottomRight, topRight, wall)
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
-                collidingSideStart = bottomRight;
-                collidingSideEnd = topRight;
+                wallSideType = WallSideType.RIGHT;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
@@ -82,8 +81,7 @@ export default class CollisionDetector {
             check = this.checkLineCollision(bottomLeft, bottomRight, wall)
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
-                collidingSideStart = bottomLeft;
-                collidingSideEnd = bottomRight;
+                wallSideType = WallSideType.BOTTOM;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
@@ -94,8 +92,7 @@ export default class CollisionDetector {
             check = this.checkLineCollision(bottomLeft, topLeft, wall)
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
-                collidingSideStart = bottomLeft;
-                collidingSideEnd = topLeft;
+                wallSideType = WallSideType.LEFT;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
@@ -104,8 +101,7 @@ export default class CollisionDetector {
 
             if (edgeCollisionsCount === 1) { // only one side collided, start and end must have been set
                 adjecentWalls.push({ 
-                    start: collidingSideStart,
-                    end: collidingSideEnd,
+                    toSide: wallSideType,
                     adjecent: wall,
                     points: collisionPoints
                 });
@@ -116,7 +112,7 @@ export default class CollisionDetector {
         return { isCollision: false, adjecentWalls: adjecentWalls };
     }
 
-    private checkLineCollision(p0: Vector3, p1: Vector3, wall: DrawedWall): LiangBarskyResult {
+    private checkLineCollision(p0: Vector3, p1: Vector3, wall: PlacedWall): LiangBarskyResult {
         const min = wall.props.points[WallPoint.BOTTOM_LEFT];
         const max = wall.props.points[WallPoint.TOP_RIGHT];
         return LiangBarsky.checkCollision(p0, p1, min, max);

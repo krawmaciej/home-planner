@@ -21,11 +21,9 @@ const FloorPlanController: React.FC<{}> = () => {
     const [scene] = useState<Scene>(new Scene());
     const [wallThickness, setWallThickness] = useState<WallThickness>(new WallThickness(1.0));
 
-    const walls = new Array<PlacedWall>(); // walls used to detect collisions
-    const testWalls = new Array<DrawedWall>();
+    const placedWalls = new Array<PlacedWall>(); // walls used to detect collisions
     const collisionDetector = new CollisionDetector();
-    const wallDrawer = new WallDrawer(scene, collisionDetector, testWalls, wallThickness);
-
+    const wallDrawer = new WallDrawer(scene, collisionDetector, placedWalls, wallThickness);
 
     useEffect(() => {
         scene.background = new Color(0x999999);
