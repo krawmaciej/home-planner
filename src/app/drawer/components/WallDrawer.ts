@@ -71,9 +71,6 @@ export default class WallDrawer {
             if (collision.adjecentWalls.length !== 1) {
                 throw new Error("Collided wall should also collide with new wall but did not!");
             }
-            if (collision.adjecentWalls[0].points.toString() !== aw.points.toString()) {
-                console.warn("Colided points should be the same both ways!");
-            }
             const { toSide, points } = collision.adjecentWalls[0];
             const replaced = aw.adjecent.collidedWithWall(toSide, points);
 

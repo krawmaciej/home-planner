@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
 
-import FloorPlanController from "./app/drawer/FloorPlanController";
+import FloorPlanStateParent from "./app/drawer/FloorPlanStateParent";
 
 const App: React.FC<{}> = () => {
 
   return (
-    <FloorPlanController/>
+    <FloorPlanStateParent/>
   );
 }
 

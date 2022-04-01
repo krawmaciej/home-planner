@@ -14,9 +14,9 @@ import DrawedWall from "./objects/wall/DrawedWall";
 import NoDrawedWall from "./objects/wall/NoDrawedWall";
 import IDrawedWall from "./objects/wall/IDrawedWall";
 import WallDrawer from "./components/WallDrawer";
+import FloorPlanMainController from "./controllers/FloorPlanMainController";
 
-const FloorPlanController: React.FC<{}> = () => {
-
+const FloorPlanStateParent: React.FC<{}> = () => {
 
     const [scene] = useState<Scene>(new Scene());
     const [wallThickness, setWallThickness] = useState<WallThickness>(new WallThickness(1.0));
@@ -30,17 +30,16 @@ const FloorPlanController: React.FC<{}> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-
     return (
         <div className="MainView">
             <div>
                 <FloorPlanCanvas scene={scene} wallDrawer={wallDrawer}/>
             </div>
             <div>
-                <FloorPlanView className={"Menu"} scene={scene} />
+                <FloorPlanMainController className={"Menu"}/>
             </div>
         </div>
     );
 }
 
-export default FloorPlanController;
+export default FloorPlanStateParent;
