@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
+import ControllerFactory, { FactorySubcomponentProps } from "./ControllerFactory";
 
-type Props = {
+const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
-}
-
-const WallController: React.FC<Props> = () => {
-
+    const [type, internalSetType] = useState<number>();
 
     useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const setType = (type: number) => {
+        setType(type);
+    }
 
     return (
-        <div>
-            Wall View
-        </div>
+        <>
+            <button onClick={goBack}>Powrót</button>
+        </>
     );
 }
 

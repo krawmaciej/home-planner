@@ -1,45 +1,56 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DoorsWindowsView from "../UI/DoorsWindowsView";
 import FloorPlanMainView, { MainViewProps } from "../UI/FloorPlanMainView";
 import WallsView from "../UI/WallsView";
-import MainControllerFactory, { MainControllerType } from "./MainControllerFactory";
+import WindowsDoorsController from "./WindowsDoorsController";
+import ControllerFactory, { ComponentProvider } from "./ControllerFactory";
+import SelectMainController from "./SelectMainController";
+import WallController from "./WallController";
 
 type Props = {
     className?: string
+}
+
+export enum MainControllerType {
+    WALLS, WINDOWS_AND_DOORS, SELECT
 }
 
  // todo: refactor so it uses controllers only instead of views as state
  // maybe this logic can be moved to parent and this one will only display its view and not control others
 const FloorPlanMainController: React.FC<Props> = () => {
 
-    const [controllerType, setControllerType] = useState<MainControllerType>(MainControllerType.);
-    // maybe some state design pattern which depending on state will return different tsx from it's render?
-    // factory component which will create component according to strategy passed to it.
-    // and then this strategy can be a state which will be passed to factory, and rerender o change
+    const setType = (type: MainControllerType) => {
+        setControllerType(type);
+    }
+    
+    const setDefaultType = () => {
+        setControllerType(MainControllerType.SELECT);
+    }
+
+    const initializeComponentProviders = () => {
+        const factoryProviders = new Array<ComponentProvider>(3); // todo: cache it
+
+        const mapProvider = (type: MainControllerType, provider: JSX.Element) => {
+            factoryProviders[type] = () => provider;
+        }
+
+        mapProvider(MainControllerType.SELECT, <SelectMainController setType={setType}/>);
+        mapProvider(MainControllerType.WALLS, <WallController goBack={setDefaultType}/>);
+        mapProvider(MainControllerType.WINDOWS_AND_DOORS, <WindowsDoorsController goBack={setDefaultType}/>);
+
+        return factoryProviders;
+    }
+
+    const [controllerType, setControllerType] = useState<MainControllerType>(MainControllerType.SELECT); // initial state is select
+    const factoryProviders = useRef<Array<ComponentProvider>>(initializeComponentProviders());
 
     useEffect(() => {
-        // setCurrentSubController(FloorPlanMainView);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    const setWalls = () => {
-        // setCurrentSubController(WallsView);
-    }
-
-    const setDoors = () => {
-        // setCurrentSubController(DoorsWindowsView);
-    }
 
 
-
-    // instead of ifs uses factory with strategy state
     return (
-
-        <>
-            <button onClick={undefined}>Rysowanie ścian</button>
-            <button onClick={undefined}>Edycja ścian [przesuwanie, usuwanie, zmiana długości]</button>
-            <button onClick={undefined}>Usunięcie zaznaczonej ściany</button>
-        </>
-        // <CurrentSubController walls={setWalls} doorsAndWindows={setDoors}/>
+        <ControllerFactory type={controllerType} providers={factoryProviders.current}/>
     );
 }
 
