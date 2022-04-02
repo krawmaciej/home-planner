@@ -1,24 +1,12 @@
-import "./app/css/MainStyle.css"
-
 import React from 'react';
 import './App.css';
 
-import RoomPlanner from './app/RoomPlanner';
-import { Scene } from 'three';
-import MainController from "./app/UI/MainController";
+import FloorPlanStateParent from "./app/drawer/FloorPlanStateParent";
 
 const App: React.FC<{}> = () => {
-  const scene = new Scene();
 
   return (
-      <div className="MainView">
-        <div>
-          <RoomPlanner scene={scene}/>
-        </div>
-        <div>
-          <MainController className={"Menu"} scene={scene}/>
-        </div>
-      </div>
+    <FloorPlanStateParent/>
   );
 }
 

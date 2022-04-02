@@ -1,4 +1,4 @@
-import "./css/MainStyle.css"
+import "../css/MainStyle.css"
 
 import { useLayoutEffect, useRef } from "react";
 
@@ -10,7 +10,7 @@ type Props = {
   scene: Scene
 }
 
-export default function RoomPlanner({scene}: Props) {
+export default function RoomArrangerCanvas({scene}: Props) {
 
   const mount = useRef<HTMLDivElement>(null);
 
