@@ -15,7 +15,7 @@ const DoorsWindowsController: React.FC<Props> = () => {
 
     return (
         <div>
-            Wall View
+            Doors windows view
         </div>
     );
 }

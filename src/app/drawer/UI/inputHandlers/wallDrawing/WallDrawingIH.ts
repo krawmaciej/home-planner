@@ -1,0 +1,49 @@
+import { Vector3 } from "three";
+import WallDrawer from "../../../components/WallDrawer";
+import { DrawingState, WallPointer } from "./WallPointer";
+import InputHandler from "../InputHandler";
+
+/**
+ * Stateful input handler for drawing new walls.
+ * Start state is NONE, start point set to 0,0,0.
+ */
+export default class WallDrawingIH implements InputHandler {
+
+    private readonly wallDrawer: WallDrawer;
+    private pointer: WallPointer;
+
+    public constructor(wallDrawer: WallDrawer) {
+        this.wallDrawer = wallDrawer;
+        this.pointer = new WallPointer();
+    }
+
+    public handleMovement(point: Vector3): void {
+        this.pointer = this.pointer.changePosition(point);
+        this.process();
+    }
+
+    public handleClick(point: Vector3): void {
+        if (this.pointer.state === DrawingState.NONE) {
+            this.pointer = this.pointer.startDrawing(point);
+        } else if (this.pointer.state === DrawingState.DRAWING) {
+            this.pointer = this.pointer.stopDrawing(point);
+        }
+        this.process();
+    }
+
+    private process(): void {
+        // aliases
+        const start = this.pointer.startPosition;
+        const end = this.pointer.endPosition;
+
+        if (this.pointer.state === DrawingState.NONE) {
+            // no op
+        } else if (this.pointer.state === DrawingState.DRAWING) {
+            // todo: start will be always the same, unprojection can be cached
+            this.wallDrawer.moveDrawedWall(start, end);
+        } else if (this.pointer.state === DrawingState.DRAW) {
+            this.pointer = this.pointer.draw();
+            this.wallDrawer.drawWall(start, end);
+        }
+    }
+}

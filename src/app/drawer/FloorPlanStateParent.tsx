@@ -15,6 +15,8 @@ import NoDrawedWall from "./objects/wall/NoDrawedWall";
 import IDrawedWall from "./objects/wall/IDrawedWall";
 import WallDrawer from "./components/WallDrawer";
 import FloorPlanMainController from "./controllers/FloorPlanMainController";
+import MainInputHandler from "./UI/inputHandlers/MainInputHandler";
+import WallDrawingIH from "./UI/inputHandlers/wallDrawing/WallDrawingIH";
 
 const FloorPlanStateParent: React.FC<{}> = () => {
 
@@ -24,6 +26,7 @@ const FloorPlanStateParent: React.FC<{}> = () => {
     const placedWalls = new Array<PlacedWall>(); // walls used to detect collisions
     const collisionDetector = new CollisionDetector();
     const wallDrawer = new WallDrawer(scene, collisionDetector, placedWalls, wallThickness);
+    const mainInputHandler = new MainInputHandler(new WallDrawingIH(wallDrawer));
 
     useEffect(() => {
         scene.background = new Color(0x999999);
@@ -33,7 +36,7 @@ const FloorPlanStateParent: React.FC<{}> = () => {
     return (
         <div className="MainView">
             <div>
-                <FloorPlanCanvas scene={scene} wallDrawer={wallDrawer}/>
+                <FloorPlanCanvas scene={scene} mainInputHandler={mainInputHandler}/>
             </div>
             <div>
                 <FloorPlanMainController className={"Menu"}/>

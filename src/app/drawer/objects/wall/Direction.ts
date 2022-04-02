@@ -1,4 +1,4 @@
-import { Vector2D } from "../constants/Types";
+import { Vector2D } from "../../constants/Types";
 
 /**
  * Holds constant values, which are used to tell in which direction the wall is drawn.

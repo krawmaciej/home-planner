@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import Direction from "../objects/Direction";
+import Direction from "../objects/wall/Direction";
 import WallThickness from "../objects/wall/WallThickness";
 import { Vector2D } from "../constants/Types";
 
