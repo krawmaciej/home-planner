@@ -1,15 +1,15 @@
 import { posix } from "path";
 import { Vector3 } from "three";
 import InputHandler from "../InputHandler";
-import WindowDoorPointer, { State } from "./WindowDoorPointer";
+import WallComponentPointer, { State } from "./WallComponentPointer";
 
-export default class WindowDoorAddingIH implements InputHandler {
+export default class WallComponentAddingIH implements InputHandler {
 
-    private readonly pointer: WindowDoorPointer;
+    private readonly pointer: WallComponentPointer;
     private selection: number;
 
     public constructor() {
-        this.pointer = new WindowDoorPointer();
+        this.pointer = new WallComponentPointer();
         this.selection = 0;
     }
 

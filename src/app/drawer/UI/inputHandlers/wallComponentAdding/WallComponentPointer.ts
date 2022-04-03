@@ -4,7 +4,7 @@ export enum State {
     NONE, SELECTED, MOVING,
 }
 
-export default class WindowDoorPointer {
+export default class WallComponentPointer {
 
     private static readonly unsetPosition = new Vector3();
     private state: State;
@@ -12,7 +12,7 @@ export default class WindowDoorPointer {
 
     public constructor() {
         this.state = State.NONE;
-        this.position = WindowDoorPointer.unsetPosition;
+        this.position = WallComponentPointer.unsetPosition;
     }
 
     public select() {

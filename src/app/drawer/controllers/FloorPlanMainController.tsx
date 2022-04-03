@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useRef, useState } from "react";
-import WindowsDoorsController from "./WindowsDoorsController";
+import WallComponentController from "./WallComponentController";
 import ControllerFactory, { ComponentProvider } from "./ControllerFactory";
 import SelectMainController from "./SelectMainController";
 import WallController from "./WallController";
@@ -51,7 +51,7 @@ const FloorPlanMainController: React.FC<Props> = ({ scene, mainInputHandler }) =
 
         mapProvider(MainControllerType.SELECT, <SelectMainController setType={setType}/>);
         mapProvider(MainControllerType.WALLS, <WallController goBack={setDefaultType}/>);
-        mapProvider(MainControllerType.WINDOWS_AND_DOORS, <WindowsDoorsController goBack={setDefaultType}/>);
+        mapProvider(MainControllerType.WINDOWS_AND_DOORS, <WallComponentController goBack={setDefaultType}/>);
 
         return factoryProviders;
     }

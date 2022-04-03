@@ -1,5 +1,5 @@
 import React from "react";
-import WindowsDoorsController from "./WindowsDoorsController";
+import WallComponentController from "./WallComponentController";
 import SelectMainController from "./SelectMainController";
 import WallController from "./WallController";
 
@@ -32,7 +32,7 @@ const ControllerFactory = <T extends number>({ type, providers }: Props<T>) => {
     //         return <WallController/>
     //     }
     //     case MainControllerType.WINDOWS_AND_DOORS: {
-    //         return <WindowsDoorsController />
+    //         return <WallComponentController />
     //     }
     //     case MainControllerType.SELECT: {
     //         return <SelectMainController setType={setType}/>

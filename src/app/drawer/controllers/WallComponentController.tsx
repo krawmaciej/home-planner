@@ -1,14 +1,14 @@
 import { useContext, useEffect } from "react";
+import WallComponentAddingIH from "../UI/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import WallDrawingIH from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
-import WindowDoorAddingIH from "../UI/inputHandlers/windowDoorAdding/WindowDoorAddingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { Context } from "./FloorPlanMainController";
 
-const WindowsDoorsController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
+const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
     const context = useContext(Context);
 
-    const inputHandler = new WindowDoorAddingIH();
+    const inputHandler = new WallComponentAddingIH();
 
     useEffect(() => {
         if (context === undefined) {
@@ -27,4 +27,4 @@ const WindowsDoorsController: React.FC<FactorySubcomponentProps> = ({ goBack }) 
     );
 }
 
-export default WindowsDoorsController;
+export default WallComponentController;
