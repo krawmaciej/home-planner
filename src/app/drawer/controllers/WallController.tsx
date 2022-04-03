@@ -12,16 +12,14 @@ const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
             throw new Error("Context is undefined!");
         }
         const wallDrawer = context.wallDrawer;
-        context.mainInputHandler.changeHandlingStrategy(new WallDrawingIH(wallDrawer))
+        context.mainInputHandler.changeHandlingStrategy(new WallDrawingIH(wallDrawer));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    console.log(context);
     return (
         <>
             <div>
-                {
-                context?.placedWalls.map(v => {
+                {context?.placedWalls.map(v => {
                     return (<p>{JSON.stringify(v.props.points)}</p>);
                 })}
             </div>

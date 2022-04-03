@@ -43,7 +43,7 @@ export default class WallDrawingIH implements InputHandler {
             this.wallDrawer.moveDrawedWall(start, end);
         } else if (this.pointer.state === DrawingState.DRAW) {
             this.pointer = this.pointer.draw();
-            this.wallDrawer.drawWall(start, end);
+            this.wallDrawer.drawWall(start, end); // todo: return whether it was able to draw the wall, if not then do not set pointer to draw
         }
     }
 }

@@ -8,8 +8,9 @@ import { RenderOrder } from "../constants/Types";
 import MainInputHandler from "./inputHandlers/MainInputHandler";
 
 type Pointer = {
+  onCanvas: boolean,
   vectorToUnproject: Vector3,
-  clicked: boolean
+  clicked: boolean,
 }
 
 type Props = {
@@ -38,7 +39,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
 
     const frustumSize = 18;
 
-    let pointer: Pointer = { vectorToUnproject: new Vector3(), clicked: false };
+    let pointer: Pointer = { onCanvas: false, vectorToUnproject: new Vector3(), clicked: false };
 
     init();
 
@@ -85,6 +86,8 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
       window.addEventListener("resize", handleResize);
       mount?.current?.addEventListener("pointermove", handlePointerMove);
       mount?.current?.addEventListener("pointerdown", handlePointerDown);
+      mount?.current?.addEventListener("pointerenter", handlePointerEnter);
+      mount?.current?.addEventListener("pointerleave", handlePointerLeave);
 
       animate();
       handleResize();
@@ -96,13 +99,20 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
     };
 
     function render() {
+      if (!pointer.onCanvas) {
+        renderer.render(scene, camera);
+        return; // if pointer not on canvas then skip
+      }
+
       const unprojection = pointer.vectorToUnproject.clone().unproject(camera);
+
       if (pointer.clicked) {
         mainInputHandler.handleClick(unprojection);
         // the click was read
         pointer = {
+          onCanvas: pointer.onCanvas,
           vectorToUnproject: pointer.vectorToUnproject.clone(),
-          clicked: pointer.clicked = false
+          clicked: false
         }
       } else {
         mainInputHandler.handleMovement(unprojection);
@@ -135,6 +145,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
       const x = (event.clientX / width) * 2 - 1;
 			const	y = -(event.clientY / height) * 2 + 1;
       pointer = {
+        onCanvas: pointer.onCanvas,
         vectorToUnproject: new Vector3(x, y, 0),
         clicked: pointer.clicked
       }
@@ -148,6 +159,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
       const x = (event.clientX / width) * 2 - 1;
       const y = -(event.clientY / height) * 2 + 1;
       pointer = {
+        onCanvas: pointer.onCanvas,
         vectorToUnproject: new Vector3(x, y, 0),
         clicked: true
       }
@@ -157,6 +169,24 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
       // } else if (pointer.state === DrawingState.DRAWING) {
       //   pointer = pointer.stopDrawing({ x: x, y: y });
       // }
+    }
+
+    function handlePointerEnter(event: PointerEvent) {
+      const x = (event.clientX / width) * 2 - 1;
+			const	y = -(event.clientY / height) * 2 + 1;
+      pointer = {
+        onCanvas: true,
+        vectorToUnproject: new Vector3(x, y, 0),
+        clicked: pointer.clicked
+      }
+    }
+
+    function handlePointerLeave(event: PointerEvent) {
+      pointer = {
+        onCanvas: false,
+        vectorToUnproject: pointer.vectorToUnproject,
+        clicked: pointer.clicked
+      }
     }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -1,7 +1,4 @@
 import React, { createContext, useEffect, useRef, useState } from "react";
-import DoorsWindowsView from "../UI/DoorsWindowsView";
-import FloorPlanMainView, { MainViewProps } from "../UI/FloorPlanMainView";
-import WallsView from "../UI/WallsView";
 import WindowsDoorsController from "./WindowsDoorsController";
 import ControllerFactory, { ComponentProvider } from "./ControllerFactory";
 import SelectMainController from "./SelectMainController";

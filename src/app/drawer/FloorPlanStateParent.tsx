@@ -1,22 +1,11 @@
 import "../css/MainStyle.css"
 
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Color, Line, Scene, Vector2, Vector3 } from 'three';
+import { Color, Scene } from 'three';
 import FloorPlanCanvas from "./UI/FloorPlanCanvas";
-import FloorPlanView from "./UI/FloorPlanView";
-import PlacedWall from "./objects/wall/PlacedWall";
-import WallBuilder from "./objects/wall/WallBuilder";
-import WallThickness from "./objects/wall/WallThickness";
-import { ComponentElevation, RenderOrder } from "./constants/Types";
-import CollisionDetector from "./components/CollisionDetector";
-import DrawedWall from "./objects/wall/DrawedWall";
-import NoDrawedWall from "./objects/wall/NoDrawedWall";
-import IDrawedWall from "./objects/wall/IDrawedWall";
-import WallDrawer from "./components/WallDrawer";
 import FloorPlanMainController from "./controllers/FloorPlanMainController";
 import MainInputHandler from "./UI/inputHandlers/MainInputHandler";
-import WallDrawingIH from "./UI/inputHandlers/wallDrawing/WallDrawingIH";
 import VoidIH from "./UI/inputHandlers/VoidIH";
 
 const FloorPlanStateParent: React.FC<{}> = () => {
