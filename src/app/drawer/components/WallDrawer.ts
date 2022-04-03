@@ -10,7 +10,7 @@ import PlacedWall from "../objects/wall/PlacedWall";
 
 export default class WallDrawer {
 
-    private readonly scene: Scene;
+    public readonly scene: Scene; // todo :make private
     private readonly collisionDetector: CollisionDetector;
     private readonly placedWalls: Array<PlacedWall>;
     private readonly updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>;

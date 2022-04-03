@@ -7,13 +7,13 @@ import { Context } from "./FloorPlanMainController";
 const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
     const context = useContext(Context);
+    if (context === undefined) {
+        throw new Error("Context is undefined!");
+    }
 
-    const inputHandler = new WallComponentAddingIH();
+    const inputHandler = new WallComponentAddingIH(context.wallDrawer.scene);
 
     useEffect(() => {
-        if (context === undefined) {
-            throw new Error("Context is undefined!");
-        }
         const wallDrawer = context.wallDrawer;
         context.mainInputHandler.changeHandlingStrategy(inputHandler);
     // eslint-disable-next-line react-hooks/exhaustive-deps

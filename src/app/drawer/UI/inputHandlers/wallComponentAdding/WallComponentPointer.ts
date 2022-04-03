@@ -25,7 +25,7 @@ export default class WallComponentPointer {
     }
 
     public place(position: Vector3) {
-        this.state = State.NONE;
+        this.state = State.MOVING;
         this.position = position;
     }
 
