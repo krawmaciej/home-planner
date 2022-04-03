@@ -77,7 +77,7 @@ export default class LiangBarsky {
     private resetState() {
         this.tN = 0.0;
         this.tF = 1.0;
-        this.edgeCollision = 0;
+        this.edgeCollision = CollisionType.NONE;
     }
 
     private calculateNewTs(denom: number, number: number): boolean {

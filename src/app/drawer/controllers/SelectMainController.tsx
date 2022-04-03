@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 import { MainFactoryComponentProps } from "./ControllerFactory";
 import { MainControllerType } from "./FloorPlanMainController";
 
- // todo: refactor so it uses controllers only instead of views as state
- // maybe this logic can be moved to parent and this one will only display its view and not control others
 const SelectMainController: React.FC<MainFactoryComponentProps<MainControllerType>> = ({ setType }) => {
 
     useEffect(() => {

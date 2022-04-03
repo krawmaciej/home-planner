@@ -18,6 +18,11 @@ type Props = {
 }
 
 // this is canvas, if there are similarities between room planner canvas then refactor
+/**
+ * Whole {@link Props} passed here consist of stateful objects, Component does not need to be rerendered.
+ * @param param0 
+ * @returns 
+ */
 const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);

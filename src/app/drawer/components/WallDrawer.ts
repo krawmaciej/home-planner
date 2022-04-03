@@ -13,6 +13,7 @@ export default class WallDrawer {
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;
     private readonly placedWalls: Array<PlacedWall>;
+    private readonly updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>;
     private wallThickness: WallThickness;
     private drawedWall: IDrawedWall = NoDrawedWall.getInstance(); // after wall is drawn there is no more wall being drawn
 
@@ -20,11 +21,13 @@ export default class WallDrawer {
         scene: Scene,
         collisionDetector: CollisionDetector,
         walls: Array<PlacedWall>,
+        updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
         wallThickness: WallThickness
     ) {
         this.scene = scene;
         this.collisionDetector = collisionDetector;
         this.placedWalls = walls;
+        this.updateWallsToggle = updateWallsToggle;
         this.wallThickness = wallThickness;
     }
 
@@ -81,8 +84,8 @@ export default class WallDrawer {
             this.placedWalls[index] = replaced;
         });
 
-
         placedWall.addTo(this.scene);
         this.placedWalls.push(placedWall);
+        this.updateWallsToggle(prev => !prev);
     }
 }
