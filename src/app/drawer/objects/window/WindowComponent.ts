@@ -1,18 +1,19 @@
 import { BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
+import WallComponent from "./WallComponent";
 
 export type WindowProps = {
     length: number,
     width: number,
 }
 
-export default class WindowComponent {
+export default class WindowComponent implements WallComponent {
 
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
         depthTest: false
     });
 
-    private readonly props: WindowProps;
+    public readonly props: WindowProps;
     private readonly window: Line<BufferGeometry, Material>;
 
     public constructor(props: WindowProps) {
@@ -29,7 +30,7 @@ export default class WindowComponent {
 
     public changePosition(position: Vector3) {
         this.window.position.copy(position);
-    }    
+    }
     
     public addTo(scene: Scene): void {
         scene.add(this.window);

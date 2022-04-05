@@ -10,10 +10,11 @@ import PlacedWall from "../objects/wall/PlacedWall";
 
 export default class WallDrawer {
 
-    public readonly scene: Scene; // todo :make private
+    private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;
     private readonly placedWalls: Array<PlacedWall>;
-    private readonly updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>;
+    private readonly updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>; // todo: refactor to placed walls domain object
+
     private wallThickness: WallThickness;
     private drawedWall: IDrawedWall = NoDrawedWall.getInstance(); // after wall is drawn there is no more wall being drawn
 

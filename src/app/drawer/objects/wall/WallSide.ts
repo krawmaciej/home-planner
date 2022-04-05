@@ -1,5 +1,5 @@
 import { BufferGeometry, Line, Material, Vector3 } from "three";
-import WallComponent from "./WallComponent";
+import WallComponent from "../window/WallComponent";
 import { WallSideType } from "./WallSides";
 
 
