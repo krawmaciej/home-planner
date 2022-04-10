@@ -11,7 +11,7 @@ import { Scene } from "three";
 import MainInputHandler from "../UI/inputHandlers/MainInputHandler";
 import VoidIH from "../UI/inputHandlers/VoidIH";
 import WallComponentAdder from "../components/WallComponentAdder";
-import WallComponent from "../objects/window/WallComponent";
+import IWallComponent from "../objects/window/IWallComponent";
 
 type Props = {
     className?: string,
@@ -68,7 +68,7 @@ const FloorPlanMainController: React.FC<Props> = ({ scene, mainInputHandler }) =
     const [updatedWallsHelper, updateWallsToggle] = useState<boolean>(false); // refactor to separate array class
 
     // wall components (doors, windows)
-    const { current: wallComponents } = useRef(new Array<WallComponent>());
+    const { current: wallComponents } = useRef(new Array<IWallComponent>());
 
     const { current: collisionDetector } = useRef(new CollisionDetector());
     const wallDrawer = new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallThickness); // todo: update only on wallThickness change, might move to WallController fully

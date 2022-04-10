@@ -1,5 +1,5 @@
 import { BufferGeometry, Line, Material, Vector3 } from "three";
-import WallComponent from "../window/WallComponent";
+import IWallComponent from "../window/IWallComponent";
 import { WallSideType } from "./WallSides";
 
 
@@ -88,13 +88,13 @@ class SideNode {
 class Connection {
     public next: SideNode | undefined;
     public type: ConnectionType;
-    public readonly components: Array<WallComponent>; // holds wall's connection doors/windows
+    public readonly components: Array<IWallComponent>; // holds wall's connection doors/windows
     public constructor(next: SideNode | undefined, type: ConnectionType) {
         this.next = next;
         this.type = type;
-        this.components = new Array<WallComponent>();
+        this.components = new Array<IWallComponent>();
     }
-    public add(component: WallComponent): Array<WallComponent> {
+    public add(component: IWallComponent): Array<IWallComponent> {
         this.components.push(component);
         return this.components;
     }

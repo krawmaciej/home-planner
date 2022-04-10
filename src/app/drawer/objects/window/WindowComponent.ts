@@ -1,12 +1,15 @@
 import { BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
-import WallComponent from "./WallComponent";
+import IMovingWindowComponent from "./IMovingWindowComponent";
+import IPlacedWindowComponent from "./IPlacedWindowComponent";
+import IWallComponent from "./IWallComponent";
 
 export type WindowProps = {
     length: number,
     width: number,
-}
+    // orientation: enum?
+};
 
-export default class WindowComponent implements WallComponent {
+export default class WindowComponent implements IMovingWindowComponent, IPlacedWindowComponent {
 
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
@@ -31,12 +34,22 @@ export default class WindowComponent implements WallComponent {
     public changePosition(position: Vector3) {
         this.window.position.copy(position);
     }
-    
-    public addTo(scene: Scene): void {
-        scene.add(this.window);
+
+    public createPlacedComponent(position: Vector3): IPlacedWindowComponent {
+        const placed = new WindowComponent(this.props);
+        placed.changePosition(position);
+        return placed;
     }
 
-    public removeFrom(scene: Scene): void {
-        scene.remove(this.window);
+    public getPointsOnPlan(position: Vector3): Array<Vector3> {
+        throw new Error("Method not implemented.");
+    }
+
+    public addTo(scene: Scene): WindowComponent {
+        throw new Error("Method not implemented.");
+    }
+
+    public removeFrom(scene: Scene): WindowComponent {
+        throw new Error("Method not implemented.");
     }
 }

@@ -1,7 +1,6 @@
 import { Vector3 } from "three";
 import DrawedWall from "../objects/wall/DrawedWall";
 import PlacedWall from "../objects/wall/PlacedWall";
-import WallSide from "../objects/wall/WallSide";
 import { WallSideType } from "../objects/wall/WallSides";
 import { WallConstruction, WallPoint } from "./DrawerMath";
 import LiangBarsky, { LiangBarskyResult, CollisionType } from "./LiangBarsky";
@@ -42,11 +41,11 @@ export default class CollisionDetector {
      * @param walls 
      * @returns 
      */
-    public detectWallCollisions(checked: WallConstruction, walls: Array<PlacedWall>): Collision {
-        const topLeft = checked.points[WallPoint.TOP_LEFT];
-        const topRight = checked.points[WallPoint.TOP_RIGHT];
-        const bottomRight = checked.points[WallPoint.BOTTOM_RIGHT];
-        const bottomLeft = checked.points[WallPoint.BOTTOM_LEFT];
+    public detectWallCollisions({ points }: WallConstruction, walls: Array<PlacedWall>): Collision {
+        const topLeft = points[WallPoint.TOP_LEFT];
+        const topRight = points[WallPoint.TOP_RIGHT];
+        const bottomRight = points[WallPoint.BOTTOM_RIGHT];
+        const bottomLeft = points[WallPoint.BOTTOM_LEFT];
 
         const adjecentWalls = new Array<AdjecentWall>();
 
