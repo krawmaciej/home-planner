@@ -1,4 +1,4 @@
-import { Scene, Vector3 } from "three";
+import { BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
 import PlacedWall from "../objects/wall/PlacedWall";
 import IWallComponent from "../objects/window/IWallComponent";
 import WindowComponent, { WindowProps } from "../objects/window/WindowComponent";
@@ -6,6 +6,8 @@ import CollisionDetector from "./CollisionDetector";
 import NoMovingWindow from "../objects/window/NoMovingWindow";
 import IMovingWindowComponent from "../objects/window/IMovingWindowComponent";
 import IPlacedWindowComponent from "../objects/window/IPlacedWindowComponent";
+import { WallPointer } from "../UI/inputHandlers/wallDrawing/WallPointer";
+import { WallPoint } from "./DrawerMath";
 
 export default class WallComponentAdder {
 
@@ -38,8 +40,9 @@ export default class WallComponentAdder {
     }
 
     public moveComponent(position: Vector3) {
-        this.movingWindow.getPointsOnPlan(position);
-
+        const points = this.movingWindow.getPointsOnPlan(position);
+        const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
+        console.log(col);
 
         this.movingWindow.changePosition(position);
     }

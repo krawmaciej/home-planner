@@ -4,5 +4,4 @@ import IWallComponent from "./IWallComponent";
 
 export default interface IMovingWindowComponent extends IWallComponent {
     createPlacedComponent(position: Vector3): IPlacedWindowComponent;
-
 }

@@ -116,4 +116,80 @@ export default class CollisionDetector {
         const max = wall.props.points[WallPoint.TOP_RIGHT];
         return LiangBarsky.checkCollision(p0, p1, min, max);
     }
+
+    /**
+     * Finds collisions, each wall check is ordered from left to right or bottom to top.
+     * @param checked 
+     * @param walls 
+     * @returns 
+     */
+    public detectWindowWallCollisions(points : Array<Vector3>, walls: Array<PlacedWall>): Collision {
+        const topLeft = points[WallPoint.TOP_LEFT];
+        const topRight = points[WallPoint.TOP_RIGHT];
+        const bottomRight = points[WallPoint.BOTTOM_RIGHT];
+        const bottomLeft = points[WallPoint.BOTTOM_LEFT];
+
+        const adjecentWalls = new Array<AdjecentWall>();
+
+        for (let wall of walls) {
+            const collisionPoints = new Array<Vector3>();
+            let edgeCollisionsCount = 0;
+            let wallSideType = WallSideType.TOP;
+
+            // top
+            let check = this.checkLineCollision(topLeft, topRight, wall);
+            if ( check.type === CollisionType.NORMAL_EDGE ) {
+                edgeCollisionsCount++;
+                wallSideType = WallSideType.TOP;
+                collisionPoints.push(check.p0);
+                collisionPoints.push(check.p1);
+            } else if ( check.type === CollisionType.NORMAL ) {
+                return { isCollision: true, adjecentWalls: adjecentWalls };
+            }
+
+            // right
+            check = this.checkLineCollision(bottomRight, topRight, wall)
+            if ( check.type === CollisionType.NORMAL_EDGE ) {
+                edgeCollisionsCount++;
+                wallSideType = WallSideType.RIGHT;
+                collisionPoints.push(check.p0);
+                collisionPoints.push(check.p1);
+            } else if ( check.type === CollisionType.NORMAL ) {
+                return { isCollision: true, adjecentWalls: adjecentWalls };
+            }
+
+            // bottom
+            check = this.checkLineCollision(bottomLeft, bottomRight, wall)
+            if ( check.type === CollisionType.NORMAL_EDGE ) {
+                edgeCollisionsCount++;
+                wallSideType = WallSideType.BOTTOM;
+                collisionPoints.push(check.p0);
+                collisionPoints.push(check.p1);
+            } else if ( check.type === CollisionType.NORMAL ) {
+                return { isCollision: true, adjecentWalls: adjecentWalls };
+            }
+
+            // left
+            check = this.checkLineCollision(bottomLeft, topLeft, wall)
+            if ( check.type === CollisionType.NORMAL_EDGE ) {
+                edgeCollisionsCount++;
+                wallSideType = WallSideType.LEFT;
+                collisionPoints.push(check.p0);
+                collisionPoints.push(check.p1);
+            } else if ( check.type === CollisionType.NORMAL ) {
+                return { isCollision: true, adjecentWalls: adjecentWalls };
+            }
+
+            if (edgeCollisionsCount === 1) { // only one side collided, start and end must have been set
+                adjecentWalls.push({ 
+                    toSide: wallSideType,
+                    adjecent: wall,
+                    points: collisionPoints
+                });
+            } else if (edgeCollisionsCount > 1) {
+                return { isCollision: true, adjecentWalls: adjecentWalls };
+            }
+        }
+        return { isCollision: false, adjecentWalls: adjecentWalls };
+    }
 }

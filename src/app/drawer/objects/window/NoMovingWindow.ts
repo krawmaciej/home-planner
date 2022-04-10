@@ -16,7 +16,7 @@ export default class NoMovingWindow implements IMovingWindowComponent {
     changePosition(point: Vector3): void {
         throw new Error("Method not implemented.");
     }
-    getPointsOnPlan(position: Vector3): void {
+    getPointsOnPlan(position: Vector3): [Vector3, Vector3, Vector3, Vector3] {
         throw new Error("Method not implemented.");
     }
     addTo(scene: Scene): NoMovingWindow {

@@ -1,4 +1,5 @@
-import { BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
+import { WallPoint } from "../../components/DrawerMath";
 import IMovingWindowComponent from "./IMovingWindowComponent";
 import IPlacedWindowComponent from "./IPlacedWindowComponent";
 import IWallComponent from "./IWallComponent";
@@ -21,14 +22,23 @@ export default class WindowComponent implements IMovingWindowComponent, IPlacedW
 
     public constructor(props: WindowProps) {
         this.props = props;
-        const points = new Array<Vector3>();
-        points.push(new Vector3(0, 0, 0));
-        points.push(new Vector3(0, 0, this.props.width));
-        points.push(new Vector3(this.props.length, 0, this.props.width));
-        points.push(new Vector3(this.props.length, 0, 0));
-        points.push(new Vector3(0, 0, 0));
+        const points = WindowComponent.createPoints(props);
+        points.push(points[WallPoint.TOP_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
         this.window = new Line(geometry, WindowComponent.material);
+    }
+
+    /**
+     * Creates new vectors each time it is called becaue of mutable vectors.
+     * @param props 
+     * @returns 
+     */
+    private static createPoints(props: WindowProps): [Vector3, Vector3, Vector3, Vector3] {
+        const topLeft = new Vector3(0, 0, props.width);
+        const topRight = new Vector3(props.length, 0, props.width);
+        const bottomRight = new Vector3(props.length, 0, 0);
+        const bottomLeft = new Vector3(0, 0, 0);
+        return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
     public changePosition(position: Vector3) {
@@ -41,15 +51,22 @@ export default class WindowComponent implements IMovingWindowComponent, IPlacedW
         return placed;
     }
 
-    public getPointsOnPlan(position: Vector3): Array<Vector3> {
-        throw new Error("Method not implemented.");
+    public getPointsOnPlan(position: Vector3): [Vector3, Vector3, Vector3, Vector3] {
+        this.window.position.copy(position);
+        const points = WindowComponent.createPoints(this.props);
+
+        const offset = new Vector3(this.props.length/2, 0, this.props.width/2);
+        points.forEach(v => v.add(position).sub(offset)); // translate all points coordinates to grid
+        return points;
     }
 
     public addTo(scene: Scene): WindowComponent {
-        throw new Error("Method not implemented.");
+        scene.add(this.window);
+        return this;
     }
 
     public removeFrom(scene: Scene): WindowComponent {
-        throw new Error("Method not implemented.");
+        scene.remove(this.window);
+        return this;
     }
 }
