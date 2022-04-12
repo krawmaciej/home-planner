@@ -1,8 +1,8 @@
 import "../../css/MainStyle.css"
 
-import { memo, useLayoutEffect, useRef } from "react";
+import React, { memo, useLayoutEffect, useRef } from "react";
 
-import { AxesHelper, CircleGeometry, DirectionalLight, GridHelper, HemisphereLight, Mesh, MeshBasicMaterial, OrthographicCamera, PerspectiveCamera, Scene, Vector2, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
+import { DirectionalLight, GridHelper, HemisphereLight, OrthographicCamera, Scene, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RenderOrder } from "../constants/Types";
 import MainInputHandler from "./inputHandlers/MainInputHandler";
@@ -96,7 +96,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
     function animate() {
       render();
       requestAnimationFrame(animate);
-    };
+    }
 
     function render() {
       if (!pointer.onCanvas) {
@@ -118,7 +118,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
         mainInputHandler.handleMovement(unprojection);
       }
       renderer.render(scene, camera);
-    };
+    }
 
     function handleResize() {
       width = mount?.current?.clientWidth ?? 0;
@@ -189,7 +189,6 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
       }
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

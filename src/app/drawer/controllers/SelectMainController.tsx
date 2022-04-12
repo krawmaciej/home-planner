@@ -5,7 +5,6 @@ import { MainControllerType } from "./FloorPlanMainController";
 const SelectMainController: React.FC<MainFactoryComponentProps<MainControllerType>> = ({ setType }) => {
 
     useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const selectWalls = () => {

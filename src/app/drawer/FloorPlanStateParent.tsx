@@ -16,7 +16,6 @@ const FloorPlanStateParent: React.FC<{}> = () => {
 
     useEffect(() => {
         scene.background = new Color(0x999999);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

@@ -1,6 +1,5 @@
-import { Line, Material, Points, Vector3 } from "three";
+import { Line, Material, Vector3 } from "three";
 import { WallConstruction, WallPoint } from "../../components/DrawerMath";
-import DrawedWall from "./DrawedWall";
 import WallSide from "./WallSide";
 
 export enum WallSideType {

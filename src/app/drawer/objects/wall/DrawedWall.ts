@@ -1,6 +1,6 @@
 import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3, MeshBasicMaterialParameters, Scene } from "three";
 import { WallConstruction, MiddlePoints, WallPoint } from "../../components/DrawerMath";
-import { ComponentElevation, RenderOrder } from "../../constants/Types";
+import { RenderOrder } from "../../constants/Types";
 import IDrawedWall from "./IDrawedWall";
 
 /**

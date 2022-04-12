@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import WallDrawingIH from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
-import ControllerFactory, { FactorySubcomponentProps } from "./ControllerFactory";
+import { FactorySubcomponentProps } from "./ControllerFactory";
 import { Context } from "./FloorPlanMainController";
 
 const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
@@ -13,14 +13,13 @@ const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
         }
         const wallDrawer = context.wallDrawer;
         context.mainInputHandler.changeHandlingStrategy(new WallDrawingIH(wallDrawer));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <>
             <div>
                 {context?.placedWalls.map(v => {
-                    return (<p>{JSON.stringify(v.props.points)}</p>);
+                    return (<p key={v.wall.id}>{JSON.stringify(v.props.points)}</p>);
                 })}
             </div>
             <button onClick={goBack}>Powrót</button>

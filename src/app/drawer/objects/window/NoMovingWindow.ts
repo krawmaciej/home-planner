@@ -1,5 +1,4 @@
-import { Vector3, Scene } from "three";
-import ISceneObject from "../ISceneObject";
+import { Vector3 } from "three";
 import IMovingWindowComponent from "./IMovingWindowComponent";
 import IPlacedWindowComponent from "./IPlacedWindowComponent";
 
@@ -7,22 +6,22 @@ export default class NoMovingWindow implements IMovingWindowComponent {
     private static readonly instance = new NoMovingWindow();
     public static getInstance(): NoMovingWindow {
         return this.instance;
-    };
+    }
     private constructor() {}
 
-    createPlacedComponent(position: Vector3): IPlacedWindowComponent {
+    createPlacedComponent(): IPlacedWindowComponent {
         throw new Error("Method not implemented.");
     }
-    changePosition(point: Vector3): void {
+    changePosition(): void {
         throw new Error("Method not implemented.");
     }
-    getPointsOnPlan(position: Vector3): [Vector3, Vector3, Vector3, Vector3] {
+    getPointsOnPlan(): [Vector3, Vector3, Vector3, Vector3] {
         throw new Error("Method not implemented.");
     }
-    addTo(scene: Scene): NoMovingWindow {
+    addTo(): void {
         throw new Error("Method not implemented.");
     }
-    removeFrom(scene: Scene): NoMovingWindow {
+    removeFrom(): void {
         throw new Error("Method not implemented.");
     }
 }

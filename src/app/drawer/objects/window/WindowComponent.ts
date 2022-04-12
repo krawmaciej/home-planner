@@ -1,8 +1,7 @@
-import { BufferAttribute, BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
+import { BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
 import { WallPoint } from "../../components/DrawerMath";
 import IMovingWindowComponent from "./IMovingWindowComponent";
 import IPlacedWindowComponent from "./IPlacedWindowComponent";
-import IWallComponent from "./IWallComponent";
 
 export type WindowProps = {
     length: number,
@@ -60,13 +59,11 @@ export default class WindowComponent implements IMovingWindowComponent, IPlacedW
         return points;
     }
 
-    public addTo(scene: Scene): WindowComponent {
+    public addTo(scene: Scene): void {
         scene.add(this.window);
-        return this;
     }
 
-    public removeFrom(scene: Scene): WindowComponent {
+    public removeFrom(scene: Scene): void {
         scene.remove(this.window);
-        return this;
     }
 }

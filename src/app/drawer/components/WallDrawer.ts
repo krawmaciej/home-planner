@@ -1,6 +1,5 @@
 import { Scene, Vector3 } from "three";
 import { ComponentElevation, RenderOrder } from "../constants/Types";
-import DrawedWall from "../objects/wall/DrawedWall";
 import WallBuilder from "../objects/wall/WallBuilder";
 import IDrawedWall from "../objects/wall/IDrawedWall";
 import NoDrawedWall from "../objects/wall/NoDrawedWall";

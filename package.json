@@ -23,7 +23,12 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
     "ansi-regex": "^6.0.1",
+    "eslint": "^8.13.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "jest": "^27.5.1",
     "node": "16.14.2",
     "npm": "^8.5.0",
@@ -40,9 +45,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "build": "react-scripts build",
     "test": "jest --maxWorkers=1",
-    "eject": "react-scripts eject"
+    "eslint": "eslint . --ext .ts --ext .tsx --ext .js",
+    "eslint-fix": "eslint . --ext .ts --ext .tsx --ext .js --fix"
   },
   "eslintConfig": {
     "extends": [

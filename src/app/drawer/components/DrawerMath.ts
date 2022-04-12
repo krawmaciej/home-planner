@@ -49,18 +49,18 @@ export default class DrawerMath {
 
     private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
         if (direction === Direction.DOWN) {
-            return DrawerMath.handleDownDirection(start, end, direction);
+            return DrawerMath.handleDownDirection(start, end);
         } else if (direction === Direction.UP) {
-            return DrawerMath.handleUpDirection(start, end, direction);
+            return DrawerMath.handleUpDirection(start, end);
         } else if (direction === Direction.LEFT) {
-            return DrawerMath.handleLeftDirection(start, end, direction);
+            return DrawerMath.handleLeftDirection(start, end);
         } else if (direction === Direction.RIGHT) {
-            return DrawerMath.handleRightDirection(start, end, direction);
+            return DrawerMath.handleRightDirection(start, end);
         }
         throw new Error("Drawed wall has no direction");
     }
 
-    private static handleDownDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static handleDownDirection(start: Vector3, end: Vector3): [Vector3, Vector3, Vector3, Vector3] {
         const topLeft = start.clone();
         topLeft.x = Math.floor(start.x);
         topLeft.z = Math.ceil(start.z);
@@ -78,7 +78,7 @@ export default class DrawerMath {
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleUpDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static handleUpDirection(start: Vector3, end: Vector3): [Vector3, Vector3, Vector3, Vector3] {
         const bottomRight = start.clone();
         bottomRight.x = Math.ceil(start.x);
         bottomRight.z = Math.floor(start.z);
@@ -96,7 +96,7 @@ export default class DrawerMath {
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleLeftDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static handleLeftDirection(start: Vector3, end: Vector3): [Vector3, Vector3, Vector3, Vector3] {
         const bottomRight = start.clone();
         bottomRight.x = Math.ceil(start.x);
         bottomRight.z = Math.floor(start.z);
@@ -114,7 +114,7 @@ export default class DrawerMath {
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleRightDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static handleRightDirection(start: Vector3, end: Vector3): [Vector3, Vector3, Vector3, Vector3] {
         const topLeft = start.clone();
         topLeft.x = Math.floor(start.x);
         topLeft.z = Math.ceil(start.z);

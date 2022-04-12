@@ -1,7 +1,6 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { WindowProps } from "../objects/window/WindowComponent";
 import WallComponentAddingIH from "../UI/inputHandlers/wallComponentAdding/WallComponentAddingIH";
-import WallDrawingIH from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { Context } from "./FloorPlanMainController";
 
@@ -21,11 +20,9 @@ const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack })
     const handleSelection = (selection: number) => {
         inputHandler.handleSelection(windowsToSelect[selection]);
         setSelection(selection);
-
     }
 
     useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

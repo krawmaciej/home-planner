@@ -21,7 +21,7 @@ export default class CollisionDetector {
     public detectAxisAlignedRectangleCollisions(checked: WallConstruction, walls: Array<DrawedWall>): boolean {
         const topRight = checked.points[WallPoint.TOP_RIGHT];
         const bottomLeft = checked.points[WallPoint.BOTTOM_LEFT];
-        for (let wall of walls) {
+        for (const wall of walls) {
             const wTopRight = wall.props.points[WallPoint.TOP_RIGHT];
             const wBottomLeft = wall.props.points[WallPoint.BOTTOM_LEFT];
             if (bottomLeft.x < wTopRight.x &&
@@ -49,7 +49,7 @@ export default class CollisionDetector {
 
         const adjecentWalls = new Array<AdjecentWall>();
 
-        for (let wall of walls) {
+        for (const wall of walls) {
             const collisionPoints = new Array<Vector3>();
             let edgeCollisionsCount = 0;
             let wallSideType = WallSideType.TOP;
@@ -131,7 +131,7 @@ export default class CollisionDetector {
 
         const adjecentWalls = new Array<AdjecentWall>();
 
-        for (let wall of walls) {
+        for (const wall of walls) {
             const collisionPoints = new Array<Vector3>();
             let edgeCollisionsCount = 0;
             let wallSideType = WallSideType.TOP;

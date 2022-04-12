@@ -1,4 +1,4 @@
-import { Scene, Vector3 } from "three";
+import { Vector3 } from "three";
 import IPlacedWindowComponent from "./IPlacedWindowComponent";
 import IWallComponent from "./IWallComponent";
 

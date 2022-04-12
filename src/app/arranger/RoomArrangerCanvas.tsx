@@ -1,6 +1,6 @@
 import "../css/MainStyle.css"
 
-import { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 
 import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -78,11 +78,11 @@ export default function RoomArrangerCanvas({scene}: Props) {
       // windowOfWall.translateX(0.01);
       render();
       requestAnimationFrame(animate);
-    };
+    }
 
     function render() {
       renderer.render(scene, camera);
-    };
+    }
 
     function handleResize() {
       width = mount?.current?.clientWidth ?? 0;

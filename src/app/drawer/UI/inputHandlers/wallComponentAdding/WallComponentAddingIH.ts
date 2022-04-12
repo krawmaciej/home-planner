@@ -1,7 +1,6 @@
-import { posix } from "path";
-import { Scene, Vector3 } from "three";
+import { Vector3 } from "three";
 import WallComponentAdder from "../../../components/WallComponentAdder";
-import WindowComponent, { WindowProps } from "../../../objects/window/WindowComponent";
+import { WindowProps } from "../../../objects/window/WindowComponent";
 import InputHandler from "../InputHandler";
 import WallComponentPointer, { State } from "./WallComponentPointer";
 

@@ -1,7 +1,3 @@
-import React from "react";
-import WallComponentController from "./WallComponentController";
-import SelectMainController from "./SelectMainController";
-import WallController from "./WallController";
 
 
 type Props<T extends number> = {
