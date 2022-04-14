@@ -1,13 +1,13 @@
 import { Vector3 } from "three";
-import WallDrawer from "../../../components/WallDrawer";
+import { WallDrawer } from "../../../components/WallDrawer";
 import { DrawingState, WallPointer } from "./WallPointer";
-import InputHandler from "../InputHandler";
+import { IInputHandler } from "../IInputHandler";
 
 /**
  * Stateful input handler for drawing new walls.
  * Start state is NONE, start point set to 0,0,0.
  */
-export default class WallDrawingIH implements InputHandler {
+export class WallDrawingIH implements IInputHandler {
 
     private readonly wallDrawer: WallDrawer;
     private pointer: WallPointer;

@@ -1,15 +1,15 @@
 import { Vector3 } from "three";
 import { AdjecentWall, Collision } from "../../components/CollisionDetector";
-import DrawerMath, { WallConstruction } from "../../components/DrawerMath";
-import DrawedWall from "./DrawedWall";
-import PlacedWall from "./PlacedWall";
-import WallThickness from "./WallThickness";
+import { DrawerMath, WallConstruction } from "../../components/DrawerMath";
+import { DrawedWall } from "./DrawedWall";
+import { PlacedWall } from "./PlacedWall";
+import { WallThickness } from "./WallThickness";
 
 /**
  * Creates a wall properties from which the meshes will be created.
  * Used for collision detection and calculations which do not require meshes.
  */
-export default class WallBuilder {
+export class WallBuilder {
 
     private props: WallConstruction;
     private collision: Collision;

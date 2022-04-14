@@ -1,9 +1,9 @@
 import { BufferGeometry, Line, Material, Vector3 } from "three";
-import IWallComponent from "../window/IWallComponent";
+import { IWallComponent } from "../window/IWallComponent";
 import { WallSideType } from "./WallSides";
 
 
-export default class WallSide {
+export class WallSide {
 
     private readonly head: SideNode;
     private readonly tail: SideNode;

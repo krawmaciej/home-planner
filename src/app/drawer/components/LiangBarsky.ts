@@ -17,7 +17,7 @@ export enum CollisionType {
     ALL = NORMAL | EDGE | POINT
 }
 
-export default class LiangBarsky {
+export class LiangBarsky {
 
     private tN = 0.0;
     private tF = 1.0;
@@ -84,7 +84,7 @@ export default class LiangBarsky {
         if (denom > 0) {
             const t = number / denom;
             if (t > this.tF) {
-                return false
+                return false;
             } else if (t > this.tN) {
                 this.tN = t;
             }

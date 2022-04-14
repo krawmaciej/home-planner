@@ -1,12 +1,12 @@
 import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3, MeshBasicMaterialParameters, Scene } from "three";
 import { WallConstruction, MiddlePoints, WallPoint } from "../../components/DrawerMath";
 import { RenderOrder } from "../../constants/Types";
-import IDrawedWall from "./IDrawedWall";
+import { IDrawedWall } from "./IDrawedWall";
 
 /**
  * Creates Meshes from properties provided by {@link DrawedWallBuilder}.
  */
-export default class DrawedWall implements IDrawedWall {
+export class DrawedWall implements IDrawedWall {
 
     private static readonly contactPointMesh = DrawedWall.createPointMesh({ color: 0xffff00 });
     private static readonly middlePointMesh = DrawedWall.createPointMesh({ color: 0x000000 });

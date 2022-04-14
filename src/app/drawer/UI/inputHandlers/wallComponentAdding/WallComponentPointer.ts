@@ -4,7 +4,7 @@ export enum State {
     NONE, SELECTED, MOVING,
 }
 
-export default class WallComponentPointer {
+export class WallComponentPointer {
 
     private static readonly unsetPosition = new Vector3();
     private state: State;

@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { WindowProps } from "../objects/window/WindowComponent";
-import WallComponentAddingIH from "../UI/inputHandlers/wallComponentAdding/WallComponentAddingIH";
+import { WallComponentAddingIH } from "../UI/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { Context } from "./FloorPlanMainController";
 
-const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
+export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
     const context = useContext(Context);
     const { current: windowsToSelect } = useRef<Array<WindowProps>>([{ length: 1.5, width: 1 }]);
@@ -20,7 +20,7 @@ const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack })
     const handleSelection = (selection: number) => {
         inputHandler.handleSelection(windowsToSelect[selection]);
         setSelection(selection);
-    }
+    };
 
     useEffect(() => {
     }, []);
@@ -31,6 +31,4 @@ const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack })
             <button onClick={() => handleSelection(0)}>Okno1</button>
         </>
     );
-}
-
-export default WallComponentController;
+};

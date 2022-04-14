@@ -1,13 +1,13 @@
 import { Scene, Vector3 } from "three";
 import { ComponentElevation, RenderOrder } from "../constants/Types";
-import WallBuilder from "../objects/wall/WallBuilder";
-import IDrawedWall from "../objects/wall/IDrawedWall";
-import NoDrawedWall from "../objects/wall/NoDrawedWall";
-import WallThickness from "../objects/wall/WallThickness";
-import CollisionDetector from "./CollisionDetector";
-import PlacedWall from "../objects/wall/PlacedWall";
+import { WallBuilder } from "../objects/wall/WallBuilder";
+import { IDrawedWall } from "../objects/wall/IDrawedWall";
+import { NoDrawedWall } from "../objects/wall/NoDrawedWall";
+import { WallThickness } from "../objects/wall/WallThickness";
+import { CollisionDetector } from "./CollisionDetector";
+import { PlacedWall } from "../objects/wall/PlacedWall";
 
-export default class WallDrawer {
+export class WallDrawer {
 
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;

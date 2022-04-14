@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import WallDrawingIH from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
+import { WallDrawingIH } from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { Context } from "./FloorPlanMainController";
 
-const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
+export const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
     const context = useContext(Context);
 
@@ -25,6 +25,4 @@ const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
             <button onClick={goBack}>Powrót</button>
         </>
     );
-}
-
-export default WallController;
+};

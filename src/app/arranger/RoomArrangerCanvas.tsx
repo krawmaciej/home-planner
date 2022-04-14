@@ -1,4 +1,4 @@
-import "../css/MainStyle.css"
+import "../css/MainStyle.css";
 
 import React, { useLayoutEffect, useRef } from "react";
 
@@ -10,7 +10,7 @@ type Props = {
   scene: Scene
 }
 
-export default function RoomArrangerCanvas({scene}: Props) {
+export function RoomArrangerCanvas({scene}: Props) {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -31,7 +31,7 @@ export default function RoomArrangerCanvas({scene}: Props) {
       const renderParams: WebGLRendererParameters = {
         precision: "lowp",
         // antialias: true,
-      }
+      };
 
       renderer = new WebGLRenderer(renderParams);
       camera = new PerspectiveCamera(50, width / height, 0.1, 1000);

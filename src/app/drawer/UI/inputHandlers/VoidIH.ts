@@ -1,6 +1,6 @@
-import InputHandler from "./InputHandler";
+import { IInputHandler } from "./IInputHandler";
 
-export default class VoidIH implements InputHandler {
+export class VoidIH implements IInputHandler {
     handleMovement(): void {
         // no op
     }

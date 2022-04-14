@@ -1,6 +1,6 @@
 import { Scene } from "three";
 
-export default interface ISceneObject {
+export interface ISceneObject {
     addTo(scene: Scene): void;
     removeFrom(scene: Scene): void;
 }

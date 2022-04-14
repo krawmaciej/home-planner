@@ -6,7 +6,7 @@ export class ImportedObject {
     public readonly mainMesh: Group = new Group(); // TODO: now empty object, change to mesh
 }
 
-export default class ObjectFactory {
+export class ObjectFactory {
     private static readonly cachedObject: ImportedObject = new ImportedObject();
 
     public static loadWindow() {

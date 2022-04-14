@@ -1,6 +1,6 @@
 import { Line, Material, Vector3 } from "three";
 import { WallConstruction, WallPoint } from "../../components/DrawerMath";
-import WallSide from "./WallSide";
+import { WallSide } from "./WallSide";
 
 export enum WallSideType {
     TOP, RIGHT, BOTTOM, LEFT
@@ -9,7 +9,7 @@ export enum WallSideType {
 /**
  * Wraps array of wall sides of a single wall.
  */
-export default class WallSides {
+export class WallSides {
     
     private readonly wallSides: Array<WallSide>;
 

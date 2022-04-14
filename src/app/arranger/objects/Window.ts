@@ -1,9 +1,9 @@
 import { BufferAttribute, BufferGeometry, Mesh } from "three";
 import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing, Position2D } from "../constants/Types";
-import ObjectLoader, { ImportedObject } from "./ImportedObject";
-import Wall from "./Wall";
+import { ImportedObject, ObjectFactory } from "./ImportedObject";
+import { Wall } from "./Wall";
 
-export default class Window {
+export class Window {
 
     public readonly mainWindowFrame: Mesh; // holds frame reference from the wall
     public readonly windowObject: ImportedObject; // window 3d object, will be a child of mainWindowFrame
@@ -16,7 +16,7 @@ export default class Window {
     }
 
     public static create(position: Position2D, parentWall: Wall) {
-        const windowObject = ObjectLoader.loadWindow();
+        const windowObject = ObjectFactory.loadWindow();
         const frameGeometry = this.createWindowFrame({
             length: windowObject.dimensions.length,
             height: windowObject.dimensions.height,

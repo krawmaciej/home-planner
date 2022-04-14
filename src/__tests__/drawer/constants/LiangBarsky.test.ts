@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import LiangBarsky from "../../../app/drawer/components/LiangBarsky";
+import { LiangBarsky } from "../../../app/drawer/components/LiangBarsky";
 
 describe("Test Liang LiangBarsky clipping", () => {
 

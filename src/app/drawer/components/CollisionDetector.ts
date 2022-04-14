@@ -1,9 +1,9 @@
 import { Vector3 } from "three";
-import DrawedWall from "../objects/wall/DrawedWall";
-import PlacedWall from "../objects/wall/PlacedWall";
+import { DrawedWall } from "../objects/wall/DrawedWall";
+import { PlacedWall } from "../objects/wall/PlacedWall";
 import { WallSideType } from "../objects/wall/WallSides";
 import { WallConstruction, WallPoint } from "./DrawerMath";
-import LiangBarsky, { LiangBarskyResult, CollisionType } from "./LiangBarsky";
+import { LiangBarsky, LiangBarskyResult, CollisionType } from "./LiangBarsky";
 
 export type Collision = {
     isCollision: boolean,
@@ -21,7 +21,7 @@ export type CollidingWall = {
     collisionArea: number,
 }
 
-export default class CollisionDetector {
+export class CollisionDetector {
 
     public detectAxisAlignedRectangleCollisions(checked: WallConstruction, walls: Array<DrawedWall>): boolean {
         const topRight = checked.points[WallPoint.TOP_RIGHT];
@@ -71,7 +71,7 @@ export default class CollisionDetector {
             }
 
             // right
-            check = this.checkLineCollision(bottomRight, topRight, wall.props.points)
+            check = this.checkLineCollision(bottomRight, topRight, wall.props.points);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
                 wallSideType = WallSideType.RIGHT;
@@ -82,7 +82,7 @@ export default class CollisionDetector {
             }
 
             // bottom
-            check = this.checkLineCollision(bottomLeft, bottomRight, wall.props.points)
+            check = this.checkLineCollision(bottomLeft, bottomRight, wall.props.points);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
                 wallSideType = WallSideType.BOTTOM;
@@ -93,7 +93,7 @@ export default class CollisionDetector {
             }
 
             // left
-            check = this.checkLineCollision(bottomLeft, topLeft, wall.props.points)
+            check = this.checkLineCollision(bottomLeft, topLeft, wall.props.points);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
                 wallSideType = WallSideType.LEFT;
@@ -143,27 +143,27 @@ export default class CollisionDetector {
             // top
             let check = this.checkLineCollision(topLeft, topRight, wall.props.points);
             if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
-                horizontalSideCollidingLengths.push(check.p0.distanceTo(check.p1))
+                horizontalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
                 collision = true;
             }
 
             // right
-            check = this.checkLineCollision(bottomRight, topRight, wall.props.points)
+            check = this.checkLineCollision(bottomRight, topRight, wall.props.points);
             if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
-                verticalSideCollidingLengths.push(check.p0.distanceTo(check.p1))
+                verticalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
             }
 
             // bottom
-            check = this.checkLineCollision(bottomLeft, bottomRight, wall.props.points)
+            check = this.checkLineCollision(bottomLeft, bottomRight, wall.props.points);
             if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
-                horizontalSideCollidingLengths.push(check.p0.distanceTo(check.p1))
+                horizontalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
                 collision = true;
             }
 
             // left
-            check = this.checkLineCollision(bottomLeft, topLeft, wall.props.points)
+            check = this.checkLineCollision(bottomLeft, topLeft, wall.props.points);
             if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
-                verticalSideCollidingLengths.push(check.p0.distanceTo(check.p1))
+                verticalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
                 collision = true;
             }
 

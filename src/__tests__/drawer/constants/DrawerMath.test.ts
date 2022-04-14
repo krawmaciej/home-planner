@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 import DrawerMath, { WallPoint } from "../../../app/drawer/components/DrawerMath";
-import Direction from "../../../app/drawer/objects/Direction";
-import WallThickness from "../../../app/drawer/objects/WallThickness";
+import { Direction } from "../../../app/drawer/objects/Direction";
+import { WallThickness } from "../../../app/drawer/objects/WallThickness";
 
 describe("test add function", () => {
   test("calculateDirection should be right", () => {

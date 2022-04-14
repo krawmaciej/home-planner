@@ -1,11 +1,11 @@
-import "../../css/MainStyle.css"
+import "../../css/MainStyle.css";
 
 import React, { memo, useLayoutEffect, useRef } from "react";
 
 import { DirectionalLight, GridHelper, HemisphereLight, OrthographicCamera, Scene, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RenderOrder } from "../constants/Types";
-import MainInputHandler from "./inputHandlers/MainInputHandler";
+import { MainInputHandler } from "./inputHandlers/MainInputHandler";
 
 type Pointer = {
   onCanvas: boolean,
@@ -24,7 +24,7 @@ type Props = {
  * @param param0 
  * @returns 
  */
-const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
+const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -50,7 +50,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
       const renderParams: WebGLRendererParameters = {
         precision: "highp",
         antialias: true,
-      }
+      };
 
       renderer = new WebGLRenderer(renderParams);
       const aspect = window.innerWidth / window.innerHeight;
@@ -113,7 +113,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
           onCanvas: pointer.onCanvas,
           vectorToUnproject: pointer.vectorToUnproject.clone(),
           clicked: false
-        }
+        };
       } else {
         mainInputHandler.handleMovement(unprojection);
       }
@@ -148,7 +148,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
         onCanvas: pointer.onCanvas,
         vectorToUnproject: new Vector3(x, y, 0),
         clicked: pointer.clicked
-      }
+      };
     }
 
     /**
@@ -162,7 +162,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
         onCanvas: pointer.onCanvas,
         vectorToUnproject: new Vector3(x, y, 0),
         clicked: true
-      }
+      };
       // old
       // if (pointer.state === DrawingState.NONE) {
       //   pointer = pointer.startDrawing({ x: x, y: y });
@@ -178,7 +178,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
         onCanvas: true,
         vectorToUnproject: new Vector3(x, y, 0),
         clicked: pointer.clicked
-      }
+      };
     }
 
     function handlePointerLeave(event: PointerEvent) {
@@ -186,7 +186,7 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
         onCanvas: false,
         vectorToUnproject: pointer.vectorToUnproject,
         clicked: pointer.clicked
-      }
+      };
     }
 
   }, []);
@@ -195,6 +195,6 @@ const FloorPlanCanvas: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
     <div className="Render" ref={mount}/>
   );
 
-}
+};
 
-export default memo(FloorPlanCanvas);
+export const FloorPlanCanvas = memo(FloorPlanCanvasBase);

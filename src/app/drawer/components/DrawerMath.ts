@@ -1,6 +1,6 @@
 import { Vector3 } from "three";
-import Direction from "../objects/wall/Direction";
-import WallThickness from "../objects/wall/WallThickness";
+import { Direction } from "../objects/wall/Direction";
+import { WallThickness } from "../objects/wall/WallThickness";
 import { Vector2D } from "../constants/Types";
 
 export type WallConstruction = {
@@ -18,7 +18,7 @@ export enum WallPoint {
     TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT
 }
 
-export default class DrawerMath {
+export class DrawerMath {
 
     public static calculateDirection(start: Vector3, end: Vector3): Vector2D {
         if (Math.abs(end.x - start.x) > Math.abs(end.z - start.z)) {

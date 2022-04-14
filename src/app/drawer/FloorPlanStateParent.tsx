@@ -1,14 +1,14 @@
-import "../css/MainStyle.css"
+import "../css/MainStyle.css";
 
 import React, { useEffect, useState } from 'react';
 
 import { Color, Scene } from 'three';
-import FloorPlanCanvas from "./UI/FloorPlanCanvas";
-import FloorPlanMainController from "./controllers/FloorPlanMainController";
-import MainInputHandler from "./UI/inputHandlers/MainInputHandler";
-import VoidIH from "./UI/inputHandlers/VoidIH";
+import { FloorPlanCanvas } from "./UI/FloorPlanCanvas";
+import { FloorPlanMainController } from "./controllers/FloorPlanMainController";
+import { MainInputHandler } from "./UI/inputHandlers/MainInputHandler";
+import { VoidIH } from "./UI/inputHandlers/VoidIH";
 
-const FloorPlanStateParent: React.FC<{}> = () => {
+export const FloorPlanStateParent: React.FC<{}> = () => {
 
     const [scene] = useState<Scene>(new Scene());
 
@@ -28,6 +28,4 @@ const FloorPlanStateParent: React.FC<{}> = () => {
             </div>
         </div>
     );
-}
-
-export default FloorPlanStateParent;
+};

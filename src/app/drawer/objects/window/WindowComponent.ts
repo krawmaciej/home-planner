@@ -1,7 +1,7 @@
 import { BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
 import { WallPoint } from "../../components/DrawerMath";
-import IMovingWindowComponent from "./IMovingWindowComponent";
-import IPlacedWindowComponent from "./IPlacedWindowComponent";
+import { IMovingWindowComponent } from "./IMovingWindowComponent";
+import { IPlacedWindowComponent } from "./IPlacedWindowComponent";
 
 export type WindowProps = {
     length: number,
@@ -9,7 +9,7 @@ export type WindowProps = {
     // orientation: enum?
 };
 
-export default class WindowComponent implements IMovingWindowComponent, IPlacedWindowComponent {
+export class WindowComponent implements IMovingWindowComponent, IPlacedWindowComponent {
 
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,

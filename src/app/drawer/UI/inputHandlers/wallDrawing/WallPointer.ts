@@ -25,7 +25,7 @@ export class WallPointer {
     }
 
     public stopDrawing(position: Vector3) {
-        console.log("stop drawing")
+        console.log("stop drawing");
         // assert(this.state === DrawingState.DRAWING, "state drawing when stop drawing");
         return new WallPointer(this.startPosition, position, DrawingState.DRAW);
     }

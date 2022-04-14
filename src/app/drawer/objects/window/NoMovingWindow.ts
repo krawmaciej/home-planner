@@ -1,8 +1,8 @@
 import { Vector3 } from "three";
-import IMovingWindowComponent from "./IMovingWindowComponent";
-import IPlacedWindowComponent from "./IPlacedWindowComponent";
+import { IMovingWindowComponent } from "./IMovingWindowComponent";
+import { IPlacedWindowComponent } from "./IPlacedWindowComponent";
 
-export default class NoMovingWindow implements IMovingWindowComponent {
+export class NoMovingWindow implements IMovingWindowComponent {
     private static readonly instance = new NoMovingWindow();
     public static getInstance(): NoMovingWindow {
         return this.instance;

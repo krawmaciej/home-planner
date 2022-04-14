@@ -1,11 +1,11 @@
 import { Vector3 } from "three";
-import WallComponentAdder from "../../../components/WallComponentAdder";
+import { WallComponentAdder } from "../../../components/WallComponentAdder";
 import { ComponentElevation } from "../../../constants/Types";
 import { WindowProps } from "../../../objects/window/WindowComponent";
-import InputHandler from "../InputHandler";
-import WallComponentPointer, { State } from "./WallComponentPointer";
+import { IInputHandler } from "../IInputHandler";
+import { WallComponentPointer, State } from "./WallComponentPointer";
 
-export default class WallComponentAddingIH implements InputHandler {
+export class WallComponentAddingIH implements IInputHandler {
 
     // deps
     private readonly wallComponentAdder: WallComponentAdder;

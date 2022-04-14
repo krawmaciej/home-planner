@@ -1,13 +1,13 @@
 import { Scene, Vector3 } from "three";
-import PlacedWall from "../objects/wall/PlacedWall";
-import IWallComponent from "../objects/window/IWallComponent";
-import WindowComponent, { WindowProps } from "../objects/window/WindowComponent";
-import CollisionDetector from "./CollisionDetector";
-import NoMovingWindow from "../objects/window/NoMovingWindow";
-import IMovingWindowComponent from "../objects/window/IMovingWindowComponent";
-import IPlacedWindowComponent from "../objects/window/IPlacedWindowComponent";
+import { PlacedWall } from "../objects/wall/PlacedWall";
+import { IWallComponent } from "../objects/window/IWallComponent";
+import { WindowComponent, WindowProps } from "../objects/window/WindowComponent";
+import { CollisionDetector } from "./CollisionDetector";
+import { NoMovingWindow } from "../objects/window/NoMovingWindow";
+import { IMovingWindowComponent } from "../objects/window/IMovingWindowComponent";
+import { IPlacedWindowComponent } from "../objects/window/IPlacedWindowComponent";
 
-export default class WallComponentAdder {
+export class WallComponentAdder {
 
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;

@@ -1,5 +1,5 @@
-import IWallComponent from "./IWallComponent";
+import { IWallComponent } from "./IWallComponent";
 
-export default interface IPlacedWindowComponent extends IWallComponent {
+export interface IPlacedWindowComponent extends IWallComponent {
 
 }

@@ -1,5 +1,3 @@
-
-
 type Props<T extends number> = {
     type: T,
     providers: Array<() => JSX.Element>,
@@ -17,7 +15,7 @@ export type FactorySubcomponentProps = {
     goBack: () => void, // goes back to MainFactoryComponent
 }
 
-const ControllerFactory = <T extends number>({ type, providers }: Props<T>) => {
+export const ControllerFactory = <T extends number>({ type, providers }: Props<T>) => {
 
     // todo: if this will be needed somewhere else then try passing index and array of React.FC and return it by index
 
@@ -37,6 +35,4 @@ const ControllerFactory = <T extends number>({ type, providers }: Props<T>) => {
     //         throw new Error("Not implemented yet."); // defensive fallback
     //     }
     // }
-}
-
-export default ControllerFactory;
+};

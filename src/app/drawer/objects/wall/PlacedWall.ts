@@ -1,10 +1,10 @@
 import { Group, Line, LineBasicMaterial, Scene, Vector3 } from "three";
 import { AdjecentWall } from "../../components/CollisionDetector";
 import { WallConstruction } from "../../components/DrawerMath";
-import ISceneObject from "../ISceneObject";
-import WallSides, { WallSideType } from "./WallSides";
+import { ISceneObject } from "../ISceneObject";
+import { WallSides, WallSideType } from "./WallSides";
 
-export default class PlacedWall implements ISceneObject {
+export class PlacedWall implements ISceneObject {
     
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,

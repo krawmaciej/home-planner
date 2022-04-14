@@ -1,19 +1,19 @@
 import { Vector3 } from "three";
-import InputHandler from "./InputHandler";
+import { IInputHandler } from "./IInputHandler";
 
 /**
  * It is stateful because it is used by the canvas.
  * (Is not a delegate itself to not allow nesting.)
  */
-export default class MainInputHandler {
+export class MainInputHandler {
 
-    private delegate: InputHandler;
+    private delegate: IInputHandler;
 
-    public constructor(inputHandler: InputHandler) {
+    public constructor(inputHandler: IInputHandler) {
         this.delegate = inputHandler;
     }
 
-    public changeHandlingStrategy(inputHandler: InputHandler) {
+    public changeHandlingStrategy(inputHandler: IInputHandler) {
         this.delegate = inputHandler;
     }
 
