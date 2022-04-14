@@ -44,14 +44,14 @@ export default class LiangBarsky {
                         if (this.tF < 1.0) {
                             np1 = new Vector3(
                                 p0.x + this.tF * dx,
-                                0,
+                                p0.y,
                                 p0.z + this.tF * dz
                             );
                         }
                         if (this.tN > 0.0) {
                             np0 = new Vector3(
                                 p0.x + this.tN * dx,
-                                0,
+                                p0.y,
                                 p0.z + this.tN * dz
                             );
                         }

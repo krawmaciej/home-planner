@@ -39,8 +39,7 @@ export default class WallComponentAdder {
 
     public moveComponent(position: Vector3) {
         const points = this.movingWindow.getPointsOnPlan(position);
-        const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
-        console.log(col);
+        // const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
 
         this.movingWindow.changePosition(position);
     }
@@ -49,6 +48,9 @@ export default class WallComponentAdder {
         if (this.movingWindow === undefined) {
             return;
         }
+        const points = this.movingWindow.getPointsOnPlan(position);
+        const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
+        console.log("col window:", col);
         // if no collisions and can be added to a wall
         const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent(position);
         placedComponent.addTo(this.scene);
