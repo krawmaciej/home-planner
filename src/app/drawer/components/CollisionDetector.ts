@@ -1,18 +1,20 @@
 import { Vector3 } from "three";
+import { ObjectPoints } from "../constants/Types";
+import { ISceneObject } from "../objects/ISceneObject";
 import { DrawedWall } from "../objects/wall/DrawedWall";
 import { PlacedWall } from "../objects/wall/PlacedWall";
 import { WallSideType } from "../objects/wall/WallSides";
-import { WallConstruction, WallPoint } from "./DrawerMath";
+import { DrawerMath, WallConstruction, WallPoint } from "./DrawerMath";
 import { LiangBarsky, LiangBarskyResult, CollisionType } from "./LiangBarsky";
 
 export type Collision = {
     isCollision: boolean,
-    adjecentWalls: Array<AdjecentWall>,
+    adjacentWalls: Array<AdjacentWall>,
 }
 
-export type AdjecentWall = {
+export type AdjacentWall = {
     toSide: WallSideType
-    adjecent: PlacedWall,
+    adjacent: PlacedWall,
     points: Array<Vector3>,
 }
 
@@ -22,6 +24,22 @@ export type CollidingWall = {
 }
 
 export class CollisionDetector {
+
+    /**
+     * Finds only the first colliding object from {@link objects} array.
+     * @param position
+     * @param objects
+     */
+    public pickRectangularObjectWithPointer<T extends ISceneObject>(position: Vector3, objects: Array<T>): T | undefined {
+        for (const obj of objects) {
+            const min = obj.objectPoints()[WallPoint.BOTTOM_LEFT];
+            const max = obj.objectPoints()[WallPoint.TOP_RIGHT];
+            if (DrawerMath.isPointBetweenMinMaxPoints(position, min, max)) {
+                return obj;
+            }
+        }
+        return undefined;
+    }
 
     public detectAxisAlignedRectangleCollisions(checked: WallConstruction, walls: Array<DrawedWall>): boolean {
         const topRight = checked.points[WallPoint.TOP_RIGHT];
@@ -52,7 +70,7 @@ export class CollisionDetector {
         const bottomRight = points[WallPoint.BOTTOM_RIGHT];
         const bottomLeft = points[WallPoint.BOTTOM_LEFT];
 
-        const adjecentWalls = new Array<AdjecentWall>();
+        const adjacentWalls = new Array<AdjacentWall>();
 
         for (const wall of walls) {
             const collisionPoints = new Array<Vector3>();
@@ -67,7 +85,7 @@ export class CollisionDetector {
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjecentWalls: adjecentWalls };
+                return { isCollision: true, adjacentWalls: adjacentWalls };
             }
 
             // right
@@ -78,7 +96,7 @@ export class CollisionDetector {
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjecentWalls: adjecentWalls };
+                return { isCollision: true, adjacentWalls: adjacentWalls };
             }
 
             // bottom
@@ -89,7 +107,7 @@ export class CollisionDetector {
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjecentWalls: adjecentWalls };
+                return { isCollision: true, adjacentWalls: adjacentWalls };
             }
 
             // left
@@ -100,23 +118,23 @@ export class CollisionDetector {
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjecentWalls: adjecentWalls };
+                return { isCollision: true, adjacentWalls: adjacentWalls };
             }
 
             if (edgeCollisionsCount === 1) { // only one side collided, start and end must have been set
-                adjecentWalls.push({ 
+                adjacentWalls.push({ 
                     toSide: wallSideType,
-                    adjecent: wall,
+                    adjacent: wall,
                     points: collisionPoints
                 });
             } else if (edgeCollisionsCount > 1) {
-                return { isCollision: true, adjecentWalls: adjecentWalls };
+                return { isCollision: true, adjacentWalls: adjacentWalls };
             }
         }
-        return { isCollision: false, adjecentWalls: adjecentWalls };
+        return { isCollision: false, adjacentWalls: adjacentWalls };
     }
 
-    private checkLineCollision(p0: Vector3, p1: Vector3, points: [Vector3, Vector3, Vector3, Vector3]): LiangBarskyResult {
+    private checkLineCollision(p0: Vector3, p1: Vector3, points: ObjectPoints): LiangBarskyResult {
         const min = points[WallPoint.BOTTOM_LEFT];
         const max = points[WallPoint.TOP_RIGHT];
         return LiangBarsky.checkCollision(p0, p1, min, max);

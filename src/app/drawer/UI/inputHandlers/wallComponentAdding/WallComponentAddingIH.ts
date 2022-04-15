@@ -1,20 +1,25 @@
 import { Vector3 } from "three";
 import { WallComponentAdder } from "../../../components/WallComponentAdder";
-import { ComponentElevation } from "../../../constants/Types";
+import { ObjectElevation } from "../../../constants/Types";
 import { WindowProps } from "../../../objects/window/WindowComponent";
 import { IInputHandler } from "../IInputHandler";
 import { WallComponentPointer, State } from "./WallComponentPointer";
+import {Observer} from "../../../controllers/WallComponentController";
 
 export class WallComponentAddingIH implements IInputHandler {
 
     // deps
     private readonly wallComponentAdder: WallComponentAdder;
 
+    // observer
+    private readonly observer: Observer;
+
     // state
     private readonly pointer: WallComponentPointer;
 
-    public constructor(wallComponentAdder: WallComponentAdder) {
+    public constructor(wallComponentAdder: WallComponentAdder, observer: Observer) {
         this.wallComponentAdder = wallComponentAdder;
+        this.observer = observer;
         this.pointer = new WallComponentPointer();
     }
 
@@ -28,18 +33,19 @@ export class WallComponentAddingIH implements IInputHandler {
     }
 
     public handleMovement(point: Vector3): void {
-        point.setY(ComponentElevation.COMPONENT); // y coordinate is elevation
+        point.setY(ObjectElevation.COMPONENT); // y coordinate is elevation
         if (this.pointer.getState() === State.SELECTED) {
             this.pointer.move(point); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
             this.wallComponentAdder.showMovingComponent(point);
         } else if (this.pointer.getState() === State.MOVING) {
             this.pointer.move(point); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
-            this.wallComponentAdder.moveComponent(point);
+            const distance = this.wallComponentAdder.moveComponent(point);
+            this.observer.setDistance(distance);
         }
     }
 
     public handleClick(point: Vector3): void {
-        point.setY(ComponentElevation.COMPONENT); // y coordinate is elevation
+        point.setY(ObjectElevation.COMPONENT); // y coordinate is elevation
         if (this.pointer.getState() === State.MOVING) {
             // todo: if it was possible to place it, otherwise don't place and continue moving
             console.log("placed on: ", point);

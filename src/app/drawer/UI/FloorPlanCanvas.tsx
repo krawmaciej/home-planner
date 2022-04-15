@@ -4,7 +4,7 @@ import React, { memo, useLayoutEffect, useRef } from "react";
 
 import { DirectionalLight, GridHelper, HemisphereLight, OrthographicCamera, Scene, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { RenderOrder } from "../constants/Types";
+// import { RenderOrder } from "../constants/Types";
 import { MainInputHandler } from "./inputHandlers/MainInputHandler";
 
 type Pointer = {
@@ -27,6 +27,7 @@ type Props = {
 const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
+  const zoom = 0.5;
 
   useLayoutEffect(() => {
     let renderer: WebGLRenderer;
@@ -54,16 +55,17 @@ const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) 
 
       renderer = new WebGLRenderer(renderParams);
       const aspect = window.innerWidth / window.innerHeight;
-      camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, 0.1, 500);
+      camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / - 2, frustumSize / 2, 0.1, 500);
 
       const grid = new GridHelper(100, 100, 0xbbbbbb, 0xbbbbbb);
-      grid.renderOrder = RenderOrder.GRID;
-      scene.add(grid);
+      // grid.renderOrder = RenderOrder.GRID;
+      // scene.add(grid);
 
       renderer.setSize(width, height);
   
       camera.position.set(0.0, 4.0, 0.0);
       camera.lookAt(0, 0, 0);
+      camera.zoom = zoom;
 
       // controls = new OrbitControls(camera, renderer.domElement);
 
@@ -127,8 +129,9 @@ const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) 
 
       camera.left = - frustumSize * aspect / 2;
       camera.right = frustumSize * aspect / 2;
-      camera.top = frustumSize / 2;
-      camera.bottom = - frustumSize / 2;
+      camera.top = - frustumSize / 2;
+      camera.bottom = frustumSize / 2;
+      // camera.zoom = zoom;
       camera.updateProjectionMatrix();
 
       // controls.update();

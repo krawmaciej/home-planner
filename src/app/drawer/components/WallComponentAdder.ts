@@ -37,22 +37,42 @@ export class WallComponentAdder {
         this.movingWindow.addTo(this.scene);
     }
 
-    public moveComponent(position: Vector3) {
-        const points = this.movingWindow.getPointsOnPlan(position);
-        // const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
-
+    public moveComponent(position: Vector3): undefined | number {
         this.movingWindow.changePosition(position);
+
+        const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
+        if (wall === undefined) {
+            return; // no wall owner, do nothing
+        }
+
+        this.movingWindow.setParentWall(wall);
+        return this.movingWindow.getDistanceFromParentWall();
+
+
+        // points.push(points[0]);
+        //
+        // const geo = new BufferGeometry().setFromPoints(points);
+        // this.scene.add(new Line(geo));
+        // const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
     }
 
     public addComponentToWall(position: Vector3) {
         if (this.movingWindow === undefined) {
             return;
         }
-        const points = this.movingWindow.getPointsOnPlan(position);
-        const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
-        console.log("col window:", col);
+        this.movingWindow.changePosition(position);
+
+        // const points = this.movingWindow.objectPoints();
+        // const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
+        // console.log("col window:", col);
         // if no collisions and can be added to a wall
         const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent(position);
+        const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
+        if (wall === undefined) {
+            return; // no wall owner, do nothing
+        }
+
+        placedComponent.setParentWall(wall);
         placedComponent.addTo(this.scene);
         this.wallComponents.push(placedComponent);
     }

@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { AdjecentWall, Collision } from "../../components/CollisionDetector";
+import { AdjacentWall, Collision } from "../../components/CollisionDetector";
 import { DrawerMath, WallConstruction } from "../../components/DrawerMath";
 import { DrawedWall } from "./DrawedWall";
 import { PlacedWall } from "./PlacedWall";
@@ -16,7 +16,7 @@ export class WallBuilder {
 
     public constructor(props: WallConstruction) {
         this.props = props;
-        this.collision = { isCollision: false, adjecentWalls: new Array<AdjecentWall>() };
+        this.collision = { isCollision: false, adjacentWalls: new Array<AdjacentWall>() };
     }
     
     public static createWall(start: Vector3, end: Vector3, wallThickness: WallThickness): WallBuilder {
@@ -38,12 +38,12 @@ export class WallBuilder {
     }
 
     public createDrawedWall(): DrawedWall {
-        const contactPoints = this.collision.adjecentWalls.flatMap(wall => wall.points);
+        const contactPoints = this.collision.adjacentWalls.flatMap(wall => wall.points);
         return DrawedWall.wallFromPoints(this.props, this.collision.isCollision, contactPoints);
     }
 
     public createPlacedWall(): PlacedWall {
-        return PlacedWall.create(this.props, this.collision.adjecentWalls);
+        return PlacedWall.create(this.props, this.collision.adjacentWalls);
     }
 
     // getters

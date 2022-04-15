@@ -1,7 +1,9 @@
-import { Vector3 } from "three";
-import { ISceneObject } from "../ISceneObject";
+import {Vector3} from "three";
+import {ISceneObject} from "../ISceneObject";
+import {PlacedWall} from "../wall/PlacedWall";
 
 export interface IWallComponent extends ISceneObject {
     changePosition(point: Vector3): void;
-    getPointsOnPlan(position: Vector3): [Vector3, Vector3, Vector3, Vector3],
+    setParentWall(wall: PlacedWall): void;
+    getDistanceFromParentWall(): undefined | number;
 }

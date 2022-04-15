@@ -1,6 +1,7 @@
 import { Group, Line, LineBasicMaterial, Scene, Vector3 } from "three";
-import { AdjecentWall } from "../../components/CollisionDetector";
+import { AdjacentWall } from "../../components/CollisionDetector";
 import { WallConstruction } from "../../components/DrawerMath";
+import { ObjectPoints } from "../../constants/Types";
 import { ISceneObject } from "../ISceneObject";
 import { WallSides, WallSideType } from "./WallSides";
 
@@ -8,12 +9,12 @@ export class PlacedWall implements ISceneObject {
     
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
-        depthTest: false
+        // depthTest: false
     });
 
-    public static create(props: WallConstruction, adjecentWalls: AdjecentWall[]): PlacedWall {
+    public static create(props: WallConstruction, adjacentWalls: AdjacentWall[]): PlacedWall {
         const wallSides = new WallSides(props);
-        adjecentWalls.forEach(aw => wallSides.putHole(aw.toSide, aw.points));
+        adjacentWalls.forEach(aw => wallSides.putHole(aw.toSide, aw.points));
         const wallParts = wallSides.createDrawableObjects(PlacedWall.material);
         const wall = new Group();
         wallParts.forEach(wp => wall.add(wp));
@@ -51,5 +52,9 @@ export class PlacedWall implements ISceneObject {
 
     public removeFrom(scene: Scene): void {
         scene.remove(this.wall);
+    }
+
+    public objectPoints(): ObjectPoints {
+        return this.props.points;
     }
 }

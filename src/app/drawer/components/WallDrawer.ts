@@ -1,5 +1,5 @@
 import { Scene, Vector3 } from "three";
-import { ComponentElevation, RenderOrder } from "../constants/Types";
+import { ObjectElevation } from "../constants/Types";
 import { WallBuilder } from "../objects/wall/WallBuilder";
 import { IDrawedWall } from "../objects/wall/IDrawedWall";
 import { NoDrawedWall } from "../objects/wall/NoDrawedWall";
@@ -37,8 +37,8 @@ export class WallDrawer {
      * @param end pointer ending point
      */
     public moveDrawedWall(start: Vector3, end: Vector3) {
-        start.y = ComponentElevation.WALL;
-        end.y = ComponentElevation.WALL;
+        start.y = ObjectElevation.WALL;
+        end.y = ObjectElevation.WALL;
 
         const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
@@ -46,14 +46,14 @@ export class WallDrawer {
         const dWall = wallBuilder.setCollision(collision).createDrawedWall();
 
         this.drawedWall.removeFrom(this.scene);
-        dWall.wall.renderOrder = RenderOrder.WALL;
+        // dWall.wall.renderOrder = RenderOrder.WALL;
         this.scene.add(dWall.wall);
         this.drawedWall = dWall;
     }
 
     public drawWall(start: Vector3, end: Vector3) {
-        start.y = ComponentElevation.WALL;
-        end.y = ComponentElevation.WALL;
+        start.y = ObjectElevation.WALL;
+        end.y = ObjectElevation.WALL;
         const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
         const collisionResult = this.collisionDetector.detectWallCollisions(wallBuilder.getProps(), this.placedWalls);
@@ -69,23 +69,24 @@ export class WallDrawer {
 
         const placedWall = wallBuilder.setCollision(collisionResult).createPlacedWall();
 
-        collisionResult.adjecentWalls.forEach(aw => {
-            const collision = this.collisionDetector.detectWallCollisions(aw.adjecent.props, [ placedWall ]);
-            if (collision.adjecentWalls.length !== 1) {
+        collisionResult.adjacentWalls.forEach(aw => {
+            const collision = this.collisionDetector.detectWallCollisions(aw.adjacent.props, [ placedWall ]);
+            if (collision.adjacentWalls.length !== 1) {
                 throw new Error("Collided wall should also collide with new wall but did not!");
             }
-            const { toSide, points } = collision.adjecentWalls[0];
-            const replaced = aw.adjecent.collidedWithWall(toSide, points);
+            const { toSide, points } = collision.adjacentWalls[0];
+            const replaced = aw.adjacent.collidedWithWall(toSide, points);
 
-            aw.adjecent.removeFrom(this.scene);
+            aw.adjacent.removeFrom(this.scene);
             replaced.addTo(this.scene);
 
-            const index = this.placedWalls.indexOf(aw.adjecent); // replace in array
+            const index = this.placedWalls.indexOf(aw.adjacent); // replace in array
             this.placedWalls[index] = replaced;
         });
 
         placedWall.addTo(this.scene);
         this.placedWalls.push(placedWall);
         this.updateWallsToggle(prev => !prev);
+        console.log(placedWall.props);
     }
 }

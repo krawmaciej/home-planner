@@ -1,23 +1,35 @@
-import { BufferGeometry, Line, LineBasicMaterial, Material, Scene, Vector3 } from "three";
-import { WallPoint } from "../../components/DrawerMath";
-import { IMovingWindowComponent } from "./IMovingWindowComponent";
-import { IPlacedWindowComponent } from "./IPlacedWindowComponent";
+import {BufferGeometry, Line, LineBasicMaterial, Material, Quaternion, Scene, Vector3} from "three";
+import {DrawerMath, WallPoint} from "../../components/DrawerMath";
+import {ObjectElevation, ObjectPoints, Vector2D} from "../../constants/Types";
+import {IMovingWindowComponent} from "./IMovingWindowComponent";
+import {IPlacedWindowComponent} from "./IPlacedWindowComponent";
+import {Direction} from "../wall/Direction";
+import {PlacedWall} from "../wall/PlacedWall";
 
 export type WindowProps = {
     length: number,
     width: number,
-    // orientation: enum?
 };
 
 export class WindowComponent implements IMovingWindowComponent, IPlacedWindowComponent {
 
+    private static readonly DEFAULT_ROTATION = new Quaternion();
+    private static readonly RIGHT_ANGLE_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2.0);
+    private static readonly directionQuaternionMap = new Map<Vector2D, Quaternion>([
+        [Direction.RIGHT, WindowComponent.DEFAULT_ROTATION],
+        [Direction.LEFT, WindowComponent.DEFAULT_ROTATION],
+        [Direction.UP, WindowComponent.RIGHT_ANGLE_ROTATION],
+        [Direction.DOWN, WindowComponent.RIGHT_ANGLE_ROTATION],
+    ]);
+
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
-        depthTest: false
     });
 
     public readonly props: WindowProps;
     private readonly window: Line<BufferGeometry, Material>;
+    private direction: Vector2D;
+    private parentWall: undefined | PlacedWall;
 
     public constructor(props: WindowProps) {
         this.props = props;
@@ -25,18 +37,19 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         points.push(points[WallPoint.TOP_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
         this.window = new Line(geometry, WindowComponent.material);
+        this.direction = Direction.RIGHT;
     }
 
     /**
-     * Creates new vectors each time it is called becaue of mutable vectors.
+     * Creates new vectors each time it is called because of mutable vectors.
      * @param props 
      * @returns 
      */
-    private static createPoints(props: WindowProps): [Vector3, Vector3, Vector3, Vector3] {
-        const topLeft = new Vector3(0, 0, props.width);
-        const topRight = new Vector3(props.length, 0, props.width);
-        const bottomRight = new Vector3(props.length, 0, 0);
-        const bottomLeft = new Vector3(0, 0, 0);
+    private static createPoints(props: WindowProps): ObjectPoints {
+        const topLeft = new Vector3(0, ObjectElevation.COMPONENT, props.width);
+        const topRight = new Vector3(props.length, ObjectElevation.COMPONENT, props.width);
+        const bottomRight = new Vector3(props.length, ObjectElevation.COMPONENT, 0);
+        const bottomLeft = new Vector3(0, ObjectElevation.COMPONENT, 0);
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
@@ -50,20 +63,80 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         return placed;
     }
 
-    public getPointsOnPlan(position: Vector3): [Vector3, Vector3, Vector3, Vector3] {
-        this.window.position.copy(position);
-        const points = WindowComponent.createPoints(this.props);
-
-        const offset = new Vector3(this.props.length/2, 0, this.props.width/2);
-        points.forEach(v => v.add(position).sub(offset)); // translate all points coordinates to grid
-        return points;
-    }
-
     public addTo(scene: Scene): void {
         scene.add(this.window);
     }
 
     public removeFrom(scene: Scene): void {
         scene.remove(this.window);
+    }
+
+    public objectPoints(): ObjectPoints {
+        const first = new Vector3(
+            this.window.geometry.getAttribute("position").array[0],
+            this.window.geometry.getAttribute("position").array[1],
+            this.window.geometry.getAttribute("position").array[2],
+        );
+
+        const second = new Vector3(
+            this.window.geometry.getAttribute("position").array[3],
+            this.window.geometry.getAttribute("position").array[4],
+            this.window.geometry.getAttribute("position").array[5],
+        );
+
+        const third = new Vector3(
+            this.window.geometry.getAttribute("position").array[6],
+            this.window.geometry.getAttribute("position").array[7],
+            this.window.geometry.getAttribute("position").array[8],
+        );
+
+        const fourth = new Vector3(
+            this.window.geometry.getAttribute("position").array[9],
+            this.window.geometry.getAttribute("position").array[10],
+            this.window.geometry.getAttribute("position").array[11],
+        );
+
+        // to world
+        this.window.localToWorld(first);
+        this.window.localToWorld(second);
+        this.window.localToWorld(third);
+        this.window.localToWorld(fourth);
+
+        if (this.direction === Direction.LEFT || this.direction === Direction.RIGHT) {
+            return [first, second, third, fourth];
+        } else {
+            return [fourth, first, second ,third];
+        }
+    }
+
+    public setParentWall(wall: PlacedWall) {
+        this.parentWall = wall;
+        this.changeRotation(wall.props.direction);
+    }
+
+    public unsetParentWall() {
+        this.parentWall = undefined;
+    }
+
+    public getDistanceFromParentWall(): undefined | number {
+        if (this.parentWall === undefined) {
+            return undefined;
+        }
+        const componentBottomLeft = this.objectPoints()[WallPoint.BOTTOM_LEFT];
+        const wallBottomLeft = this.parentWall.objectPoints()[WallPoint.BOTTOM_LEFT];
+        return DrawerMath.distanceBetweenVectors(componentBottomLeft, wallBottomLeft);
+    }
+
+    private changeRotation(direction: Vector2D): void {
+        if (this.direction === direction) {
+            return;
+        }
+
+        this.direction = direction;
+        const quaternion = WindowComponent.directionQuaternionMap.get(direction);
+        if (quaternion === undefined) {
+            throw new Error("Wall component direction has no quaternion mapped!");
+        }
+        this.window.setRotationFromQuaternion(quaternion);
     }
 }
