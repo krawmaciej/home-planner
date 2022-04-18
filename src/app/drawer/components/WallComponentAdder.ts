@@ -38,22 +38,25 @@ export class WallComponentAdder {
     }
 
     public moveComponent(position: Vector3): undefined | number {
-        this.movingWindow.changePosition(position);
 
         const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
         if (wall === undefined) {
+            console.log("unset parent wall in adder");
+            this.movingWindow.changePosition(position);
+            this.movingWindow.unsetParentWall();
             return; // no wall owner, do nothing
         }
 
+        console.log("set parent wall in adder");
         this.movingWindow.setParentWall(wall);
+        this.movingWindow.changePosition(position);
+
+
+
+
+
+
         return this.movingWindow.getDistanceFromParentWall();
-
-
-        // points.push(points[0]);
-        //
-        // const geo = new BufferGeometry().setFromPoints(points);
-        // this.scene.add(new Line(geo));
-        // const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
     }
 
     public addComponentToWall(position: Vector3) {

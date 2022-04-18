@@ -1,6 +1,6 @@
 import {BufferGeometry, Line, LineBasicMaterial, Material, Quaternion, Scene, Vector3} from "three";
-import {DrawerMath, WallPoint} from "../../components/DrawerMath";
-import {ObjectElevation, ObjectPoints, Vector2D} from "../../constants/Types";
+import {DrawerMath} from "../../components/DrawerMath";
+import {ObjectElevation, ObjectPoints, Vector2D, ObjectPoint} from "../../constants/Types";
 import {IMovingWindowComponent} from "./IMovingWindowComponent";
 import {IPlacedWindowComponent} from "./IPlacedWindowComponent";
 import {Direction} from "../wall/Direction";
@@ -9,7 +9,12 @@ import {PlacedWall} from "../wall/PlacedWall";
 export type WindowProps = {
     length: number,
     width: number,
-};
+}
+
+type XZLengths = {
+    x: number,
+    z: number,
+}
 
 export class WindowComponent implements IMovingWindowComponent, IPlacedWindowComponent {
 
@@ -34,7 +39,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     public constructor(props: WindowProps) {
         this.props = props;
         const points = WindowComponent.createPoints(props);
-        points.push(points[WallPoint.TOP_LEFT]);
+        points.push(points[ObjectPoint.TOP_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
         this.window = new Line(geometry, WindowComponent.material);
         this.direction = Direction.RIGHT;
@@ -54,7 +59,41 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     }
 
     public changePosition(position: Vector3) {
-        this.window.position.copy(position);
+        if (this.parentWall === undefined) {
+            this.window.position.copy(position);
+            return;
+        }
+
+        const wallPoints = this.parentWall.objectPoints();
+        const wallMin = wallPoints[ObjectPoint.BOTTOM_LEFT];
+        const wallMax = wallPoints[ObjectPoint.TOP_RIGHT];
+
+        const delta = position.clone().sub(this.window.position);
+
+        const componentPoints = this.objectPoints();
+        const componentMin = componentPoints[ObjectPoint.BOTTOM_LEFT].add(delta);
+        const componentMax = componentPoints[ObjectPoint.TOP_RIGHT].add(delta);
+
+        const componentLengths = this.getXZLengths();
+        const newPosition = position.clone();
+
+        if (componentMin.x < wallMin.x) {
+            newPosition.x = wallMin.x + componentLengths.x/2;
+        }
+
+        if (componentMin.z < wallMin.z) {
+            newPosition.z = wallMin.z + componentLengths.z/2;
+        }
+
+        if (componentMax.x > wallMax.x) {
+            newPosition.x = wallMax.x - componentLengths.x/2;
+        }
+
+        if (componentMax.z > wallMax.z) {
+            newPosition.z = wallMax.z - componentLengths.z/2;
+        }
+
+        this.window.position.copy(newPosition);
     }
 
     public createPlacedComponent(position: Vector3): IPlacedWindowComponent {
@@ -109,6 +148,20 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         }
     }
 
+    public getXZLengths(): XZLengths {
+        if (this.direction === Direction.LEFT || this.direction === Direction.RIGHT) {
+            return {
+                x: this.props.length,
+                z: this.props.width,
+            };
+        } else {
+            return {
+                x: this.props.width,
+                z: this.props.length,
+            };
+        }
+    }
+
     public setParentWall(wall: PlacedWall) {
         this.parentWall = wall;
         this.changeRotation(wall.props.direction);
@@ -122,9 +175,9 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         if (this.parentWall === undefined) {
             return undefined;
         }
-        const componentBottomLeft = this.objectPoints()[WallPoint.BOTTOM_LEFT];
-        const wallBottomLeft = this.parentWall.objectPoints()[WallPoint.BOTTOM_LEFT];
-        return DrawerMath.distanceBetweenVectors(componentBottomLeft, wallBottomLeft);
+        const componentBottomLeft = this.objectPoints()[ObjectPoint.BOTTOM_LEFT];
+        const wallBottomLeft = this.parentWall.objectPoints()[ObjectPoint.BOTTOM_LEFT];
+        return DrawerMath.distanceBetweenPoints(componentBottomLeft, wallBottomLeft);
     }
 
     private changeRotation(direction: Vector2D): void {

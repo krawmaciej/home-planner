@@ -1,6 +1,6 @@
 import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3, MeshBasicMaterialParameters, Scene } from "three";
-import { WallConstruction, MiddlePoints, WallPoint } from "../../components/DrawerMath";
-import { ObjectElevation } from "../../constants/Types";
+import { WallConstruction, MiddlePoints} from "../../components/DrawerMath";
+import {ObjectElevation, ObjectPoint} from "../../constants/Types";
 import { IDrawedWall } from "./IDrawedWall";
 
 /**
@@ -98,7 +98,7 @@ export class DrawedWall implements IDrawedWall {
     }
 
     private static getWallPoints({points}: WallConstruction): Vector3[] {
-        return [...points, points[WallPoint.TOP_LEFT]];
+        return [...points, points[ObjectPoint.TOP_LEFT]];
     }
 
     private static getMiddlePoints({first: start, last: end}: MiddlePoints): Vector3[] {

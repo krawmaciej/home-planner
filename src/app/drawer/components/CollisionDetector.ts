@@ -1,10 +1,10 @@
 import { Vector3 } from "three";
-import { ObjectPoints } from "../constants/Types";
+import {ObjectPoints, ObjectPoint} from "../constants/Types";
 import { ISceneObject } from "../objects/ISceneObject";
 import { DrawedWall } from "../objects/wall/DrawedWall";
 import { PlacedWall } from "../objects/wall/PlacedWall";
 import { WallSideType } from "../objects/wall/WallSides";
-import { DrawerMath, WallConstruction, WallPoint } from "./DrawerMath";
+import { DrawerMath, WallConstruction} from "./DrawerMath";
 import { LiangBarsky, LiangBarskyResult, CollisionType } from "./LiangBarsky";
 
 export type Collision = {
@@ -32,8 +32,8 @@ export class CollisionDetector {
      */
     public pickRectangularObjectWithPointer<T extends ISceneObject>(position: Vector3, objects: Array<T>): T | undefined {
         for (const obj of objects) {
-            const min = obj.objectPoints()[WallPoint.BOTTOM_LEFT];
-            const max = obj.objectPoints()[WallPoint.TOP_RIGHT];
+            const min = obj.objectPoints()[ObjectPoint.BOTTOM_LEFT];
+            const max = obj.objectPoints()[ObjectPoint.TOP_RIGHT];
             if (DrawerMath.isPointBetweenMinMaxPoints(position, min, max)) {
                 return obj;
             }
@@ -42,11 +42,11 @@ export class CollisionDetector {
     }
 
     public detectAxisAlignedRectangleCollisions(checked: WallConstruction, walls: Array<DrawedWall>): boolean {
-        const topRight = checked.points[WallPoint.TOP_RIGHT];
-        const bottomLeft = checked.points[WallPoint.BOTTOM_LEFT];
+        const topRight = checked.points[ObjectPoint.TOP_RIGHT];
+        const bottomLeft = checked.points[ObjectPoint.BOTTOM_LEFT];
         for (const wall of walls) {
-            const wTopRight = wall.props.points[WallPoint.TOP_RIGHT];
-            const wBottomLeft = wall.props.points[WallPoint.BOTTOM_LEFT];
+            const wTopRight = wall.props.points[ObjectPoint.TOP_RIGHT];
+            const wBottomLeft = wall.props.points[ObjectPoint.BOTTOM_LEFT];
             if (bottomLeft.x < wTopRight.x &&
                 topRight.x > wBottomLeft.x &&
                 bottomLeft.z < wTopRight.z &&
@@ -65,10 +65,10 @@ export class CollisionDetector {
      * @returns 
      */
     public detectWallCollisions({ points }: WallConstruction, walls: Array<PlacedWall>): Collision {
-        const topLeft = points[WallPoint.TOP_LEFT];
-        const topRight = points[WallPoint.TOP_RIGHT];
-        const bottomRight = points[WallPoint.BOTTOM_RIGHT];
-        const bottomLeft = points[WallPoint.BOTTOM_LEFT];
+        const topLeft = points[ObjectPoint.TOP_LEFT];
+        const topRight = points[ObjectPoint.TOP_RIGHT];
+        const bottomRight = points[ObjectPoint.BOTTOM_RIGHT];
+        const bottomLeft = points[ObjectPoint.BOTTOM_LEFT];
 
         const adjacentWalls = new Array<AdjacentWall>();
 
@@ -135,8 +135,8 @@ export class CollisionDetector {
     }
 
     private checkLineCollision(p0: Vector3, p1: Vector3, points: ObjectPoints): LiangBarskyResult {
-        const min = points[WallPoint.BOTTOM_LEFT];
-        const max = points[WallPoint.TOP_RIGHT];
+        const min = points[ObjectPoint.BOTTOM_LEFT];
+        const max = points[ObjectPoint.TOP_RIGHT];
         return LiangBarsky.checkCollision(p0, p1, min, max);
     }
 
@@ -147,10 +147,10 @@ export class CollisionDetector {
      * @returns 
      */
     public detectWindowWallCollisions(points : Array<Vector3>, walls: Array<PlacedWall>): Array<CollidingWall> {
-        const topLeft = points[WallPoint.TOP_LEFT];
-        const topRight = points[WallPoint.TOP_RIGHT];
-        const bottomRight = points[WallPoint.BOTTOM_RIGHT];
-        const bottomLeft = points[WallPoint.BOTTOM_LEFT];
+        const topLeft = points[ObjectPoint.TOP_LEFT];
+        const topRight = points[ObjectPoint.TOP_RIGHT];
+        const bottomRight = points[ObjectPoint.BOTTOM_RIGHT];
+        const bottomLeft = points[ObjectPoint.BOTTOM_LEFT];
 
         const collidingWalls = new Array<CollidingWall>();
 

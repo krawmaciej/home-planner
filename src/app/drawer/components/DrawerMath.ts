@@ -1,7 +1,7 @@
-import { Vector3 } from "three";
-import { Direction } from "../objects/wall/Direction";
-import { WallThickness } from "../objects/wall/WallThickness";
-import {ObjectElevation, ObjectPoints, Vector2D} from "../constants/Types";
+import {Vector3} from "three";
+import {Direction} from "../objects/wall/Direction";
+import {WallThickness} from "../objects/wall/WallThickness";
+import {ObjectElevation, ObjectPoints, Vector2D, ObjectPoint} from "../constants/Types";
 
 export type WallConstruction = {
     points: ObjectPoints,
@@ -14,22 +14,22 @@ export type MiddlePoints = {
     last: Vector3
 }
 
-export enum WallPoint {
-    TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT
-}
-
 export class DrawerMath {
 
     public static readonly COMPARISON_ACCURACY = 0.01; // one millimeter, 1 is 10 cm
 
     public static isPointBetweenMinMaxPoints(point: Vector3, min: Vector3, max: Vector3): boolean {
-        if (point.x > min.x && point.z > min.z) {
-            if (point.x < max.x && point.z < max.z) {
+        if (point.x >= min.x && point.z >= min.z) {
+            if (point.x <= max.x && point.z <= max.z) {
                 return true;
             }
         }
         // needs checking equality because of the floating point representation
         return DrawerMath.areVectorsEqual(point, min) || DrawerMath.areVectorsEqual(point, max);
+    }
+
+    public static isInMinAndMaxRange(num: number, min: number, max: number) {
+        return num >= min && num <= max;
     }
 
     public static areVectorsEqual(v1: Vector3, v2: Vector3): boolean {
@@ -39,9 +39,17 @@ export class DrawerMath {
         );
     }
 
-    public static distanceBetweenVectors(v1: Vector3, v2: Vector3): number {
+    public static distanceBetweenPoints(v1: Vector3, v2: Vector3): number {
         return Math.sqrt((v1.x - v2.x) * (v1.x - v2.x) +
                             (v1.z - v2.z) * (v1.z - v2.z)
+        );
+    }
+
+    public static subtractVectors(leftOperand: Vector3, rightOperand: Vector3): Vector3 {
+        return new Vector3(
+            leftOperand.x - rightOperand.x,
+            0,
+            leftOperand.z - rightOperand.z
         );
     }
 
@@ -160,8 +168,8 @@ export class DrawerMath {
     private static calculateMiddlePoints(
         points: ObjectPoints, direction: Direction, wallThickness: WallThickness
     ): MiddlePoints {
-        const topLeft = points[WallPoint.TOP_LEFT];
-        const bottomRight = points[WallPoint.BOTTOM_RIGHT];
+        const topLeft = points[ObjectPoint.TOP_LEFT];
+        const bottomRight = points[ObjectPoint.BOTTOM_RIGHT];
 
         if (direction === Direction.DOWN || direction === Direction.UP) {
             const x = topLeft.x + wallThickness.halfThickness;

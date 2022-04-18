@@ -1,6 +1,7 @@
 import { Line, Material, Vector3 } from "three";
-import { WallConstruction, WallPoint } from "../../components/DrawerMath";
+import { WallConstruction} from "../../components/DrawerMath";
 import { WallSide } from "./WallSide";
+import {ObjectPoint} from "../../constants/Types";
 
 export enum WallSideType {
     TOP, RIGHT, BOTTOM, LEFT
@@ -30,10 +31,10 @@ export class WallSides {
     }
 
     private addWallSides({ points }: WallConstruction): void {
-        this.putWallSide(points[WallPoint.TOP_LEFT], points[WallPoint.TOP_RIGHT], WallSideType.TOP);
-        this.putWallSide(points[WallPoint.BOTTOM_RIGHT], points[WallPoint.TOP_RIGHT], WallSideType.RIGHT);
-        this.putWallSide(points[WallPoint.BOTTOM_LEFT], points[WallPoint.BOTTOM_RIGHT], WallSideType.BOTTOM);
-        this.putWallSide(points[WallPoint.BOTTOM_LEFT], points[WallPoint.TOP_LEFT], WallSideType.LEFT);
+        this.putWallSide(points[ObjectPoint.TOP_LEFT], points[ObjectPoint.TOP_RIGHT], WallSideType.TOP);
+        this.putWallSide(points[ObjectPoint.BOTTOM_RIGHT], points[ObjectPoint.TOP_RIGHT], WallSideType.RIGHT);
+        this.putWallSide(points[ObjectPoint.BOTTOM_LEFT], points[ObjectPoint.BOTTOM_RIGHT], WallSideType.BOTTOM);
+        this.putWallSide(points[ObjectPoint.BOTTOM_LEFT], points[ObjectPoint.TOP_LEFT], WallSideType.LEFT);
     }
 
     private putWallSide(p0: Vector3, p1: Vector3, type: WallSideType) {
