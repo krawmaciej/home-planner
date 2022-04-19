@@ -1,9 +1,13 @@
 import { BufferGeometry, Line, Material, Vector3 } from "three";
 import { IWallComponent } from "../window/IWallComponent";
 import { WallSideType } from "./WallSides";
+import {ObjectPoint} from "../../constants/Types";
 
 
 export class WallSide {
+
+    // used to quickly remove components from wall sides
+    private readonly componentToSideNode = new Map<IWallComponent, Array<SideNode>>();
 
     private readonly head: SideNode;
     private readonly tail: SideNode;
@@ -43,7 +47,7 @@ export class WallSide {
         const first = new SideNode(p0);
         const second = new SideNode(p1);
 
-        const strategyKey = this.strategyKey; // 'alias'
+        const strategyKey = this.strategyKey; // "alias"
 
         // check first pair
         let beforeIterator: SideNode = this.head;
@@ -74,6 +78,47 @@ export class WallSide {
             iterator = iterator.connection.next; // go to next node
         }
     }
+
+    /**
+     *
+     * @param component to be added to wall side
+     */
+    public putComponent(component: IWallComponent) {
+        // todo: when sideNode for component was found, cache it into the map
+        const strategyKey = this.strategyKey; // "alias"
+
+        const componentPoints = component.objectPoints();
+        const componentAttributes: ComponentAttributes = {
+            firstPoint: componentPoints[ObjectPoint.BOTTOM_LEFT],
+            secondPoint: componentPoints[ObjectPoint.TOP_RIGHT],
+            height: 15 // todo: parametrize this
+        };
+
+        // check first pair
+        let beforeIterator: SideNode = this.head;
+        let iterator: SideNode | undefined = this.head.connection.next;
+
+        while (iterator !== undefined) {
+            if (componentAttributes.secondPoint[strategyKey] <= iterator.point[strategyKey]) { // found higher todo: use vector epsilon comparison
+                // put in connection between iterator and beforeIterator
+                beforeIterator.connection.addComponent(component, componentAttributes);
+                return;
+            }
+            beforeIterator = iterator;
+            iterator = iterator.connection.next; // go to next node
+        }
+
+        // should not happen
+        throw new Error(`component: ${component} is outside of wallside: ${this}`);
+    }
+
+    public removeComponent(component: IWallComponent) {
+        const sideNodes = this.componentToSideNode.get(component);
+        if (sideNodes === undefined) {
+            throw new Error(`component: ${component} does not belong to wallside: ${this}`);
+        }
+        sideNodes.forEach(node => node.connection.removeComponent(component));
+    }
 }
 
 class SideNode {
@@ -89,15 +134,32 @@ class Connection {
     public next: SideNode | undefined;
     public type: ConnectionType;
     public readonly components: Array<IWallComponent>; // holds wall's connection doors/windows
+    public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices wih components array
     public constructor(next: SideNode | undefined, type: ConnectionType) {
         this.next = next;
         this.type = type;
         this.components = new Array<IWallComponent>();
+        this.componentsAttributes = new Array<ComponentAttributes>();
     }
-    public add(component: IWallComponent): Array<IWallComponent> {
+    public addComponent(component: IWallComponent, attributes: ComponentAttributes): Array<IWallComponent> {
         this.components.push(component);
+        this.componentsAttributes.push(attributes);
         return this.components;
     }
+    public removeComponent(component: IWallComponent) {
+        const index = this.components.indexOf(component);
+        if (index === -1) {
+            throw new Error(`component: ${component} was not found in the connection: ${this}`);
+        }
+        this.components.splice(index, 1);
+        this.componentsAttributes.splice(index, 1);
+    }
+}
+
+type ComponentAttributes = {
+    firstPoint: Vector3,
+    secondPoint: Vector3,
+    height: number,
 }
 
 enum ConnectionType {

@@ -1,19 +1,19 @@
 import {BufferGeometry, Line, LineBasicMaterial, Material, Quaternion, Scene, Vector3} from "three";
 import {DrawerMath} from "../../components/DrawerMath";
-import {ObjectElevation, ObjectPoints, Vector2D, ObjectPoint} from "../../constants/Types";
+import {ObjectElevation, ObjectPoint, ObjectPoints, Vector2D} from "../../constants/Types";
 import {IMovingWindowComponent} from "./IMovingWindowComponent";
 import {IPlacedWindowComponent} from "./IPlacedWindowComponent";
 import {Direction} from "../wall/Direction";
 import {PlacedWall} from "../wall/PlacedWall";
 
 export type WindowProps = {
-    length: number,
-    width: number,
+    readonly length: number,
+    readonly width: number,
 }
 
 type XZLengths = {
-    x: number,
-    z: number,
+    readonly x: number,
+    readonly z: number,
 }
 
 export class WindowComponent implements IMovingWindowComponent, IPlacedWindowComponent {
@@ -96,9 +96,10 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         this.window.position.copy(newPosition);
     }
 
-    public createPlacedComponent(position: Vector3): IPlacedWindowComponent {
+    public createPlacedComponent(): IPlacedWindowComponent {
         const placed = new WindowComponent(this.props);
-        placed.changePosition(position);
+        placed.changePosition(this.window.position);
+        placed.changeRotation(this.direction);
         return placed;
     }
 
@@ -191,5 +192,9 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
             throw new Error("Wall component direction has no quaternion mapped!");
         }
         this.window.setRotationFromQuaternion(quaternion);
+    }
+
+    public getParentWall(): PlacedWall | undefined {
+        return this.parentWall;
     }
 }

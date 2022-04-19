@@ -37,47 +37,52 @@ export class WallComponentAdder {
         this.movingWindow.addTo(this.scene);
     }
 
-    public moveComponent(position: Vector3): undefined | number {
-
+    public moveComponent(position: Vector3): IWallComponent {
         const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
         if (wall === undefined) {
-            console.log("unset parent wall in adder");
             this.movingWindow.changePosition(position);
             this.movingWindow.unsetParentWall();
-            return; // no wall owner, do nothing
+            return this.movingWindow; // no wall owner, do nothing
         }
 
-        console.log("set parent wall in adder");
         this.movingWindow.setParentWall(wall);
         this.movingWindow.changePosition(position);
 
-
-
-
-
-
-        return this.movingWindow.getDistanceFromParentWall();
+        return this.movingWindow;
     }
 
     public addComponentToWall(position: Vector3) {
+        // todo: debug corner placement
         if (this.movingWindow === undefined) {
             return;
         }
-        this.movingWindow.changePosition(position);
+
+        // const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
+        const wall = this.moveComponent(position).getParentWall();
+        if (wall === undefined) {
+            return; // no wall owner, cannot place component
+        }
+
+        const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent();
+        placedComponent.addTo(this.scene);
+        placedComponent.setParentWall(wall);
+        placedComponent.changePosition(position);
+        // wall.addComponent(placedComponent);
+        // this.wallComponents.push(placedComponent);
 
         // const points = this.movingWindow.objectPoints();
         // const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
         // console.log("col window:", col);
         // if no collisions and can be added to a wall
-        const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent(position);
-        const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
-        if (wall === undefined) {
-            return; // no wall owner, do nothing
-        }
-
-        placedComponent.setParentWall(wall);
-        placedComponent.addTo(this.scene);
-        this.wallComponents.push(placedComponent);
+        // const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent(position);
+        // const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
+        // if (wall === undefined) {
+        //     return; // no wall owner, do nothing
+        // }
+        //
+        // placedComponent.setParentWall(wall);
+        // placedComponent.addTo(this.scene);
+        // this.wallComponents.push(placedComponent);
     }
 
     /**

@@ -1,9 +1,11 @@
-import { Group, Line, LineBasicMaterial, Scene, Vector3 } from "three";
-import { AdjacentWall } from "../../components/CollisionDetector";
-import { WallConstruction } from "../../components/DrawerMath";
-import { ObjectPoints } from "../../constants/Types";
-import { ISceneObject } from "../ISceneObject";
-import { WallSides, WallSideType } from "./WallSides";
+import {Group, Line, LineBasicMaterial, Scene, Vector3} from "three";
+import {AdjacentWall} from "../../components/CollisionDetector";
+import {WallConstruction} from "../../components/DrawerMath";
+import {ObjectPoints} from "../../constants/Types";
+import {ISceneObject} from "../ISceneObject";
+import {WallSides, WallSideType} from "./WallSides";
+import {IWallComponent} from "../window/IWallComponent";
+import {Direction} from "./Direction";
 
 export class PlacedWall implements ISceneObject {
     
@@ -56,5 +58,29 @@ export class PlacedWall implements ISceneObject {
 
     public objectPoints(): ObjectPoints {
         return this.props.points;
+    }
+
+    public addComponent(component: IWallComponent): void {
+        if (this.props.direction === Direction.UP || this.props.direction === Direction.DOWN) {
+            this.wallSides.addComponent(WallSideType.LEFT, component);
+            this.wallSides.addComponent(WallSideType.RIGHT, component);
+        } else {
+            this.wallSides.addComponent(WallSideType.BOTTOM, component);
+            this.wallSides.addComponent(WallSideType.TOP, component);
+        }
+    }
+
+    /**
+     * Throws error if component does not belong to this wall.
+     * @param component
+     */
+    public removeComponent(component: IWallComponent): void {
+        if (this.props.direction === Direction.UP || this.props.direction === Direction.DOWN) {
+            this.wallSides.removeComponent(WallSideType.LEFT, component);
+            this.wallSides.removeComponent(WallSideType.RIGHT, component);
+        } else {
+            this.wallSides.removeComponent(WallSideType.BOTTOM, component);
+            this.wallSides.removeComponent(WallSideType.TOP, component);
+        }
     }
 }

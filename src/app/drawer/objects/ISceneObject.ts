@@ -1,5 +1,6 @@
-import { Scene } from "three";
-import { ObjectPoints } from "../constants/Types";
+import {Scene} from "three";
+import {ObjectPoints} from "../constants/Types";
+import {IMovingWindowComponent} from "./window/IMovingWindowComponent";
 
 export interface ISceneObject {
     addTo(scene: Scene): void;

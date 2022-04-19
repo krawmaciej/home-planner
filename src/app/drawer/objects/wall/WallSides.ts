@@ -1,7 +1,8 @@
-import { Line, Material, Vector3 } from "three";
-import { WallConstruction} from "../../components/DrawerMath";
-import { WallSide } from "./WallSide";
+import {Line, Material, Vector3} from "three";
+import {WallConstruction} from "../../components/DrawerMath";
+import {WallSide} from "./WallSide";
 import {ObjectPoint} from "../../constants/Types";
+import {IWallComponent} from "../window/IWallComponent";
 
 export enum WallSideType {
     TOP, RIGHT, BOTTOM, LEFT
@@ -21,9 +22,17 @@ export class WallSides {
 
     public putHole(side: WallSideType, points: Vector3[]): void {
         if (points.length !== 2) {
-            console.warn("More than 2 points of adjecency from liang barsky!");
+            console.warn("More than 2 points of adjacency from liang barsky!");
         }
         this.wallSides[side].cutBlock(points[0], points[1]);
+    }
+
+    public addComponent(side: WallSideType, component: IWallComponent) {
+        this.wallSides[side].putComponent(component);
+    }
+
+    public removeComponent(side: WallSideType, component: IWallComponent) {
+        this.wallSides[side].removeComponent(component);
     }
 
     public createDrawableObjects(material: Material): Array<Line> {
@@ -38,7 +47,6 @@ export class WallSides {
     }
 
     private putWallSide(p0: Vector3, p1: Vector3, type: WallSideType) {
-        const wallSide = new WallSide(p0, p1, type);
-        this.wallSides[type] = wallSide;
+        this.wallSides[type] = new WallSide(p0, p1, type);
     }
 }

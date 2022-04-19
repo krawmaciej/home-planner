@@ -39,7 +39,7 @@ export class WallComponentAddingIH implements IInputHandler {
             this.wallComponentAdder.showMovingComponent(point);
         } else if (this.pointer.getState() === State.MOVING) {
             this.pointer.move(point); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
-            const distance = this.wallComponentAdder.moveComponent(point);
+            const distance = this.wallComponentAdder.moveComponent(point).getDistanceFromParentWall();
             this.observer.setDistance(distance);
         }
     }

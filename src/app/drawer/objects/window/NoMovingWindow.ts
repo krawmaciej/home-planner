@@ -1,6 +1,6 @@
 import { ObjectPoints } from "../../constants/Types";
-import { IMovingWindowComponent } from "./IMovingWindowComponent";
-import { IPlacedWindowComponent } from "./IPlacedWindowComponent";
+import {IMovingWindowComponent} from "./IMovingWindowComponent";
+import {IPlacedWindowComponent} from "./IPlacedWindowComponent";
 
 export class NoMovingWindow implements IMovingWindowComponent {
     private static readonly instance = new NoMovingWindow();
@@ -28,6 +28,9 @@ export class NoMovingWindow implements IMovingWindowComponent {
         throw new Error("Method not implemented.");
     }
     unsetParentWall(): void {
+        throw new Error("Method not implemented.");
+    }
+    getParentWall(): undefined {
         throw new Error("Method not implemented.");
     }
     getDistanceFromParentWall(): number | undefined {
