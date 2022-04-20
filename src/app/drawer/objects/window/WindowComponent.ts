@@ -182,9 +182,9 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     }
 
     private changeRotation(direction: Vector2D): void {
-        if (this.direction === direction) {
-            return;
-        }
+        // if (this.direction === direction) {
+        //     return;
+        // }
 
         this.direction = direction;
         const quaternion = WindowComponent.directionQuaternionMap.get(direction);

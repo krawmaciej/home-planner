@@ -66,10 +66,10 @@ export class WallComponentAdder {
         const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent();
         placedComponent.addTo(this.scene);
         placedComponent.setParentWall(wall);
-        placedComponent.changePosition(position);
-        // wall.addComponent(placedComponent);
-        // this.wallComponents.push(placedComponent);
-
+        // placedComponent.changePosition(position);
+        wall.addComponent(placedComponent);
+        this.wallComponents.push(placedComponent);
+        //
         // const points = this.movingWindow.objectPoints();
         // const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
         // console.log("col window:", col);
