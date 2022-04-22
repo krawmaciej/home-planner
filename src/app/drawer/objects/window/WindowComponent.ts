@@ -42,6 +42,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         points.push(points[ObjectPoint.TOP_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
         this.window = new Line(geometry, WindowComponent.material);
+        this.window.matrixAutoUpdate = false; // will be updated on each change position
         this.direction = Direction.RIGHT;
     }
 
@@ -61,16 +62,18 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     public changePosition(position: Vector3) {
         if (this.parentWall === undefined) {
             this.window.position.copy(position);
+            this.window.updateMatrix();
+            this.window.updateMatrixWorld(true);
             return;
         }
 
-        const wallPoints = this.parentWall.objectPoints();
+        const wallPoints = this.parentWall.objectPointsOnScene();
         const wallMin = wallPoints[ObjectPoint.BOTTOM_LEFT];
         const wallMax = wallPoints[ObjectPoint.TOP_RIGHT];
 
         const delta = position.clone().sub(this.window.position);
 
-        const componentPoints = this.objectPoints();
+        const componentPoints = this.objectPointsOnScene();
         const componentMin = componentPoints[ObjectPoint.BOTTOM_LEFT].add(delta);
         const componentMax = componentPoints[ObjectPoint.TOP_RIGHT].add(delta);
 
@@ -94,12 +97,14 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         }
 
         this.window.position.copy(newPosition);
+        this.window.updateMatrix();
+        this.window.updateMatrixWorld(true);
     }
 
-    public createPlacedComponent(): IPlacedWindowComponent {
+    public createPlacedComponent(parentWall: PlacedWall): IPlacedWindowComponent {
         const placed = new WindowComponent(this.props);
+        placed.setParentWall(parentWall);
         placed.changePosition(this.window.position);
-        placed.changeRotation(this.direction);
         return placed;
     }
 
@@ -111,7 +116,13 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         scene.remove(this.window);
     }
 
-    public objectPoints(): ObjectPoints {
+    /**
+     * Scene object has to have a scene to retrieve points on scene's coordinate system.
+     */
+    public objectPointsOnScene(): ObjectPoints {
+        if (this.window.parent === undefined) {
+            throw new Error("Wall component has to have a scene when retrieving its points");
+        }
         const first = new Vector3(
             this.window.geometry.getAttribute("position").array[0],
             this.window.geometry.getAttribute("position").array[1],
@@ -176,8 +187,8 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         if (this.parentWall === undefined) {
             return undefined;
         }
-        const componentBottomLeft = this.objectPoints()[ObjectPoint.BOTTOM_LEFT];
-        const wallBottomLeft = this.parentWall.objectPoints()[ObjectPoint.BOTTOM_LEFT];
+        const componentBottomLeft = this.objectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
+        const wallBottomLeft = this.parentWall.objectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
         return DrawerMath.distanceBetweenPoints(componentBottomLeft, wallBottomLeft);
     }
 

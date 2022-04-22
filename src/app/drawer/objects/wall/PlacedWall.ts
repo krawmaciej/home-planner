@@ -56,7 +56,7 @@ export class PlacedWall implements ISceneObject {
         scene.remove(this.wall);
     }
 
-    public objectPoints(): ObjectPoints {
+    public objectPointsOnScene(): ObjectPoints {
         return this.props.points;
     }
 

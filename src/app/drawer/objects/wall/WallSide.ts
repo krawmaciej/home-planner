@@ -87,7 +87,7 @@ export class WallSide {
         // todo: when sideNode for component was found, cache it into the map
         const strategyKey = this.strategyKey; // "alias"
 
-        const componentPoints = component.objectPoints();
+        const componentPoints = component.objectPointsOnScene();
         const componentAttributes: ComponentAttributes = {
             firstPoint: componentPoints[ObjectPoint.BOTTOM_LEFT],
             secondPoint: componentPoints[ObjectPoint.TOP_RIGHT],
@@ -109,13 +109,13 @@ export class WallSide {
         }
 
         // should not happen
-        throw new Error(`component: ${component} is outside of wallside: ${this}`);
+        throw new Error(`component: ${JSON.stringify(component)} is outside of wallside: ${JSON.stringify(this)}`);
     }
 
     public removeComponent(component: IWallComponent) {
         const sideNodes = this.componentToSideNode.get(component);
         if (sideNodes === undefined) {
-            throw new Error(`component: ${component} does not belong to wallside: ${this}`);
+            throw new Error(`component: ${JSON.stringify(component)} does not belong to wallside: ${JSON.stringify(this)}`);
         }
         sideNodes.forEach(node => node.connection.removeComponent(component));
     }
@@ -149,7 +149,7 @@ class Connection {
     public removeComponent(component: IWallComponent) {
         const index = this.components.indexOf(component);
         if (index === -1) {
-            throw new Error(`component: ${component} was not found in the connection: ${this}`);
+            throw new Error(`component: ${JSON.stringify(component)} was not found in the connection: ${JSON.stringify(this)}`);
         }
         this.components.splice(index, 1);
         this.componentsAttributes.splice(index, 1);

@@ -21,7 +21,7 @@ export class NoMovingWindow implements IMovingWindowComponent {
     removeFrom(): void {
         throw new Error("Method not implemented.");
     }
-    objectPoints(): ObjectPoints {
+    objectPointsOnScene(): ObjectPoints {
         throw new Error("Method not implemented.");
     }
     setParentWall(): void {

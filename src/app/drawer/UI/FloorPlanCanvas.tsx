@@ -2,7 +2,16 @@ import "../../css/MainStyle.css";
 
 import React, { memo, useLayoutEffect, useRef } from "react";
 
-import { DirectionalLight, GridHelper, HemisphereLight, OrthographicCamera, Scene, Vector3, WebGLRenderer, WebGLRendererParameters } from "three";
+import {
+  DirectionalLight,
+  GridHelper,
+  HemisphereLight,
+  OrthographicCamera,
+  Scene,
+  Vector3,
+  WebGLRenderer,
+  WebGLRendererParameters
+} from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // import { RenderOrder } from "../constants/Types";
 import { MainInputHandler } from "./inputHandlers/MainInputHandler";
@@ -69,7 +78,19 @@ const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) 
 
       // controls = new OrbitControls(camera, renderer.domElement);
 
-
+      // checking matrix updating if position was changed
+      // const points = [new Vector3(0, 0, 0), new Vector3(3, 2, 1), new Vector3(0, 0, 0)];
+      // const geomPoints = new BufferGeometry().setFromPoints(points);
+      // const line = new Line(geomPoints);
+      // console.log(JSON.stringify(line.matrix));
+      // console.log(JSON.stringify(line.position));
+      // console.log(JSON.stringify(line.matrixWorld));
+      // line.position.copy(new Vector3(10, 10, 10));
+      // scene.add(line);
+      // line.updateMatrixWorld();
+      // console.log(JSON.stringify(line.matrix));
+      // console.log(JSON.stringify(line.position));
+      // console.log(JSON.stringify(line.matrixWorld));
 
       // sample
       // const wall = Wall.create({length: 50, height: 20, width: 2});

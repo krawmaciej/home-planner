@@ -32,8 +32,8 @@ export class CollisionDetector {
      */
     public pickRectangularObjectWithPointer<T extends ISceneObject>(position: Vector3, objects: Array<T>): T | undefined {
         for (const obj of objects) {
-            const min = obj.objectPoints()[ObjectPoint.BOTTOM_LEFT];
-            const max = obj.objectPoints()[ObjectPoint.TOP_RIGHT];
+            const min = obj.objectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
+            const max = obj.objectPointsOnScene()[ObjectPoint.TOP_RIGHT];
             if (DrawerMath.isPointBetweenMinMaxPoints(position, min, max)) {
                 return obj;
             }

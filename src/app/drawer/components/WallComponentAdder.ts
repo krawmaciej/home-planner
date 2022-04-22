@@ -63,10 +63,8 @@ export class WallComponentAdder {
             return; // no wall owner, cannot place component
         }
 
-        const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent();
-        placedComponent.addTo(this.scene);
-        placedComponent.setParentWall(wall);
-        // placedComponent.changePosition(position);
+        const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent(wall);
+        placedComponent.addTo(this.scene); // first add to scene so that component has a world scene
         wall.addComponent(placedComponent);
         this.wallComponents.push(placedComponent);
         //
