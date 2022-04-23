@@ -6,8 +6,8 @@ import {ObjectPoint} from "../../constants/Types";
 
 export class WallSide {
 
-    // used to quickly remove components from wall sides
-    private readonly componentToSideNode = new Map<IWallComponent, Array<SideNode>>();
+    // used to quickly remove component from wallSide's node
+    private readonly componentToSideNode = new Map<IWallComponent, SideNode>();
 
     private readonly head: SideNode;
     private readonly tail: SideNode;
@@ -102,6 +102,7 @@ export class WallSide {
             if (componentAttributes.secondPoint[strategyKey] <= iterator.point[strategyKey]) { // found higher todo: use vector epsilon comparison
                 // put in connection between iterator and beforeIterator
                 beforeIterator.connection.addComponent(component, componentAttributes);
+                this.componentToSideNode.set(component, beforeIterator);
                 return;
             }
             beforeIterator = iterator;
@@ -113,11 +114,11 @@ export class WallSide {
     }
 
     public removeComponent(component: IWallComponent) {
-        const sideNodes = this.componentToSideNode.get(component);
-        if (sideNodes === undefined) {
-            throw new Error(`component: ${JSON.stringify(component)} does not belong to wallside: ${JSON.stringify(this)}`);
+        const sideNode = this.componentToSideNode.get(component);
+        if (sideNode === undefined) {
+            throw new Error(`component: ${JSON.stringify(component)} does not belong to wallSide: ${JSON.stringify(this)}`);
         }
-        sideNodes.forEach(node => node.connection.removeComponent(component));
+        sideNode.connection.removeComponent(component);
     }
 }
 

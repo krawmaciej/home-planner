@@ -57,14 +57,14 @@ export class WallComponentAdder {
             return;
         }
 
-        // const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
-        const wall = this.moveComponent(position).getParentWall();
+        // check wall collision
+        const wall = this.moveComponent(position).getParentWall(); // move moving component so that it appears in same place as placed
         if (wall === undefined) {
             return; // no wall owner, cannot place component
         }
 
         const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent(wall);
-        placedComponent.addTo(this.scene); // first add to scene so that component has a world scene
+        placedComponent.addTo(this.scene); // first add to scene so that component has world coordinates
         wall.addComponent(placedComponent);
         this.wallComponents.push(placedComponent);
         //

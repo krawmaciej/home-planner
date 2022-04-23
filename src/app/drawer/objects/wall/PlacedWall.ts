@@ -68,7 +68,6 @@ export class PlacedWall implements ISceneObject {
             this.wallSides.addComponent(WallSideType.BOTTOM, component);
             this.wallSides.addComponent(WallSideType.TOP, component);
         }
-        console.log("Component added to wall, now wall is: ", this);
     }
 
     /**
