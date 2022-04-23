@@ -1,18 +1,21 @@
-import { BufferGeometry, Group, Line, LineBasicMaterial, Scene, Vector2, Vector3 } from "three";
-import { AdjecentWall } from "../../components/CollisionDetector";
-import { WallConstruction, WallPoint } from "../../components/DrawerMath";
-import WallSides, { WallSideType } from "./WallSides";
+import {Group, Line, LineBasicMaterial, Scene, Vector3} from "three";
+import {AdjacentObject} from "../../components/CollisionDetector";
+import {WallConstruction} from "../../components/DrawerMath";
+import {ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
+import {ISceneObject} from "../ISceneObject";
+import {WallSides} from "./WallSides";
+import {IWallComponent} from "../window/IWallComponent";
+import {Direction} from "./Direction";
 
-export default class PlacedWall {
+export class PlacedWall implements ISceneObject {
     
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
-        depthTest: false
     });
 
-    public static create(props: WallConstruction, adjecentWalls: AdjecentWall[]): PlacedWall {
+    public static create(props: WallConstruction, adjacentWalls: AdjacentObject<PlacedWall>[]): PlacedWall {
         const wallSides = new WallSides(props);
-        adjecentWalls.forEach(aw => wallSides.putHole(aw.toSide, aw.points));
+        adjacentWalls.forEach(aw => wallSides.putHole(aw.toSide, aw.points));
         const wallParts = wallSides.createDrawableObjects(PlacedWall.material);
         const wall = new Group();
         wallParts.forEach(wp => wall.add(wp));
@@ -36,7 +39,7 @@ export default class PlacedWall {
      * @param toSide side of the wall that collided
      * @param points points of collision
      */
-    public collidedWithWall(toSide: WallSideType, points: Vector3[]): PlacedWall {
+    public collidedWithWall(toSide: ObjectSideOrientation, points: Vector3[]): PlacedWall {
         this.wallSides.putHole(toSide, points);
         const wallParts = this.wallSides.createDrawableObjects(PlacedWall.material);
         const wall = new Group();
@@ -50,5 +53,33 @@ export default class PlacedWall {
 
     public removeFrom(scene: Scene): void {
         scene.remove(this.wall);
+    }
+
+    public getObjectPointsOnScene(): ObjectPoints {
+        return this.props.points;
+    }
+
+    public addComponent(component: IWallComponent): void {
+        if (this.props.direction === Direction.UP || this.props.direction === Direction.DOWN) {
+            this.wallSides.addComponent(ObjectSideOrientation.LEFT, component);
+            this.wallSides.addComponent(ObjectSideOrientation.RIGHT, component);
+        } else {
+            this.wallSides.addComponent(ObjectSideOrientation.BOTTOM, component);
+            this.wallSides.addComponent(ObjectSideOrientation.TOP, component);
+        }
+    }
+
+    /**
+     * Throws error if component does not belong to this wall.
+     * @param component
+     */
+    public removeComponent(component: IWallComponent): void {
+        if (this.props.direction === Direction.UP || this.props.direction === Direction.DOWN) {
+            this.wallSides.removeComponent(ObjectSideOrientation.LEFT, component);
+            this.wallSides.removeComponent(ObjectSideOrientation.RIGHT, component);
+        } else {
+            this.wallSides.removeComponent(ObjectSideOrientation.BOTTOM, component);
+            this.wallSides.removeComponent(ObjectSideOrientation.TOP, component);
+        }
     }
 }

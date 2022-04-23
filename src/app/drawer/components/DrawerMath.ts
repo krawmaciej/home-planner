@@ -1,24 +1,57 @@
-import { Vector3 } from "three";
-import Direction from "../objects/Direction";
-import WallThickness from "../objects/wall/WallThickness";
-import { Vector2D } from "../constants/Types";
+import {Vector3} from "three";
+import {Direction} from "../objects/wall/Direction";
+import {WallThickness} from "../objects/wall/WallThickness";
+import {ObjectElevation, ObjectPoints, Vector2D, ObjectPoint} from "../constants/Types";
 
 export type WallConstruction = {
-    points: [Vector3, Vector3, Vector3, Vector3],
+    points: ObjectPoints,
     middlePoints: MiddlePoints,
     direction: Vector2D
 }
 
 export type MiddlePoints = {
-    top: Vector3,
-    bottom: Vector3
+    first: Vector3,
+    last: Vector3
 }
 
-export enum WallPoint {
-    TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT
-}
+export class DrawerMath {
 
-export default class DrawerMath {
+    public static readonly COMPARISON_ACCURACY = 0.01; // one millimeter, 1 is 10 cm
+
+    public static isPointBetweenMinMaxPoints(point: Vector3, min: Vector3, max: Vector3): boolean {
+        if (point.x >= min.x && point.z >= min.z) {
+            if (point.x <= max.x && point.z <= max.z) {
+                return true;
+            }
+        }
+        // needs checking equality because of the floating point representation
+        return DrawerMath.areVectorsEqual(point, min) || DrawerMath.areVectorsEqual(point, max);
+    }
+
+    public static isInMinAndMaxRange(num: number, min: number, max: number) {
+        return num >= min && num <= max;
+    }
+
+    public static areVectorsEqual(v1: Vector3, v2: Vector3): boolean {
+        return (
+            (Math.abs( v1.x - v2.x) < DrawerMath.COMPARISON_ACCURACY) &&
+            (Math.abs( v1.z - v2.z ) < DrawerMath.COMPARISON_ACCURACY)
+        );
+    }
+
+    public static distanceBetweenPoints(v1: Vector3, v2: Vector3): number {
+        return Math.sqrt((v1.x - v2.x) * (v1.x - v2.x) +
+                            (v1.z - v2.z) * (v1.z - v2.z)
+        );
+    }
+
+    public static subtractVectors(leftOperand: Vector3, rightOperand: Vector3): Vector3 {
+        return new Vector3(
+            leftOperand.x - rightOperand.x,
+            0,
+            leftOperand.z - rightOperand.z
+        );
+    }
 
     public static calculateDirection(start: Vector3, end: Vector3): Vector2D {
         if (Math.abs(end.x - start.x) > Math.abs(end.z - start.z)) {
@@ -47,20 +80,20 @@ export default class DrawerMath {
         return { points: points, direction, middlePoints };
     }
 
-    private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): ObjectPoints {
         if (direction === Direction.DOWN) {
-            return DrawerMath.handleDownDirection(start, end, direction);
+            return DrawerMath.handleDownDirection(start, end);
         } else if (direction === Direction.UP) {
-            return DrawerMath.handleUpDirection(start, end, direction);
+            return DrawerMath.handleUpDirection(start, end);
         } else if (direction === Direction.LEFT) {
-            return DrawerMath.handleLeftDirection(start, end, direction);
+            return DrawerMath.handleLeftDirection(start, end);
         } else if (direction === Direction.RIGHT) {
-            return DrawerMath.handleRightDirection(start, end, direction);
+            return DrawerMath.handleRightDirection(start, end);
         }
         throw new Error("Drawed wall has no direction");
     }
 
-    private static handleDownDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static handleDownDirection(start: Vector3, end: Vector3): ObjectPoints {
         const topLeft = start.clone();
         topLeft.x = Math.floor(start.x);
         topLeft.z = Math.ceil(start.z);
@@ -78,7 +111,7 @@ export default class DrawerMath {
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleUpDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static handleUpDirection(start: Vector3, end: Vector3): ObjectPoints {
         const bottomRight = start.clone();
         bottomRight.x = Math.ceil(start.x);
         bottomRight.z = Math.floor(start.z);
@@ -96,7 +129,7 @@ export default class DrawerMath {
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleLeftDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static handleLeftDirection(start: Vector3, end: Vector3): ObjectPoints {
         const bottomRight = start.clone();
         bottomRight.x = Math.ceil(start.x);
         bottomRight.z = Math.floor(start.z);
@@ -114,7 +147,7 @@ export default class DrawerMath {
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static handleRightDirection(start: Vector3, end: Vector3, direction: Vector2D): [Vector3, Vector3, Vector3, Vector3] {
+    private static handleRightDirection(start: Vector3, end: Vector3): ObjectPoints {
         const topLeft = start.clone();
         topLeft.x = Math.floor(start.x);
         topLeft.z = Math.ceil(start.z);
@@ -133,25 +166,25 @@ export default class DrawerMath {
     }
 
     private static calculateMiddlePoints(
-        points: [Vector3, Vector3, Vector3, Vector3], direction: Direction, wallThickness: WallThickness
+        points: ObjectPoints, direction: Direction, wallThickness: WallThickness
     ): MiddlePoints {
-        const topLeft = points[WallPoint.TOP_LEFT];
-        const bottomRight = points[WallPoint.BOTTOM_RIGHT];
+        const topLeft = points[ObjectPoint.TOP_LEFT];
+        const bottomRight = points[ObjectPoint.BOTTOM_RIGHT];
 
         if (direction === Direction.DOWN || direction === Direction.UP) {
             const x = topLeft.x + wallThickness.halfThickness;
             const topZ = topLeft.z - wallThickness.halfThickness;
             const bottomZ = bottomRight.z + wallThickness.halfThickness;
-            const middleTop = new Vector3(x, topLeft.y, topZ);
-            const middleBottom = new Vector3(x, bottomRight.y, bottomZ);
-            return { top: middleTop, bottom: middleBottom };
+            const middleTop = new Vector3(x, ObjectElevation.UI, topZ);
+            const middleBottom = new Vector3(x, ObjectElevation.UI, bottomZ);
+            return { first: middleTop, last: middleBottom };
         } else { // LEFT or RIGHT
             const z = topLeft.z - wallThickness.halfThickness;
             const leftX = topLeft.x + wallThickness.halfThickness;
             const rightX = bottomRight.x - wallThickness.halfThickness;
-            const middleLeft = new Vector3(leftX, topLeft.y, z);
-            const middleRight = new Vector3(rightX, bottomRight.y, z);
-            return { top: middleLeft, bottom: middleRight };
+            const middleLeft = new Vector3(leftX, ObjectElevation.UI, z);
+            const middleRight = new Vector3(rightX, ObjectElevation.UI, z);
+            return { first: middleLeft, last: middleRight };
         }
     }
 }

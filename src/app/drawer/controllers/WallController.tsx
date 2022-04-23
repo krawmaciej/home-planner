@@ -1,22 +1,28 @@
-import { useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
+import { WallDrawingIH } from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
+import { FactorySubcomponentProps } from "./ControllerFactory";
+import { Context } from "./FloorPlanMainController";
 
-type Props = {
+export const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
-}
-
-const WallController: React.FC<Props> = () => {
-
+    const context = useContext(Context);
 
     useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (context === undefined) {
+            throw new Error("Context is undefined!");
+        }
+        const wallDrawer = context.wallDrawer;
+        context.mainInputHandler.changeHandlingStrategy(new WallDrawingIH(wallDrawer));
     }, []);
 
-
     return (
-        <div>
-            Wall View
-        </div>
+        <>
+            <div>
+                {context?.placedWalls.map(v => {
+                    return (<p key={v.wall.id}>{JSON.stringify(v.props.points)}</p>);
+                })}
+            </div>
+            <button onClick={goBack}>Powrót</button>
+        </>
     );
-}
-
-export default WallController;
+};

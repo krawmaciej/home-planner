@@ -17,7 +17,7 @@ export enum CollisionType {
     ALL = NORMAL | EDGE | POINT
 }
 
-export default class LiangBarsky {
+export class LiangBarsky {
 
     private tN = 0.0;
     private tF = 1.0;
@@ -44,14 +44,14 @@ export default class LiangBarsky {
                         if (this.tF < 1.0) {
                             np1 = new Vector3(
                                 p0.x + this.tF * dx,
-                                0,
+                                p0.y,
                                 p0.z + this.tF * dz
                             );
                         }
                         if (this.tN > 0.0) {
                             np0 = new Vector3(
                                 p0.x + this.tN * dx,
-                                0,
+                                p0.y,
                                 p0.z + this.tN * dz
                             );
                         }
@@ -77,14 +77,14 @@ export default class LiangBarsky {
     private resetState() {
         this.tN = 0.0;
         this.tF = 1.0;
-        this.edgeCollision = 0;
+        this.edgeCollision = CollisionType.NONE;
     }
 
     private calculateNewTs(denom: number, number: number): boolean {
         if (denom > 0) {
             const t = number / denom;
             if (t > this.tF) {
-                return false
+                return false;
             } else if (t > this.tN) {
                 this.tN = t;
             }

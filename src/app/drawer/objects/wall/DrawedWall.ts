@@ -1,32 +1,30 @@
 import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3, MeshBasicMaterialParameters, Scene } from "three";
-import { WallConstruction, MiddlePoints, WallPoint } from "../../components/DrawerMath";
-import { ComponentElevation, RenderOrder } from "../../constants/Types";
-import IDrawedWall from "./IDrawedWall";
+import { WallConstruction, MiddlePoints} from "../../components/DrawerMath";
+import {ObjectElevation, ObjectPoint} from "../../constants/Types";
+import { IDrawedWall } from "./IDrawedWall";
 
 /**
  * Creates Meshes from properties provided by {@link DrawedWallBuilder}.
  */
-export default class DrawedWall implements IDrawedWall {
+export class DrawedWall implements IDrawedWall {
 
     private static readonly contactPointMesh = DrawedWall.createPointMesh({ color: 0xffff00 });
     private static readonly middlePointMesh = DrawedWall.createPointMesh({ color: 0x000000 });
 
     private static createPointMesh(material: MeshBasicMaterialParameters): Mesh<CircleGeometry, MeshBasicMaterial> {
-        const geometry = new CircleGeometry(0.1);
+        const geometry = new CircleGeometry(0.17);
         const meshMaterial = new MeshBasicMaterial(material);
         const mesh = new Mesh(geometry, meshMaterial);
-        mesh.rotateX(Math.PI*1.5);
+        mesh.rotateX(Math.PI*0.5);
         return mesh;
     }
 
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
-        depthTest: false
     });
 
     private static readonly collidedMaterial = new LineBasicMaterial({
         color: 0xff0000,
-        depthTest: false
     });
 
     public readonly props: WallConstruction;
@@ -57,10 +55,6 @@ export default class DrawedWall implements IDrawedWall {
         middle.add(anchorEnd);
         wall.add(middle);
         contactPoints.forEach(mesh => wall.add(mesh));
-        // anchorStart.renderOrder = 1;
-        // anchorEnd.renderOrder = 1;
-        // middle.renderOrder = 1;
-        // wall.renderOrder = 1;
     }
 
     public static wallFromPoints(props: WallConstruction, isCollided: boolean, contactPoints: Vector3[]): DrawedWall {
@@ -68,7 +62,6 @@ export default class DrawedWall implements IDrawedWall {
         let contactPointsMeshes = new Array<Mesh<CircleGeometry, MeshBasicMaterial>>();
         if (!isCollided) {
             contactPointsMeshes = contactPoints.map(point => this.createContactPoint(point));
-            contactPointsMeshes.forEach(mesh => mesh.renderOrder = RenderOrder.UI);
         }
         
         const wallGeometry = new BufferGeometry().setFromPoints(this.getWallPoints(props));
@@ -77,8 +70,8 @@ export default class DrawedWall implements IDrawedWall {
         const middleGeometry = new BufferGeometry().setFromPoints(this.getMiddlePoints(props.middlePoints));
         const middle = new Line(middleGeometry, material);
 
-        const p1 = this.createMiddlePoint(props.middlePoints.bottom);
-        const p2 = this.createMiddlePoint(props.middlePoints.top);
+        const p1 = this.createMiddlePoint(props.middlePoints.last);
+        const p2 = this.createMiddlePoint(props.middlePoints.first);
 
         return new DrawedWall(props, isCollided, wall, middle, p1, p2, contactPointsMeshes);
     }
@@ -86,20 +79,22 @@ export default class DrawedWall implements IDrawedWall {
     private static createContactPoint(position: Vector3): Mesh<CircleGeometry, MeshBasicMaterial> {
         const newMesh = DrawedWall.contactPointMesh.clone();
         newMesh.position.copy(position);
+        newMesh.position.setY(ObjectElevation.UI);
         return newMesh;
     }
 
     private static createMiddlePoint(position: Vector3): Mesh<CircleGeometry, MeshBasicMaterial> {
         const newMesh = DrawedWall.middlePointMesh.clone();
         newMesh.position.copy(position);
+        newMesh.position.setY(ObjectElevation.UI);
         return newMesh;
     }
 
     private static getWallPoints({points}: WallConstruction): Vector3[] {
-        return [...points, points[WallPoint.TOP_LEFT]];
+        return [...points, points[ObjectPoint.TOP_LEFT]];
     }
 
-    private static getMiddlePoints({top: start, bottom: end}: MiddlePoints): Vector3[] {
+    private static getMiddlePoints({first: start, last: end}: MiddlePoints): Vector3[] {
         return [start, end];
     }
 

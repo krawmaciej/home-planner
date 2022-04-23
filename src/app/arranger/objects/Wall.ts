@@ -1,8 +1,8 @@
 import { BufferAttribute, BufferGeometry, Material, Mesh, MeshPhongMaterial, Shape, ShapeGeometry } from "three";
 import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing } from "../constants/Types";
-import Window from "./Window";
+import { Window } from "./Window";
 
-export default class Wall {
+export class Wall {
 
     public readonly dimensions: Dimensions;
     public readonly mainWallFrame: Mesh;

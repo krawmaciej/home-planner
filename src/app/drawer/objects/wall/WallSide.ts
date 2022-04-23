@@ -1,21 +1,24 @@
 import { BufferGeometry, Line, Material, Vector3 } from "three";
-import WallComponent from "./WallComponent";
-import { WallSideType } from "./WallSides";
+import { IWallComponent } from "../window/IWallComponent";
+import {ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
 
 
-export default class WallSide {
+export class WallSide {
+
+    // used to quickly remove component from wallSide's node
+    private readonly componentToSideNode = new Map<IWallComponent, SideNode>();
 
     private readonly head: SideNode;
     private readonly tail: SideNode;
-    private readonly side: WallSideType;
+    private readonly side: ObjectSideOrientation;
     private readonly strategyKey: "x" | "z"; // 'strategy' used for finding where to put point
     
-    public constructor(start: Vector3, end: Vector3, side: WallSideType) {
+    public constructor(start: Vector3, end: Vector3, side: ObjectSideOrientation) {
         this.head = new SideNode(start);
         this.tail = new SideNode(end);
         this.head.connection = new Connection(this.tail, ConnectionType.SOLID); // connect
         this.side = side;
-        const xStrategy = side === WallSideType.BOTTOM || side === WallSideType.TOP;
+        const xStrategy = side === ObjectSideOrientation.BOTTOM || side === ObjectSideOrientation.TOP;
         this.strategyKey = xStrategy ? "x" : "z";
     }
 
@@ -24,10 +27,10 @@ export default class WallSide {
         const lines = new Array<Line>();
         while (iterator.connection.next !== undefined) {
             if (iterator.connection.type === ConnectionType.SOLID) {
-                const p0 = iterator.point;
-                const p1 = iterator.connection.next.point;
-                const bg = new BufferGeometry().setFromPoints([p0, p1]);
-                lines.push(new Line(bg, material));
+                const first = iterator.point;
+                const second = iterator.connection.next.point;
+                const bufferGeometry = new BufferGeometry().setFromPoints([first, second]);
+                lines.push(new Line(bufferGeometry, material));
             }
             iterator = iterator.connection.next;
         }
@@ -36,43 +39,84 @@ export default class WallSide {
 
     /**
      * 
-     * @param p0 has to be smaller than {@link this.tail.point}
-     * @param p1 has to be smaller or equal to {@link this.tail.point}
+     * @param firstPoint has to be smaller than {@link this.tail.point}
+     * @param secondPoint has to be smaller or equal to {@link this.tail.point}
      */
-    public cutBlock(p0: Vector3, p1: Vector3) {
-        const first = new SideNode(p0);
-        const second = new SideNode(p1);
+    public cutBlock(firstPoint: Vector3, secondPoint: Vector3) {
+        const firstNode = new SideNode(firstPoint);
+        const secondNode = new SideNode(secondPoint);
 
-        const strategyKey = this.strategyKey; // 'alias'
+        const strategyKey = this.strategyKey; // "alias"
 
         // check first pair
         let beforeIterator: SideNode = this.head;
         let iterator: SideNode | undefined = this.head.connection.next;
 
         while (iterator !== undefined) {
-            if (p1[strategyKey] < iterator.point[strategyKey]) { // found higher
+            if (secondPoint[strategyKey] < iterator.point[strategyKey]) { // found higher
                 // cut between iterator and beforeIterator
-                if (p0[strategyKey] === beforeIterator.point[strategyKey]) {
-                    beforeIterator.connection = new Connection(second, ConnectionType.HOLE);
-                    second.connection = new Connection(iterator, ConnectionType.SOLID);
+                if (firstPoint[strategyKey] === beforeIterator.point[strategyKey]) {
+                    beforeIterator.connection = new Connection(secondNode, ConnectionType.HOLE);
+                    secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 } else {
-                    beforeIterator.connection.next = first;
-                    first.connection = new Connection(second, ConnectionType.HOLE);
-                    second.connection = new Connection(iterator, ConnectionType.SOLID);
+                    beforeIterator.connection.next = firstNode;
+                    firstNode.connection = new Connection(secondNode, ConnectionType.HOLE);
+                    secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 }
                 break;
-            } else if (p1[strategyKey] === iterator.point[strategyKey]) { // second point is same as existing
-                if (p0[strategyKey] === beforeIterator.point[strategyKey]) { // swap current solid line for hole
+            } else if (secondPoint[strategyKey] === iterator.point[strategyKey]) { // second point is same as existing
+                if (firstPoint[strategyKey] === beforeIterator.point[strategyKey]) { // swap current solid line for hole
                     beforeIterator.connection.type = ConnectionType.HOLE;
                 } else {
-                    beforeIterator.connection.next = first;
-                    first.connection = new Connection(iterator, ConnectionType.HOLE);
+                    beforeIterator.connection.next = firstNode;
+                    firstNode.connection = new Connection(iterator, ConnectionType.HOLE);
                 }
                 break;
             }
             beforeIterator = iterator;
             iterator = iterator.connection.next; // go to next node
         }
+    }
+
+    /**
+     *
+     * @param component to be added to wall side
+     */
+    public putComponent(component: IWallComponent) {
+        const strategyKey = this.strategyKey; // "alias"
+
+        const componentPoints = component.getObjectPointsOnScene();
+        const componentAttributes: ComponentAttributes = {
+            firstPoint: componentPoints[ObjectPoint.BOTTOM_LEFT],
+            secondPoint: componentPoints[ObjectPoint.TOP_RIGHT],
+            height: 15 // todo: parametrize this
+        };
+
+        // check first pair
+        let beforeIterator: SideNode = this.head;
+        let iterator: SideNode | undefined = this.head.connection.next;
+
+        while (iterator !== undefined) {
+            if (componentAttributes.secondPoint[strategyKey] <= iterator.point[strategyKey]) { // found higher todo: use vector epsilon comparison
+                // put in connection between iterator and beforeIterator
+                beforeIterator.connection.addComponent(component, componentAttributes);
+                this.componentToSideNode.set(component, beforeIterator);
+                return;
+            }
+            beforeIterator = iterator;
+            iterator = iterator.connection.next; // go to next node
+        }
+
+        // should not happen
+        throw new Error(`component: ${JSON.stringify(component)} is outside of wallside: ${JSON.stringify(this)}`);
+    }
+
+    public removeComponent(component: IWallComponent) {
+        const sideNode = this.componentToSideNode.get(component);
+        if (sideNode === undefined) {
+            throw new Error(`component: ${JSON.stringify(component)} does not belong to wallSide: ${JSON.stringify(this)}`);
+        }
+        sideNode.connection.removeComponent(component);
     }
 }
 
@@ -88,16 +132,33 @@ class SideNode {
 class Connection {
     public next: SideNode | undefined;
     public type: ConnectionType;
-    public readonly components: Array<WallComponent>; // holds wall's connection doors/windows
+    public readonly components: Array<IWallComponent>; // holds wall's connection doors/windows
+    public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices wih components array
     public constructor(next: SideNode | undefined, type: ConnectionType) {
         this.next = next;
         this.type = type;
-        this.components = new Array<WallComponent>();
+        this.components = new Array<IWallComponent>();
+        this.componentsAttributes = new Array<ComponentAttributes>();
     }
-    public add(component: WallComponent): Array<WallComponent> {
+    public addComponent(component: IWallComponent, attributes: ComponentAttributes): Array<IWallComponent> {
         this.components.push(component);
+        this.componentsAttributes.push(attributes);
         return this.components;
     }
+    public removeComponent(component: IWallComponent) {
+        const index = this.components.indexOf(component);
+        if (index === -1) {
+            throw new Error(`component: ${JSON.stringify(component)} was not found in the connection: ${JSON.stringify(this)}`);
+        }
+        this.components.splice(index, 1);
+        this.componentsAttributes.splice(index, 1);
+    }
+}
+
+type ComponentAttributes = {
+    firstPoint: Vector3,
+    secondPoint: Vector3,
+    height: number,
 }
 
 enum ConnectionType {

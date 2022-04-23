@@ -1,5 +1,5 @@
 import { Scene } from "three";
 
-export default interface IDrawedWall {
+export interface IDrawedWall {
     removeFrom(scene: Scene): void;
 }

@@ -1,7 +1,8 @@
 import { Vector3 } from "three";
-import DrawerMath, { WallPoint } from "../../../app/drawer/components/DrawerMath";
-import Direction from "../../../app/drawer/objects/Direction";
-import WallThickness from "../../../app/drawer/objects/WallThickness";
+import DrawerMath from "../../../app/drawer/components/DrawerMath";
+import { Direction } from "../../../app/drawer/objects/Direction";
+import { WallThickness } from "../../../app/drawer/objects/WallThickness";
+import {ObjectPoint} from "../../../app/drawer/constants/Types";
 
 describe("test add function", () => {
   test("calculateDirection should be right", () => {
@@ -52,10 +53,10 @@ describe("test add function", () => {
 
     // then
     expect(direction).toBe(expectedDirection);
-    expect(points[WallPoint.TOP_LEFT].x < points[WallPoint.TOP_RIGHT].x).toBeTruthy();
-    expect(points[WallPoint.BOTTOM_LEFT].x < points[WallPoint.BOTTOM_RIGHT].x).toBeTruthy();
-    expect(points[WallPoint.TOP_LEFT].z > points[WallPoint.BOTTOM_LEFT].z).toBeTruthy();
-    expect(points[WallPoint.TOP_RIGHT].z > points[WallPoint.BOTTOM_RIGHT].z).toBeTruthy();
+    expect(points[ObjectPoint.TOP_LEFT].x < points[ObjectPoint.TOP_RIGHT].x).toBeTruthy();
+    expect(points[ObjectPoint.BOTTOM_LEFT].x < points[ObjectPoint.BOTTOM_RIGHT].x).toBeTruthy();
+    expect(points[ObjectPoint.TOP_LEFT].z > points[ObjectPoint.BOTTOM_LEFT].z).toBeTruthy();
+    expect(points[ObjectPoint.TOP_RIGHT].z > points[ObjectPoint.BOTTOM_RIGHT].z).toBeTruthy();
   });
 
   test("calculateCornerPoints should be DOWN and top left be higer and to the left of bottom right", () => {
@@ -71,10 +72,10 @@ describe("test add function", () => {
 
     // then
     expect(direction).toBe(expectedDirection);
-    expect(points[WallPoint.TOP_LEFT].x < points[WallPoint.TOP_RIGHT].x).toBeTruthy();
-    expect(points[WallPoint.BOTTOM_LEFT].x < points[WallPoint.BOTTOM_RIGHT].x).toBeTruthy();
-    expect(points[WallPoint.TOP_LEFT].z > points[WallPoint.BOTTOM_LEFT].z).toBeTruthy();
-    expect(points[WallPoint.TOP_RIGHT].z > points[WallPoint.BOTTOM_RIGHT].z).toBeTruthy();
+    expect(points[ObjectPoint.TOP_LEFT].x < points[ObjectPoint.TOP_RIGHT].x).toBeTruthy();
+    expect(points[ObjectPoint.BOTTOM_LEFT].x < points[ObjectPoint.BOTTOM_RIGHT].x).toBeTruthy();
+    expect(points[ObjectPoint.TOP_LEFT].z > points[ObjectPoint.BOTTOM_LEFT].z).toBeTruthy();
+    expect(points[ObjectPoint.TOP_RIGHT].z > points[ObjectPoint.BOTTOM_RIGHT].z).toBeTruthy();
   });
 
   test("calculateCornerPoints should be RIGHT and top left be higer and to the left of bottom right", () => {
@@ -90,10 +91,10 @@ describe("test add function", () => {
 
     // then
     expect(direction).toBe(expectedDirection);
-    expect(points[WallPoint.TOP_LEFT].x < points[WallPoint.TOP_RIGHT].x).toBeTruthy();
-    expect(points[WallPoint.BOTTOM_LEFT].x < points[WallPoint.BOTTOM_RIGHT].x).toBeTruthy();
-    expect(points[WallPoint.TOP_LEFT].z > points[WallPoint.BOTTOM_LEFT].z).toBeTruthy();
-    expect(points[WallPoint.TOP_RIGHT].z > points[WallPoint.BOTTOM_RIGHT].z).toBeTruthy();
+    expect(points[ObjectPoint.TOP_LEFT].x < points[ObjectPoint.TOP_RIGHT].x).toBeTruthy();
+    expect(points[ObjectPoint.BOTTOM_LEFT].x < points[ObjectPoint.BOTTOM_RIGHT].x).toBeTruthy();
+    expect(points[ObjectPoint.TOP_LEFT].z > points[ObjectPoint.BOTTOM_LEFT].z).toBeTruthy();
+    expect(points[ObjectPoint.TOP_RIGHT].z > points[ObjectPoint.BOTTOM_RIGHT].z).toBeTruthy();
   });
 
   test("calculateCornerPoints should be LEFT and top left be higer and to the left of bottom right", () => {
@@ -109,10 +110,10 @@ describe("test add function", () => {
 
     // then
     expect(direction).toBe(expectedDirection);
-    expect(points[WallPoint.TOP_LEFT].x < points[WallPoint.TOP_RIGHT].x).toBeTruthy();
-    expect(points[WallPoint.BOTTOM_LEFT].x < points[WallPoint.BOTTOM_RIGHT].x).toBeTruthy();
-    expect(points[WallPoint.TOP_LEFT].z > points[WallPoint.BOTTOM_LEFT].z).toBeTruthy();
-    expect(points[WallPoint.TOP_RIGHT].z > points[WallPoint.BOTTOM_RIGHT].z).toBeTruthy();
+    expect(points[ObjectPoint.TOP_LEFT].x < points[ObjectPoint.TOP_RIGHT].x).toBeTruthy();
+    expect(points[ObjectPoint.BOTTOM_LEFT].x < points[ObjectPoint.BOTTOM_RIGHT].x).toBeTruthy();
+    expect(points[ObjectPoint.TOP_LEFT].z > points[ObjectPoint.BOTTOM_LEFT].z).toBeTruthy();
+    expect(points[ObjectPoint.TOP_RIGHT].z > points[ObjectPoint.BOTTOM_RIGHT].z).toBeTruthy();
   });
 
   test("calculateCornerPoints should be UP create corner box", () => {
@@ -130,7 +131,7 @@ describe("test add function", () => {
 
     // then
     expect(direction).toBe(expectedDirection);
-    expect(points[WallPoint.TOP_LEFT]).toStrictEqual(expectedTopLeft);
-    expect(points[WallPoint.BOTTOM_RIGHT]).toStrictEqual(expectedBottomRight);
+    expect(points[ObjectPoint.TOP_LEFT]).toStrictEqual(expectedTopLeft);
+    expect(points[ObjectPoint.BOTTOM_RIGHT]).toStrictEqual(expectedBottomRight);
   });
 });

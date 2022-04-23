@@ -1,22 +1,22 @@
 import { Vector3 } from "three";
-import { AdjecentWall, Collision } from "../../components/CollisionDetector";
-import DrawerMath, { WallConstruction } from "../../components/DrawerMath";
-import DrawedWall from "./DrawedWall";
-import PlacedWall from "./PlacedWall";
-import WallThickness from "./WallThickness";
+import { AdjacentObject, Collision } from "../../components/CollisionDetector";
+import { DrawerMath, WallConstruction } from "../../components/DrawerMath";
+import { DrawedWall } from "./DrawedWall";
+import { PlacedWall } from "./PlacedWall";
+import { WallThickness } from "./WallThickness";
 
 /**
  * Creates a wall properties from which the meshes will be created.
  * Used for collision detection and calculations which do not require meshes.
  */
-export default class WallBuilder {
+export class WallBuilder {
 
     private props: WallConstruction;
-    private collision: Collision;
+    private collision: Collision<PlacedWall>;
 
     public constructor(props: WallConstruction) {
         this.props = props;
-        this.collision = { isCollision: false, adjecentWalls: new Array<AdjecentWall>() };
+        this.collision = { isCollision: false, adjacentObjects: new Array<AdjacentObject<PlacedWall>>() };
     }
     
     public static createWall(start: Vector3, end: Vector3, wallThickness: WallThickness): WallBuilder {
@@ -32,18 +32,18 @@ export default class WallBuilder {
         return this;
     }
 
-    public setCollision(collision: Collision): WallBuilder {
+    public setCollision(collision: Collision<PlacedWall>): WallBuilder {
         this.collision = collision;
         return this;
     }
 
     public createDrawedWall(): DrawedWall {
-        const contactPoints = this.collision.adjecentWalls.flatMap(wall => wall.points);
+        const contactPoints = this.collision.adjacentObjects.flatMap(wall => wall.points);
         return DrawedWall.wallFromPoints(this.props, this.collision.isCollision, contactPoints);
     }
 
     public createPlacedWall(): PlacedWall {
-        return PlacedWall.create(this.props, this.collision.adjecentWalls);
+        return PlacedWall.create(this.props, this.collision.adjacentObjects);
     }
 
     // getters

@@ -1,3 +1,5 @@
+import {Vector3} from "three";
+
 export type PointerPosition = {
     x: number,
     y: number,
@@ -14,17 +16,29 @@ export type Vector2D = {
 }
 
 export enum RenderOrder {
-    GRID = -1,
-    WALL = 1,
-    COMPONENT = 2,
-    UI = 3
+    GRID = 0,
+    WALL = 0,
+    COMPONENT = 0,
+    UI = 0,
 }
 
-export enum ComponentElevation {
+export enum ObjectElevation {
+    GRID = 0,
     WALL = 1,
     COMPONENT = 2,
-    UI = 3
+    MOVING = 3,
+    UI = 4,
 }
 
 export enum WallSide {
+}
+
+export type ObjectPoints = [ Vector3, Vector3, Vector3, Vector3 ];
+
+export enum ObjectPoint {
+    TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT
+}
+
+export enum ObjectSideOrientation {
+    TOP, RIGHT, BOTTOM, LEFT
 }
