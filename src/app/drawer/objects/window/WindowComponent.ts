@@ -1,12 +1,4 @@
-import {
-    BufferGeometry,
-    Line,
-    LineBasicMaterial,
-    Material,
-    Quaternion,
-    Scene,
-    Vector3
-} from "three";
+import {BufferGeometry, Line, LineBasicMaterial, Material, Quaternion, Scene, Vector3} from "three";
 import {DrawerMath} from "../../components/DrawerMath";
 import {ObjectElevation, ObjectPoint, ObjectPoints, Vector2D} from "../../constants/Types";
 import {IMovingWindowComponent} from "./IMovingWindowComponent";
@@ -52,6 +44,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     private readonly window: Line<BufferGeometry, Material>;
     private direction: Vector2D;
     private parentWall: undefined | PlacedWall;
+    private collided: boolean;
 
     public constructor(props: WindowProps, material?: LineBasicMaterial) {
         this.props = props;
@@ -61,6 +54,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         this.window = new Line(geometry, material ?? WindowComponent.defaultMaterial);
         this.window.matrixAutoUpdate = false; // will be updated on each change position
         this.direction = Direction.RIGHT;
+        this.collided = false;
     }
 
     /**
@@ -84,13 +78,13 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
             return;
         }
 
-        const wallPoints = this.parentWall.objectPointsOnScene();
+        const wallPoints = this.parentWall.getObjectPointsOnScene();
         const wallMin = wallPoints[ObjectPoint.BOTTOM_LEFT];
         const wallMax = wallPoints[ObjectPoint.TOP_RIGHT];
 
         const delta = position.clone().sub(this.window.position);
 
-        const componentPoints = this.objectPointsOnScene();
+        const componentPoints = this.getObjectPointsOnScene();
         const componentMin = componentPoints[ObjectPoint.BOTTOM_LEFT].add(delta);
         const componentMax = componentPoints[ObjectPoint.TOP_RIGHT].add(delta);
 
@@ -136,7 +130,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     /**
      * Scene object has to have a scene to retrieve points on scene's coordinate system.
      */
-    public objectPointsOnScene(): ObjectPoints {
+    public getObjectPointsOnScene(): ObjectPoints {
         if (this.window.parent === undefined) {
             throw new Error("Wall component has to have a scene when retrieving its points");
         }
@@ -204,16 +198,12 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         if (this.parentWall === undefined) {
             return undefined;
         }
-        const componentBottomLeft = this.objectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
-        const wallBottomLeft = this.parentWall.objectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
+        const componentBottomLeft = this.getObjectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
+        const wallBottomLeft = this.parentWall.getObjectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
         return DrawerMath.distanceBetweenPoints(componentBottomLeft, wallBottomLeft);
     }
 
     private changeRotation(direction: Vector2D): void {
-        // if (this.direction === direction) {
-        //     return;
-        // }
-
         this.direction = direction;
         const quaternion = WindowComponent.directionQuaternionMap.get(direction);
         if (quaternion === undefined) {
@@ -226,11 +216,18 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         return this.parentWall;
     }
 
-    public setDefaultColour(): void {
+    public setNotCollided(): void {
+        this.collided = false;
         this.window.material = WindowComponent.defaultMaterial;
     }
 
-    public setCollidedColour(): void {
+    public setCollided(): void {
+        this.collided = true;
         this.window.material = WindowComponent.collidingMaterial;
     }
+
+    public collides(): boolean {
+        return this.collided;
+    }
+
 }

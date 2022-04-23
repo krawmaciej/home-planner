@@ -65,7 +65,7 @@ export const FloorPlanMainController: React.FC<Props> = ({ scene, mainInputHandl
     // walls
     const [wallThickness, setWallThickness] = useState<WallThickness>(new WallThickness(1.0));
     const { current: placedWalls } = useRef(new Array<PlacedWall>());
-    const [updatedWallsHelper, updateWallsToggle] = useState<boolean>(false); // refactor to separate array class
+    const [, updateWallsToggle] = useState<boolean>(false); // refactor to separate array class
 
     // wall components (doors, windows)
     const { current: wallComponents } = useRef(new Array<IWallComponent>());

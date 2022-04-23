@@ -1,9 +1,9 @@
 import {Group, Line, LineBasicMaterial, Scene, Vector3} from "three";
 import {AdjacentObject} from "../../components/CollisionDetector";
 import {WallConstruction} from "../../components/DrawerMath";
-import {ObjectPoints} from "../../constants/Types";
+import {ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
 import {ISceneObject} from "../ISceneObject";
-import {WallSides, WallSideType} from "./WallSides";
+import {WallSides} from "./WallSides";
 import {IWallComponent} from "../window/IWallComponent";
 import {Direction} from "./Direction";
 
@@ -11,7 +11,6 @@ export class PlacedWall implements ISceneObject {
     
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
-        // depthTest: false
     });
 
     public static create(props: WallConstruction, adjacentWalls: AdjacentObject<PlacedWall>[]): PlacedWall {
@@ -40,7 +39,7 @@ export class PlacedWall implements ISceneObject {
      * @param toSide side of the wall that collided
      * @param points points of collision
      */
-    public collidedWithWall(toSide: WallSideType, points: Vector3[]): PlacedWall {
+    public collidedWithWall(toSide: ObjectSideOrientation, points: Vector3[]): PlacedWall {
         this.wallSides.putHole(toSide, points);
         const wallParts = this.wallSides.createDrawableObjects(PlacedWall.material);
         const wall = new Group();
@@ -56,17 +55,17 @@ export class PlacedWall implements ISceneObject {
         scene.remove(this.wall);
     }
 
-    public objectPointsOnScene(): ObjectPoints {
+    public getObjectPointsOnScene(): ObjectPoints {
         return this.props.points;
     }
 
     public addComponent(component: IWallComponent): void {
         if (this.props.direction === Direction.UP || this.props.direction === Direction.DOWN) {
-            this.wallSides.addComponent(WallSideType.LEFT, component);
-            this.wallSides.addComponent(WallSideType.RIGHT, component);
+            this.wallSides.addComponent(ObjectSideOrientation.LEFT, component);
+            this.wallSides.addComponent(ObjectSideOrientation.RIGHT, component);
         } else {
-            this.wallSides.addComponent(WallSideType.BOTTOM, component);
-            this.wallSides.addComponent(WallSideType.TOP, component);
+            this.wallSides.addComponent(ObjectSideOrientation.BOTTOM, component);
+            this.wallSides.addComponent(ObjectSideOrientation.TOP, component);
         }
     }
 
@@ -76,11 +75,11 @@ export class PlacedWall implements ISceneObject {
      */
     public removeComponent(component: IWallComponent): void {
         if (this.props.direction === Direction.UP || this.props.direction === Direction.DOWN) {
-            this.wallSides.removeComponent(WallSideType.LEFT, component);
-            this.wallSides.removeComponent(WallSideType.RIGHT, component);
+            this.wallSides.removeComponent(ObjectSideOrientation.LEFT, component);
+            this.wallSides.removeComponent(ObjectSideOrientation.RIGHT, component);
         } else {
-            this.wallSides.removeComponent(WallSideType.BOTTOM, component);
-            this.wallSides.removeComponent(WallSideType.TOP, component);
+            this.wallSides.removeComponent(ObjectSideOrientation.BOTTOM, component);
+            this.wallSides.removeComponent(ObjectSideOrientation.TOP, component);
         }
     }
 }

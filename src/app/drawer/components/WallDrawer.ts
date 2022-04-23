@@ -46,7 +46,6 @@ export class WallDrawer {
         const dWall = wallBuilder.setCollision(collision).createDrawedWall();
 
         this.drawedWall.removeFrom(this.scene);
-        // dWall.wall.renderOrder = RenderOrder.WALL;
         this.scene.add(dWall.wall);
         this.drawedWall = dWall;
     }
@@ -72,7 +71,7 @@ export class WallDrawer {
 
         collisionResult.adjacentObjects.forEach(aw => {
             const collision = this.collisionDetector
-                .detectCollisions(aw.adjacent.objectPointsOnScene(), [ placedWall ]);
+                .detectCollisions(aw.adjacent.getObjectPointsOnScene(), [ placedWall ]);
             if (collision.adjacentObjects.length !== 1) {
                 throw new Error("Collided wall should also collide with new wall but did not!");
             }

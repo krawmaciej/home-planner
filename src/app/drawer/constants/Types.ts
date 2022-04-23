@@ -23,6 +23,7 @@ export enum RenderOrder {
 }
 
 export enum ObjectElevation {
+    GRID = 0,
     WALL = 1,
     COMPONENT = 2,
     MOVING = 3,
@@ -36,4 +37,8 @@ export type ObjectPoints = [ Vector3, Vector3, Vector3, Vector3 ];
 
 export enum ObjectPoint {
     TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT
+}
+
+export enum ObjectSideOrientation {
+    TOP, RIGHT, BOTTOM, LEFT
 }

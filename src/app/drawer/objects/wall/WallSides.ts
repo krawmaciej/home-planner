@@ -1,12 +1,8 @@
 import {Line, Material, Vector3} from "three";
 import {WallConstruction} from "../../components/DrawerMath";
 import {WallSide} from "./WallSide";
-import {ObjectPoint} from "../../constants/Types";
+import {ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
 import {IWallComponent} from "../window/IWallComponent";
-
-export enum WallSideType {
-    TOP, RIGHT, BOTTOM, LEFT
-}
 
 /**
  * Wraps array of wall sides of a single wall.
@@ -20,18 +16,18 @@ export class WallSides {
         this.addWallSides(construction);
     }
 
-    public putHole(side: WallSideType, points: Vector3[]): void {
+    public putHole(side: ObjectSideOrientation, points: Vector3[]): void {
         if (points.length !== 2) {
             console.warn("More than 2 points of adjacency from liang barsky!");
         }
         this.wallSides[side].cutBlock(points[0], points[1]);
     }
 
-    public addComponent(side: WallSideType, component: IWallComponent) {
+    public addComponent(side: ObjectSideOrientation, component: IWallComponent) {
         this.wallSides[side].putComponent(component);
     }
 
-    public removeComponent(side: WallSideType, component: IWallComponent) {
+    public removeComponent(side: ObjectSideOrientation, component: IWallComponent) {
         this.wallSides[side].removeComponent(component);
     }
 
@@ -40,13 +36,13 @@ export class WallSides {
     }
 
     private addWallSides({ points }: WallConstruction): void {
-        this.putWallSide(points[ObjectPoint.TOP_LEFT], points[ObjectPoint.TOP_RIGHT], WallSideType.TOP);
-        this.putWallSide(points[ObjectPoint.BOTTOM_RIGHT], points[ObjectPoint.TOP_RIGHT], WallSideType.RIGHT);
-        this.putWallSide(points[ObjectPoint.BOTTOM_LEFT], points[ObjectPoint.BOTTOM_RIGHT], WallSideType.BOTTOM);
-        this.putWallSide(points[ObjectPoint.BOTTOM_LEFT], points[ObjectPoint.TOP_LEFT], WallSideType.LEFT);
+        this.putWallSide(points[ObjectPoint.TOP_LEFT], points[ObjectPoint.TOP_RIGHT], ObjectSideOrientation.TOP);
+        this.putWallSide(points[ObjectPoint.BOTTOM_RIGHT], points[ObjectPoint.TOP_RIGHT], ObjectSideOrientation.RIGHT);
+        this.putWallSide(points[ObjectPoint.BOTTOM_LEFT], points[ObjectPoint.BOTTOM_RIGHT], ObjectSideOrientation.BOTTOM);
+        this.putWallSide(points[ObjectPoint.BOTTOM_LEFT], points[ObjectPoint.TOP_LEFT], ObjectSideOrientation.LEFT);
     }
 
-    private putWallSide(p0: Vector3, p1: Vector3, type: WallSideType) {
+    private putWallSide(p0: Vector3, p1: Vector3, type: ObjectSideOrientation) {
         this.wallSides[type] = new WallSide(p0, p1, type);
     }
 }

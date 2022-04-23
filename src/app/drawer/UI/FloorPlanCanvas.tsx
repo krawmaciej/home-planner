@@ -13,8 +13,8 @@ import {
   WebGLRendererParameters
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-// import { RenderOrder } from "../constants/Types";
 import { MainInputHandler } from "./inputHandlers/MainInputHandler";
+import {ObjectElevation} from "../constants/Types";
 
 type Pointer = {
   onCanvas: boolean,
@@ -36,7 +36,7 @@ type Props = {
 const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
 
   const mount = useRef<HTMLDivElement>(null);
-  const zoom = 0.5;
+  const zoom = 0.75;
 
   useLayoutEffect(() => {
     let renderer: WebGLRenderer;
@@ -67,8 +67,8 @@ const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) 
       camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / - 2, frustumSize / 2, 0.1, 500);
 
       const grid = new GridHelper(100, 100, 0xbbbbbb, 0xbbbbbb);
-      // grid.renderOrder = RenderOrder.GRID;
-      // scene.add(grid);
+      grid.position.setY(ObjectElevation.GRID);
+      scene.add(grid);
 
       renderer.setSize(width, height);
   
@@ -77,20 +77,6 @@ const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) 
       camera.zoom = zoom;
 
       // controls = new OrbitControls(camera, renderer.domElement);
-
-      // checking matrix updating if position was changed
-      // const points = [new Vector3(0, 0, 0), new Vector3(3, 2, 1), new Vector3(0, 0, 0)];
-      // const geomPoints = new BufferGeometry().setFromPoints(points);
-      // const line = new Line(geomPoints);
-      // console.log(JSON.stringify(line.matrix));
-      // console.log(JSON.stringify(line.position));
-      // console.log(JSON.stringify(line.matrixWorld));
-      // line.position.copy(new Vector3(10, 10, 10));
-      // scene.add(line);
-      // line.updateMatrixWorld();
-      // console.log(JSON.stringify(line.matrix));
-      // console.log(JSON.stringify(line.position));
-      // console.log(JSON.stringify(line.matrixWorld));
 
       // sample
       // const wall = Wall.create({length: 50, height: 20, width: 2});
@@ -187,12 +173,6 @@ const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) 
         vectorToUnproject: new Vector3(x, y, 0),
         clicked: true
       };
-      // old
-      // if (pointer.state === DrawingState.NONE) {
-      //   pointer = pointer.startDrawing({ x: x, y: y });
-      // } else if (pointer.state === DrawingState.DRAWING) {
-      //   pointer = pointer.stopDrawing({ x: x, y: y });
-      // }
     }
 
     function handlePointerEnter(event: PointerEvent) {

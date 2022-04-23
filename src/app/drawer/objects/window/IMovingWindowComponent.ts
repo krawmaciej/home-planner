@@ -1,5 +1,5 @@
-import { IPlacedWindowComponent } from "./IPlacedWindowComponent";
-import { IWallComponent } from "./IWallComponent";
+import {IPlacedWindowComponent} from "./IPlacedWindowComponent";
+import {IWallComponent} from "./IWallComponent";
 import {PlacedWall} from "../wall/PlacedWall";
 
 export interface IMovingWindowComponent extends IWallComponent {
@@ -9,6 +9,4 @@ export interface IMovingWindowComponent extends IWallComponent {
      */
     createPlacedComponent(parentWall: PlacedWall): IPlacedWindowComponent;
     unsetParentWall(): void;
-    setDefaultColour(): void;
-    setCollidedColour(): void;
 }

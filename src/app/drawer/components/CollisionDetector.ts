@@ -1,11 +1,12 @@
-import { Vector3 } from "three";
-import {ObjectPoints, ObjectPoint} from "../constants/Types";
-import { ISceneObject } from "../objects/ISceneObject";
-import { DrawedWall } from "../objects/wall/DrawedWall";
-import { PlacedWall } from "../objects/wall/PlacedWall";
-import { WallSideType } from "../objects/wall/WallSides";
-import { DrawerMath, WallConstruction} from "./DrawerMath";
-import { LiangBarsky, LiangBarskyResult, CollisionType } from "./LiangBarsky";
+import {Vector3} from "three";
+import {ObjectPoint, ObjectPoints, ObjectSideOrientation} from "../constants/Types";
+import {ISceneObject} from "../objects/ISceneObject";
+import {DrawedWall} from "../objects/wall/DrawedWall";
+import {PlacedWall} from "../objects/wall/PlacedWall";
+import {DrawerMath, WallConstruction} from "./DrawerMath";
+import {CollisionType, LiangBarsky, LiangBarskyResult} from "./LiangBarsky";
+import {IWallComponent} from "../objects/window/IWallComponent";
+import {Direction} from "../objects/wall/Direction";
 
 export type Collision <T extends ISceneObject> = {
     isCollision: boolean,
@@ -13,7 +14,7 @@ export type Collision <T extends ISceneObject> = {
 }
 
 export type AdjacentObject <T extends ISceneObject> = {
-    toSide: WallSideType
+    toSide: ObjectSideOrientation
     adjacent: T,
     points: Array<Vector3>,
 }
@@ -32,8 +33,8 @@ export class CollisionDetector {
      */
     public pickRectangularObjectWithPointer<T extends ISceneObject>(position: Vector3, objects: Array<T>): T | undefined {
         for (const obj of objects) {
-            const min = obj.objectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
-            const max = obj.objectPointsOnScene()[ObjectPoint.TOP_RIGHT];
+            const min = obj.getObjectPointsOnScene()[ObjectPoint.BOTTOM_LEFT];
+            const max = obj.getObjectPointsOnScene()[ObjectPoint.TOP_RIGHT];
             if (DrawerMath.isPointBetweenMinMaxPoints(position, min, max)) {
                 return obj;
             }
@@ -73,16 +74,16 @@ export class CollisionDetector {
         const adjacentObjects = new Array<AdjacentObject<T>>();
 
         for (const object of otherSceneObjects) {
-            const checkedAgainstObjectPoints = object.objectPointsOnScene();
+            const checkedAgainstObjectPoints = object.getObjectPointsOnScene();
             const collisionPoints = new Array<Vector3>();
             let edgeCollisionsCount = 0;
-            let wallSideType = WallSideType.TOP;
+            let wallSideType = ObjectSideOrientation.TOP;
 
             // top
             let check = CollisionDetector.checkLineCollision(topLeft, topRight, checkedAgainstObjectPoints);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
-                wallSideType = WallSideType.TOP;
+                wallSideType = ObjectSideOrientation.TOP;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
@@ -93,7 +94,7 @@ export class CollisionDetector {
             check = CollisionDetector.checkLineCollision(bottomRight, topRight, checkedAgainstObjectPoints);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
-                wallSideType = WallSideType.RIGHT;
+                wallSideType = ObjectSideOrientation.RIGHT;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
@@ -104,7 +105,7 @@ export class CollisionDetector {
             check = CollisionDetector.checkLineCollision(bottomLeft, bottomRight, checkedAgainstObjectPoints);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
-                wallSideType = WallSideType.BOTTOM;
+                wallSideType = ObjectSideOrientation.BOTTOM;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
@@ -115,7 +116,7 @@ export class CollisionDetector {
             check = CollisionDetector.checkLineCollision(bottomLeft, topLeft, checkedAgainstObjectPoints);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
-                wallSideType = WallSideType.LEFT;
+                wallSideType = ObjectSideOrientation.LEFT;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
@@ -143,67 +144,53 @@ export class CollisionDetector {
 
     /**
      * Finds collisions, each wall check is ordered from left to right or bottom to top.
-     * @param points
+     * @param component
      * @param walls 
      * @returns 
      */
-    public detectWindowWallCollisions(points : Array<Vector3>, walls: Array<PlacedWall>): Array<CollidingWall> {
-        const topLeft = points[ObjectPoint.TOP_LEFT];
-        const topRight = points[ObjectPoint.TOP_RIGHT];
-        const bottomRight = points[ObjectPoint.BOTTOM_RIGHT];
-        const bottomLeft = points[ObjectPoint.BOTTOM_LEFT];
-
-        const collidingWalls = new Array<CollidingWall>();
-
-        for (const wall of walls) {
-            let collision = false;
-            const horizontalSideCollidingLengths = new Array<number>();
-            const verticalSideCollidingLengths = new Array<number>();
-            // top
-            let check = CollisionDetector.checkLineCollision(topLeft, topRight, wall.props.points);
-            if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
-                horizontalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
-                collision = true;
-            }
-
-            // right
-            check = CollisionDetector.checkLineCollision(bottomRight, topRight, wall.props.points);
-            if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
-                verticalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
-            }
-
-            // bottom
-            check = CollisionDetector.checkLineCollision(bottomLeft, bottomRight, wall.props.points);
-            if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
-                horizontalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
-                collision = true;
-            }
-
-            // left
-            check = CollisionDetector.checkLineCollision(bottomLeft, topLeft, wall.props.points);
-            if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
-                verticalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
-                collision = true;
-            }
-
-            if (!collision) {
-                continue; // no meaningful collisions, check next wall
-            }
-
-            if (verticalSideCollidingLengths.length === 0 || horizontalSideCollidingLengths.length === 0) {
-                // requires checking wall against component
-
-            }
-
-            const horizontalLength = CollisionDetector.average(horizontalSideCollidingLengths);
-            const verticalLength = CollisionDetector.average(verticalSideCollidingLengths);
-            collidingWalls.push({ wall: wall, collisionArea: horizontalLength * verticalLength });
+    public detectComponentAdjacentWallCollisions(component: IWallComponent, walls: Array<PlacedWall>
+    ): Collision<PlacedWall> {
+        const parentWall = component.getParentWall();
+        if (parentWall === undefined) {
+            throw new Error("Cannot find adjacent wall collision for component without parent wall.");
         }
+        const placedWallsWithoutParentWall = CollisionDetector.getPlacedWallsWithoutParentWall(parentWall, walls);
+        const points = component.getObjectPointsOnScene();
+        const collision = this.detectCollisions(points, placedWallsWithoutParentWall);
 
-        return collidingWalls;
+        // check only front and back component side adjacent collisions
+        return {
+            isCollision: collision.isCollision,
+            adjacentObjects: CollisionDetector.getOnlyFrontAndBackCollisions(collision, parentWall),
+        };
+    }
+
+    private static getOnlyFrontAndBackCollisions(collision: Collision<PlacedWall>, parentWall: PlacedWall) {
+        const sideFilter = CollisionDetector.getSideFilterStrategy(parentWall);
+        return collision.adjacentObjects.filter(sideFilter);
+    }
+
+    private static getSideFilterStrategy(parentWall: PlacedWall) {
+        if (parentWall.props.direction === Direction.UP || parentWall.props.direction === Direction.DOWN) {
+            return CollisionDetector.isSideVertical; // find only non-horizontal
+        } else {
+            return CollisionDetector.isSideHorizontal; // find only non-vertical
+        }
+    }
+
+    private static isSideHorizontal(adjacentWall: AdjacentObject<PlacedWall>): boolean {
+        return adjacentWall.toSide === ObjectSideOrientation.TOP || adjacentWall.toSide === ObjectSideOrientation.BOTTOM;
+    }
+
+    private static isSideVertical(adjacentWall: AdjacentObject<PlacedWall>): boolean {
+        return adjacentWall.toSide === ObjectSideOrientation.LEFT || adjacentWall.toSide === ObjectSideOrientation.RIGHT;
     }
 
     private static average(array: Array<number>) {
         return array.reduce((a, b) => a + b) / array.length;
+    }
+
+    private static getPlacedWallsWithoutParentWall(parentWall: PlacedWall, placedWalls: Array<PlacedWall>): Array<PlacedWall> {
+        return placedWalls.filter(wall => wall !== parentWall);
     }
 }

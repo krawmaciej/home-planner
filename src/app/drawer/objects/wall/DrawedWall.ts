@@ -21,12 +21,10 @@ export class DrawedWall implements IDrawedWall {
 
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
-        // depthTest: false
     });
 
     private static readonly collidedMaterial = new LineBasicMaterial({
         color: 0xff0000,
-        // depthTest: false
     });
 
     public readonly props: WallConstruction;
@@ -57,10 +55,6 @@ export class DrawedWall implements IDrawedWall {
         middle.add(anchorEnd);
         wall.add(middle);
         contactPoints.forEach(mesh => wall.add(mesh));
-        // anchorStart.renderOrder = 1;
-        // anchorEnd.renderOrder = 1;
-        // middle.renderOrder = 1;
-        // wall.renderOrder = 1;
     }
 
     public static wallFromPoints(props: WallConstruction, isCollided: boolean, contactPoints: Vector3[]): DrawedWall {
@@ -68,7 +62,6 @@ export class DrawedWall implements IDrawedWall {
         let contactPointsMeshes = new Array<Mesh<CircleGeometry, MeshBasicMaterial>>();
         if (!isCollided) {
             contactPointsMeshes = contactPoints.map(point => this.createContactPoint(point));
-            // contactPointsMeshes.forEach(mesh => mesh.renderOrder = 1);
         }
         
         const wallGeometry = new BufferGeometry().setFromPoints(this.getWallPoints(props));
@@ -102,8 +95,6 @@ export class DrawedWall implements IDrawedWall {
     }
 
     private static getMiddlePoints({first: start, last: end}: MiddlePoints): Vector3[] {
-        // start.setY(ComponentElevation.WALL); // todo: remove if working
-        // end.setY(ComponentElevation.WALL);
         return [start, end];
     }
 

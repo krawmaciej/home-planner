@@ -10,36 +10,39 @@ export class NoMovingWindow implements IMovingWindowComponent {
     private constructor() {}
 
     createPlacedComponent(): IPlacedWindowComponent {
-        throw new Error("Method not implemented.");
+        throw new Error("Called method on a not initialized component.");
     }
     changePosition(): void {
-        throw new Error("Method not implemented.");
+        throw new Error("Called method on a not initialized component.");
     }
     addTo(): void {
-        throw new Error("Method not implemented.");
+        throw new Error("Called method on a not initialized component.");
     }
     removeFrom(): void {
-        throw new Error("Method not implemented.");
+        throw new Error("Called method on a not initialized component.");
     }
-    objectPointsOnScene(): ObjectPoints {
-        throw new Error("Method not implemented.");
+    getObjectPointsOnScene(): ObjectPoints {
+        throw new Error("Called method on a not initialized component.");
     }
     setParentWall(): void {
-        throw new Error("Method not implemented.");
+        throw new Error("Called method on a not initialized component.");
     }
     unsetParentWall(): void {
-        throw new Error("Method not implemented.");
+        throw new Error("Called method on a not initialized component.");
     }
     getParentWall(): undefined {
-        throw new Error("Method not implemented.");
+        throw new Error("Called method on a not initialized component.");
     }
     getDistanceFromParentWall(): number | undefined {
-        throw new Error("Method not implemented.");
+        throw new Error("Called method on a not initialized component.");
     }
-    setDefaultColour(): void {
-        throw new Error("Method not implemented.");
+    setNotCollided(): void {
+        throw new Error("Called method on a not initialized component.");
     }
-    setCollidedColour(): void {
-        throw new Error("Method not implemented.");
+    setCollided(): void {
+        throw new Error("Called method on a not initialized component.");
+    }
+    collides(): boolean {
+        throw new Error("Called method on a not initialized component.");
     }
 }
