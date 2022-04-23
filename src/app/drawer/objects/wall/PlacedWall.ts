@@ -1,5 +1,5 @@
 import {Group, Line, LineBasicMaterial, Scene, Vector3} from "three";
-import {AdjacentWall} from "../../components/CollisionDetector";
+import {AdjacentObject} from "../../components/CollisionDetector";
 import {WallConstruction} from "../../components/DrawerMath";
 import {ObjectPoints} from "../../constants/Types";
 import {ISceneObject} from "../ISceneObject";
@@ -14,7 +14,7 @@ export class PlacedWall implements ISceneObject {
         // depthTest: false
     });
 
-    public static create(props: WallConstruction, adjacentWalls: AdjacentWall[]): PlacedWall {
+    public static create(props: WallConstruction, adjacentWalls: AdjacentObject<PlacedWall>[]): PlacedWall {
         const wallSides = new WallSides(props);
         adjacentWalls.forEach(aw => wallSides.putHole(aw.toSide, aw.points));
         const wallParts = wallSides.createDrawableObjects(PlacedWall.material);

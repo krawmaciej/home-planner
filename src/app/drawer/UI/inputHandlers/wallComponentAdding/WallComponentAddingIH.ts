@@ -33,7 +33,7 @@ export class WallComponentAddingIH implements IInputHandler {
     }
 
     public handleMovement(point: Vector3): void {
-        point.setY(ObjectElevation.COMPONENT); // y coordinate is elevation
+        point.setY(ObjectElevation.MOVING); // y coordinate is elevation
         if (this.pointer.getState() === State.SELECTED) {
             this.pointer.move(point); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
             this.wallComponentAdder.showMovingComponent(point);

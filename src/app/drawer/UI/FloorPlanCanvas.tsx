@@ -72,7 +72,7 @@ const FloorPlanCanvasBase: React.FC<Props> = ({scene, mainInputHandler}: Props) 
 
       renderer.setSize(width, height);
   
-      camera.position.set(0.0, 4.0, 0.0);
+      camera.position.set(0.0, 5.0, 0.0);
       camera.lookAt(0, 0, 0);
       camera.zoom = zoom;
 

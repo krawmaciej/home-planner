@@ -9,4 +9,6 @@ export interface IMovingWindowComponent extends IWallComponent {
      */
     createPlacedComponent(parentWall: PlacedWall): IPlacedWindowComponent;
     unsetParentWall(): void;
+    setDefaultColour(): void;
+    setCollidedColour(): void;
 }

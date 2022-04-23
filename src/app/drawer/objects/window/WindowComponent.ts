@@ -1,4 +1,12 @@
-import {BufferGeometry, Line, LineBasicMaterial, Material, Quaternion, Scene, Vector3} from "three";
+import {
+    BufferGeometry,
+    Line,
+    LineBasicMaterial,
+    Material,
+    Quaternion,
+    Scene,
+    Vector3
+} from "three";
 import {DrawerMath} from "../../components/DrawerMath";
 import {ObjectElevation, ObjectPoint, ObjectPoints, Vector2D} from "../../constants/Types";
 import {IMovingWindowComponent} from "./IMovingWindowComponent";
@@ -27,7 +35,16 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         [Direction.DOWN, WindowComponent.RIGHT_ANGLE_ROTATION],
     ]);
 
-    private static readonly material = new LineBasicMaterial({
+    private static readonly defaultMaterial = new LineBasicMaterial({
+        color: 0x000000,
+    });
+
+    private static readonly collidingMaterial = new LineBasicMaterial({
+        color: 0xaa0000,
+    });
+
+    // has to be separate from defaultMaterial due to ThreeJS material sharing
+    private static readonly placedMaterial = new LineBasicMaterial({
         color: 0x000000,
     });
 
@@ -36,12 +53,12 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     private direction: Vector2D;
     private parentWall: undefined | PlacedWall;
 
-    public constructor(props: WindowProps) {
+    public constructor(props: WindowProps, material?: LineBasicMaterial) {
         this.props = props;
         const points = WindowComponent.createPoints(props);
         points.push(points[ObjectPoint.TOP_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
-        this.window = new Line(geometry, WindowComponent.material);
+        this.window = new Line(geometry, material ?? WindowComponent.defaultMaterial);
         this.window.matrixAutoUpdate = false; // will be updated on each change position
         this.direction = Direction.RIGHT;
     }
@@ -102,7 +119,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     }
 
     public createPlacedComponent(parentWall: PlacedWall): IPlacedWindowComponent {
-        const placed = new WindowComponent(this.props);
+        const placed = new WindowComponent(this.props, WindowComponent.placedMaterial);
         placed.setParentWall(parentWall);
         placed.changePosition(this.window.position);
         return placed;
@@ -207,5 +224,13 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
 
     public getParentWall(): PlacedWall | undefined {
         return this.parentWall;
+    }
+
+    public setDefaultColour(): void {
+        this.window.material = WindowComponent.defaultMaterial;
+    }
+
+    public setCollidedColour(): void {
+        this.window.material = WindowComponent.collidingMaterial;
     }
 }

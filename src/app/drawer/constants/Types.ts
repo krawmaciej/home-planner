@@ -25,7 +25,8 @@ export enum RenderOrder {
 export enum ObjectElevation {
     WALL = 1,
     COMPONENT = 2,
-    UI = 3,
+    MOVING = 3,
+    UI = 4,
 }
 
 export enum WallSide {

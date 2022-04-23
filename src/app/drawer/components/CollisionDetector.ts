@@ -7,14 +7,14 @@ import { WallSideType } from "../objects/wall/WallSides";
 import { DrawerMath, WallConstruction} from "./DrawerMath";
 import { LiangBarsky, LiangBarskyResult, CollisionType } from "./LiangBarsky";
 
-export type Collision = {
+export type Collision <T extends ISceneObject> = {
     isCollision: boolean,
-    adjacentWalls: Array<AdjacentWall>,
+    adjacentObjects: Array<AdjacentObject<T>>,
 }
 
-export type AdjacentWall = {
+export type AdjacentObject <T extends ISceneObject> = {
     toSide: WallSideType
-    adjacent: PlacedWall,
+    adjacent: T,
     points: Array<Vector3>,
 }
 
@@ -60,81 +60,82 @@ export class CollisionDetector {
 
     /**
      * Finds collisions, each wall check is ordered from left to right or bottom to top.
-     * @param checked 
-     * @param walls 
+     * @param points
+     * @param otherSceneObjects
      * @returns 
      */
-    public detectWallCollisions({ points }: WallConstruction, walls: Array<PlacedWall>): Collision {
+    public detectCollisions<T extends ISceneObject>(points: ObjectPoints, otherSceneObjects: Array<T>): Collision<T> {
         const topLeft = points[ObjectPoint.TOP_LEFT];
         const topRight = points[ObjectPoint.TOP_RIGHT];
         const bottomRight = points[ObjectPoint.BOTTOM_RIGHT];
         const bottomLeft = points[ObjectPoint.BOTTOM_LEFT];
 
-        const adjacentWalls = new Array<AdjacentWall>();
+        const adjacentObjects = new Array<AdjacentObject<T>>();
 
-        for (const wall of walls) {
+        for (const object of otherSceneObjects) {
+            const checkedAgainstObjectPoints = object.objectPointsOnScene();
             const collisionPoints = new Array<Vector3>();
             let edgeCollisionsCount = 0;
             let wallSideType = WallSideType.TOP;
 
             // top
-            let check = this.checkLineCollision(topLeft, topRight, wall.props.points);
+            let check = CollisionDetector.checkLineCollision(topLeft, topRight, checkedAgainstObjectPoints);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
                 wallSideType = WallSideType.TOP;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjacentWalls: adjacentWalls };
+                return { isCollision: true, adjacentObjects: adjacentObjects };
             }
 
             // right
-            check = this.checkLineCollision(bottomRight, topRight, wall.props.points);
+            check = CollisionDetector.checkLineCollision(bottomRight, topRight, checkedAgainstObjectPoints);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
                 wallSideType = WallSideType.RIGHT;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjacentWalls: adjacentWalls };
+                return { isCollision: true, adjacentObjects: adjacentObjects };
             }
 
             // bottom
-            check = this.checkLineCollision(bottomLeft, bottomRight, wall.props.points);
+            check = CollisionDetector.checkLineCollision(bottomLeft, bottomRight, checkedAgainstObjectPoints);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
                 wallSideType = WallSideType.BOTTOM;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjacentWalls: adjacentWalls };
+                return { isCollision: true, adjacentObjects: adjacentObjects };
             }
 
             // left
-            check = this.checkLineCollision(bottomLeft, topLeft, wall.props.points);
+            check = CollisionDetector.checkLineCollision(bottomLeft, topLeft, checkedAgainstObjectPoints);
             if ( check.type === CollisionType.NORMAL_EDGE ) {
                 edgeCollisionsCount++;
                 wallSideType = WallSideType.LEFT;
                 collisionPoints.push(check.p0);
                 collisionPoints.push(check.p1);
             } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjacentWalls: adjacentWalls };
+                return { isCollision: true, adjacentObjects: adjacentObjects };
             }
 
             if (edgeCollisionsCount === 1) { // only one side collided, start and end must have been set
-                adjacentWalls.push({ 
+                adjacentObjects.push({
                     toSide: wallSideType,
-                    adjacent: wall,
+                    adjacent: object,
                     points: collisionPoints
                 });
             } else if (edgeCollisionsCount > 1) {
-                return { isCollision: true, adjacentWalls: adjacentWalls };
+                return { isCollision: true, adjacentObjects: adjacentObjects };
             }
         }
-        return { isCollision: false, adjacentWalls: adjacentWalls };
+        return { isCollision: false, adjacentObjects: adjacentObjects };
     }
 
-    private checkLineCollision(p0: Vector3, p1: Vector3, points: ObjectPoints): LiangBarskyResult {
+    private static checkLineCollision(p0: Vector3, p1: Vector3, points: ObjectPoints): LiangBarskyResult {
         const min = points[ObjectPoint.BOTTOM_LEFT];
         const max = points[ObjectPoint.TOP_RIGHT];
         return LiangBarsky.checkCollision(p0, p1, min, max);
@@ -159,27 +160,27 @@ export class CollisionDetector {
             const horizontalSideCollidingLengths = new Array<number>();
             const verticalSideCollidingLengths = new Array<number>();
             // top
-            let check = this.checkLineCollision(topLeft, topRight, wall.props.points);
+            let check = CollisionDetector.checkLineCollision(topLeft, topRight, wall.props.points);
             if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
                 horizontalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
                 collision = true;
             }
 
             // right
-            check = this.checkLineCollision(bottomRight, topRight, wall.props.points);
+            check = CollisionDetector.checkLineCollision(bottomRight, topRight, wall.props.points);
             if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
                 verticalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
             }
 
             // bottom
-            check = this.checkLineCollision(bottomLeft, bottomRight, wall.props.points);
+            check = CollisionDetector.checkLineCollision(bottomLeft, bottomRight, wall.props.points);
             if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
                 horizontalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
                 collision = true;
             }
 
             // left
-            check = this.checkLineCollision(bottomLeft, topLeft, wall.props.points);
+            check = CollisionDetector.checkLineCollision(bottomLeft, topLeft, wall.props.points);
             if ( (check.type & CollisionType.NORMAL) === CollisionType.NORMAL ) { // any kind of collision
                 verticalSideCollidingLengths.push(check.p0.distanceTo(check.p1));
                 collision = true;
@@ -194,15 +195,15 @@ export class CollisionDetector {
 
             }
 
-            const horizontalLength = this.average(horizontalSideCollidingLengths);
-            const verticalLength = this.average(verticalSideCollidingLengths);
+            const horizontalLength = CollisionDetector.average(horizontalSideCollidingLengths);
+            const verticalLength = CollisionDetector.average(verticalSideCollidingLengths);
             collidingWalls.push({ wall: wall, collisionArea: horizontalLength * verticalLength });
         }
 
         return collidingWalls;
     }
 
-    private average(array: Array<number>) {
+    private static average(array: Array<number>) {
         return array.reduce((a, b) => a + b) / array.length;
     }
 }

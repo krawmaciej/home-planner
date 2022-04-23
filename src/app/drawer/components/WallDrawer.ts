@@ -37,12 +37,12 @@ export class WallDrawer {
      * @param end pointer ending point
      */
     public moveDrawedWall(start: Vector3, end: Vector3) {
-        start.y = ObjectElevation.WALL;
-        end.y = ObjectElevation.WALL;
+        start.y = ObjectElevation.MOVING;
+        end.y = ObjectElevation.MOVING;
 
         const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
-        const collision = this.collisionDetector.detectWallCollisions(wallBuilder.getProps(), this.placedWalls);
+        const collision = this.collisionDetector.detectCollisions(wallBuilder.getProps().points, this.placedWalls);
         const dWall = wallBuilder.setCollision(collision).createDrawedWall();
 
         this.drawedWall.removeFrom(this.scene);
@@ -56,7 +56,8 @@ export class WallDrawer {
         end.y = ObjectElevation.WALL;
         const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
-        const collisionResult = this.collisionDetector.detectWallCollisions(wallBuilder.getProps(), this.placedWalls);
+        const collisionResult = this.collisionDetector
+            .detectCollisions(wallBuilder.getProps().points, this.placedWalls);
         console.log(collisionResult);
 
         this.drawedWall.removeFrom(this.scene);
@@ -69,12 +70,13 @@ export class WallDrawer {
 
         const placedWall = wallBuilder.setCollision(collisionResult).createPlacedWall();
 
-        collisionResult.adjacentWalls.forEach(aw => {
-            const collision = this.collisionDetector.detectWallCollisions(aw.adjacent.props, [ placedWall ]);
-            if (collision.adjacentWalls.length !== 1) {
+        collisionResult.adjacentObjects.forEach(aw => {
+            const collision = this.collisionDetector
+                .detectCollisions(aw.adjacent.objectPointsOnScene(), [ placedWall ]);
+            if (collision.adjacentObjects.length !== 1) {
                 throw new Error("Collided wall should also collide with new wall but did not!");
             }
-            const { toSide, points } = collision.adjacentWalls[0];
+            const { toSide, points } = collision.adjacentObjects[0];
             const replaced = aw.adjacent.collidedWithWall(toSide, points);
 
             aw.adjacent.removeFrom(this.scene);

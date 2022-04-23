@@ -36,4 +36,10 @@ export class NoMovingWindow implements IMovingWindowComponent {
     getDistanceFromParentWall(): number | undefined {
         throw new Error("Method not implemented.");
     }
+    setDefaultColour(): void {
+        throw new Error("Method not implemented.");
+    }
+    setCollidedColour(): void {
+        throw new Error("Method not implemented.");
+    }
 }

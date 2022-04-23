@@ -12,7 +12,7 @@ export class WallComponentAdder {
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;
     private readonly placedWalls: Array<PlacedWall>; // used to detect collisions with walls
-    private readonly wallComponents: Array<IPlacedWindowComponent>; // used to detect collisions with other components
+    private readonly placedWallComponents: Array<IPlacedWindowComponent>; // used to detect collisions with other components
 
     private movingWindow: IMovingWindowComponent = NoMovingWindow.getInstance();
 
@@ -25,7 +25,7 @@ export class WallComponentAdder {
         this.scene = scene;
         this.collisionDetector = collisionDetector;
         this.placedWalls = placedWalls;
-        this.wallComponents = wallComponents;
+        this.placedWallComponents = wallComponents;
     }
 
     public setComponent(windowProps: WindowProps) {
@@ -38,6 +38,9 @@ export class WallComponentAdder {
     }
 
     public moveComponent(position: Vector3): IWallComponent {
+        this.movingWindow.setDefaultColour(); // reset to default color
+
+        // check if component has parent wall
         const wall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
         if (wall === undefined) {
             this.movingWindow.changePosition(position);
@@ -47,6 +50,14 @@ export class WallComponentAdder {
 
         this.movingWindow.setParentWall(wall);
         this.movingWindow.changePosition(position);
+
+        // check if component collides with other components
+        const collision = this.collisionDetector
+            .detectCollisions(this.movingWindow.objectPointsOnScene(), this.placedWallComponents);
+        if (collision.isCollision) {
+            this.movingWindow.setCollidedColour();
+            return this.movingWindow; // collides with another component, do nothing
+        }
 
         return this.movingWindow;
     }
@@ -63,10 +74,11 @@ export class WallComponentAdder {
             return; // no wall owner, cannot place component
         }
 
+
         const placedComponent: IPlacedWindowComponent = this.movingWindow.createPlacedComponent(wall);
         placedComponent.addTo(this.scene); // first add to scene so that component has world coordinates
         wall.addComponent(placedComponent);
-        this.wallComponents.push(placedComponent);
+        this.placedWallComponents.push(placedComponent);
         //
         // const points = this.movingWindow.objectPoints();
         // const col = this.collisionDetector.detectWindowWallCollisions(points, this.placedWalls);
