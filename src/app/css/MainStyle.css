@@ -1,14 +1,16 @@
-.MainView { 
+.app-main-view {
   display: flex;
   flex-flow: column;
-  height: 100vh;
 }
-.Menu {
+.app-top-menu {
   height: 100%;
+}
+.app-bottom-menu {
+  height: 22vh;
   background-color: grey;
 }
-.Render { 
-  height: 70vh;
+.app-canvas {
+  height: 75vh;
   background-color: #DDDDDD;
-  flex-grow : 1; 
+  flex-grow: 1;
 }

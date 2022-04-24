@@ -1,16 +1,15 @@
-import "../css/MainStyle.css";
+import "../../css/MainStyle.css";
 
 import React, { useLayoutEffect, useRef } from "react";
 
 import { DirectionalLight, HemisphereLight, PerspectiveCamera, Scene, WebGLRenderer, WebGLRendererParameters } from "three";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
 type Props = {
   scene: Scene
 }
 
-export function RoomArrangerCanvas({scene}: Props) {
+export function InteriorArrangerCanvas({scene}: Props) {
 
   const mount = useRef<HTMLDivElement>(null);
 
@@ -35,22 +34,22 @@ export function RoomArrangerCanvas({scene}: Props) {
 
       renderer = new WebGLRenderer(renderParams);
       camera = new PerspectiveCamera(50, width / height, 0.1, 1000);
-      hemiLight = new HemisphereLight("white", "grey", 0.5);
-      directLight = new DirectionalLight("white", 0.4);
-      directLight.position.set(0, 30, 10);
-      directLight.target.position.set(0, 0, 10);
-
-      scene.add(hemiLight, directLight);
+      // hemiLight = new HemisphereLight("white", "grey", 0.5);
+      // directLight = new DirectionalLight("white", 0.4);
+      // directLight.position.set(0, 30, 10);
+      // directLight.target.position.set(0, 0, 10);
+      //
+      // scene.add(hemiLight, directLight);
 
       renderer.setSize(width, height);
   
-      camera.position.set(0, 60, 50);
-      camera.lookAt(0, 0, 0);
+      // camera.position.set(0, 60, 50);
+      // camera.lookAt(0, 0, 0);
 
       // camera controlls
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.minZoom = 0.5;
-      controls.maxZoom = 2;
+      // const controls = new OrbitControls(camera, renderer.domElement);
+      // controls.minZoom = 0.5;
+      // controls.maxZoom = 2;
 
 
 
@@ -103,7 +102,7 @@ export function RoomArrangerCanvas({scene}: Props) {
   }, []);
 
   return (
-    <div className="Render" ref={mount}/>
+    <div className="app-canvas" ref={mount}/>
   );
 
 }

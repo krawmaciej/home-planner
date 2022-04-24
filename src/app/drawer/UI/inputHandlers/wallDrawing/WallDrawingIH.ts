@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 import { WallDrawer } from "../../../components/WallDrawer";
 import { DrawingState, WallPointer } from "./WallPointer";
-import { IInputHandler } from "../IInputHandler";
+import { IInputHandler } from "../../../../common/canvas/inputHandler/IInputHandler";
 
 /**
  * Stateful input handler for drawing new walls.

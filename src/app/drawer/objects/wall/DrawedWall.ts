@@ -15,7 +15,7 @@ export class DrawedWall implements IDrawedWall {
         const geometry = new CircleGeometry(0.17);
         const meshMaterial = new MeshBasicMaterial(material);
         const mesh = new Mesh(geometry, meshMaterial);
-        mesh.rotateX(Math.PI*0.5);
+        mesh.rotateX(-Math.PI/2.0);
         return mesh;
     }
 
@@ -91,7 +91,7 @@ export class DrawedWall implements IDrawedWall {
     }
 
     private static getWallPoints({points}: WallConstruction): Vector3[] {
-        return [...points, points[ObjectPoint.TOP_LEFT]];
+        return [...points, points[ObjectPoint.BOTTOM_LEFT]];
     }
 
     private static getMiddlePoints({first: start, last: end}: MiddlePoints): Vector3[] {

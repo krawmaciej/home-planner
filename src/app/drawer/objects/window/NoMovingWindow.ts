@@ -36,6 +36,12 @@ export class NoMovingWindow implements IMovingWindowComponent {
     getDistanceFromParentWall(): number | undefined {
         throw new Error("Called method on a not initialized component.");
     }
+    getHeight(): number {
+        throw new Error("Called method on a not initialized component.");
+    }
+    getElevation(): number {
+        throw new Error("Called method on a not initialized component.");
+    }
     setNotCollided(): void {
         throw new Error("Called method on a not initialized component.");
     }

@@ -60,12 +60,12 @@ export class PlacedWall implements ISceneObject {
     }
 
     public addComponent(component: IWallComponent): void {
-        if (this.props.direction === Direction.UP || this.props.direction === Direction.DOWN) {
+        if (this.props.direction === Direction.DOWN || this.props.direction === Direction.UP) {
             this.wallSides.addComponent(ObjectSideOrientation.LEFT, component);
             this.wallSides.addComponent(ObjectSideOrientation.RIGHT, component);
         } else {
-            this.wallSides.addComponent(ObjectSideOrientation.BOTTOM, component);
             this.wallSides.addComponent(ObjectSideOrientation.TOP, component);
+            this.wallSides.addComponent(ObjectSideOrientation.BOTTOM, component);
         }
     }
 
@@ -74,12 +74,12 @@ export class PlacedWall implements ISceneObject {
      * @param component
      */
     public removeComponent(component: IWallComponent): void {
-        if (this.props.direction === Direction.UP || this.props.direction === Direction.DOWN) {
+        if (this.props.direction === Direction.DOWN || this.props.direction === Direction.UP) {
             this.wallSides.removeComponent(ObjectSideOrientation.LEFT, component);
             this.wallSides.removeComponent(ObjectSideOrientation.RIGHT, component);
         } else {
-            this.wallSides.removeComponent(ObjectSideOrientation.BOTTOM, component);
             this.wallSides.removeComponent(ObjectSideOrientation.TOP, component);
+            this.wallSides.removeComponent(ObjectSideOrientation.BOTTOM, component);
         }
     }
 }

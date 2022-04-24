@@ -35,14 +35,19 @@ export class WallSides {
         return this.wallSides.flatMap(value => value.createDrawableObjects(material));
     }
 
+    public getWallSides(): Array<WallSide> {
+        return [...this.wallSides];
+    }
+
     private addWallSides({ points }: WallConstruction): void {
-        this.putWallSide(points[ObjectPoint.TOP_LEFT], points[ObjectPoint.TOP_RIGHT], ObjectSideOrientation.TOP);
-        this.putWallSide(points[ObjectPoint.BOTTOM_RIGHT], points[ObjectPoint.TOP_RIGHT], ObjectSideOrientation.RIGHT);
         this.putWallSide(points[ObjectPoint.BOTTOM_LEFT], points[ObjectPoint.BOTTOM_RIGHT], ObjectSideOrientation.BOTTOM);
-        this.putWallSide(points[ObjectPoint.BOTTOM_LEFT], points[ObjectPoint.TOP_LEFT], ObjectSideOrientation.LEFT);
+        this.putWallSide(points[ObjectPoint.TOP_RIGHT], points[ObjectPoint.BOTTOM_RIGHT], ObjectSideOrientation.RIGHT);
+        this.putWallSide(points[ObjectPoint.TOP_LEFT], points[ObjectPoint.TOP_RIGHT], ObjectSideOrientation.TOP);
+        this.putWallSide(points[ObjectPoint.TOP_LEFT], points[ObjectPoint.BOTTOM_LEFT], ObjectSideOrientation.LEFT);
     }
 
     private putWallSide(p0: Vector3, p1: Vector3, type: ObjectSideOrientation) {
         this.wallSides[type] = new WallSide(p0, p1, type);
     }
+
 }
