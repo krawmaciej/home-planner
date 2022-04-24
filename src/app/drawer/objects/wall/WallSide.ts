@@ -1,6 +1,7 @@
 import { BufferGeometry, Line, Material, Vector3 } from "three";
 import { IWallComponent } from "../window/IWallComponent";
 import {ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
+import {DrawerMath} from "../../components/DrawerMath";
 
 
 export class WallSide {
@@ -55,7 +56,7 @@ export class WallSide {
         while (iterator !== undefined) {
             if (secondPoint[strategyKey] < iterator.point[strategyKey]) { // found higher
                 // cut between iterator and beforeIterator
-                if (firstPoint[strategyKey] === beforeIterator.point[strategyKey]) {
+                if (DrawerMath.areNumbersEqual(firstPoint[strategyKey],beforeIterator.point[strategyKey])) {
                     beforeIterator.connection = new Connection(secondNode, ConnectionType.HOLE);
                     secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 } else {
@@ -64,8 +65,8 @@ export class WallSide {
                     secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 }
                 break;
-            } else if (secondPoint[strategyKey] === iterator.point[strategyKey]) { // second point is same as existing
-                if (firstPoint[strategyKey] === beforeIterator.point[strategyKey]) { // swap current solid line for hole
+            } else if (DrawerMath.areNumbersEqual(secondPoint[strategyKey], iterator.point[strategyKey])) { // second point is same as existing
+                if (DrawerMath.areNumbersEqual(firstPoint[strategyKey], beforeIterator.point[strategyKey])) { // swap current solid line for hole
                     beforeIterator.connection.type = ConnectionType.HOLE;
                 } else {
                     beforeIterator.connection.next = firstNode;
@@ -97,7 +98,11 @@ export class WallSide {
         let iterator: SideNode | undefined = this.head.connection.next;
 
         while (iterator !== undefined) {
-            if (componentAttributes.secondPoint[strategyKey] <= iterator.point[strategyKey]) { // found higher todo: use vector epsilon comparison
+            const componentPoint = componentAttributes.secondPoint[strategyKey];
+            const sideNodePoint = iterator.point[strategyKey];
+            if (componentPoint <= sideNodePoint ||
+                DrawerMath.areNumbersEqual(componentPoint, sideNodePoint)
+            ) {
                 // put in connection between iterator and beforeIterator
                 beforeIterator.connection.addComponent(component, componentAttributes);
                 this.componentToSideNode.set(component, beforeIterator);

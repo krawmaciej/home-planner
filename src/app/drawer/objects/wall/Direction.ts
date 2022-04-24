@@ -9,4 +9,8 @@ export class Direction {
     public static readonly DOWN: Vector2D = { x: 0, y: -1 };
     public static readonly RIGHT: Vector2D = { x: 1, y: 0 };
     public static readonly LEFT: Vector2D = { x: -1, y: 0 };
+
+    public static getOpposite(direction: Vector2D): Vector2D {
+        return { x: -direction.x, y: -direction.y };
+    }
 }

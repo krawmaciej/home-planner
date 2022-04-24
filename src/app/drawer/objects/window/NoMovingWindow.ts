@@ -1,4 +1,4 @@
-import { ObjectPoints } from "../../constants/Types";
+import {ObjectPoints, Vector2D} from "../../constants/Types";
 import {IMovingWindowComponent} from "./IMovingWindowComponent";
 import {IPlacedWindowComponent} from "./IPlacedWindowComponent";
 
@@ -43,6 +43,9 @@ export class NoMovingWindow implements IMovingWindowComponent {
         throw new Error("Called method on a not initialized component.");
     }
     collides(): boolean {
+        throw new Error("Called method on a not initialized component.");
+    }
+    getDirection(): Vector2D {
         throw new Error("Called method on a not initialized component.");
     }
 }

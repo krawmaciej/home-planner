@@ -230,4 +230,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         return this.collided;
     }
 
+    public getDirection(): Vector2D {
+        return this.direction;
+    }
 }
