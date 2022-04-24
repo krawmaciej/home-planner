@@ -1,5 +1,5 @@
 import {Vector3} from "three";
-import {ObjectPoint, ObjectPoints, ObjectSideOrientation} from "../constants/Types";
+import {ObjectPoint, ObjectPoints, ObjectSideOrientation, Vector2D} from "../constants/Types";
 import {ISceneObject} from "../objects/ISceneObject";
 import {DrawedWall} from "../objects/wall/DrawedWall";
 import {PlacedWall} from "../objects/wall/PlacedWall";
@@ -60,7 +60,7 @@ export class CollisionDetector {
     }
 
     /**
-     * Finds collisions, each wall check is ordered from left to right or bottom to top.
+     * Finds collisions, each checked object is ordered horizontally or vertically.
      * @param points
      * @param otherSceneObjects
      * @returns 
@@ -143,7 +143,7 @@ export class CollisionDetector {
     }
 
     /**
-     * Finds collisions, each wall check is ordered from left to right or bottom to top.
+     * Finds walls that collide with front and back of the component. Other sides are allowed to collide.
      * @param component
      * @param walls 
      * @returns 
@@ -163,6 +163,17 @@ export class CollisionDetector {
             isCollision: collision.isCollision,
             adjacentObjects: CollisionDetector.getOnlyFrontAndBackCollisions(collision, parentWall),
         };
+    }
+
+    public detectWallComponentCollisions(wallProps: WallConstruction, components: Array<IWallComponent>) {
+        const componentsPerpendicularToWall = components.filter(
+            cmp => ! CollisionDetector.areDirectionsSameOrientation(cmp.getDirection(), wallProps.direction)
+        );
+        return this.detectCollisions(wallProps.points, componentsPerpendicularToWall);
+    }
+
+    private static areDirectionsSameOrientation(direction: Vector2D, otherDirection: Vector2D): boolean {
+        return direction === otherDirection || Direction.getOpposite(direction) === otherDirection;// todo: move to Direction and use are numbers equal
     }
 
     private static getOnlyFrontAndBackCollisions(collision: Collision<PlacedWall>, parentWall: PlacedWall) {

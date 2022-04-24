@@ -1,6 +1,7 @@
 import {Vector3} from "three";
 import {ISceneObject} from "../ISceneObject";
 import {PlacedWall} from "../wall/PlacedWall";
+import {Vector2D} from "../../constants/Types";
 
 export interface IWallComponent extends ISceneObject {
     changePosition(point: Vector3): void;
@@ -10,4 +11,6 @@ export interface IWallComponent extends ISceneObject {
     setNotCollided(): void;
     setCollided(): void;
     collides(): boolean;
+
+    getDirection(): Vector2D;
 }

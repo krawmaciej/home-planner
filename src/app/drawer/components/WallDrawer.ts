@@ -6,6 +6,7 @@ import { NoDrawedWall } from "../objects/wall/NoDrawedWall";
 import { WallThickness } from "../objects/wall/WallThickness";
 import { CollisionDetector } from "./CollisionDetector";
 import { PlacedWall } from "../objects/wall/PlacedWall";
+import {IWallComponent} from "../objects/window/IWallComponent";
 
 export class WallDrawer {
 
@@ -13,6 +14,7 @@ export class WallDrawer {
     private readonly collisionDetector: CollisionDetector;
     private readonly placedWalls: Array<PlacedWall>;
     private readonly updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>; // todo: refactor to placed walls domain object
+    private readonly components: Array<IWallComponent>;
 
     private wallThickness: WallThickness;
     private drawedWall: IDrawedWall = NoDrawedWall.getInstance(); // after wall is drawn there is no more wall being drawn
@@ -22,12 +24,14 @@ export class WallDrawer {
         collisionDetector: CollisionDetector,
         walls: Array<PlacedWall>,
         updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
+        components: Array<IWallComponent>,
         wallThickness: WallThickness
     ) {
         this.scene = scene;
         this.collisionDetector = collisionDetector;
         this.placedWalls = walls;
         this.updateWallsToggle = updateWallsToggle;
+        this.components = components;
         this.wallThickness = wallThickness;
     }
 
@@ -42,8 +46,19 @@ export class WallDrawer {
 
         const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
-        const collision = this.collisionDetector.detectCollisions(wallBuilder.getProps().points, this.placedWalls);
-        const dWall = wallBuilder.setCollision(collision).createDrawedWall();
+        const wallToWallCollision =
+            this.collisionDetector.detectCollisions(wallBuilder.getProps().points, this.placedWalls);
+
+        wallBuilder.setCollision(wallToWallCollision); // always set to get contact points
+
+        const wallToComponentCollision =
+            this.collisionDetector.detectWallComponentCollisions(wallBuilder.getProps(), this.components);
+
+        if (wallToComponentCollision.isCollision || wallToComponentCollision.adjacentObjects.length > 0) {
+            wallBuilder.setCollisionWithComponent(wallToComponentCollision); // also set component collisions
+        }
+
+        const dWall = wallBuilder.createDrawedWall();
 
         this.drawedWall.removeFrom(this.scene);
         this.scene.add(dWall.wall);
@@ -66,6 +81,15 @@ export class WallDrawer {
             console.log("wall collides!");
             return; // do not draw the wall
         }
+
+        const wallToComponentCollision =
+            this.collisionDetector.detectWallComponentCollisions(wallBuilder.getProps(), this.components);
+
+        if (wallToComponentCollision.isCollision || wallToComponentCollision.adjacentObjects.length > 0) {
+            console.log("wall collides with component");
+            return;
+        }
+
 
         const placedWall = wallBuilder.setCollision(collisionResult).createPlacedWall();
 

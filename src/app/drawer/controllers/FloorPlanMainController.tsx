@@ -71,7 +71,7 @@ export const FloorPlanMainController: React.FC<Props> = ({ scene, mainInputHandl
     const { current: wallComponents } = useRef(new Array<IWallComponent>());
 
     const { current: collisionDetector } = useRef(new CollisionDetector());
-    const wallDrawer = new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallThickness); // todo: update only on wallThickness change, might move to WallController fully
+    const wallDrawer = new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallComponents, wallThickness); // todo: update only on wallThickness change, might move to WallController fully
     const wallComponentAdder = new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents); // todo: same as above
 
     useEffect(() => {

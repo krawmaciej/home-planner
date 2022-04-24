@@ -29,14 +29,19 @@ export class DrawerMath {
     }
 
     public static isInMinAndMaxRange(num: number, min: number, max: number) {
-        return num >= min && num <= max;
+        if (num >= min && num <= max) {
+            return true;
+        }
+        // needs checking equality because of the floating point representation
+        return DrawerMath.areNumbersEqual(min, num) || DrawerMath.areNumbersEqual(max, num);
     }
 
     public static areVectorsEqual(v1: Vector3, v2: Vector3): boolean {
-        return (
-            (Math.abs( v1.x - v2.x) < DrawerMath.COMPARISON_ACCURACY) &&
-            (Math.abs( v1.z - v2.z ) < DrawerMath.COMPARISON_ACCURACY)
-        );
+        return (DrawerMath.areNumbersEqual(v1.x, v2.x) && DrawerMath.areNumbersEqual(v1.z, v2.z));
+    }
+
+    public static areNumbersEqual(n1: number, n2: number): boolean {
+        return Math.abs( n1 - n2) <= DrawerMath.COMPARISON_ACCURACY;
     }
 
     public static distanceBetweenPoints(v1: Vector3, v2: Vector3): number {
