@@ -1,5 +1,5 @@
 import { BufferAttribute, BufferGeometry, Material, Mesh, MeshPhongMaterial, Shape, ShapeGeometry } from "three";
-import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing } from "../constants/Types";
+import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing } from "../../constants/Types";
 import { Window } from "./Window";
 
 export class Wall {

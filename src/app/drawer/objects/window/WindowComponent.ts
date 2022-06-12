@@ -9,6 +9,8 @@ import {PlacedWall} from "../wall/PlacedWall";
 export type WindowProps = {
     readonly length: number,
     readonly width: number,
+    height: number,
+    elevation: number,
 }
 
 type XZLengths = {
@@ -23,8 +25,8 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     private static readonly directionQuaternionMap = new Map<Vector2D, Quaternion>([
         [Direction.RIGHT, WindowComponent.DEFAULT_ROTATION],
         [Direction.LEFT, WindowComponent.DEFAULT_ROTATION],
-        [Direction.UP, WindowComponent.RIGHT_ANGLE_ROTATION],
         [Direction.DOWN, WindowComponent.RIGHT_ANGLE_ROTATION],
+        [Direction.UP, WindowComponent.RIGHT_ANGLE_ROTATION],
     ]);
 
     private static readonly defaultMaterial = new LineBasicMaterial({
@@ -40,7 +42,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         color: 0x000000,
     });
 
-    public readonly props: WindowProps;
+    private readonly props: WindowProps;
     private readonly window: Line<BufferGeometry, Material>;
     private direction: Vector2D;
     private parentWall: undefined | PlacedWall;
@@ -49,7 +51,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     public constructor(props: WindowProps, material?: LineBasicMaterial) {
         this.props = props;
         const points = WindowComponent.createPoints(props);
-        points.push(points[ObjectPoint.TOP_LEFT]);
+        points.push(points[ObjectPoint.BOTTOM_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
         this.window = new Line(geometry, material ?? WindowComponent.defaultMaterial);
         this.window.matrixAutoUpdate = false; // will be updated on each change position
@@ -79,14 +81,14 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         }
 
         const wallPoints = this.parentWall.getObjectPointsOnScene();
-        const wallMin = wallPoints[ObjectPoint.BOTTOM_LEFT];
-        const wallMax = wallPoints[ObjectPoint.TOP_RIGHT];
+        const wallMin = wallPoints[ObjectPoint.TOP_LEFT];
+        const wallMax = wallPoints[ObjectPoint.BOTTOM_RIGHT];
 
         const delta = position.clone().sub(this.window.position);
 
         const componentPoints = this.getObjectPointsOnScene();
-        const componentMin = componentPoints[ObjectPoint.BOTTOM_LEFT].add(delta);
-        const componentMax = componentPoints[ObjectPoint.TOP_RIGHT].add(delta);
+        const componentMin = componentPoints[ObjectPoint.TOP_LEFT].add(delta);
+        const componentMax = componentPoints[ObjectPoint.BOTTOM_RIGHT].add(delta);
 
         const componentLengths = this.getXZLengths();
         const newPosition = position.clone();
@@ -106,6 +108,13 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         if (componentMax.z > wallMax.z) {
             newPosition.z = wallMax.z - componentLengths.z/2;
         }
+
+        // snap to movement interval // todo: fix
+        // newPosition.set(
+        //     +newPosition.x.toFixed(Precision.CM_1),
+        //     newPosition.y,
+        //     +newPosition.z.toFixed(Precision.CM_1)
+        // );
 
         this.window.position.copy(newPosition);
         this.window.updateMatrix();
@@ -232,5 +241,13 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
 
     public getDirection(): Vector2D {
         return this.direction;
+    }
+
+    public getElevation(): number {
+        return this.props.elevation;
+    }
+
+    public getHeight(): number {
+        return this.props.height;
     }
 }

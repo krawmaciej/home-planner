@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import { Scene } from "three";
 import { Position2D } from "../constants/Types";
-import { Wall } from "../objects/Wall";
-import { Window } from "../objects/Window";
+import { Wall } from "../objects/old/Wall";
+import { Window } from "../objects/old/Window";
+import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandler";
 
 type Props = {
     className?: string
-    scene: Scene
+    scene: Scene,
+    mainInputHandler: MainInputHandler
 }
 
-export const MainController: React.FC<Props> = ({scene}: Props) => {
+export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
     
     const [windowPosition, setWindowPosition] = useState<Position2D>({
         x: 10,

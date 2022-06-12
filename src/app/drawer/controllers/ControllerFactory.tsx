@@ -16,5 +16,6 @@ export type FactorySubcomponentProps = {
 }
 
 export const ControllerFactory = <T extends number>({ type, providers }: Props<T>) => {
+    console.log("Does factory get context from provider? I mean is it reloaded?");
     return providers[type]();
 };

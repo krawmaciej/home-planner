@@ -1,20 +1,18 @@
-top priority now:
- - move drawing to render instead of spamming every mouse movement
- - fix so that a wall can be drawn with only clickToDraw, not by using move
- - fix collision so it gets all the intersection points, and splits the drawn wall properly
+
+ - linked list as walls representation, connections containing components
+ - conversion from 2d to 3d, why can't walls overlap: https://en.wikipedia.org/wiki/Z-fighting and https://en.wikipedia.org/wiki/Z-buffering
+ - solution with not overlapping walls lets easily select for which wall does the wall component belong to, and it also solves z-fighting problem.
+
 
 
  
  - fix: cannot draw a line when starting from other line
- - fix: can draw a line that goes through line with the same a b c, (infinite intersection points)
- - check: what happens when checking intersection of parallel lines
- - handle: lines starting and ending on the same point
 
 
 
 Algorithms(solutions to problems) to describe:
  - creating a wall with a hole for window/door
- - dissappearing of wall and ceiling when looking from given angle (vector dot product algorithms)
+ - 
  - save/caching state
  - updating state from two places (renderer + UI)
  - selecting object from the renderer (update scene)
@@ -26,10 +24,6 @@ See if walls "sticked" together let light go through,
 does the ceiling and floor make any light artifacts if they are solid blocks
 above and below the walls
 
-
-Rotating walls (created new) (and models - TODO check):
-    rotating geometry of walls makes it so that the wall mesh default rotation
-    is the current rotation of wall's geometry
 
 
 Saving system (works same as cache system, implement first - before caching)
@@ -101,14 +95,20 @@ before using context (if ever, check): https://reactjs.org/docs/context.html
 don't use global state but rather pass needed props to rendered components
 
 
-menu components need to load what item is now active in them from main state, or to be singletons, to keep their state in them (and change state on updateObservers)
 
 
 
 
-maybe, because menu should change without user knowledge: each item needs to know what menu it belongs to
 
 
 
-LATER (never): optimization of rendering (also hookup listeners from menu to renderer):
+LATER (never):
+ - dissappearing of wall and ceiling when looking from given angle (vector dot product algorithms)
+ - optimization of rendering (also hookup listeners from menu to renderer):
 https://threejsfundamentals.org/threejs/lessons/threejs-rendering-on-demand.html
+
+
+done:
+ - move drawing to render instead of spamming every mouse movement
+ - fix collision so it gets all the intersection points, and splits the drawn wall properly
+ - handle: lines starting and ending on the same point

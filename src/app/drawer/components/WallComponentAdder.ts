@@ -88,6 +88,7 @@ export class WallComponentAdder {
         placedComponent.addTo(this.scene); // first add to scene so that component has world coordinates
         parentWall.addComponent(placedComponent);
         this.placedWallComponents.push(placedComponent);
+        console.log("parent wall with added component: ", parentWall);
     }
 
     /**

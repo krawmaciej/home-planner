@@ -2,28 +2,29 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { WindowProps } from "../objects/window/WindowComponent";
 import { WallComponentAddingIH } from "../UI/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
-import { Context } from "./FloorPlanMainController";
+import { FloorPlanContext } from "./FloorPlanMainController";
 
 export type Observer = {
     setDistance: React.Dispatch<React.SetStateAction<number | undefined>>,
 }
 
 export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
-    const context = useContext(Context);
+    const context = useContext(FloorPlanContext);
     if (context === undefined) {
-        throw new Error("Context is undefined!");
+        throw new Error("Context in WallComponentController is undefined.");
     }
 
-    const { current: windowsToSelect } = useRef<Array<WindowProps>>([{ length: 1.5, width: 1 }]);
+    const { current: windowsToSelect } = useRef<Array<WindowProps>>([
+        { length: 8, width: 1, height: 10, elevation: 4 },
+        { length: 12, width: 1, height: 5.5, elevation: 8 },
+    ]);
     const [selection, setSelection] = useState<number | undefined>(undefined);
     const [componentToWindowDistance, setComponentToWindowDistance] = useState<number | undefined>(undefined);
 
-    const { current: inputHandler } = useRef(new WallComponentAddingIH(
+    let inputHandler = new WallComponentAddingIH(
         context.wallComponentAdder,
         { setDistance: setComponentToWindowDistance }
-    )); // todo: think about state, this shouldn't be reset if window/door is added, but should be reset if this component is fully reloaded (useRef might just work)
-    context.mainInputHandler.changeHandlingStrategy(inputHandler);
-    console.log("WallCompo ctrl reloaded");
+    );
 
     const handleSelection = (selection: number) => {
         inputHandler.handleSelection(windowsToSelect[selection]);
@@ -31,7 +32,13 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     };
 
     useEffect(() => {
-    }, []);
+        console.log("Component adder reloaded on context.");
+        inputHandler = new WallComponentAddingIH(
+            context.wallComponentAdder,
+            { setDistance: setComponentToWindowDistance }
+        );
+        context.mainInputHandler.changeHandlingStrategy(inputHandler);
+    }, [context.wallComponentAdder]);
 
     const display = () => {
         if (selection === undefined) {

@@ -1,44 +1,36 @@
-import {Vector3} from "three";
+import {MeshStandardMaterial, Vector3} from "three";
 
-export type PointerPosition = {
-    x: number,
-    y: number,
-    isDown: boolean
-}
+export const DEFAULT_WALL_HEIGHT = 25;
+export const DEFAULT_WALL_MATERIAL = new MeshStandardMaterial({
+    color: 0xbbbbbb,
+});
 
-export enum PointerDrawingState {
-    NONE, DRAWING, DRAW
+export enum Precision {
+    CM_100 = -1,
+    CM_10 = 0,
+    CM_1 = 1,
+    MM_1 = 2,
 }
 
 export type Vector2D = {
     x: number,
-    y: number
-}
-
-export enum RenderOrder {
-    GRID = 0,
-    WALL = 0,
-    COMPONENT = 0,
-    UI = 0,
+    z: number
 }
 
 export enum ObjectElevation {
-    GRID = 0,
-    WALL = 1,
-    COMPONENT = 2,
+    GRID = -1,
+    WALL = 0,
+    COMPONENT = 0,
     MOVING = 3,
     UI = 4,
-}
-
-export enum WallSide {
 }
 
 export type ObjectPoints = [ Vector3, Vector3, Vector3, Vector3 ];
 
 export enum ObjectPoint {
-    TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT
+    BOTTOM_LEFT, BOTTOM_RIGHT, TOP_RIGHT, TOP_LEFT
 }
 
 export enum ObjectSideOrientation {
-    TOP, RIGHT, BOTTOM, LEFT
+    BOTTOM, RIGHT, TOP, LEFT
 }

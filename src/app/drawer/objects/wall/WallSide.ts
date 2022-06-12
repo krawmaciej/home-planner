@@ -1,8 +1,30 @@
-import { BufferGeometry, Line, Material, Vector3 } from "three";
-import { IWallComponent } from "../window/IWallComponent";
-import {ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
-import {DrawerMath} from "../../components/DrawerMath";
+import {BufferGeometry, Line, Material, Vector3} from "three";
+import {IWallComponent} from "../window/IWallComponent";
+import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
+import {MathFloatingPoints} from "../../../common/components/MathFloatingPoints";
 
+type OrientationPoints = {
+    first: ObjectPoint,
+    second: ObjectPoint,
+}
+
+class ComponentSidePointsSingletonMap {
+    private static readonly MAP = new Map<ObjectSideOrientation, OrientationPoints>([
+        [ObjectSideOrientation.BOTTOM, { first: ObjectPoint.BOTTOM_LEFT, second: ObjectPoint.BOTTOM_RIGHT }],
+        [ObjectSideOrientation.RIGHT, { first: ObjectPoint.TOP_RIGHT, second: ObjectPoint.BOTTOM_RIGHT }],
+        [ObjectSideOrientation.TOP, { first: ObjectPoint.TOP_LEFT, second: ObjectPoint.TOP_RIGHT }],
+        [ObjectSideOrientation.LEFT, { first: ObjectPoint.TOP_LEFT, second: ObjectPoint.BOTTOM_LEFT }],
+    ]);
+
+    public static get(side: ObjectSideOrientation): OrientationPoints {
+        const orientationPoints = ComponentSidePointsSingletonMap.MAP.get(side);
+        if (orientationPoints === undefined) {
+            throw new Error(`Requested object side: ${JSON.stringify(side)} was not found
+                             in ${JSON.stringify(ComponentSidePointsSingletonMap.MAP)}`);
+        }
+        return orientationPoints;
+    }
+}
 
 export class WallSide {
 
@@ -19,7 +41,7 @@ export class WallSide {
         this.tail = new SideNode(end);
         this.head.connection = new Connection(this.tail, ConnectionType.SOLID); // connect
         this.side = side;
-        const xStrategy = side === ObjectSideOrientation.BOTTOM || side === ObjectSideOrientation.TOP;
+        const xStrategy = side === ObjectSideOrientation.TOP || side === ObjectSideOrientation.BOTTOM;
         this.strategyKey = xStrategy ? "x" : "z";
     }
 
@@ -56,7 +78,7 @@ export class WallSide {
         while (iterator !== undefined) {
             if (secondPoint[strategyKey] < iterator.point[strategyKey]) { // found higher
                 // cut between iterator and beforeIterator
-                if (DrawerMath.areNumbersEqual(firstPoint[strategyKey],beforeIterator.point[strategyKey])) {
+                if (MathFloatingPoints.areNumbersEqual(firstPoint[strategyKey],beforeIterator.point[strategyKey])) {
                     beforeIterator.connection = new Connection(secondNode, ConnectionType.HOLE);
                     secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 } else {
@@ -65,8 +87,8 @@ export class WallSide {
                     secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 }
                 break;
-            } else if (DrawerMath.areNumbersEqual(secondPoint[strategyKey], iterator.point[strategyKey])) { // second point is same as existing
-                if (DrawerMath.areNumbersEqual(firstPoint[strategyKey], beforeIterator.point[strategyKey])) { // swap current solid line for hole
+            } else if (MathFloatingPoints.areNumbersEqual(secondPoint[strategyKey], iterator.point[strategyKey])) { // second point is same as existing
+                if (MathFloatingPoints.areNumbersEqual(firstPoint[strategyKey], beforeIterator.point[strategyKey])) { // swap current solid line for hole
                     beforeIterator.connection.type = ConnectionType.HOLE;
                 } else {
                     beforeIterator.connection.next = firstNode;
@@ -87,10 +109,12 @@ export class WallSide {
         const strategyKey = this.strategyKey; // "alias"
 
         const componentPoints = component.getObjectPointsOnScene();
+        const indices = ComponentSidePointsSingletonMap.get(this.side);
         const componentAttributes: ComponentAttributes = {
-            firstPoint: componentPoints[ObjectPoint.BOTTOM_LEFT],
-            secondPoint: componentPoints[ObjectPoint.TOP_RIGHT],
-            height: 15 // todo: parametrize this
+            firstPoint: componentPoints[indices.first],
+            secondPoint: componentPoints[indices.second],
+            height: component.getHeight(),
+            elevation: component.getElevation(),
         };
 
         // check first pair
@@ -101,7 +125,7 @@ export class WallSide {
             const componentPoint = componentAttributes.secondPoint[strategyKey];
             const sideNodePoint = iterator.point[strategyKey];
             if (componentPoint <= sideNodePoint ||
-                DrawerMath.areNumbersEqual(componentPoint, sideNodePoint)
+                MathFloatingPoints.areNumbersEqual(componentPoint, sideNodePoint)
             ) {
                 // put in connection between iterator and beforeIterator
                 beforeIterator.connection.addComponent(component, componentAttributes);
@@ -123,6 +147,22 @@ export class WallSide {
         }
         sideNode.connection.removeComponent(component);
     }
+
+    public wallFaceArray(): Array<WallFace> {
+        const result = new Array<WallFace>();
+
+        let iterator: SideNode = this.head;
+        while (iterator.connection.next !== undefined) {
+            result.push({
+                firstPoint: iterator.point,
+                secondPoint: iterator.connection.next.point,
+                connection: iterator.connection,
+            });
+            iterator = iterator.connection.next;
+        }
+
+        return result;
+    }
 }
 
 class SideNode {
@@ -137,11 +177,13 @@ class SideNode {
 class Connection {
     public next: SideNode | undefined;
     public type: ConnectionType;
+    public readonly material: Material;
     public readonly components: Array<IWallComponent>; // holds wall's connection doors/windows
     public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices wih components array
-    public constructor(next: SideNode | undefined, type: ConnectionType) {
+    public constructor(next: SideNode | undefined, type: ConnectionType, material?: Material) {
         this.next = next;
         this.type = type;
+        this.material = material ?? DEFAULT_WALL_MATERIAL.clone();
         this.components = new Array<IWallComponent>();
         this.componentsAttributes = new Array<ComponentAttributes>();
     }
@@ -160,12 +202,19 @@ class Connection {
     }
 }
 
-type ComponentAttributes = {
+export type ComponentAttributes = {
     firstPoint: Vector3,
     secondPoint: Vector3,
     height: number,
+    elevation: number,
 }
 
-enum ConnectionType {
+export enum ConnectionType {
     SOLID, HOLE, TAIL
+}
+
+export type WallFace = {
+    firstPoint: Vector3,
+    secondPoint: Vector3,
+    connection: Connection,
 }

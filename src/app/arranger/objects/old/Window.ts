@@ -1,6 +1,6 @@
 import { BufferAttribute, BufferGeometry, Mesh } from "three";
-import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing, Position2D } from "../constants/Types";
-import { ImportedObject, ObjectFactory } from "./ImportedObject";
+import { AttributeName, AttributeNumber, Attributes, Dimensions, Facing, Position2D } from "../../constants/Types";
+import { ImportedObject, ObjectFactory } from "../ImportedObject";
 import { Wall } from "./Wall";
 
 export class Window {

@@ -2,11 +2,13 @@ import {Vector3} from "three";
 import {Direction} from "../objects/wall/Direction";
 import {WallThickness} from "../objects/wall/WallThickness";
 import {ObjectElevation, ObjectPoints, Vector2D, ObjectPoint} from "../constants/Types";
+import {MathFloatingPoints} from "../../common/components/MathFloatingPoints";
 
 export type WallConstruction = {
     points: ObjectPoints,
     middlePoints: MiddlePoints,
-    direction: Vector2D
+    direction: Vector2D,
+    height: number,
 }
 
 export type MiddlePoints = {
@@ -15,8 +17,6 @@ export type MiddlePoints = {
 }
 
 export class DrawerMath {
-
-    public static readonly COMPARISON_ACCURACY = 0.01; // one millimeter, 1 is 10 cm
 
     public static isPointBetweenMinMaxPoints(point: Vector3, min: Vector3, max: Vector3): boolean {
         if (point.x >= min.x && point.z >= min.z) {
@@ -28,20 +28,16 @@ export class DrawerMath {
         return DrawerMath.areVectorsEqual(point, min) || DrawerMath.areVectorsEqual(point, max);
     }
 
+    public static areVectorsEqual(v1: Vector3, v2: Vector3): boolean {
+        return (MathFloatingPoints.areNumbersEqual(v1.x, v2.x) && MathFloatingPoints.areNumbersEqual(v1.z, v2.z));
+    }
+
     public static isInMinAndMaxRange(num: number, min: number, max: number) {
         if (num >= min && num <= max) {
             return true;
         }
         // needs checking equality because of the floating point representation
-        return DrawerMath.areNumbersEqual(min, num) || DrawerMath.areNumbersEqual(max, num);
-    }
-
-    public static areVectorsEqual(v1: Vector3, v2: Vector3): boolean {
-        return (DrawerMath.areNumbersEqual(v1.x, v2.x) && DrawerMath.areNumbersEqual(v1.z, v2.z));
-    }
-
-    public static areNumbersEqual(n1: number, n2: number): boolean {
-        return Math.abs( n1 - n2) <= DrawerMath.COMPARISON_ACCURACY;
+        return MathFloatingPoints.areNumbersEqual(min, num) || MathFloatingPoints.areNumbersEqual(max, num);
     }
 
     public static distanceBetweenPoints(v1: Vector3, v2: Vector3): number {
@@ -69,26 +65,26 @@ export class DrawerMath {
 
         } else {
 
-            if (start.z < end.z) {
-                return Direction.UP;
-            } else {
+            if (start.z < end.z) { // bigger z axis values are directed downwards
                 return Direction.DOWN;
+            } else {
+                return Direction.UP;
             }
 
         }
     }
 
-    public static calculateWallPoints(start: Vector3, end: Vector3, wallThickness: WallThickness): WallConstruction {
+    public static calculateWallPoints(start: Vector3, end: Vector3, wallThickness: WallThickness, height: number): WallConstruction {
         const direction = DrawerMath.calculateDirection(start, end);
         const points = DrawerMath.calculateCornerPoints(start, end, direction);
         const middlePoints = DrawerMath.calculateMiddlePoints(points, direction, wallThickness);
-        return { points: points, direction, middlePoints };
+        return { points, direction, middlePoints, height };
     }
 
     private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): ObjectPoints {
-        if (direction === Direction.DOWN) {
+        if (direction === Direction.UP) {
             return DrawerMath.handleDownDirection(start, end);
-        } else if (direction === Direction.UP) {
+        } else if (direction === Direction.DOWN) {
             return DrawerMath.handleUpDirection(start, end);
         } else if (direction === Direction.LEFT) {
             return DrawerMath.handleLeftDirection(start, end);
@@ -173,10 +169,10 @@ export class DrawerMath {
     private static calculateMiddlePoints(
         points: ObjectPoints, direction: Direction, wallThickness: WallThickness
     ): MiddlePoints {
-        const topLeft = points[ObjectPoint.TOP_LEFT];
-        const bottomRight = points[ObjectPoint.BOTTOM_RIGHT];
+        const topLeft = points[ObjectPoint.BOTTOM_LEFT];
+        const bottomRight = points[ObjectPoint.TOP_RIGHT];
 
-        if (direction === Direction.DOWN || direction === Direction.UP) {
+        if (direction === Direction.UP || direction === Direction.DOWN) {
             const x = topLeft.x + wallThickness.halfThickness;
             const topZ = topLeft.z - wallThickness.halfThickness;
             const bottomZ = bottomRight.z + wallThickness.halfThickness;

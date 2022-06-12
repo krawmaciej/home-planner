@@ -17,6 +17,7 @@ export class WallDrawer {
     private readonly components: Array<IWallComponent>;
 
     private wallThickness: WallThickness;
+    private wallHeight: number;
     private drawedWall: IDrawedWall = NoDrawedWall.getInstance(); // after wall is drawn there is no more wall being drawn
 
     public constructor(
@@ -25,7 +26,8 @@ export class WallDrawer {
         walls: Array<PlacedWall>,
         updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
         components: Array<IWallComponent>,
-        wallThickness: WallThickness
+        wallThickness: WallThickness,
+        wallHeight: number,
     ) {
         this.scene = scene;
         this.collisionDetector = collisionDetector;
@@ -33,6 +35,7 @@ export class WallDrawer {
         this.updateWallsToggle = updateWallsToggle;
         this.components = components;
         this.wallThickness = wallThickness;
+        this.wallHeight = wallHeight;
     }
 
     /**
@@ -44,7 +47,7 @@ export class WallDrawer {
         start.y = ObjectElevation.MOVING;
         end.y = ObjectElevation.MOVING;
 
-        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
+        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness, this.wallHeight);
 
         const wallToWallCollision =
             this.collisionDetector.detectCollisions(wallBuilder.getProps().points, this.placedWalls);
@@ -68,7 +71,7 @@ export class WallDrawer {
     public drawWall(start: Vector3, end: Vector3) {
         start.y = ObjectElevation.WALL;
         end.y = ObjectElevation.WALL;
-        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
+        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness, this.wallHeight);
 
         const collisionResult = this.collisionDetector
             .detectCollisions(wallBuilder.getProps().points, this.placedWalls);

@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import {DrawerMath} from "./DrawerMath";
+import {MathFloatingPoints} from "../../common/components/MathFloatingPoints";
 
 export type LiangBarskyResult = {
     p0: Vector3,
@@ -56,7 +56,7 @@ export class LiangBarsky {
                                 p0.z + this.tN * dz
                             );
                         }
-                        if (DrawerMath.areNumbersEqual(this.tN, this.tF)) { // single point collision
+                        if (MathFloatingPoints.areNumbersEqual(this.tN, this.tF)) { // single point collision
                             collisionType |= CollisionType.POINT;
                         }
                         return { 
@@ -101,7 +101,7 @@ export class LiangBarsky {
         }
         // denom is delta, if delta is 0 then two points lay on same x or y coordinate
         // and if any of the points matches with any of the box edges then number will be equal to 0
-        else if (DrawerMath.areNumbersEqual(number, 0.0)) {
+        else if (MathFloatingPoints.areNumbersEqual(number, 0.0)) {
             this.edgeCollision = CollisionType.EDGE;
         }
         return true;

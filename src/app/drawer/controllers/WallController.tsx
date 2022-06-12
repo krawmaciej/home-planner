@@ -1,19 +1,20 @@
 import React, { useContext, useEffect } from "react";
 import { WallDrawingIH } from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
-import { Context } from "./FloorPlanMainController";
+import { FloorPlanContext } from "./FloorPlanMainController";
 
 export const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
-    const context = useContext(Context);
+    const context = useContext(FloorPlanContext);
+
+    if (context === undefined) {
+        throw new Error("Context in WallController is undefined.");
+    }
 
     useEffect(() => {
-        if (context === undefined) {
-            throw new Error("Context is undefined!");
-        }
-        const wallDrawer = context.wallDrawer;
-        context.mainInputHandler.changeHandlingStrategy(new WallDrawingIH(wallDrawer));
-    }, []);
+        console.log("Wall contro reloaded, but I mean this should happen not on mount but rather on context update");
+        context.mainInputHandler.changeHandlingStrategy(new WallDrawingIH(context.wallDrawer));
+    }, [context.wallDrawer]);
 
     return (
         <>

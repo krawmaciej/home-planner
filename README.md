@@ -4,18 +4,30 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
-In the project directory, you can run:
-
 First install LTS version of Node.js https://nodejs.org/en/download/ (it contains node package manager - npm).
 
-### `npm install --include=dev`
+In the project directory, you can run:
+
+### `npm install`
 
 Installs all needed packages into the project directory.
-All the below scripts can only be run after this installation step is done.
+All the below scripts can only be run after the installation step is done.
+
+### `npm audit`
+
+Checks whether there are any issues with the dependencies this project is using.
 
 ### `npm audit --production`
 
-Checks whether there are any issues with the dependencies this project is using.
+Same as npm audit but checks only whether the production build dependencies.
+
+### `npm run eslint`
+
+Checks whether there are any linter errors/warnings in the application code.
+
+### `npm run eslint-fix`
+
+Tries fixing linter errors/warnings automatically.
 
 ### `npm start`
 
