@@ -52,6 +52,7 @@ export class PlacedWall implements ISceneObject {
     }
 
     public removeFrom(scene: Scene): void {
+        this.lines.forEach(line => line.geometry.dispose());
         scene.remove(this.wall);
     }
 

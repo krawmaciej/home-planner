@@ -100,5 +100,7 @@ export class DrawedWall implements IDrawedWall {
 
     public removeFrom(scene: Scene): void {
         scene.remove(this.wall);
+        this.wall.geometry.dispose();
+        this.middle.geometry.dispose();
     }
 }

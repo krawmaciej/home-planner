@@ -12,6 +12,7 @@ import { MainInputHandler } from "../../common/canvas/inputHandler/MainInputHand
 import { VoidIH } from "../../common/canvas/inputHandler/VoidIH";
 import { WallComponentAdder } from "../components/WallComponentAdder";
 import {IWallComponent} from "../objects/window/IWallComponent";
+import {FloorsComponent} from "./FloorsComponent";
 
 type Props = {
     className?: string,
@@ -24,7 +25,7 @@ type Props = {
 }
 
 export enum MainControllerType {
-    WALLS, WINDOWS_AND_DOORS, SELECT
+    WALLS, WINDOWS_AND_DOORS, FLOORS, SELECT,
 }
 
 type FloorPlanContextType = {
@@ -34,6 +35,7 @@ type FloorPlanContextType = {
     collisionDetector: CollisionDetector,
     wallDrawer: WallDrawer,
     wallComponentAdder: WallComponentAdder,
+
 }
 
 export const FloorPlanContext = createContext<FloorPlanContextType | undefined>(undefined);
@@ -56,7 +58,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
     };
 
     const initializeComponentProviders = () => {
-        const factoryProviders = new Array<ComponentProvider>(3); // todo: cache it
+        const factoryProviders = new Array<ComponentProvider>(4); // todo: cache it
 
         const mapProvider = (type: MainControllerType, provider: JSX.Element) => {
             factoryProviders[type] = () => provider;
@@ -65,6 +67,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
         mapProvider(MainControllerType.SELECT, <SelectMainController setType={setType}/>);
         mapProvider(MainControllerType.WALLS, <WallController goBack={setDefaultType}/>);
         mapProvider(MainControllerType.WINDOWS_AND_DOORS, <WallComponentController goBack={setDefaultType}/>);
+        mapProvider(MainControllerType.FLOORS, <FloorsComponent goBack={setDefaultType}/>);
 
         return factoryProviders;
     };
