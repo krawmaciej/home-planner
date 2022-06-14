@@ -66,6 +66,7 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, scene }: P
                 wallHeight={floorPlanState.wallHeight}
                 placedWalls={sceneObjects.placedWalls}
                 wallComponents={sceneObjects.wallComponents}
+                floors={sceneObjects.floors}
             />
         </>
     );
