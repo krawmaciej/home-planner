@@ -5,22 +5,25 @@ import {AttributeName} from "../../../arranger/constants/Types";
 
 export class Floor implements IFloor {
 
-    private static readonly OUTLINE_MATERIAL = new LineBasicMaterial({
+    private static readonly STANDARD_MATERIAL = new LineBasicMaterial({
         color: 0x000000,
     });
+    private static readonly COLLIDED_MATERIAL = new LineBasicMaterial({
+        color: 0xaa0000,
+    });
 
-    private readonly material: MeshStandardMaterial;
+    private readonly outline: Line<BufferGeometry, LineBasicMaterial>;
+    private readonly diagonal: Line<BufferGeometry, LineBasicMaterial>;
+    private material: MeshStandardMaterial;
     private objectPoints: ObjectPoints;
-    private outline: Line<BufferGeometry, LineBasicMaterial>;
-    private diagonal: Line<BufferGeometry, LineBasicMaterial>;
 
     public constructor(start: Vector3, end: Vector3, material: MeshStandardMaterial) {
         this.material = material;
         this.objectPoints = Floor.calculateObjectPoints(start, end);
         const outlineGeo = new BufferGeometry().setFromPoints(this.getOutlinePoints());
-        this.outline = new Line(outlineGeo, Floor.OUTLINE_MATERIAL);
+        this.outline = new Line(outlineGeo, Floor.STANDARD_MATERIAL);
         const diagonalGeo = new BufferGeometry().setFromPoints(this.getDiagonalPoints());
-        this.diagonal = new Line(diagonalGeo, Floor.OUTLINE_MATERIAL);
+        this.diagonal = new Line(diagonalGeo, Floor.STANDARD_MATERIAL);
     }
 
     private getOutlinePoints() {
@@ -49,10 +52,28 @@ export class Floor implements IFloor {
     }
 
     public removeFrom(scene: Scene): void {
+        scene.remove(this.outline);
+        scene.remove(this.diagonal);
+        this.outline.geometry.dispose();
+        this.diagonal.geometry.dispose();
     }
 
     public getObjectPointsOnScene(): ObjectPoints {
         return this.objectPoints;
+    }
+
+    public place(): Floor {
+        return this;
+    }
+
+    public collide(): void {
+        this.outline.material = Floor.COLLIDED_MATERIAL;
+        this.diagonal.material = Floor.COLLIDED_MATERIAL;
+    }
+
+    public uncollide(): void {
+        this.outline.material = Floor.STANDARD_MATERIAL;
+        this.diagonal.material = Floor.STANDARD_MATERIAL;
     }
 
     public change(start: Vector3, end: Vector3): void {

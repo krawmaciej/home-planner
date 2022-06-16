@@ -18,6 +18,7 @@ export class FloorsDrawer {
         scene: Scene,
         collisionDetector: CollisionDetector,
         floors: Array<Floor>,
+        // walls: Array<PlacedWall>, // todo: check collisions also against placed walls
         // updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
     ) {
         this.scene = scene;
@@ -32,7 +33,13 @@ export class FloorsDrawer {
      * @param end pointer ending point
      */
     public changeDrawnFloor(start: Vector3, end: Vector3) {
+        this.drawnFloor.uncollide(); // reset do default color
         this.drawnFloor.change(start, end);
+        const collision = this.collisionDetector.detectAABBCollisions(this.drawnFloor, this.placedFloors);
+        if (collision !== undefined) {
+            this.drawnFloor.collide();
+        }
+
         // start.y = ObjectElevation.MOVING;
         // end.y = ObjectElevation.MOVING;
         //
@@ -57,8 +64,21 @@ export class FloorsDrawer {
         // this.drawnFloor = dWall;
     }
 
-    public drawFloor(start: Vector3, end: Vector3) {
-        console.log(`Draw floor, persist it: ${JSON.stringify(start)}, ${JSON.stringify(end)}`);
+    /**
+     * Returns true if floor was drawn, false if there was collision and floor could not be drawn.
+     */
+    public drawFloor(start: Vector3, end: Vector3): boolean {
+        this.drawnFloor.uncollide(); // reset do default color
+        this.drawnFloor.change(start, end);
+        const collision = this.collisionDetector.detectAABBCollisions(this.drawnFloor, [...this.placedFloors]);
+        if (collision !== undefined) {
+            this.drawnFloor.collide();
+            return false;
+        }
+
+        const placedFloor = this.drawnFloor.place();
+        this.placedFloors.push(placedFloor);
+        return true;
         // start.y = ObjectElevation.WALL;
         // end.y = ObjectElevation.WALL;
         // const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness, this.wallHeight);
