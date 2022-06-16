@@ -2,6 +2,7 @@ import {Vector3} from "three";
 import {DrawingState, FloorsPointer} from "./FloorsPointer";
 import {IInputHandler} from "../../../../common/canvas/inputHandler/IInputHandler";
 import {FloorsDrawer} from "../../../components/FloorsDrawer";
+import {ObjectElevation} from "../../../constants/Types";
 
 /**
  * Stateful input handler for drawing new floors.
@@ -18,6 +19,7 @@ export class FloorsDrawingIH implements IInputHandler {
     }
 
     public handleMovement(point: Vector3): void {
+        point.setY(ObjectElevation.FLOOR);
         switch (this.pointer.state) {
             case DrawingState.NONE:
                 // no op
@@ -35,6 +37,7 @@ export class FloorsDrawingIH implements IInputHandler {
     }
 
     public handleClick(point: Vector3): void {
+        point.setY(ObjectElevation.FLOOR);
         switch (this.pointer.state) {
             case DrawingState.NONE:
                 this.pointer.beginDrawing(point);

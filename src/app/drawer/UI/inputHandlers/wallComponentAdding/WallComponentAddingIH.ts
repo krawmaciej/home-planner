@@ -1,10 +1,10 @@
 import { Vector3 } from "three";
-import { WallComponentAdder } from "../../../components/WallComponentAdder";
 import { ObjectElevation } from "../../../constants/Types";
 import { WindowProps } from "../../../objects/window/WindowComponent";
 import { IInputHandler } from "../../../../common/canvas/inputHandler/IInputHandler";
 import { WallComponentPointer, State } from "./WallComponentPointer";
 import {Observer} from "../../../controllers/WallComponentController";
+import {WallComponentAdder} from "../../../components/WallComponentAdder";
 
 export class WallComponentAddingIH implements IInputHandler {
 

@@ -45,7 +45,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     private readonly props: WindowProps;
     private readonly window: Line<BufferGeometry, Material>;
     private direction: Vector2D;
-    private parentWall: undefined | PlacedWall;
+    private parentWall: undefined | PlacedWall; // not yet placed wall component can also have a parent wall
     private collided: boolean;
 
     public constructor(props: WindowProps, material?: LineBasicMaterial) {
@@ -108,13 +108,6 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         if (componentMax.z > wallMax.z) {
             newPosition.z = wallMax.z - componentLengths.z/2;
         }
-
-        // snap to movement interval // todo: fix
-        // newPosition.set(
-        //     +newPosition.x.toFixed(Precision.CM_1),
-        //     newPosition.y,
-        //     +newPosition.z.toFixed(Precision.CM_1)
-        // );
 
         this.window.position.copy(newPosition);
         this.window.updateMatrix();
@@ -212,6 +205,25 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         return DrawerMath.distanceBetweenPoints(componentBottomLeft, wallBottomLeft);
     }
 
+    public setDistanceFromParentWall(distance: number): void {
+        if (this.parentWall === undefined) {
+            return;
+        }
+
+        const componentBottomLeft = this.getObjectPointsOnScene()[ObjectPoint.BOTTOM_LEFT].clone();
+        const wallBottomLeft = this.parentWall.getObjectPointsOnScene()[ObjectPoint.BOTTOM_LEFT].clone();
+
+        // set Y values to the same number since Ys should be not considered in further calculations
+        componentBottomLeft.setY(0);
+        wallBottomLeft.setY(0);
+
+        const oldDistanceVector = componentBottomLeft.sub(wallBottomLeft);
+        const newDistanceVector = oldDistanceVector.clone().normalize().multiplyScalar(distance);
+        const moveByVector = newDistanceVector.sub(oldDistanceVector);
+        const newWindowMiddlePosition = this.window.position.clone().add(moveByVector);
+        this.changePosition(newWindowMiddlePosition);
+    }
+
     private changeRotation(direction: Vector2D): void {
         this.direction = direction;
         const quaternion = WindowComponent.directionQuaternionMap.get(direction);
@@ -250,4 +262,5 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     public getHeight(): number {
         return this.props.height;
     }
+
 }

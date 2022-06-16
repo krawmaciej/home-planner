@@ -1,11 +1,11 @@
-import { Scene, Vector3 } from "three";
-import { PlacedWall } from "../objects/wall/PlacedWall";
-import { IWallComponent } from "../objects/window/IWallComponent";
-import { WindowComponent, WindowProps } from "../objects/window/WindowComponent";
-import { CollisionDetector } from "./CollisionDetector";
-import { NoMovingWindow } from "../objects/window/NoMovingWindow";
-import { IMovingWindowComponent } from "../objects/window/IMovingWindowComponent";
-import { IPlacedWindowComponent } from "../objects/window/IPlacedWindowComponent";
+import {Scene, Vector3} from "three";
+import {PlacedWall} from "../objects/wall/PlacedWall";
+import {IWallComponent} from "../objects/window/IWallComponent";
+import {WindowComponent, WindowProps} from "../objects/window/WindowComponent";
+import {CollisionDetector} from "./CollisionDetector";
+import {NoMovingWindow} from "../objects/window/NoMovingWindow";
+import {IMovingWindowComponent} from "../objects/window/IMovingWindowComponent";
+import {IPlacedWindowComponent} from "../objects/window/IPlacedWindowComponent";
 
 export class WallComponentAdder {
 
@@ -15,17 +15,20 @@ export class WallComponentAdder {
     private readonly placedWallComponents: Array<IPlacedWindowComponent>; // used to detect collisions with other components
 
     private movingWindow: IMovingWindowComponent = NoMovingWindow.getInstance();
+    private snapStep: number;
 
     public constructor(
         scene: Scene,
         collisionDetector: CollisionDetector,
         placedWalls: Array<PlacedWall>,
         wallComponents: Array<IWallComponent>,
+        snapStep: number,
     ) {
         this.scene = scene;
         this.collisionDetector = collisionDetector;
         this.placedWalls = placedWalls;
         this.placedWallComponents = wallComponents;
+        this.snapStep = snapStep;
     }
 
     public setComponent(windowProps: WindowProps) {
@@ -50,6 +53,10 @@ export class WallComponentAdder {
 
         this.movingWindow.setParentWall(parentWall);
         this.movingWindow.changePosition(position);
+
+        const currentDistance = this.movingWindow.getDistanceFromParentWall() ?? 0;
+        const newDistance = Math.floor(currentDistance / this.snapStep) * this.snapStep;
+        this.movingWindow.setDistanceFromParentWall(newDistance);
 
         // check whether component collides with other components
         const componentCollision = this.collisionDetector
@@ -97,5 +104,13 @@ export class WallComponentAdder {
     public removeMovingComponent() {
         this.movingWindow.removeFrom(this.scene);
         this.movingWindow = NoMovingWindow.getInstance();
+    }
+
+    public getSnapStep(): number {
+        return this.snapStep;
+    }
+
+    public setSnapStep(snapStep: number): void {
+        this.snapStep = snapStep;
     }
 }

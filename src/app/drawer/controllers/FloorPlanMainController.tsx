@@ -10,11 +10,11 @@ import { WallThickness } from "../objects/wall/WallThickness";
 import { Scene } from "three";
 import { MainInputHandler } from "../../common/canvas/inputHandler/MainInputHandler";
 import { VoidIH } from "../../common/canvas/inputHandler/VoidIH";
-import { WallComponentAdder } from "../components/WallComponentAdder";
 import {IWallComponent} from "../objects/window/IWallComponent";
 import {FloorsDrawer} from "../components/FloorsDrawer";
 import {Floor} from "../objects/floor/Floor";
 import {FloorsController} from "./FloorsController";
+import {WallComponentAdder} from "../components/WallComponentAdder";
 
 type Props = {
     className?: string,
@@ -83,7 +83,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
 
     const { current: collisionDetector } = useRef(new CollisionDetector());
     const wallDrawer = new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallComponents, wallThickness, wallHeight); // todo: update only on wallThickness change, might move to WallController fully
-    const wallComponentAdder = new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents); // todo: same as above
+    const wallComponentAdder = new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, 5 / 10); // todo: same as above
     const floorsDrawer = new FloorsDrawer(scene, collisionDetector, floors);
 
     useEffect(() => {

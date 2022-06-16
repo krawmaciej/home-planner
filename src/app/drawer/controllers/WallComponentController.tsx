@@ -47,7 +47,7 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
 
         let message = "brak wybranej ściany";
         if (componentToWindowDistance !== undefined) {
-            message = componentToWindowDistance.toString();
+            message = Math.round(componentToWindowDistance * 10).toString() + "cm"; // display with precision to 1 cm.
         }
 
         return (

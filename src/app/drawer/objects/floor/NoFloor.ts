@@ -3,6 +3,9 @@ import {ObjectPoints} from "../../constants/Types";
 
 export class NoFloor implements IFloor {
     public static readonly INSTANCE = new NoFloor();
+    change(): void {
+        throw new Error("Called method on a not initialized floor.");
+    }
     addTo(): void {
         throw new Error("Called method on a not initialized floor.");
     }

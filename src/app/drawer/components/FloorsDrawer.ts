@@ -3,6 +3,7 @@ import { CollisionDetector } from "./CollisionDetector";
 import {IFloor} from "../objects/floor/IFloor";
 import {Floor} from "../objects/floor/Floor";
 import {NoFloor} from "../objects/floor/NoFloor";
+import {DEFAULT_FLOOR_MATERIAL} from "../constants/Types";
 
 export class FloorsDrawer {
 
@@ -31,7 +32,7 @@ export class FloorsDrawer {
      * @param end pointer ending point
      */
     public changeDrawnFloor(start: Vector3, end: Vector3) {
-        console.log(`Changed drawn floor: ${JSON.stringify(start)}, ${JSON.stringify(end)}`);
+        this.drawnFloor.change(start, end);
         // start.y = ObjectElevation.MOVING;
         // end.y = ObjectElevation.MOVING;
         //
@@ -108,6 +109,7 @@ export class FloorsDrawer {
     }
 
     public initializeFloor(start: Vector3, end: Vector3) {
-        console.log(`Initial floor (that will be changed) created: ${JSON.stringify(start)}, ${JSON.stringify(end)}`);
+        this.drawnFloor = new Floor(start, end, DEFAULT_FLOOR_MATERIAL);
+        this.drawnFloor.addTo(this.scene);
     }
 }

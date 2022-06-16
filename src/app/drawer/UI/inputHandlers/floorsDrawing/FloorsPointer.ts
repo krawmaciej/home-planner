@@ -4,7 +4,6 @@ export enum DrawingState {
     NONE, INITIALIZE, DRAWING,
 }
 
-// todo: refactor to be statefull instead of immutable, this is kinda state pattern
 export class FloorsPointer {
 
     private static readonly unsetPosition = new Vector3();
