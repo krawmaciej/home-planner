@@ -68,29 +68,26 @@ export class WallDrawer {
         this.drawedWall = dWall;
     }
 
-    public drawWall(start: Vector3, end: Vector3) {
+    public drawWall(start: Vector3, end: Vector3): boolean {
         start.y = ObjectElevation.WALL;
         end.y = ObjectElevation.WALL;
         const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness, this.wallHeight);
 
         const collisionResult = this.collisionDetector
             .detectCollisions(wallBuilder.getProps().points, this.placedWalls);
-        console.log(collisionResult);
 
         this.drawedWall.removeFrom(this.scene);
         this.drawedWall = NoDrawedWall.getInstance();
         
         if (collisionResult.isCollision) {
-            console.log("wall collides!");
-            return; // do not draw the wall
+            return false; // do not place the wall
         }
 
         const wallToComponentCollision =
             this.collisionDetector.detectWallComponentCollisions(wallBuilder.getProps(), this.components);
 
         if (wallToComponentCollision.isCollision || wallToComponentCollision.adjacentObjects.length > 0) {
-            console.log("wall collides with component");
-            return;
+            return false; // do not place the wall
         }
 
 
@@ -115,6 +112,6 @@ export class WallDrawer {
         placedWall.addTo(this.scene);
         this.placedWalls.push(placedWall);
         this.updateWallsToggle(prev => !prev);
-        console.log(placedWall.props);
+        return true;
     }
 }

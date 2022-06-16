@@ -42,8 +42,11 @@ export class WallDrawingIH implements IInputHandler {
             // todo: start will be always the same, unprojection can be cached
             this.wallDrawer.moveDrawedWall(start, end);
         } else if (this.pointer.state === DrawingState.DRAW) {
-            this.pointer = this.pointer.draw();
-            this.wallDrawer.drawWall(start, end); // todo: return whether it was able to draw the wall, if not then do not set pointer to draw
+            if (this.wallDrawer.drawWall(start, end)) {
+                this.pointer = this.pointer.draw();
+            } else {
+                this.pointer = this.pointer.startDrawing(start);
+            }
         }
     }
 }
