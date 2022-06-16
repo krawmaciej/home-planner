@@ -17,14 +17,18 @@ export class Floor implements IFloor {
     public constructor(start: Vector3, end: Vector3, material: MeshStandardMaterial) {
         this.material = material;
         this.objectPoints = Floor.calculateObjectPoints(start, end);
-        const outlineGeo = new BufferGeometry().setFromPoints(
-            [...this.objectPoints, this.objectPoints[ObjectPoint.BOTTOM_LEFT]]
-        );
+        const outlineGeo = new BufferGeometry().setFromPoints(this.getOutlinePoints());
         this.outline = new Line(outlineGeo, Floor.OUTLINE_MATERIAL);
-        const diagonalGeo = new BufferGeometry().setFromPoints(
-            [this.objectPoints[ObjectPoint.BOTTOM_LEFT], this.objectPoints[ObjectPoint.TOP_RIGHT], this.objectPoints[ObjectPoint.BOTTOM_LEFT]]
-        );
+        const diagonalGeo = new BufferGeometry().setFromPoints(this.getDiagonalPoints());
         this.diagonal = new Line(diagonalGeo, Floor.OUTLINE_MATERIAL);
+    }
+
+    private getOutlinePoints() {
+        return [...this.objectPoints, this.objectPoints[ObjectPoint.BOTTOM_LEFT]];
+    }
+
+    private getDiagonalPoints() {
+        return [this.objectPoints[ObjectPoint.BOTTOM_LEFT], this.objectPoints[ObjectPoint.TOP_RIGHT], this.objectPoints[ObjectPoint.BOTTOM_LEFT]];
     }
 
     private static calculateObjectPoints(p1: Vector3, p2: Vector3): ObjectPoints {
@@ -53,6 +57,27 @@ export class Floor implements IFloor {
 
     public change(start: Vector3, end: Vector3): void {
         this.objectPoints = Floor.calculateObjectPoints(start, end);
-        const positions = this.outline.geometry.attributes[AttributeName.POSITION];
+        // update outline
+        Floor.updateGeometry(this.outline.geometry, this.getOutlinePoints());
+        // update diagonal
+        Floor.updateGeometry(this.diagonal.geometry, this.getDiagonalPoints());
+    }
+
+    private static updateGeometry(geometry: BufferGeometry, newGeometryPoints: Array<Vector3>) {
+        const positions = geometry.attributes[AttributeName.POSITION].array as Array<number>;
+        const newPositions = newGeometryPoints.flatMap(v3 => [v3.x, v3.y, v3.z]);
+        Floor.validatePositionsAndPoints(positions, newPositions);
+        for (let i = 0; i < newPositions.length; i++) {
+            positions[i] = newPositions[i];
+        }
+        geometry.attributes[AttributeName.POSITION].needsUpdate = true;
+    }
+
+    private static validatePositionsAndPoints(positions: Array<number>, points: Array<number>) {
+        if (positions.length !== points.length) {
+            throw new Error(
+                `Floor geometry positions: ${positions} should have same number of elements as points: ${points}`
+            );
+        }
     }
 }
