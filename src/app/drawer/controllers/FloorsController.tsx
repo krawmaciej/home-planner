@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";
 import {FloorsDrawingIH} from "../UI/inputHandlers/floorsDrawing/FloorsDrawingIH";
@@ -6,19 +6,30 @@ import {FloorsDrawingIH} from "../UI/inputHandlers/floorsDrawing/FloorsDrawingIH
 export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
     const context = useContext(FloorPlanContext);
-
     if (context === undefined) {
         throw new Error("Context in FloorsController is undefined.");
     }
 
+    const [inputHandler, setInputHandler] = useState(new FloorsDrawingIH(context.floorsDrawer));
+
     useEffect(() => {
-        context.mainInputHandler.changeHandlingStrategy(new FloorsDrawingIH(context.floorsDrawer));
+        context.mainInputHandler.changeHandlingStrategy(inputHandler);
+    }, [inputHandler]);
+
+    useEffect(() => {
+        setInputHandler(new FloorsDrawingIH(context.floorsDrawer));
     }, [context.floorsDrawer]);
+
+    useEffect(() => cancelFloorDrawing, [inputHandler]);
+
+    const cancelFloorDrawing = () => {
+        inputHandler.handleCancel();
+    };
 
     return (
         <>
             <button onClick={goBack}>Powrót</button>
-            <button onClick={goBack}>Anuluj</button>
+            <button onClick={cancelFloorDrawing}>Anuluj</button>
         </>
     );
 };
