@@ -7,6 +7,7 @@ import { WallThickness } from "../objects/wall/WallThickness";
 import { CollisionDetector } from "./CollisionDetector";
 import { PlacedWall } from "../objects/wall/PlacedWall";
 import {IWallComponent} from "../objects/window/IWallComponent";
+import {Floor} from "../objects/floor/Floor";
 
 export class WallDrawer {
 
@@ -15,6 +16,7 @@ export class WallDrawer {
     private readonly placedWalls: Array<PlacedWall>;
     private readonly updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>; // todo: refactor to placed walls domain object
     private readonly components: Array<IWallComponent>;
+    private readonly floors: Array<Floor>;
 
     private wallThickness: WallThickness;
     private wallHeight: number;
@@ -26,6 +28,7 @@ export class WallDrawer {
         walls: Array<PlacedWall>,
         updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
         components: Array<IWallComponent>,
+        floors: Array<Floor>,
         wallThickness: WallThickness,
         wallHeight: number,
     ) {
@@ -34,6 +37,7 @@ export class WallDrawer {
         this.placedWalls = walls;
         this.updateWallsToggle = updateWallsToggle;
         this.components = components;
+        this.floors = floors;
         this.wallThickness = wallThickness;
         this.wallHeight = wallHeight;
     }
@@ -52,13 +56,20 @@ export class WallDrawer {
         const wallToWallCollision =
             this.collisionDetector.detectCollisions(wallBuilder.getProps().points, this.placedWalls);
 
-        wallBuilder.setCollision(wallToWallCollision); // always set to get contact points
+        wallBuilder.setCollisionWithWall(wallToWallCollision); // always set to get contact points
 
         const wallToComponentCollision =
             this.collisionDetector.detectWallComponentCollisions(wallBuilder.getProps(), this.components);
 
         if (wallToComponentCollision.isCollision || wallToComponentCollision.adjacentObjects.length > 0) {
-            wallBuilder.setCollisionWithComponent(wallToComponentCollision); // also set component collisions
+            wallBuilder.setCollisionWithObject(true); // also set component collisions
+        }
+
+        const wallToFloorCollision =
+            this.collisionDetector.detectAABBCollisionsForObjectPoints(wallBuilder.getProps().points, this.floors);
+
+        if (wallToFloorCollision !== undefined) {
+            wallBuilder.setCollisionWithObject(true); // also set component collisions
         }
 
         const dWall = wallBuilder.createDrawedWall();
@@ -90,7 +101,14 @@ export class WallDrawer {
             return false; // do not place the wall
         }
 
-        const placedWall = wallBuilder.setCollision(collisionResult).createPlacedWall();
+        const wallToFloorCollision =
+            this.collisionDetector.detectAABBCollisionsForObjectPoints(wallBuilder.getProps().points, this.floors);
+
+        if (wallToFloorCollision !== undefined) {
+            return false;
+        }
+
+        const placedWall = wallBuilder.setCollisionWithWall(collisionResult).createPlacedWall();
 
         collisionResult.adjacentObjects.forEach(aw => {
             const collision = this.collisionDetector

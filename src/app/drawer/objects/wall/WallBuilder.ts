@@ -4,7 +4,6 @@ import { DrawerMath, WallConstruction } from "../../components/DrawerMath";
 import { DrawedWall } from "./DrawedWall";
 import { PlacedWall } from "./PlacedWall";
 import { WallThickness } from "./WallThickness";
-import {IWallComponent} from "../window/IWallComponent";
 
 /**
  * Creates a wall properties from which the meshes will be created.
@@ -33,14 +32,14 @@ export class WallBuilder {
         return this;
     }
 
-    public setCollision(collision: Collision<PlacedWall>): WallBuilder {
+    public setCollisionWithWall(collision: Collision<PlacedWall>): WallBuilder {
         this.collision = collision;
         return this;
     }
 
-    public setCollisionWithComponent(collision: Collision<IWallComponent>): WallBuilder {
+    public setCollisionWithObject(collision: boolean): WallBuilder {
         this.collision = {
-            isCollision: collision.isCollision || collision.adjacentObjects.length > 0,
+            isCollision: collision,
             adjacentObjects: new Array<AdjacentObject<PlacedWall>>(), // no contact points displayed
         };
         return this;

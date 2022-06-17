@@ -42,7 +42,10 @@ export class CollisionDetector {
     }
 
     public detectAABBCollisions<T extends ISceneObject>(checked: T, objects: Array<T>): T | undefined {
-        const points = checked.getObjectPointsOnScene();
+        return this.detectAABBCollisionsForObjectPoints(checked.getObjectPointsOnScene(), objects);
+    }
+
+    public detectAABBCollisionsForObjectPoints<T extends ISceneObject>(points: ObjectPoints, objects: Array<T>): T | undefined {
         const topRight = points[ObjectPoint.BOTTOM_RIGHT];
         const bottomLeft = points[ObjectPoint.TOP_LEFT];
         for (const obj of objects) {
