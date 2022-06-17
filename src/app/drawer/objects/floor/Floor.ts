@@ -12,13 +12,13 @@ export class Floor implements IFloor {
         color: 0xaa4444,
     });
 
+    public readonly meshMaterial: MeshStandardMaterial;
     private readonly outline: Line<BufferGeometry, LineBasicMaterial>;
     private readonly diagonal: Line<BufferGeometry, LineBasicMaterial>;
-    private material: MeshStandardMaterial;
     private objectPoints: ObjectPoints;
 
-    public constructor(start: Vector3, end: Vector3, material: MeshStandardMaterial) {
-        this.material = material;
+    public constructor(start: Vector3, end: Vector3, meshMaterial: MeshStandardMaterial) {
+        this.meshMaterial = meshMaterial;
         this.objectPoints = Floor.calculateObjectPoints(start, end);
         const outlineGeo = new BufferGeometry().setFromPoints(this.getOutlinePoints());
         this.outline = new Line(outlineGeo, Floor.STANDARD_MATERIAL);

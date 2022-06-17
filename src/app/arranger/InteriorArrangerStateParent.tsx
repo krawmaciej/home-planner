@@ -71,6 +71,8 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         scene.add(...wallFaceMeshes);
         scene.add(...temp.wallCoverMeshes);
         scene.add(...temp.sceneComponentFramesMeshes);
+        scene.add(...temp.sceneFloorsMeshes);
+        scene.add(...temp.sceneCeilingsMeshes);
         // scene.add(meshes[0]);
         // scene.add(meshes[1]);
         // scene.add(meshes[2]);

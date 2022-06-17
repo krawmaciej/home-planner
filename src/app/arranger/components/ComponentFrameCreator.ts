@@ -1,9 +1,6 @@
 import {ObjectPoint} from "../../drawer/constants/Types";
-import {AttributeName, AttributeNumber, Attributes, Coordinate, Facing} from "../constants/Types";
+import { Attributes, Coordinate, Facing} from "../constants/Types";
 import {
-    BufferAttribute,
-    BufferGeometry,
-    DoubleSide,
     Mesh,
     MeshBasicMaterialParameters,
     MeshStandardMaterial,
@@ -12,10 +9,11 @@ import {
 import {instanceOfUvTxt} from "./Textures";
 import {IWallComponent} from "../../drawer/objects/window/IWallComponent";
 import {Direction} from "../../drawer/objects/wall/Direction";
+import {AttributesToGeometry} from "./AttributesToGeometry";
 
 export class ComponentFrameCreator {
 
-    private frameMaterial: MeshStandardMaterial;
+    private readonly frameMaterial: MeshStandardMaterial;
 
     public constructor(frameMaterial: MeshStandardMaterial) {
         this.frameMaterial = frameMaterial;
@@ -23,27 +21,13 @@ export class ComponentFrameCreator {
 
     public createFromWallComponent(wallComponent: IWallComponent) {
         const attributes = ComponentFrameCreator.createAttributes(wallComponent);
-
-        const positions = [];
-        const normals = [];
-        const uvs = [];
-        for (const attribute of attributes) {
-            positions.push(...attribute.position);
-            normals.push(...attribute.normal);
-            uvs.push(...attribute.uv);
-        }
-
-        const geometry = new BufferGeometry();
-        geometry.setAttribute(AttributeName.POSITION, new BufferAttribute(new Float32Array(positions), AttributeNumber.POSITION));
-        geometry.setAttribute(AttributeName.NORMAL, new BufferAttribute(new Float32Array(normals), AttributeNumber.NORMAL));
-        geometry.setAttribute(AttributeName.UV, new BufferAttribute(new Float32Array(uvs), AttributeNumber.UV));
-
+        const geometry = AttributesToGeometry.process(attributes);
 
         instanceOfUvTxt().then(txt => {
             txt.repeat.set(0.1, 0.1);
             this.frameMaterial.setValues({
                 map: txt,
-                side: DoubleSide,
+                color: 0x888888,
             } as MeshBasicMaterialParameters);
         });
         return new Mesh(geometry, this.frameMaterial);
@@ -62,13 +46,6 @@ export class ComponentFrameCreator {
         const result = [...coordinates];
         result[Coordinate.Y] += height;
         return result;
-    }
-
-    private static toUv(coordinates: Array<number>) {
-        if (coordinates.length !== 3) {
-            throw new Error(`Invalid Vector3 coordinates: ${coordinates} when creating component frame.`);
-        }
-        return [coordinates[Coordinate.X], coordinates[Coordinate.Z]];
     }
 
     private static createAttributes(wallComponent: IWallComponent): Array<Attributes> {
@@ -142,10 +119,10 @@ export class ComponentFrameCreator {
 
                 // front (world-orientation-wise)
                 { position: bottomLeft,            normal: Facing.BACK, uv: [bottomLeft[Coordinate.X],            bottomLeft[Coordinate.Y]]            },
-                { position: bottomRight,           normal: Facing.BACK, uv: [bottomRight[Coordinate.X],           bottomRight[Coordinate.Y]]           },
-                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
-                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
                 { position: bottomLeftWithHeight,  normal: Facing.BACK, uv: [bottomLeftWithHeight[Coordinate.X],  bottomLeftWithHeight[Coordinate.Y]]  },
+                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
+                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
+                { position: bottomRight,           normal: Facing.BACK, uv: [bottomRight[Coordinate.X],           bottomRight[Coordinate.Y]]           },
                 { position: bottomLeft,            normal: Facing.BACK, uv: [bottomLeft[Coordinate.X],            bottomLeft[Coordinate.Y]]            },
 
                 // back (world-orientation-wise)

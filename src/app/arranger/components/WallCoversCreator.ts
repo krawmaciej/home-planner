@@ -1,13 +1,14 @@
-import {BufferAttribute, BufferGeometry, Mesh, MeshStandardMaterial} from "three";
+import { BufferGeometry, Mesh, MeshStandardMaterial} from "three";
 import {ObjectPoint, ObjectPoints} from "../../drawer/constants/Types";
-import {AttributeName, AttributeNumber, Attributes, Coordinate, Facing} from "../constants/Types";
+import { Attributes, Coordinate, Facing} from "../constants/Types";
 import {WallConstruction} from "../../drawer/components/DrawerMath";
+import {AttributesToGeometry} from "./AttributesToGeometry";
 
 export class WallCoversCreator {
 
     private static readonly ERROR_MESSAGE = (coordinates: number[]) => `Malformed Vector3 with coordinates: ${coordinates} while creating wall covers.`;
 
-    private coverMeshMaterial: MeshStandardMaterial;
+    private readonly coverMeshMaterial: MeshStandardMaterial;
 
     constructor(coverMeshMaterial: MeshStandardMaterial) {
         this.coverMeshMaterial = coverMeshMaterial;
@@ -15,25 +16,11 @@ export class WallCoversCreator {
 
     public fromObjectPoints({ points, height }: WallConstruction): Mesh<BufferGeometry, MeshStandardMaterial> {
         const attributes = WallCoversCreator.createAttributes(points, height);
-
-        const positions = [];
-        const normals = [];
-        const uvs = [];
-        for (const attribute of attributes) {
-            positions.push(...attribute.position);
-            normals.push(...attribute.normal);
-            uvs.push(...attribute.uv);
-        }
-
-        const geometry = new BufferGeometry();
-        geometry.setAttribute(AttributeName.POSITION, new BufferAttribute(new Float32Array(positions), AttributeNumber.POSITION));
-        geometry.setAttribute(AttributeName.NORMAL, new BufferAttribute(new Float32Array(normals), AttributeNumber.NORMAL));
-        geometry.setAttribute(AttributeName.UV, new BufferAttribute(new Float32Array(uvs), AttributeNumber.UV));
-
+        const geometry = AttributesToGeometry.process(attributes);
         return new Mesh(geometry, this.coverMeshMaterial);
     }
 
-    private static createAttributes(points: ObjectPoints, height: number) {
+    private static createAttributes(points: ObjectPoints, height: number): Array<Attributes> {
         // bottom cover
         const bottomLeft = points[ObjectPoint.BOTTOM_LEFT].toArray();
         const topLeft = points[ObjectPoint.TOP_LEFT].toArray();
@@ -46,7 +33,7 @@ export class WallCoversCreator {
         const topRightWithHeight = WallCoversCreator.withHeight(topRight, height);
         const bottomRightWithHeight = WallCoversCreator.withHeight(bottomRight, height);
 
-        const attributes: Array<Attributes> = [
+        return [
             // bottom cover
             { position: bottomLeft,  normal: Facing.DOWN, uv: WallCoversCreator.toUv(bottomLeft)  },
             { position: topLeft,     normal: Facing.DOWN, uv: WallCoversCreator.toUv(topLeft)     },
@@ -63,7 +50,6 @@ export class WallCoversCreator {
             { position: topLeftWithHeight,     normal: Facing.UP, uv: WallCoversCreator.toUv(topLeft)     },
             { position: bottomLeftWithHeight,  normal: Facing.UP, uv: WallCoversCreator.toUv(bottomLeft)  },
         ];
-        return attributes;
     }
 
     private static toUv(coordinates: Array<number>) {

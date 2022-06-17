@@ -68,7 +68,7 @@ export class FloorsDrawer {
      * Creates initial floor shape which can be changed, initially no shape is available to be changed.
      */
     public initializeFloor(start: Vector3, end: Vector3) {
-        this.drawnFloor = new Floor(start, end, DEFAULT_FLOOR_MATERIAL);
+        this.drawnFloor = new Floor(start, end, DEFAULT_FLOOR_MATERIAL.clone());
         this.drawnFloor.addTo(this.scene);
     }
 
