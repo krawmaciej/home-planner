@@ -6,10 +6,10 @@ import {AttributeName} from "../../../arranger/constants/Types";
 export class Floor implements IFloor {
 
     private static readonly STANDARD_MATERIAL = new LineBasicMaterial({
-        color: 0x000000,
+        color: 0x444444,
     });
     private static readonly COLLIDED_MATERIAL = new LineBasicMaterial({
-        color: 0xaa0000,
+        color: 0xaa4444,
     });
 
     private readonly outline: Line<BufferGeometry, LineBasicMaterial>;

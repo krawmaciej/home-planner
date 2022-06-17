@@ -1,7 +1,7 @@
 import { Scene, Vector3 } from "three";
 import { ObjectElevation } from "../constants/Types";
 import { WallBuilder } from "../objects/wall/WallBuilder";
-import { IDrawedWall } from "../objects/wall/IDrawedWall";
+import { IDrawnWall } from "../objects/wall/IDrawnWall";
 import { NoDrawnWall } from "../objects/wall/NoDrawnWall";
 import { WallThickness } from "../objects/wall/WallThickness";
 import { CollisionDetector } from "./CollisionDetector";
@@ -20,7 +20,7 @@ export class WallDrawer {
 
     private wallThickness: WallThickness;
     private wallHeight: number;
-    private drawnWall: IDrawedWall = NoDrawnWall.getInstance(); // after wall is drawn there is no more wall being drawn
+    private drawnWall: IDrawnWall = NoDrawnWall.getInstance(); // after wall is drawn there is no more wall being drawn
 
     public constructor(
         scene: Scene,
@@ -72,7 +72,7 @@ export class WallDrawer {
             wallBuilder.setCollisionWithObject(true); // also set component collisions
         }
 
-        const dWall = wallBuilder.createDrawedWall();
+        const dWall = wallBuilder.createDrawnWall();
 
         this.drawnWall.removeFrom(this.scene);
         this.scene.add(dWall.wall);

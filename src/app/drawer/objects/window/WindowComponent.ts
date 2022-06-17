@@ -34,7 +34,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     });
 
     private static readonly collidingMaterial = new LineBasicMaterial({
-        color: 0xaa0000,
+        color: 0xaa3333,
     });
 
     private static readonly placedMaterial = new LineBasicMaterial({
