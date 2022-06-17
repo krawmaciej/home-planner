@@ -31,6 +31,11 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
         setSelection(selection);
     };
 
+    const cancelAddingComponent = () => {
+        inputHandler.handleCancel();
+        setSelection(undefined);
+    };
+
     useEffect(() => {
         context.mainInputHandler.changeHandlingStrategy(inputHandler);
     }, [inputHandler]);
@@ -42,11 +47,6 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
             { setDistance: setComponentToWindowDistance }
         ));
     }, [context.wallComponentAdder]);
-
-    const cancelAddingComponent = () => {
-        inputHandler.handleCancel();
-        setSelection(undefined);
-    };
 
     useEffect(() => cancelAddingComponent, [inputHandler]);
 

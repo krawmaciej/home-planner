@@ -12,6 +12,10 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
 
     const [inputHandler, setInputHandler] = useState(new FloorsDrawingIH(context.floorsDrawer));
 
+    const cancelFloorDrawing = () => {
+        inputHandler.handleCancel();
+    };
+
     useEffect(() => {
         context.mainInputHandler.changeHandlingStrategy(inputHandler);
     }, [inputHandler]);
@@ -21,10 +25,6 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
     }, [context.floorsDrawer]);
 
     useEffect(() => cancelFloorDrawing, [inputHandler]);
-
-    const cancelFloorDrawing = () => {
-        inputHandler.handleCancel();
-    };
 
     return (
         <>

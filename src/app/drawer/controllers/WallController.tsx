@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { WallDrawingIH } from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";
@@ -6,24 +6,35 @@ import { FloorPlanContext } from "./FloorPlanMainController";
 export const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 
     const context = useContext(FloorPlanContext);
-
     if (context === undefined) {
         throw new Error("Context in WallController is undefined.");
     }
 
+    const [inputHandler, setInputHandler] = useState(new WallDrawingIH(context.wallDrawer));
+
+    const cancelWallDrawing = () => {
+        inputHandler.handleCancel();
+    };
+
     useEffect(() => {
-        console.log("Wall contro reloaded, but I mean this should happen not on mount but rather on context update");
-        context.mainInputHandler.changeHandlingStrategy(new WallDrawingIH(context.wallDrawer));
+        context.mainInputHandler.changeHandlingStrategy(inputHandler);
+    }, [inputHandler]);
+
+    useEffect(() => {
+        setInputHandler(new WallDrawingIH(context.wallDrawer));
     }, [context.wallDrawer]);
+
+    useEffect(() => cancelWallDrawing, [inputHandler]);
 
     return (
         <>
             <div>
                 {context?.placedWalls.map(v => {
-                    return (<p key={v.wall.id}>{JSON.stringify(v.props.points)}</p>);
+                    return (<p key={v.wall.id}>{JSON.stringify(v.wall.id)}</p>);
                 })}
             </div>
             <button onClick={goBack}>Powrót</button>
+            <button onClick={cancelWallDrawing}>Anuluj</button>
         </>
     );
 };
