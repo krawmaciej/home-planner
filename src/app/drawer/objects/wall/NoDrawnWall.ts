@@ -1,8 +1,8 @@
 import { IDrawedWall } from "./IDrawedWall";
 
-export class NoDrawedWall implements IDrawedWall {
-    private static readonly instance = new NoDrawedWall();
-    public static getInstance(): NoDrawedWall {
+export class NoDrawnWall implements IDrawedWall {
+    private static readonly instance = new NoDrawnWall();
+    public static getInstance(): NoDrawnWall {
         return this.instance;
     }
     private constructor() {}

@@ -30,14 +30,13 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     ]);
 
     private static readonly defaultMaterial = new LineBasicMaterial({
-        color: 0x000000,
+        color: 0x333333,
     });
 
     private static readonly collidingMaterial = new LineBasicMaterial({
         color: 0xaa0000,
     });
 
-    // has to be separate from defaultMaterial due to ThreeJS material sharing
     private static readonly placedMaterial = new LineBasicMaterial({
         color: 0x000000,
     });
@@ -127,6 +126,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
 
     public removeFrom(scene: Scene): void {
         scene.remove(this.window);
+        this.window.geometry.dispose();
     }
 
     /**
@@ -262,5 +262,4 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
     public getHeight(): number {
         return this.props.height;
     }
-
 }

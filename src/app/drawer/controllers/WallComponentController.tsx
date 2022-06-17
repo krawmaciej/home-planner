@@ -20,10 +20,10 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     ]);
     const [selection, setSelection] = useState<number | undefined>(undefined);
     const [componentToWindowDistance, setComponentToWindowDistance] = useState<number | undefined>(undefined);
-
-    let inputHandler = new WallComponentAddingIH(
-        context.wallComponentAdder,
-        { setDistance: setComponentToWindowDistance }
+    const [inputHandler, setInputHandler] = useState(new WallComponentAddingIH(
+            context.wallComponentAdder,
+            {setDistance: setComponentToWindowDistance}
+        )
     );
 
     const handleSelection = (selection: number) => {
@@ -32,13 +32,23 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     };
 
     useEffect(() => {
-        console.log("Component adder reloaded on context.");
-        inputHandler = new WallComponentAddingIH(
+        context.mainInputHandler.changeHandlingStrategy(inputHandler);
+    }, [inputHandler]);
+
+    useEffect(() => {
+        console.log("Component adder reloaded on context wall component adder change.");
+        setInputHandler(new WallComponentAddingIH(
             context.wallComponentAdder,
             { setDistance: setComponentToWindowDistance }
-        );
-        context.mainInputHandler.changeHandlingStrategy(inputHandler);
+        ));
     }, [context.wallComponentAdder]);
+
+    const cancelAddingComponent = () => {
+        inputHandler.handleCancel();
+        setSelection(undefined);
+    };
+
+    useEffect(() => cancelAddingComponent, [inputHandler]);
 
     const display = () => {
         if (selection === undefined) {
@@ -60,6 +70,7 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     return (
         <>
             <button onClick={goBack}>Powrót</button>
+            <button onClick={cancelAddingComponent}>Anuluj</button>
             { display() }
         </>
     );

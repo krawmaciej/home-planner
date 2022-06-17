@@ -12,6 +12,7 @@ export class WallComponentPointer {
 
     public constructor() {
         this.state = State.NONE;
+        console.log("Pointer state set to none");
         this.position = WallComponentPointer.unsetPosition;
     }
 
@@ -27,6 +28,11 @@ export class WallComponentPointer {
     public place(position: Vector3) {
         this.state = State.MOVING;
         this.position = position;
+    }
+
+    public reset() {
+        this.state = State.NONE;
+        this.position = WallComponentPointer.unsetPosition;
     }
 
     public getState(): State {

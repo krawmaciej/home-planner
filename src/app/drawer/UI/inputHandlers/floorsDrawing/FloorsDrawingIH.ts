@@ -55,6 +55,21 @@ export class FloorsDrawingIH implements IInputHandler {
         }
     }
 
+    public handleCancel(): void {
+        switch (this.pointer.state) {
+            case DrawingState.NONE:
+                // no op
+                break;
+            case DrawingState.INITIALIZE:
+                // no op
+                break;
+            case DrawingState.DRAWING:
+                this.pointer.reset();
+                this.floorsDrawer.removeCurrentlyDrawnFloor();
+                break;
+        }
+    }
+
     private static snapToGrid(point: Vector3) {
         return new Vector3(
             Math.round(point.x),

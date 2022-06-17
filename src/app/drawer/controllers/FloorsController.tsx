@@ -17,10 +17,8 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
 
     return (
         <>
-            <div>
-                Coś
-            </div>
             <button onClick={goBack}>Powrót</button>
+            <button onClick={goBack}>Anuluj</button>
         </>
     );
 };

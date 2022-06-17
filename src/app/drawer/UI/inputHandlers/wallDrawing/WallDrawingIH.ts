@@ -49,4 +49,11 @@ export class WallDrawingIH implements IInputHandler {
             }
         }
     }
+
+    public handleCancel(): void {
+        if (this.pointer.state === DrawingState.DRAWING) {
+            this.pointer = this.pointer.reset();
+            this.wallDrawer.removeDrawnWall();
+        }
+    }
 }

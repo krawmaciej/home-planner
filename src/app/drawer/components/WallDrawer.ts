@@ -2,7 +2,7 @@ import { Scene, Vector3 } from "three";
 import { ObjectElevation } from "../constants/Types";
 import { WallBuilder } from "../objects/wall/WallBuilder";
 import { IDrawedWall } from "../objects/wall/IDrawedWall";
-import { NoDrawedWall } from "../objects/wall/NoDrawedWall";
+import { NoDrawnWall } from "../objects/wall/NoDrawnWall";
 import { WallThickness } from "../objects/wall/WallThickness";
 import { CollisionDetector } from "./CollisionDetector";
 import { PlacedWall } from "../objects/wall/PlacedWall";
@@ -18,7 +18,7 @@ export class WallDrawer {
 
     private wallThickness: WallThickness;
     private wallHeight: number;
-    private drawedWall: IDrawedWall = NoDrawedWall.getInstance(); // after wall is drawn there is no more wall being drawn
+    private drawnWall: IDrawedWall = NoDrawnWall.getInstance(); // after wall is drawn there is no more wall being drawn
 
     public constructor(
         scene: Scene,
@@ -63,9 +63,9 @@ export class WallDrawer {
 
         const dWall = wallBuilder.createDrawedWall();
 
-        this.drawedWall.removeFrom(this.scene);
+        this.drawnWall.removeFrom(this.scene);
         this.scene.add(dWall.wall);
-        this.drawedWall = dWall;
+        this.drawnWall = dWall;
     }
 
     public drawWall(start: Vector3, end: Vector3): boolean {
@@ -76,8 +76,8 @@ export class WallDrawer {
         const collisionResult = this.collisionDetector
             .detectCollisions(wallBuilder.getProps().points, this.placedWalls);
 
-        this.drawedWall.removeFrom(this.scene);
-        this.drawedWall = NoDrawedWall.getInstance();
+        this.drawnWall.removeFrom(this.scene);
+        this.drawnWall = NoDrawnWall.getInstance();
         
         if (collisionResult.isCollision) {
             return false; // do not place the wall
@@ -89,7 +89,6 @@ export class WallDrawer {
         if (wallToComponentCollision.isCollision || wallToComponentCollision.adjacentObjects.length > 0) {
             return false; // do not place the wall
         }
-
 
         const placedWall = wallBuilder.setCollision(collisionResult).createPlacedWall();
 
@@ -113,5 +112,10 @@ export class WallDrawer {
         this.placedWalls.push(placedWall);
         this.updateWallsToggle(prev => !prev);
         return true;
+    }
+
+    public removeDrawnWall() {
+        this.drawnWall.removeFrom(this.scene);
+        this.drawnWall = NoDrawnWall.getInstance();
     }
 }
