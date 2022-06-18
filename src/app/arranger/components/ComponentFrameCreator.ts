@@ -7,9 +7,9 @@ import {
     Vector3
 } from "three";
 import {instanceOfUvTxt} from "./Textures";
-import {IWallComponent} from "../../drawer/objects/window/IWallComponent";
 import {Direction} from "../../drawer/objects/wall/Direction";
 import {AttributesToGeometry} from "./AttributesToGeometry";
+import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
 
 export class ComponentFrameCreator {
 
@@ -19,7 +19,7 @@ export class ComponentFrameCreator {
         this.frameMaterial = frameMaterial;
     }
 
-    public createFromWallComponent(wallComponent: IWallComponent) {
+    public createFromWallComponent(wallComponent: IPlacedWallComponent) {
         const attributes = ComponentFrameCreator.createAttributes(wallComponent);
         const geometry = AttributesToGeometry.process(attributes);
 
@@ -48,7 +48,7 @@ export class ComponentFrameCreator {
         return result;
     }
 
-    private static createAttributes(wallComponent: IWallComponent): Array<Attributes> {
+    private static createAttributes(wallComponent: IPlacedWallComponent): Array<Attributes> {
         const points = wallComponent.getObjectPointsOnScene();
         const elevation = wallComponent.getElevation();
         const height = wallComponent.getHeight();
@@ -64,6 +64,10 @@ export class ComponentFrameCreator {
         const topLeftWithHeight = ComponentFrameCreator.withHeight(topLeft, height);
         const topRightWithHeight = ComponentFrameCreator.withHeight(topRight, height);
         const bottomRightWithHeight = ComponentFrameCreator.withHeight(bottomRight, height);
+
+        const uvRotatedBottomStrategy = wallComponent.isDoor() ?
+            { first: Coordinate.X, second: Coordinate.Z } :
+            { first: Coordinate.Z, second: Coordinate.X };
 
         if (direction === Direction.LEFT || direction === Direction.RIGHT) {
             return [
@@ -102,12 +106,12 @@ export class ComponentFrameCreator {
         } else {
             return [
                 // bottom
-                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[Coordinate.Z],  bottomLeft[Coordinate.X]]  },
-                { position: bottomRight, normal: Facing.UP, uv: [bottomRight[Coordinate.Z], bottomRight[Coordinate.X]] },
-                { position: topRight,    normal: Facing.UP, uv: [topRight[Coordinate.Z],    topRight[Coordinate.X]]    },
-                { position: topRight,    normal: Facing.UP, uv: [topRight[Coordinate.Z],    topRight[Coordinate.X]]    },
-                { position: topLeft,     normal: Facing.UP, uv: [topLeft[Coordinate.Z],     topLeft[Coordinate.X]]     },
-                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[Coordinate.Z],  bottomLeft[Coordinate.X]]  },
+                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[uvRotatedBottomStrategy.first],  bottomLeft[uvRotatedBottomStrategy.second]]  },
+                { position: bottomRight, normal: Facing.UP, uv: [bottomRight[uvRotatedBottomStrategy.first], bottomRight[uvRotatedBottomStrategy.second]] },
+                { position: topRight,    normal: Facing.UP, uv: [topRight[uvRotatedBottomStrategy.first],    topRight[uvRotatedBottomStrategy.second]]    },
+                { position: topRight,    normal: Facing.UP, uv: [topRight[uvRotatedBottomStrategy.first],    topRight[uvRotatedBottomStrategy.second]]    },
+                { position: topLeft,     normal: Facing.UP, uv: [topLeft[uvRotatedBottomStrategy.first],     topLeft[uvRotatedBottomStrategy.second]]     },
+                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[uvRotatedBottomStrategy.first],  bottomLeft[uvRotatedBottomStrategy.second]]  },
 
                 // top
                 { position: bottomLeftWithHeight,  normal: Facing.DOWN, uv: [bottomLeftWithHeight[Coordinate.Z],  bottomLeftWithHeight[Coordinate.X]]  },

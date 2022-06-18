@@ -22,6 +22,6 @@ export interface IWallComponent extends ISceneObject {
     setNotCollided(): void;
     setCollided(): void;
     collides(): boolean;
-
     getDirection(): Vector2D;
+    isDoor(): boolean;
 }

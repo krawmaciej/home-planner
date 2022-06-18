@@ -6,8 +6,8 @@ import { NoDrawnWall } from "../objects/wall/NoDrawnWall";
 import { WallThickness } from "../objects/wall/WallThickness";
 import { CollisionDetector } from "./CollisionDetector";
 import { PlacedWall } from "../objects/wall/PlacedWall";
-import {IWallComponent} from "../objects/window/IWallComponent";
 import {Floor} from "../objects/floor/Floor";
+import {IPlacedWallComponent} from "../objects/window/IPlacedWallComponent";
 
 export class WallDrawer {
 
@@ -15,7 +15,7 @@ export class WallDrawer {
     private readonly collisionDetector: CollisionDetector;
     private readonly placedWalls: Array<PlacedWall>;
     private readonly updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>; // todo: refactor to placed walls domain object
-    private readonly components: Array<IWallComponent>;
+    private readonly components: Array<IPlacedWallComponent>;
     private readonly floors: Array<Floor>;
 
     private wallThickness: WallThickness;
@@ -27,7 +27,7 @@ export class WallDrawer {
         collisionDetector: CollisionDetector,
         walls: Array<PlacedWall>,
         updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
-        components: Array<IWallComponent>,
+        components: Array<IPlacedWallComponent>,
         floors: Array<Floor>,
         wallThickness: WallThickness,
         wallHeight: number,

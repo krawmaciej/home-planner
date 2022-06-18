@@ -1,6 +1,5 @@
 import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 import {PlacedWall} from "../../drawer/objects/wall/PlacedWall";
-import {IWallComponent} from "../../drawer/objects/window/IWallComponent";
 import {ConnectionType, WallFace} from "../../drawer/objects/wall/WallSide";
 import {SceneWallFaceMeshes} from "../objects/SceneWallFaceMeshes";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
@@ -14,6 +13,7 @@ import {ComponentFrameCreator} from "./ComponentFrameCreator";
 import {Floor} from "../../drawer/objects/floor/Floor";
 import {FloorCreator} from "./FloorCreator";
 import {CeilingCreator} from "./CeilingCreator";
+import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
 
 /**
  * Expects walls and wall component points to be in the same order.
@@ -53,7 +53,7 @@ export class PlanToArrangerConverter {
         return { sceneWallFaceMeshes, wallCoverMeshes };
     }
 
-    private convertWallComponents(wallComponents: Array<IWallComponent>) {
+    private convertWallComponents(wallComponents: Array<IPlacedWallComponent>) {
         // todo: save in wall component 4 materials, one per frame face
         // todo: allow each wall face material to be set separately
         const creator = new ComponentFrameCreator(DEFAULT_WALL_MATERIAL.clone());

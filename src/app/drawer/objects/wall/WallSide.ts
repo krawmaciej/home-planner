@@ -1,7 +1,7 @@
 import {BufferGeometry, Line, Material, Vector3} from "three";
-import {IWallComponent} from "../window/IWallComponent";
 import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
 import {MathFloatingPoints} from "../../../common/components/MathFloatingPoints";
+import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
 
 type OrientationPoints = {
     first: ObjectPoint,
@@ -29,7 +29,7 @@ class ComponentSidePointsSingletonMap {
 export class WallSide {
 
     // used to quickly remove component from wallSide's node
-    private readonly componentToSideNode = new Map<IWallComponent, SideNode>();
+    private readonly componentToSideNode = new Map<IPlacedWallComponent, SideNode>();
 
     private readonly head: SideNode;
     private readonly tail: SideNode;
@@ -105,7 +105,7 @@ export class WallSide {
      *
      * @param component to be added to wall side
      */
-    public putComponent(component: IWallComponent) {
+    public putComponent(component: IPlacedWallComponent) {
         const strategyKey = this.strategyKey; // "alias"
 
         const componentPoints = component.getObjectPointsOnScene();
@@ -140,7 +140,7 @@ export class WallSide {
         throw new Error(`component: ${JSON.stringify(component)} is outside of wallside: ${JSON.stringify(this)}`);
     }
 
-    public removeComponent(component: IWallComponent) {
+    public removeComponent(component: IPlacedWallComponent) {
         const sideNode = this.componentToSideNode.get(component);
         if (sideNode === undefined) {
             throw new Error(`component: ${JSON.stringify(component)} does not belong to wallSide: ${JSON.stringify(this)}`);
@@ -178,21 +178,21 @@ class Connection {
     public next: SideNode | undefined;
     public type: ConnectionType;
     public readonly material: Material;
-    public readonly components: Array<IWallComponent>; // holds wall's connection doors/windows
+    public readonly components: Array<IPlacedWallComponent>; // holds wall's connection doors/windows
     public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices wih components array
     public constructor(next: SideNode | undefined, type: ConnectionType, material?: Material) {
         this.next = next;
         this.type = type;
         this.material = material ?? DEFAULT_WALL_MATERIAL.clone();
-        this.components = new Array<IWallComponent>();
+        this.components = new Array<IPlacedWallComponent>();
         this.componentsAttributes = new Array<ComponentAttributes>();
     }
-    public addComponent(component: IWallComponent, attributes: ComponentAttributes): Array<IWallComponent> {
+    public addComponent(component: IPlacedWallComponent, attributes: ComponentAttributes): Array<IPlacedWallComponent> {
         this.components.push(component);
         this.componentsAttributes.push(attributes);
         return this.components;
     }
-    public removeComponent(component: IWallComponent) {
+    public removeComponent(component: IPlacedWallComponent) {
         const index = this.components.indexOf(component);
         if (index === -1) {
             throw new Error(`component: ${JSON.stringify(component)} was not found in the connection: ${JSON.stringify(this)}`);

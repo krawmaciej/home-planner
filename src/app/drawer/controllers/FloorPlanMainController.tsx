@@ -10,11 +10,11 @@ import { WallThickness } from "../objects/wall/WallThickness";
 import { Scene } from "three";
 import { MainInputHandler } from "../../common/canvas/inputHandler/MainInputHandler";
 import { VoidIH } from "../../common/canvas/inputHandler/VoidIH";
-import {IWallComponent} from "../objects/window/IWallComponent";
 import {FloorsDrawer} from "../components/FloorsDrawer";
 import {Floor} from "../objects/floor/Floor";
 import {FloorsController} from "./FloorsController";
 import {WallComponentAdder} from "../components/WallComponentAdder";
+import {IPlacedWallComponent} from "../objects/window/IPlacedWallComponent";
 
 type Props = {
     className?: string,
@@ -24,7 +24,7 @@ type Props = {
     wallHeight: number,
     placedWalls: Array<PlacedWall>,
     floors: Array<Floor>,
-    wallComponents: Array<IWallComponent>,
+    wallComponents: Array<IPlacedWallComponent>,
 }
 
 export enum MainControllerType {
