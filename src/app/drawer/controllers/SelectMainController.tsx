@@ -15,11 +15,15 @@ export const SelectMainController: React.FC<MainFactoryComponentProps<MainContro
         setType(MainControllerType.WINDOWS_AND_DOORS);
     };
 
+    const selectFloors = () => {
+        setType(MainControllerType.FLOORS);
+    };
+
     return (
         <>
             <button onClick={selectWalls}>Ściany</button>
             <button onClick={selectWindowsAndDoors}>Okna i drzwi</button>
-            <button onClick={undefined}>Reset</button>
+            <button onClick={selectFloors}>Podłogi</button>
         </>
     );
 };

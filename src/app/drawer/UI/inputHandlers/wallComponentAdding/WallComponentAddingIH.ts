@@ -1,10 +1,10 @@
 import { Vector3 } from "three";
-import { WallComponentAdder } from "../../../components/WallComponentAdder";
 import { ObjectElevation } from "../../../constants/Types";
-import { WindowProps } from "../../../objects/window/WindowComponent";
+import { ComponentProps } from "../../../objects/window/WallComponent";
 import { IInputHandler } from "../../../../common/canvas/inputHandler/IInputHandler";
 import { WallComponentPointer, State } from "./WallComponentPointer";
 import {Observer} from "../../../controllers/WallComponentController";
+import {WallComponentAdder} from "../../../components/WallComponentAdder";
 
 export class WallComponentAddingIH implements IInputHandler {
 
@@ -18,18 +18,28 @@ export class WallComponentAddingIH implements IInputHandler {
     private readonly pointer: WallComponentPointer;
 
     public constructor(wallComponentAdder: WallComponentAdder, observer: Observer) {
+        console.log("Reinitialized wall component adding input handler.");
         this.wallComponentAdder = wallComponentAdder;
         this.observer = observer;
         this.pointer = new WallComponentPointer();
     }
 
-    public handleSelection(windowProps: WindowProps) {
+    public handleWindowSelection(componentProps: ComponentProps) {
         if (this.pointer.getState() === State.MOVING) {
             this.wallComponentAdder.removeMovingComponent();
         }
 
         this.pointer.select();
-        this.wallComponentAdder.setComponent(windowProps);
+        this.wallComponentAdder.setWindow(componentProps);
+    }
+
+    public handleDoorSelection(componentProps: ComponentProps) {
+        if (this.pointer.getState() === State.MOVING) {
+            this.wallComponentAdder.removeMovingComponent();
+        }
+
+        this.pointer.select();
+        this.wallComponentAdder.setDoor(componentProps);
     }
 
     public handleMovement(point: Vector3): void {
@@ -51,6 +61,14 @@ export class WallComponentAddingIH implements IInputHandler {
             console.log("placed on: ", point);
             this.pointer.place(point);
             this.wallComponentAdder.addComponentToWall(point);
+        }
+    }
+
+    public handleCancel(): void {
+        console.log("Pointer state is " + this.pointer.getState());
+        if (this.pointer.getState() === State.MOVING) {
+            this.pointer.reset();
+            this.wallComponentAdder.removeMovingComponent();
         }
     }
 }

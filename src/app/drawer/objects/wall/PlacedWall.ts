@@ -4,8 +4,8 @@ import {WallConstruction} from "../../components/DrawerMath";
 import {ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
 import {ISceneObject} from "../ISceneObject";
 import {WallSides} from "./WallSides";
-import {IWallComponent} from "../window/IWallComponent";
 import {Direction} from "./Direction";
+import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
 
 export class PlacedWall implements ISceneObject {
     
@@ -52,6 +52,7 @@ export class PlacedWall implements ISceneObject {
     }
 
     public removeFrom(scene: Scene): void {
+        this.lines.forEach(line => line.geometry.dispose());
         scene.remove(this.wall);
     }
 
@@ -59,7 +60,7 @@ export class PlacedWall implements ISceneObject {
         return this.props.points;
     }
 
-    public addComponent(component: IWallComponent): void {
+    public addComponent(component: IPlacedWallComponent): void {
         if (this.props.direction === Direction.DOWN || this.props.direction === Direction.UP) {
             this.wallSides.addComponent(ObjectSideOrientation.LEFT, component);
             this.wallSides.addComponent(ObjectSideOrientation.RIGHT, component);
@@ -73,7 +74,7 @@ export class PlacedWall implements ISceneObject {
      * Throws error if component does not belong to this wall.
      * @param component
      */
-    public removeComponent(component: IWallComponent): void {
+    public removeComponent(component: IPlacedWallComponent): void {
         if (this.props.direction === Direction.DOWN || this.props.direction === Direction.UP) {
             this.wallSides.removeComponent(ObjectSideOrientation.LEFT, component);
             this.wallSides.removeComponent(ObjectSideOrientation.RIGHT, component);

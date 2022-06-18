@@ -1,15 +1,15 @@
 import {ObjectPoints, Vector2D} from "../../constants/Types";
-import {IMovingWindowComponent} from "./IMovingWindowComponent";
-import {IPlacedWindowComponent} from "./IPlacedWindowComponent";
+import {IMovingWallComponent} from "./IMovingWallComponent";
+import {IPlacedWallComponent} from "./IPlacedWallComponent";
 
-export class NoMovingWindow implements IMovingWindowComponent {
-    private static readonly instance = new NoMovingWindow();
-    public static getInstance(): NoMovingWindow {
+export class NoMovingWallComponent implements IMovingWallComponent {
+    private static readonly instance = new NoMovingWallComponent();
+    public static getInstance(): NoMovingWallComponent {
         return this.instance;
     }
     private constructor() {}
 
-    createPlacedComponent(): IPlacedWindowComponent {
+    createPlacedComponent(): IPlacedWallComponent {
         throw new Error("Called method on a not initialized component.");
     }
     changePosition(): void {
@@ -36,6 +36,9 @@ export class NoMovingWindow implements IMovingWindowComponent {
     getDistanceFromParentWall(): number | undefined {
         throw new Error("Called method on a not initialized component.");
     }
+    setDistanceFromParentWall(): void {
+        throw new Error("Called method on a not initialized component.");
+    }
     getHeight(): number {
         throw new Error("Called method on a not initialized component.");
     }
@@ -52,6 +55,9 @@ export class NoMovingWindow implements IMovingWindowComponent {
         throw new Error("Called method on a not initialized component.");
     }
     getDirection(): Vector2D {
+        throw new Error("Called method on a not initialized component.");
+    }
+    isDoor(): boolean {
         throw new Error("Called method on a not initialized component.");
     }
 }

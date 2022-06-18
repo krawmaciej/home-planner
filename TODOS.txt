@@ -4,8 +4,6 @@
  - solution with not overlapping walls lets easily select for which wall does the wall component belong to, and it also solves z-fighting problem.
 
 
-
- 
  - fix: cannot draw a line when starting from other line
 
 

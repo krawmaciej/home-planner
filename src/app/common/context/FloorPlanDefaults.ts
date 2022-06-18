@@ -3,7 +3,7 @@ import {ICameraHandler, OrthographicCameraHandler} from "../canvas/ICameraHandle
 import {MainInputHandler} from "../canvas/inputHandler/MainInputHandler";
 import {WallThickness} from "../../drawer/objects/wall/WallThickness";
 import {VoidIH} from "../canvas/inputHandler/VoidIH";
-import {DEFAULT_WALL_HEIGHT, ObjectElevation} from "../../drawer/constants/Types";
+import { ObjectElevation} from "../../drawer/constants/Types";
 import {SceneObjectsState} from "./SceneObjectsDefaults";
 
 export type FloorPlanState = {
@@ -11,7 +11,6 @@ export type FloorPlanState = {
     renderer: WebGLRenderer,
     mainInputHandler: MainInputHandler,
     wallThickness: WallThickness,
-    wallHeight: number,
 }
 
 export const createCameraHandler = () => {
@@ -35,7 +34,6 @@ export const createFloorPlanState = () => {
         renderer: createRenderer(),
         mainInputHandler: createMainInputHandler(),
         wallThickness: new WallThickness(1.0),
-        wallHeight: DEFAULT_WALL_HEIGHT,
     } as FloorPlanState;
 };
 

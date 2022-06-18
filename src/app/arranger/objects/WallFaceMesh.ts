@@ -14,6 +14,7 @@ export class WallFaceMesh {
             wallFace.connection.material.setValues({
                 map: txt,
                 side: DoubleSide,
+                color: 0x888888,
             } as MeshBasicMaterialParameters);
         });
         const mesh = new Mesh(geometry, wallFace.connection.material);

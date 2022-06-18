@@ -1,49 +1,33 @@
 import {ObjectPoint} from "../../drawer/constants/Types";
-import {AttributeName, AttributeNumber, Attributes, Coordinate, Facing} from "../constants/Types";
+import { Attributes, Coordinate, Facing} from "../constants/Types";
 import {
-    BufferAttribute,
-    BufferGeometry,
-    DoubleSide,
     Mesh,
     MeshBasicMaterialParameters,
     MeshStandardMaterial,
     Vector3
 } from "three";
 import {instanceOfUvTxt} from "./Textures";
-import {IWallComponent} from "../../drawer/objects/window/IWallComponent";
 import {Direction} from "../../drawer/objects/wall/Direction";
+import {AttributesToGeometry} from "./AttributesToGeometry";
+import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
 
 export class ComponentFrameCreator {
 
-    private frameMaterial: MeshStandardMaterial;
+    private readonly frameMaterial: MeshStandardMaterial;
 
     public constructor(frameMaterial: MeshStandardMaterial) {
         this.frameMaterial = frameMaterial;
     }
 
-    public createFromWallComponent(wallComponent: IWallComponent) {
+    public createFromWallComponent(wallComponent: IPlacedWallComponent) {
         const attributes = ComponentFrameCreator.createAttributes(wallComponent);
-
-        const positions = [];
-        const normals = [];
-        const uvs = [];
-        for (const attribute of attributes) {
-            positions.push(...attribute.position);
-            normals.push(...attribute.normal);
-            uvs.push(...attribute.uv);
-        }
-
-        const geometry = new BufferGeometry();
-        geometry.setAttribute(AttributeName.POSITION, new BufferAttribute(new Float32Array(positions), AttributeNumber.POSITION));
-        geometry.setAttribute(AttributeName.NORMAL, new BufferAttribute(new Float32Array(normals), AttributeNumber.NORMAL));
-        geometry.setAttribute(AttributeName.UV, new BufferAttribute(new Float32Array(uvs), AttributeNumber.UV));
-
+        const geometry = AttributesToGeometry.process(attributes);
 
         instanceOfUvTxt().then(txt => {
             txt.repeat.set(0.1, 0.1);
             this.frameMaterial.setValues({
                 map: txt,
-                side: DoubleSide,
+                color: 0x888888,
             } as MeshBasicMaterialParameters);
         });
         return new Mesh(geometry, this.frameMaterial);
@@ -64,14 +48,7 @@ export class ComponentFrameCreator {
         return result;
     }
 
-    private static toUv(coordinates: Array<number>) {
-        if (coordinates.length !== 3) {
-            throw new Error(`Invalid Vector3 coordinates: ${coordinates} when creating component frame.`);
-        }
-        return [coordinates[Coordinate.X], coordinates[Coordinate.Z]];
-    }
-
-    private static createAttributes(wallComponent: IWallComponent): Array<Attributes> {
+    private static createAttributes(wallComponent: IPlacedWallComponent): Array<Attributes> {
         const points = wallComponent.getObjectPointsOnScene();
         const elevation = wallComponent.getElevation();
         const height = wallComponent.getHeight();
@@ -87,6 +64,10 @@ export class ComponentFrameCreator {
         const topLeftWithHeight = ComponentFrameCreator.withHeight(topLeft, height);
         const topRightWithHeight = ComponentFrameCreator.withHeight(topRight, height);
         const bottomRightWithHeight = ComponentFrameCreator.withHeight(bottomRight, height);
+
+        const uvRotatedBottomStrategy = wallComponent.isDoor() ?
+            { first: Coordinate.X, second: Coordinate.Z } :
+            { first: Coordinate.Z, second: Coordinate.X };
 
         if (direction === Direction.LEFT || direction === Direction.RIGHT) {
             return [
@@ -125,12 +106,12 @@ export class ComponentFrameCreator {
         } else {
             return [
                 // bottom
-                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[Coordinate.Z],  bottomLeft[Coordinate.X]]  },
-                { position: bottomRight, normal: Facing.UP, uv: [bottomRight[Coordinate.Z], bottomRight[Coordinate.X]] },
-                { position: topRight,    normal: Facing.UP, uv: [topRight[Coordinate.Z],    topRight[Coordinate.X]]    },
-                { position: topRight,    normal: Facing.UP, uv: [topRight[Coordinate.Z],    topRight[Coordinate.X]]    },
-                { position: topLeft,     normal: Facing.UP, uv: [topLeft[Coordinate.Z],     topLeft[Coordinate.X]]     },
-                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[Coordinate.Z],  bottomLeft[Coordinate.X]]  },
+                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[uvRotatedBottomStrategy.first],  bottomLeft[uvRotatedBottomStrategy.second]]  },
+                { position: bottomRight, normal: Facing.UP, uv: [bottomRight[uvRotatedBottomStrategy.first], bottomRight[uvRotatedBottomStrategy.second]] },
+                { position: topRight,    normal: Facing.UP, uv: [topRight[uvRotatedBottomStrategy.first],    topRight[uvRotatedBottomStrategy.second]]    },
+                { position: topRight,    normal: Facing.UP, uv: [topRight[uvRotatedBottomStrategy.first],    topRight[uvRotatedBottomStrategy.second]]    },
+                { position: topLeft,     normal: Facing.UP, uv: [topLeft[uvRotatedBottomStrategy.first],     topLeft[uvRotatedBottomStrategy.second]]     },
+                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[uvRotatedBottomStrategy.first],  bottomLeft[uvRotatedBottomStrategy.second]]  },
 
                 // top
                 { position: bottomLeftWithHeight,  normal: Facing.DOWN, uv: [bottomLeftWithHeight[Coordinate.Z],  bottomLeftWithHeight[Coordinate.X]]  },
@@ -142,10 +123,10 @@ export class ComponentFrameCreator {
 
                 // front (world-orientation-wise)
                 { position: bottomLeft,            normal: Facing.BACK, uv: [bottomLeft[Coordinate.X],            bottomLeft[Coordinate.Y]]            },
-                { position: bottomRight,           normal: Facing.BACK, uv: [bottomRight[Coordinate.X],           bottomRight[Coordinate.Y]]           },
-                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
-                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
                 { position: bottomLeftWithHeight,  normal: Facing.BACK, uv: [bottomLeftWithHeight[Coordinate.X],  bottomLeftWithHeight[Coordinate.Y]]  },
+                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
+                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
+                { position: bottomRight,           normal: Facing.BACK, uv: [bottomRight[Coordinate.X],           bottomRight[Coordinate.Y]]           },
                 { position: bottomLeft,            normal: Facing.BACK, uv: [bottomLeft[Coordinate.X],            bottomLeft[Coordinate.Y]]            },
 
                 // back (world-orientation-wise)

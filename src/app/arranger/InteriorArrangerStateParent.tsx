@@ -68,9 +68,27 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         const temp = planObjectsConverter.convertPlanObjects(sceneObjects);
 
         const wallFaceMeshes = [...temp.sceneWallFaceMeshes.meshToWallFaceMap.keys()];
-        scene.add(...wallFaceMeshes);
-        scene.add(...temp.wallCoverMeshes);
-        scene.add(...temp.sceneComponentFramesMeshes);
+
+        const allMeshes = [
+            ...wallFaceMeshes,
+            ...temp.wallCoverMeshes,
+            ...temp.sceneComponentFramesMeshes,
+            ...temp.sceneFloorsMeshes,
+            ...temp.sceneCeilingsMeshes,
+        ];
+
+        allMeshes.forEach(mesh => {
+            mesh.receiveShadow = true;
+            mesh.castShadow = true;
+        });
+
+        scene.add(...allMeshes);
+
+        // scene.add(...wallFaceMeshes);
+        // scene.add(...temp.wallCoverMeshes);
+        // scene.add(...temp.sceneComponentFramesMeshes);
+        // scene.add(...temp.sceneFloorsMeshes);
+        // scene.add(...temp.sceneCeilingsMeshes);
         // scene.add(meshes[0]);
         // scene.add(meshes[1]);
         // scene.add(meshes[2]);

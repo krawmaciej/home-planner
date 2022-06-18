@@ -7,4 +7,7 @@ export class VoidIH implements IInputHandler {
     handleClick(): void {
         // no op
     }
+    handleCancel(): void {
+        // no op
+    }
 }

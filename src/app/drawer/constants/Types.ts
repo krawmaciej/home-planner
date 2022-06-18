@@ -5,6 +5,8 @@ export const DEFAULT_WALL_MATERIAL = new MeshStandardMaterial({
     color: 0xbbbbbb,
 });
 
+export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({ color: 0x444444 });
+
 export enum Precision {
     CM_100 = -1,
     CM_10 = 0,
@@ -18,19 +20,23 @@ export type Vector2D = {
 }
 
 export enum ObjectElevation {
-    GRID = -1,
+    GRID = -2,
+    FLOOR = -1,
     WALL = 0,
-    COMPONENT = 0,
+    COMPONENT = 1,
     MOVING = 3,
     UI = 4,
 }
 
-export type ObjectPoints = [ Vector3, Vector3, Vector3, Vector3 ];
+export type ObjectPoints = [ Vector3, Vector3, Vector3, Vector3, ];
 
+/**
+ * {@link TOP_LEFT} and {@link BOTTOM_RIGHT} are used in bounding a rectangular shape.
+ */
 export enum ObjectPoint {
-    BOTTOM_LEFT, BOTTOM_RIGHT, TOP_RIGHT, TOP_LEFT
+    BOTTOM_LEFT, BOTTOM_RIGHT, TOP_RIGHT, TOP_LEFT,
 }
 
 export enum ObjectSideOrientation {
-    BOTTOM, RIGHT, TOP, LEFT
+    BOTTOM, RIGHT, TOP, LEFT,
 }

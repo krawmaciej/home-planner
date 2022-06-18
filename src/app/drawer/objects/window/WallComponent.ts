@@ -1,16 +1,20 @@
 import {BufferGeometry, Line, LineBasicMaterial, Material, Quaternion, Scene, Vector3} from "three";
 import {DrawerMath} from "../../components/DrawerMath";
 import {ObjectElevation, ObjectPoint, ObjectPoints, Vector2D} from "../../constants/Types";
-import {IMovingWindowComponent} from "./IMovingWindowComponent";
-import {IPlacedWindowComponent} from "./IPlacedWindowComponent";
+import {IMovingWallComponent} from "./IMovingWallComponent";
+import {IPlacedWallComponent} from "./IPlacedWallComponent";
 import {Direction} from "../wall/Direction";
 import {PlacedWall} from "../wall/PlacedWall";
 
-export type WindowProps = {
+export enum ComponentType {
+    WINDOW, DOOR,
+}
+
+export type ComponentProps = {
     readonly length: number,
     readonly width: number,
-    height: number,
-    elevation: number,
+    readonly height: number,
+    readonly elevation: number,
 }
 
 type XZLengths = {
@@ -18,45 +22,54 @@ type XZLengths = {
     readonly z: number,
 }
 
-export class WindowComponent implements IMovingWindowComponent, IPlacedWindowComponent {
+export class WallComponent implements IMovingWallComponent, IPlacedWallComponent {
+
+    public static createMovingDoor(props: ComponentProps): IMovingWallComponent {
+        return new WallComponent(props, WallComponent.defaultMaterial, ComponentType.DOOR);
+    }
+
+    public static createMovingWindow(props: ComponentProps): IMovingWallComponent {
+        return new WallComponent(props, WallComponent.defaultMaterial, ComponentType.WINDOW);
+    }
 
     private static readonly DEFAULT_ROTATION = new Quaternion();
     private static readonly RIGHT_ANGLE_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2.0);
     private static readonly directionQuaternionMap = new Map<Vector2D, Quaternion>([
-        [Direction.RIGHT, WindowComponent.DEFAULT_ROTATION],
-        [Direction.LEFT, WindowComponent.DEFAULT_ROTATION],
-        [Direction.DOWN, WindowComponent.RIGHT_ANGLE_ROTATION],
-        [Direction.UP, WindowComponent.RIGHT_ANGLE_ROTATION],
+        [Direction.RIGHT, WallComponent.DEFAULT_ROTATION],
+        [Direction.LEFT, WallComponent.DEFAULT_ROTATION],
+        [Direction.DOWN, WallComponent.RIGHT_ANGLE_ROTATION],
+        [Direction.UP, WallComponent.RIGHT_ANGLE_ROTATION],
     ]);
 
     private static readonly defaultMaterial = new LineBasicMaterial({
-        color: 0x000000,
+        color: 0x333333,
     });
 
     private static readonly collidingMaterial = new LineBasicMaterial({
-        color: 0xaa0000,
+        color: 0xaa3333,
     });
 
-    // has to be separate from defaultMaterial due to ThreeJS material sharing
     private static readonly placedMaterial = new LineBasicMaterial({
         color: 0x000000,
     });
 
-    private readonly props: WindowProps;
+    private readonly props: ComponentProps;
     private readonly window: Line<BufferGeometry, Material>;
     private direction: Vector2D;
-    private parentWall: undefined | PlacedWall;
+    private parentWall: undefined | PlacedWall; // not yet placed wall component can also have a parent wall
     private collided: boolean;
+    private type: ComponentType;
 
-    public constructor(props: WindowProps, material?: LineBasicMaterial) {
+    public constructor(props: ComponentProps, material: LineBasicMaterial, type: ComponentType) {
         this.props = props;
-        const points = WindowComponent.createPoints(props);
+        const points = WallComponent.createPoints(props);
         points.push(points[ObjectPoint.BOTTOM_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
-        this.window = new Line(geometry, material ?? WindowComponent.defaultMaterial);
+        this.window = new Line(geometry, material ?? WallComponent.defaultMaterial);
         this.window.matrixAutoUpdate = false; // will be updated on each change position
         this.direction = Direction.RIGHT;
         this.collided = false;
+        this.type = type;
     }
 
     /**
@@ -64,7 +77,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
      * @param props 
      * @returns 
      */
-    private static createPoints(props: WindowProps): ObjectPoints {
+    private static createPoints(props: ComponentProps): ObjectPoints {
         const topLeft = new Vector3(0, ObjectElevation.COMPONENT, props.width);
         const topRight = new Vector3(props.length, ObjectElevation.COMPONENT, props.width);
         const bottomRight = new Vector3(props.length, ObjectElevation.COMPONENT, 0);
@@ -109,20 +122,13 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
             newPosition.z = wallMax.z - componentLengths.z/2;
         }
 
-        // snap to movement interval // todo: fix
-        // newPosition.set(
-        //     +newPosition.x.toFixed(Precision.CM_1),
-        //     newPosition.y,
-        //     +newPosition.z.toFixed(Precision.CM_1)
-        // );
-
         this.window.position.copy(newPosition);
         this.window.updateMatrix();
         this.window.updateMatrixWorld(true);
     }
 
-    public createPlacedComponent(parentWall: PlacedWall): IPlacedWindowComponent {
-        const placed = new WindowComponent(this.props, WindowComponent.placedMaterial);
+    public createPlacedComponent(parentWall: PlacedWall): IPlacedWallComponent {
+        const placed = new WallComponent(this.props, WallComponent.placedMaterial, this.type);
         placed.setParentWall(parentWall);
         placed.changePosition(this.window.position);
         return placed;
@@ -134,6 +140,7 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
 
     public removeFrom(scene: Scene): void {
         scene.remove(this.window);
+        this.window.geometry.dispose();
     }
 
     /**
@@ -212,9 +219,28 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
         return DrawerMath.distanceBetweenPoints(componentBottomLeft, wallBottomLeft);
     }
 
+    public setDistanceFromParentWall(distance: number): void {
+        if (this.parentWall === undefined) {
+            return;
+        }
+
+        const componentBottomLeft = this.getObjectPointsOnScene()[ObjectPoint.BOTTOM_LEFT].clone();
+        const wallBottomLeft = this.parentWall.getObjectPointsOnScene()[ObjectPoint.BOTTOM_LEFT].clone();
+
+        // set Y values to the same number since Ys should be not considered in further calculations
+        componentBottomLeft.setY(0);
+        wallBottomLeft.setY(0);
+
+        const oldDistanceVector = componentBottomLeft.sub(wallBottomLeft);
+        const newDistanceVector = oldDistanceVector.clone().normalize().multiplyScalar(distance);
+        const moveByVector = newDistanceVector.sub(oldDistanceVector);
+        const newWindowMiddlePosition = this.window.position.clone().add(moveByVector);
+        this.changePosition(newWindowMiddlePosition);
+    }
+
     private changeRotation(direction: Vector2D): void {
         this.direction = direction;
-        const quaternion = WindowComponent.directionQuaternionMap.get(direction);
+        const quaternion = WallComponent.directionQuaternionMap.get(direction);
         if (quaternion === undefined) {
             throw new Error("Wall component direction has no quaternion mapped!");
         }
@@ -227,12 +253,12 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
 
     public setNotCollided(): void {
         this.collided = false;
-        this.window.material = WindowComponent.defaultMaterial;
+        this.window.material = WallComponent.defaultMaterial;
     }
 
     public setCollided(): void {
         this.collided = true;
-        this.window.material = WindowComponent.collidingMaterial;
+        this.window.material = WallComponent.collidingMaterial;
     }
 
     public collides(): boolean {
@@ -249,5 +275,9 @@ export class WindowComponent implements IMovingWindowComponent, IPlacedWindowCom
 
     public getHeight(): number {
         return this.props.height;
+    }
+
+    public isDoor() {
+        return this.type === ComponentType.DOOR;
     }
 }

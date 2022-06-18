@@ -2,7 +2,7 @@ import {Line, Material, Vector3} from "three";
 import {WallConstruction} from "../../components/DrawerMath";
 import {WallSide} from "./WallSide";
 import {ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
-import {IWallComponent} from "../window/IWallComponent";
+import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
 
 /**
  * Wraps array of wall sides of a single wall.
@@ -23,11 +23,11 @@ export class WallSides {
         this.wallSides[side].cutBlock(points[0], points[1]);
     }
 
-    public addComponent(side: ObjectSideOrientation, component: IWallComponent) {
+    public addComponent(side: ObjectSideOrientation, component: IPlacedWallComponent) {
         this.wallSides[side].putComponent(component);
     }
 
-    public removeComponent(side: ObjectSideOrientation, component: IWallComponent) {
+    public removeComponent(side: ObjectSideOrientation, component: IPlacedWallComponent) {
         this.wallSides[side].removeComponent(component);
     }
 

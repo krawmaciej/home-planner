@@ -43,4 +43,8 @@ export class WallPointer {
         }
         return this;
     }
+
+    public reset() {
+        return new WallPointer();
+    }
 }

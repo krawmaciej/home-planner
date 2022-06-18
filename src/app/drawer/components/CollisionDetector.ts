@@ -1,7 +1,6 @@
 import {Vector3} from "three";
 import {ObjectPoint, ObjectPoints, ObjectSideOrientation, Vector2D} from "../constants/Types";
 import {ISceneObject} from "../objects/ISceneObject";
-import {DrawedWall} from "../objects/wall/DrawedWall";
 import {PlacedWall} from "../objects/wall/PlacedWall";
 import {DrawerMath, WallConstruction} from "./DrawerMath";
 import {CollisionType, LiangBarsky, LiangBarskyResult} from "./LiangBarsky";
@@ -42,21 +41,26 @@ export class CollisionDetector {
         return undefined;
     }
 
-    public detectAxisAlignedRectangleCollisions(checked: WallConstruction, walls: Array<DrawedWall>): boolean {
-        const topRight = checked.points[ObjectPoint.BOTTOM_RIGHT];
-        const bottomLeft = checked.points[ObjectPoint.TOP_LEFT];
-        for (const wall of walls) {
-            const wTopRight = wall.props.points[ObjectPoint.BOTTOM_RIGHT];
-            const wBottomLeft = wall.props.points[ObjectPoint.TOP_LEFT];
+    public detectAABBCollisions<T extends ISceneObject>(checked: T, objects: Array<T>): T | undefined {
+        return this.detectAABBCollisionsForObjectPoints(checked.getObjectPointsOnScene(), objects);
+    }
+
+    public detectAABBCollisionsForObjectPoints<T extends ISceneObject>(points: ObjectPoints, objects: Array<T>): T | undefined {
+        const topRight = points[ObjectPoint.BOTTOM_RIGHT];
+        const bottomLeft = points[ObjectPoint.TOP_LEFT];
+        for (const obj of objects) {
+            const objPoints = obj.getObjectPointsOnScene();
+            const wTopRight = objPoints[ObjectPoint.BOTTOM_RIGHT];
+            const wBottomLeft = objPoints[ObjectPoint.TOP_LEFT];
             if (bottomLeft.x < wTopRight.x &&
                 topRight.x > wBottomLeft.x &&
                 bottomLeft.z < wTopRight.z &&
                 topRight.z > wBottomLeft.z
             ) {
-                return true;
+                return obj;
             }
         }
-        return false;
+        return undefined;
     }
 
     /**

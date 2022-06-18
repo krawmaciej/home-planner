@@ -1,6 +1,5 @@
 import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 import {PlacedWall} from "../../drawer/objects/wall/PlacedWall";
-import {IWallComponent} from "../../drawer/objects/window/IWallComponent";
 import {ConnectionType, WallFace} from "../../drawer/objects/wall/WallSide";
 import {SceneWallFaceMeshes} from "../objects/SceneWallFaceMeshes";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
@@ -11,6 +10,10 @@ import {DEFAULT_WALL_MATERIAL, ObjectPoints, ObjectSideOrientation} from "../../
 import {ArrangerMath} from "./ArrangerMath";
 import {WallCoversCreator} from "./WallCoversCreator";
 import {ComponentFrameCreator} from "./ComponentFrameCreator";
+import {Floor} from "../../drawer/objects/floor/Floor";
+import {FloorCreator} from "./FloorCreator";
+import {CeilingCreator} from "./CeilingCreator";
+import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
 
 /**
  * Expects walls and wall component points to be in the same order.
@@ -23,9 +26,11 @@ import {ComponentFrameCreator} from "./ComponentFrameCreator";
 export class PlanToArrangerConverter {
 
     public convertPlanObjects(sceneObjects: SceneObjectsState) {
-        const sceneWallFaceMeshes = this.convertPlacedWalls(sceneObjects.placedWalls);
+        const sceneWallFacesMeshes = this.convertPlacedWalls(sceneObjects.placedWalls);
         const sceneComponentFramesMeshes = this.convertWallComponents(sceneObjects.wallComponents);
-        return { ...sceneWallFaceMeshes, sceneComponentFramesMeshes };
+        const sceneFloorsMeshes = this.convertFloors(sceneObjects.floors);
+        const sceneCeilingsMeshes = this.createCeilings(sceneObjects.floors, sceneObjects.wallsHeight);
+        return { ...sceneWallFacesMeshes, sceneComponentFramesMeshes, sceneFloorsMeshes, sceneCeilingsMeshes };
     }
 
     private convertPlacedWalls(placedWalls: Array<PlacedWall>) {
@@ -48,9 +53,21 @@ export class PlanToArrangerConverter {
         return { sceneWallFaceMeshes, wallCoverMeshes };
     }
 
-    private convertWallComponents(wallComponents: Array<IWallComponent>) {
+    private convertWallComponents(wallComponents: Array<IPlacedWallComponent>) {
+        // todo: save in wall component 4 materials, one per frame face
+        // todo: allow each wall face material to be set separately
         const creator = new ComponentFrameCreator(DEFAULT_WALL_MATERIAL.clone());
         return wallComponents.map(wc => creator.createFromWallComponent(wc));
+    }
+
+    private convertFloors(floors: Array<Floor>) {
+        const creator = new FloorCreator();
+        return floors.map(floor => creator.createFromFloor(floor));
+    }
+
+    private createCeilings(floors: Array<Floor>, wallsHeight: number) {
+        const creator = new CeilingCreator(wallsHeight);
+        return floors.map(floor => creator.createFromFloor(floor));
     }
 
     private static wallFaceToWallFaceMesh(wallFace: WallFace, orientation: ObjectSideOrientation, wallHeight: number): WallFaceMesh {
