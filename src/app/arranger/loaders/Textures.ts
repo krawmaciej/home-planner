@@ -1,4 +1,4 @@
-import {RepeatWrapping, Texture, TextureLoader} from "three";
+import {RepeatWrapping, TextureLoader} from "three";
 // import uvMapUrl from "../../textures/hardwood.jpg";
 
 fetch("/doors/doors.json")
@@ -7,22 +7,20 @@ fetch("/doors/doors.json")
 
 const textureLoader = new TextureLoader();
 
-const createPromise = async (fileName: string) => {
-    const txt = await textureLoader.loadAsync(fileName);
+export const loadHardwoodTxt = async () => {
+    const txt = await textureLoader.loadAsync("/textures/hardwood.jpg");
     txt.wrapT = RepeatWrapping;
     txt.wrapS = RepeatWrapping;
     console.log("THIS SHOULD BE CALLED ONLY ONCE PER TEXTURE!");
     return txt;
 };
 
-export const textureMap = new Map<string, Promise<Texture>>();
-
-const uvPromise = createPromise("/textures/hardwood.jpg");
+// const uvPromise = placeH();
 // const uvTxtPromise = createPromise("/textures/hardwood.jpg");
 
-export const instanceOfUvTxt = async () => {
-    const txt = await uvPromise;
-    const clone = txt.clone();
-    clone.needsUpdate = true;
-    return clone;
-};
+// export const loadHardwoodTxt = async () => {
+//     const txt = await uvPromise;
+//     const clone = txt.clone();
+//     clone.needsUpdate = true;
+//     return clone;
+// };

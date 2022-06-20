@@ -6,7 +6,7 @@ import {
     MeshStandardMaterial,
     Vector3
 } from "three";
-import {instanceOfUvTxt} from "../loaders/Textures";
+import {loadHardwoodTxt} from "../loaders/Textures";
 import {Direction} from "../../drawer/objects/wall/Direction";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
@@ -24,12 +24,14 @@ export class ComponentFrameCreator {
         const attributes = ComponentFrameCreator.createAttributes(wallComponent);
         const geometry = AttributesToGeometry.process(attributes);
 
-        instanceOfUvTxt().then(txt => {
+        loadHardwoodTxt().then(txt => {
             txt.repeat.set(0.1, 0.1);
             this.frameMaterial.setValues({
                 map: txt,
                 color: 0x888888,
             } as MeshBasicMaterialParameters);
+
+            this.frameMaterial.needsUpdate = true;
         });
         return new Mesh(geometry, this.frameMaterial);
     }

@@ -1,6 +1,6 @@
 import {DoubleSide, Material, Mesh, MeshBasicMaterialParameters, ShapeGeometry} from "three";
 import {WallFace} from "../../drawer/objects/wall/WallSide";
-import {instanceOfUvTxt} from "../loaders/Textures";
+import {loadHardwoodTxt} from "../loaders/Textures";
 
 export class WallFaceMesh {
 
@@ -8,7 +8,7 @@ export class WallFaceMesh {
     public readonly wallFace: WallFace;
 
     public constructor(geometry: ShapeGeometry, wallFace: WallFace, angle: number, txtRotation: number) {
-        instanceOfUvTxt().then(txt => {
+        loadHardwoodTxt().then(txt => {
             txt.repeat.set(0.1, 0.1);
             txt.rotation = txtRotation;
             wallFace.connection.material.setValues({
@@ -16,6 +16,8 @@ export class WallFaceMesh {
                 side: DoubleSide,
                 color: 0x888888,
             } as MeshBasicMaterialParameters);
+            
+            wallFace.connection.material.needsUpdate = true;
         });
         const mesh = new Mesh(geometry, wallFace.connection.material);
         mesh.position.copy(wallFace.firstPoint); // move to correct position - geometry center does not change

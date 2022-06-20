@@ -1,7 +1,7 @@
 import {Floor} from "../../drawer/objects/floor/Floor";
 import { Mesh, MeshBasicMaterialParameters} from "three";
 import { Attributes, Coordinate, Facing} from "../constants/Types";
-import {instanceOfUvTxt} from "../loaders/Textures";
+import {loadHardwoodTxt} from "../loaders/Textures";
 import {ObjectPoint} from "../../drawer/constants/Types";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 
@@ -11,7 +11,7 @@ export class FloorCreator {
         const attributes = FloorCreator.createAttributes(floor);
         const geometry = AttributesToGeometry.process(attributes);
 
-        instanceOfUvTxt().then(txt => {
+        loadHardwoodTxt().then(txt => {
             console.log("txtid: ", txt.id);
             console.log("txtuuid: ", txt.uuid);
 
@@ -21,6 +21,8 @@ export class FloorCreator {
                 color: 0x888888,
                 // depthWrite: false,
             } as MeshBasicMaterialParameters);
+
+            floor.meshMaterial.needsUpdate = true;
         });
         return new Mesh(geometry, floor.meshMaterial);
     }
