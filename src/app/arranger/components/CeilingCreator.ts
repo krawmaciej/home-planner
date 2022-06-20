@@ -1,7 +1,7 @@
 import {Floor} from "../../drawer/objects/floor/Floor";
 import { Mesh, MeshBasicMaterialParameters} from "three";
 import { Attributes, Coordinate, Facing} from "../constants/Types";
-import {instanceOfUvTxt} from "./Textures";
+import {instanceOfUvTxt} from "../loaders/Textures";
 import {ObjectPoint} from "../../drawer/constants/Types";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 
@@ -18,6 +18,9 @@ export class CeilingCreator {
         const geometry = AttributesToGeometry.process(attributes);
 
         instanceOfUvTxt().then(txt => {
+            console.log("txtid: ", txt.id);
+            console.log("txtuuid: ", txt.uuid);
+
             txt.repeat.set(0.1, 0.1);
             floor.meshMaterial.setValues({
                 map: txt,

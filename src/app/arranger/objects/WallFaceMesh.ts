@@ -1,6 +1,6 @@
 import {DoubleSide, Material, Mesh, MeshBasicMaterialParameters, ShapeGeometry} from "three";
 import {WallFace} from "../../drawer/objects/wall/WallSide";
-import {instanceOfUvTxt} from "../components/Textures";
+import {instanceOfUvTxt} from "../loaders/Textures";
 
 export class WallFaceMesh {
 

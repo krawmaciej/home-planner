@@ -1,15 +1,16 @@
 import {ObjectPoint} from "../../drawer/constants/Types";
-import { Attributes, Coordinate, Facing} from "../constants/Types";
+import {Attributes, Coordinate, Facing, FLOOR_LEVEL} from "../constants/Types";
 import {
     Mesh,
     MeshBasicMaterialParameters,
     MeshStandardMaterial,
     Vector3
 } from "three";
-import {instanceOfUvTxt} from "./Textures";
+import {instanceOfUvTxt} from "../loaders/Textures";
 import {Direction} from "../../drawer/objects/wall/Direction";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
+import {MathFloatingPoints} from "../../common/components/MathFloatingPoints";
 
 export class ComponentFrameCreator {
 
@@ -65,7 +66,7 @@ export class ComponentFrameCreator {
         const topRightWithHeight = ComponentFrameCreator.withHeight(topRight, height);
         const bottomRightWithHeight = ComponentFrameCreator.withHeight(bottomRight, height);
 
-        const uvRotatedBottomStrategy = wallComponent.isDoor() ?
+        const uvRotatedBottomStrategy = MathFloatingPoints.areNumbersEqual(elevation, FLOOR_LEVEL) ?
             { first: Coordinate.X, second: Coordinate.Z } :
             { first: Coordinate.Z, second: Coordinate.X };
 

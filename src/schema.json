@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "offset": {
+        "type": "number"
+      },
+      "texture": {
+        "type": "boolean"
+      },
+      "normals": {
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "name",
+      "offset"
+    ]
+  }
+}
