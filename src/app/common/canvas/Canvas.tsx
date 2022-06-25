@@ -107,7 +107,7 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             height = mount?.current?.clientHeight ?? 0;
             const aspect = width / height;
             props.cameraHandler.setAspectRatio(aspect);
-            props.controls?.update();
+            // props.controls?.update(); // // only required if controls.enableDamping = true, or if controls.autoRotate = true
             props.renderer.setSize(width, height);
             render();
         }

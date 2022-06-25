@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from 'react';
 
 import {
     ACESFilmicToneMapping,
-    AmbientLight, Box3, Box3Helper, Color, Mesh, Object3D,
+    AmbientLight, Box3, Box3Helper, Color, Group, Mesh, Object3D,
     PerspectiveCamera,
     Scene,
     Vector3, WebGLRenderer,
@@ -17,10 +17,10 @@ import {ICameraHandler, PerspectiveCameraHandler} from "../common/canvas/ICamera
 import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {PlanToArrangerConverter} from "./components/PlanToArrangerConverter";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {Geometry} from "three/examples/jsm/deprecated/Geometry";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 type Props = {
     className?: string,
@@ -51,8 +51,9 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         antialias: true,
     };
 
-    const { current: renderer } = useRef<WebGLRenderer>(createBetterWebGLRenderer(rendererParams));
-    const { current: controls } = useRef<OrbitControls>(new OrbitControls(cameraHandler.getCamera(), renderer.domElement));
+    const { current: renderer } = useRef(createBetterWebGLRenderer(rendererParams));
+    const { current: orbit } = useRef(new OrbitControls(cameraHandler.getCamera(), renderer.domElement));
+    const { current: transform } = useRef(new TransformControls(cameraHandler.getCamera(), renderer.domElement));
 
     const setCameraZoomHandler = (zoom: number) => {
         cameraHandler.setZoom(zoom);
@@ -107,12 +108,12 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         // scene.add(...temp.meshes()); // todo: might need to use [] around ...temp.meshes
 
 
-        const transformControls = new TransformControls(cameraHandler.getCamera(), renderer.domElement);
-
         // models tests
         const gltfLoader = new GLTFLoader();
         gltfLoader.loadAsync('/doors/offset_pos_door/door.gltf').then(gltf => {
-            scene.add(gltf.scene);
+            const group = new Group();
+            group.add(gltf.scene);
+            scene.add(group);
             // door.scale.multiplyScalar(0.1);
             // door.children.forEach(child => {
             //     if (child instanceof Mesh) {
@@ -182,13 +183,14 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
 
             // scene.add(scene2);
 
-            transformControls.attach(gltf.scene);
+            transform.attach(group);
+            scene.add(transform);
         });
     }, [sceneObjects]);
 
     return (
         <>
-            <Canvas scene={scene} renderer={renderer} controls={controls} cameraHandler={cameraHandler} mainInputHandler={mainInputHandler}/>
+            <Canvas scene={scene} renderer={renderer} cameraHandler={cameraHandler} mainInputHandler={mainInputHandler}/>
             <InteriorArrangerMainController className={"app-bottom-menu"} scene={scene} mainInputHandler={mainInputHandler}/>
         </>
     );
