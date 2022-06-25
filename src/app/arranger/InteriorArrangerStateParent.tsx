@@ -4,7 +4,7 @@ import React, {useEffect, useRef, useState} from 'react';
 
 import {
     ACESFilmicToneMapping,
-    AmbientLight, Mesh, MeshStandardMaterial, Object3D,
+    AmbientLight, Box3, Box3Helper, Color, Mesh, Object3D,
     PerspectiveCamera,
     Scene,
     Vector3, WebGLRenderer,
@@ -19,56 +19,12 @@ import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {PlanToArrangerConverter} from "./components/PlanToArrangerConverter";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+import {Geometry} from "three/examples/jsm/deprecated/Geometry";
+import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 
 type Props = {
     className?: string,
     sceneObjects: SceneObjectsState,
-}
-
-function traverseChildren(children: Object3D[]) {
-    if (!children) {
-        return;
-    }
-    children.forEach(child => {
-        if (child instanceof Mesh) {
-            if (child.material instanceof MeshStandardMaterial) {
-                child.material.flatShading = true;
-            }
-            // if (child.material instanceof MeshStandardMaterial) {
-            //     if (!child.material.metalnessMap) {
-            //         child.material.metalness = 0;
-            //     }
-            //     if (!child.material.aoMap) {
-            //         child.material.aoMapIntensity = 0;
-            //     }
-            //     if (!child.material.bumpMap) {
-            //         child.material.bumpScale = 0;
-            //     }
-            //     if (!child.material.displacementMap) {
-            //         child.material.displacementScale = 0;
-            //     }
-            //     if (!child.material.emissiveMap) {
-            //         child.material.emissiveIntensity = 0;
-            //     }
-            //     if (!child.material.envMap) {
-            //         child.material.envMapIntensity = 0;
-            //     }
-            //     if (!child.material.lightMap) {
-            //         child.material.lightMapIntensity = 0;
-            //     }
-            //     if (!child.material.normalMap) {
-            //         child.material.normalScale = new Vector2(1, 1);
-            //     }
-            //     if (!child.material.roughnessMap) {
-            //         child.material.roughness = 0;
-            //     }
-            //     if (!child.material.map) {
-            //         child.material.lightMapIntensity = 0;
-            //     }
-            // }
-        }
-        traverseChildren(child.children);
-    });
 }
 
 function createBetterWebGLRenderer(rendererParams: WebGLRendererParameters) {
@@ -151,9 +107,12 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         // scene.add(...temp.meshes()); // todo: might need to use [] around ...temp.meshes
 
 
+        const transformControls = new TransformControls(cameraHandler.getCamera(), renderer.domElement);
+
         // models tests
         const gltfLoader = new GLTFLoader();
-        gltfLoader.loadAsync('/doors/InteriorDoor.gltf').then(gltf => {
+        gltfLoader.loadAsync('/doors/offset_pos_door/door.gltf').then(gltf => {
+            scene.add(gltf.scene);
             // door.scale.multiplyScalar(0.1);
             // door.children.forEach(child => {
             //     if (child instanceof Mesh) {
@@ -166,11 +125,64 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
 
             // traverseChildren(gltf.scene.children);
 
-            gltf.scene.children.forEach(child => {
-                child.scale.multiplyScalar(10);
+            // gltf.scene.children.forEach(child => {
+            //     child.scale.multiplyScalar(10);
+            // });
+            gltf.scene.scale.multiplyScalar(0.2);
+            // gltf.scene.position.set(5, 2, -4);
+
+            const box3 = new Box3().setFromObject(gltf.scene);
+            const boxNotModifiable = box3.clone();
+            const box3Helper = new Box3Helper(boxNotModifiable, new Color(0xffff00));
+            scene.add(box3Helper);
+
+            console.log("box3: ", box3);
+            const min = box3.min.clone();
+            console.log(min);
+            console.log(box3.max);
+            const center = boxNotModifiable.getCenter(new Vector3());
+            console.log("box3 center: ", center);
+            console.log("Scene position: ", gltf.scene.position);
+
+            // temporarily move to global coordinate
+            // while (!gltf.scene.parent);
+            // gltf.scene?.parent?.localToWorld(gltf.scene.position);
+
+            // rotate position
+            gltf.scene.position.sub(center);
+            gltf.scene.position.applyAxisAngle(new Vector3(0, 1, 0), Math.PI/2.0);
+            gltf.scene.position.add(center);
+
+            // rotate object
+            gltf.scene.rotateOnAxis(new Vector3(0, 1, 0), Math.PI/2.0);
+
+            // move back to local coordinate
+            // gltf.scene?.parent?.worldToLocal(gltf.scene.position);
+
+
+
+
+            const box3Helper2 = new Box3Helper(box3, new Color(0x00ff00));
+            scene.add(box3Helper2);
+
+            gltf.scene.position.sub(center);
+
+
+
+            //gltf.scene.position.copy(center);
+
+
+            gltf.scene.traverse((obj) => {
+                console.log(obj.position);
             });
-            console.log("Scene", gltf.scene);
-            scene.add(gltf.scene);
+            // scene.add(box3Helper);
+
+            // const scene2 = gltf.scene.clone();
+            // scene2.applyMatrix4(new Matrix4().makeScale(-1, 1, 1));
+
+            // scene.add(scene2);
+
+            transformControls.attach(gltf.scene);
         });
     }, [sceneObjects]);
 
@@ -180,4 +192,12 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
             <InteriorArrangerMainController className={"app-bottom-menu"} scene={scene} mainInputHandler={mainInputHandler}/>
         </>
     );
+};
+
+const findGeometries = (object: Object3D) => {
+    const geometries = new Array<Geometry>();
+    if (object instanceof Mesh) {
+        geometries.push(object.geometry);
+    }
+    return geometries;
 };
