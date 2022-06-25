@@ -3,9 +3,8 @@ import "../css/MainStyle.css";
 import React, {useEffect, useRef, useState} from 'react';
 
 import {
-    AmbientLight,
-    DirectionalLight,
-    HemisphereLight,
+    ACESFilmicToneMapping,
+    AmbientLight, Mesh, MeshStandardMaterial, Object3D,
     PerspectiveCamera,
     Scene,
     Vector3, WebGLRenderer,
@@ -19,10 +18,65 @@ import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {PlanToArrangerConverter} from "./components/PlanToArrangerConverter";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 
 type Props = {
     className?: string,
     sceneObjects: SceneObjectsState,
+}
+
+function traverseChildren(children: Object3D[]) {
+    if (!children) {
+        return;
+    }
+    children.forEach(child => {
+        if (child instanceof Mesh) {
+            if (child.material instanceof MeshStandardMaterial) {
+                child.material.flatShading = true;
+            }
+            // if (child.material instanceof MeshStandardMaterial) {
+            //     if (!child.material.metalnessMap) {
+            //         child.material.metalness = 0;
+            //     }
+            //     if (!child.material.aoMap) {
+            //         child.material.aoMapIntensity = 0;
+            //     }
+            //     if (!child.material.bumpMap) {
+            //         child.material.bumpScale = 0;
+            //     }
+            //     if (!child.material.displacementMap) {
+            //         child.material.displacementScale = 0;
+            //     }
+            //     if (!child.material.emissiveMap) {
+            //         child.material.emissiveIntensity = 0;
+            //     }
+            //     if (!child.material.envMap) {
+            //         child.material.envMapIntensity = 0;
+            //     }
+            //     if (!child.material.lightMap) {
+            //         child.material.lightMapIntensity = 0;
+            //     }
+            //     if (!child.material.normalMap) {
+            //         child.material.normalScale = new Vector2(1, 1);
+            //     }
+            //     if (!child.material.roughnessMap) {
+            //         child.material.roughness = 0;
+            //     }
+            //     if (!child.material.map) {
+            //         child.material.lightMapIntensity = 0;
+            //     }
+            // }
+        }
+        traverseChildren(child.children);
+    });
+}
+
+function createBetterWebGLRenderer(rendererParams: WebGLRendererParameters) {
+    const webGLRenderer = new WebGLRenderer(rendererParams);
+    webGLRenderer.toneMapping = ACESFilmicToneMapping;
+    webGLRenderer.toneMappingExposure = 1;
+    // webGLRenderer.outputEncoding = sRGBEncoding;
+    return webGLRenderer;
 }
 
 export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: Props) => {
@@ -41,7 +95,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         antialias: true,
     };
 
-    const { current: renderer } = useRef<WebGLRenderer>(new WebGLRenderer(rendererParams));
+    const { current: renderer } = useRef<WebGLRenderer>(createBetterWebGLRenderer(rendererParams));
     const { current: controls } = useRef<OrbitControls>(new OrbitControls(cameraHandler.getCamera(), renderer.domElement));
 
     const setCameraZoomHandler = (zoom: number) => {
@@ -50,14 +104,14 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
     };
 
     useEffect(() => {
-        const hemiLight = new HemisphereLight("white", "grey", 0.5);
-        const directLight = new DirectionalLight("white", 0.4);
-        directLight.position.set(0, 30, 10);
-        directLight.target.position.set(0, 0, 10);
+        // const hemiLight = new HemisphereLight("white", "grey");
+        // const directLight = new DirectionalLight("white", 1);
+        // directLight.position.set(0, 40, 20);
+        // directLight.target.position.set(0, 0, 0);
+        //
+        // scene.add(directLight);
 
-        scene.add(hemiLight, directLight);
-
-        const light = new AmbientLight( 0x808080 ); // soft white light
+        const light = new AmbientLight( 0xffffff ); // soft white light
         scene.add(light);
 
         cameraHandler.setPosition(new Vector3(0, 50, 20));
@@ -77,10 +131,10 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
             ...temp.sceneCeilingsMeshes,
         ];
 
-        allMeshes.forEach(mesh => {
-            mesh.receiveShadow = true;
-            mesh.castShadow = true;
-        });
+        // allMeshes.forEach(mesh => {
+        //     mesh.receiveShadow = true;
+        //     mesh.castShadow = true;
+        // });
 
         scene.add(...allMeshes);
 
@@ -95,6 +149,29 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         // scene.add(meshes[3]);
         // temp.meshToWallFaceMap.forEach(val => scene.add(val.mesh));
         // scene.add(...temp.meshes()); // todo: might need to use [] around ...temp.meshes
+
+
+        // models tests
+        const gltfLoader = new GLTFLoader();
+        gltfLoader.loadAsync('/doors/InteriorDoor.gltf').then(gltf => {
+            // door.scale.multiplyScalar(0.1);
+            // door.children.forEach(child => {
+            //     if (child instanceof Mesh) {
+            //         // const material = DEFAULT_WALL_MATERIAL.clone();
+            //         // material.side = DoubleSide;
+            //         // child.material = material;
+            //         console.log("door mesh material", child.material);
+            //     }
+            // });
+
+            // traverseChildren(gltf.scene.children);
+
+            gltf.scene.children.forEach(child => {
+                child.scale.multiplyScalar(10);
+            });
+            console.log("Scene", gltf.scene);
+            scene.add(gltf.scene);
+        });
     }, [sceneObjects]);
 
     return (

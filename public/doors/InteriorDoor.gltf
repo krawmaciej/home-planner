@@ -1,0 +1,323 @@
+{
+    "asset": {
+        "generator": "FBX2glTF v0.9.7",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "buffers": [
+        {
+            "byteLength": 1844,
+            "uri": "buffer.bin"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteLength": 108,
+            "byteOffset": 0,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 336,
+            "byteOffset": 108,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 336,
+            "byteOffset": 444,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 224,
+            "byteOffset": 780,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 72,
+            "byteOffset": 1004,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 288,
+            "byteOffset": 1076,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 288,
+            "byteOffset": 1364,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 192,
+            "byteOffset": 1652,
+            "target": 34962
+        }
+    ],
+    "scenes": [
+        {
+            "name": "Root Scene",
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "componentType": 5123,
+            "type": "SCALAR",
+            "count": 54,
+            "bufferView": 0,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 28,
+            "bufferView": 1,
+            "byteOffset": 0,
+            "min": [
+                -0.259563982486725,
+                -0.0157069992274046,
+                -0.0095459995791316
+            ],
+            "max": [
+                0.259563982486725,
+                0.0157069992274046,
+                0.918711960315704
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 28,
+            "bufferView": 2,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC2",
+            "count": 28,
+            "bufferView": 3,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5123,
+            "type": "SCALAR",
+            "count": 36,
+            "bufferView": 4,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 24,
+            "bufferView": 5,
+            "byteOffset": 0,
+            "min": [
+                -0.226550996303558,
+                -0.00987099949270487,
+                0.000545999966561794
+            ],
+            "max": [
+                0.226550996303558,
+                0.00986999925225973,
+                0.89122998714447
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 24,
+            "bufferView": 6,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC2",
+            "count": 24,
+            "bufferView": 7,
+            "byteOffset": 0
+        }
+    ],
+    "images": [
+        {
+            "name": "InteriorDoor_NRM.jpg",
+            "uri": "InteriorDoor_NRM.jpg"
+        },
+        {
+            "name": "InteriorDoor_Diffuce.jpg",
+            "uri": "InteriorDoor_Diffuce.jpg"
+        }
+    ],
+    "samplers": [
+        {}
+    ],
+    "textures": [
+        {
+            "name": "InteriorDoorNrm",
+            "sampler": 0,
+            "source": 0
+        },
+        {
+            "name": "InteriorDoorDiffuce",
+            "sampler": 0,
+            "source": 1
+        }
+    ],
+    "materials": [
+        {
+            "name": "InteriorDoor",
+            "alphaMode": "OPAQUE",
+            "extras": {
+                "fromFBX": {
+                    "shadingModel": "Phong",
+                    "isTruePBR": false
+                }
+            },
+            "normalTexture": {
+                "index": 0,
+                "texCoord": 0
+            },
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {
+                    "index": 1,
+                    "texCoord": 0
+                },
+                "baseColorFactor": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "metallicFactor": 0.400000005960464,
+                "roughnessFactor": 0.70710676908493
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "InteriorDoorProfile",
+            "primitives": [
+                {
+                    "material": 0,
+                    "mode": 4,
+                    "attributes": {
+                        "NORMAL": 2,
+                        "POSITION": 1,
+                        "TEXCOORD_0": 3
+                    },
+                    "indices": 0
+                }
+            ]
+        },
+        {
+            "name": "InteriorDoor",
+            "primitives": [
+                {
+                    "material": 0,
+                    "mode": 4,
+                    "attributes": {
+                        "NORMAL": 6,
+                        "POSITION": 5,
+                        "TEXCOORD_0": 7
+                    },
+                    "indices": 4
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "name": "RootNode",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                1
+            ]
+        },
+        {
+            "name": "InteriorDoorDummy",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                -0.70710676908493,
+                -0.0,
+                0.0,
+                0.70710676908493
+            ],
+            "scale": [
+                7.56303834915161,
+                0.471623957157135,
+                12.9806728363037
+            ],
+            "children": [
+                2,
+                3
+            ]
+        },
+        {
+            "name": "InteriorDoorProfile",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                -5.72166732474964e-34,
+                -0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                0.335843861103058,
+                5.38564682006836,
+                0.195675492286682
+            ],
+            "mesh": 0
+        },
+        {
+            "name": "InteriorDoor",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                -5.72166732474964e-34,
+                -0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                0.335843861103058,
+                5.38564682006836,
+                0.195675492286682
+            ],
+            "mesh": 1
+        }
+    ]
+}
