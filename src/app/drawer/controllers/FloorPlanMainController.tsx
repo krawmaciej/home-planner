@@ -86,11 +86,12 @@ export const FloorPlanMainController: React.FC<Props> = ({
     const [, updateWallsToggle] = useState<boolean>(false);
 
     const { current: collisionDetector } = useRef(new CollisionDetector());
-    const wallDrawer = new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallComponents, floors, wallThickness, wallHeight); // todo: update only on wallThickness change, might move to WallController fully
-    const wallComponentAdder = new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, 5 / 10); // todo: same as above
-    const floorsDrawer = new FloorsDrawer(scene, collisionDetector, floors, placedWalls);
+    const [wallDrawer] = useState(new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallComponents, floors, wallThickness, wallHeight)); // todo: update only on wallThickness change, might move to WallController fully
+    const [wallComponentAdder] = useState(new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, 5 / 10)); // todo: same as above
+    const [floorsDrawer] = useState(new FloorsDrawer(scene, collisionDetector, floors, placedWalls));
 
     useEffect(() => {
+        console.log("Floorplanmain controller mounted");
         setType(MainControllerType.SELECT);
     }, []);
 

@@ -53,6 +53,7 @@ export const App: React.FC = () => {
     };
 
     useEffect(() => {
+        console.log("App mount");
         loadDoors().then(doors => setDoorDefinitions(doors));
     }, []);
 
