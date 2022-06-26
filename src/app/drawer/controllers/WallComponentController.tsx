@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
-import { ComponentProps } from "../objects/window/WallComponent";
+import {ComponentProps, DEFAULT_MUTABLE_DOOR_PROPS} from "../objects/window/WallComponent";
 import { WallComponentAddingIH } from "../UI/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";
@@ -16,14 +16,11 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     }
 
     const { current: windowsToSelect } = useRef<Array<ComponentProps>>([
-        { length: 8, width: 1, height: 10, elevation: 4 },
-        { length: 12, width: 1, height: 5.5, elevation: 8 },
-        { length: 6, width: 1, height: 14, elevation: 0 },
+        { width: 8, thickness: 1, height: 10, elevation: 4 },
+        { width: 12, thickness: 1, height: 5.5, elevation: 8 },
+        { width: 6, thickness: 1, height: 14, elevation: 0 },
     ]);
-    const { current: doorsToSelect } = useRef<Array<ComponentProps>>([
-        { length: 12, width: 1, height: 5.5, elevation: 0 },
-        { length: 6, width: 1, height: 14, elevation: 0 },
-    ]);
+    const [doorsToSelect, setDoorsToSelect] = useState([DEFAULT_MUTABLE_DOOR_PROPS]);
 
     const [windowSelection, setWindowSelection] = useState<number | undefined>(undefined);
     const [doorSelection, setDoorSelection] = useState<number | undefined>(undefined);
@@ -63,6 +60,10 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
             { setDistance: setComponentToWindowDistance }
         ));
     }, [context.wallComponentAdder]);
+
+    useEffect(() => {
+        setDoorsToSelect([DEFAULT_MUTABLE_DOOR_PROPS, ...context.doorDefinitions]);
+    }, [context.doorDefinitions]);
 
     useEffect(() => cancelAddingComponent, [inputHandler]);
 

@@ -83,7 +83,8 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         const allMeshes = [
             ...wallFaceMeshes,
             ...temp.wallCoverMeshes,
-            ...temp.sceneComponentFramesMeshes,
+            ...temp.sceneComponents.models,
+            ...temp.sceneComponents.frames,
             ...temp.sceneFloorsMeshes,
             ...temp.sceneCeilingsMeshes,
         ];

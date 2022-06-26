@@ -15,6 +15,7 @@ import {Floor} from "../objects/floor/Floor";
 import {FloorsController} from "./FloorsController";
 import {WallComponentAdder} from "../components/WallComponentAdder";
 import {IPlacedWallComponent} from "../objects/window/IPlacedWallComponent";
+import {ComponentProps} from "../objects/window/WallComponent";
 
 type Props = {
     className?: string,
@@ -25,6 +26,7 @@ type Props = {
     placedWalls: Array<PlacedWall>,
     floors: Array<Floor>,
     wallComponents: Array<IPlacedWallComponent>,
+    doorDefinitions: Array<ComponentProps>,
 }
 
 export enum MainControllerType {
@@ -39,6 +41,7 @@ type FloorPlanContextType = {
     wallDrawer: WallDrawer,
     wallComponentAdder: WallComponentAdder,
     floorsDrawer: FloorsDrawer,
+    doorDefinitions: Array<ComponentProps>,
 }
 
 export const FloorPlanContext = createContext<FloorPlanContextType | undefined>(undefined);
@@ -51,6 +54,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
                                                              wallComponents,
                                                              floors,
                                                              wallHeight,
+                                                             doorDefinitions,
                                                          }) => {
     const setType = (type: MainControllerType) => {
         setControllerType(type);
@@ -99,6 +103,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
         wallDrawer,
         wallComponentAdder,
         floorsDrawer,
+        doorDefinitions,
     };
 
     console.log("context should be reloaded now with different wall drawer and compo adder");

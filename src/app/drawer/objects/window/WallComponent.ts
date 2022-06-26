@@ -1,4 +1,4 @@
-import {BufferGeometry, Line, LineBasicMaterial, Material, Quaternion, Scene, Vector3} from "three";
+import {BufferGeometry, Line, LineBasicMaterial, Material, Object3D, Quaternion, Scene, Vector3} from "three";
 import {DrawerMath} from "../../components/DrawerMath";
 import {ObjectElevation, ObjectPoint, ObjectPoints, Vector2D} from "../../constants/Types";
 import {IMovingWallComponent} from "./IMovingWallComponent";
@@ -11,11 +11,19 @@ export enum ComponentType {
 }
 
 export type ComponentProps = {
-    readonly length: number,
+    readonly object3d?: Object3D,
     readonly width: number,
+    readonly thickness: number,
     readonly height: number,
     readonly elevation: number,
 }
+
+export const DEFAULT_MUTABLE_DOOR_PROPS = {
+    width: 6,
+    thickness: 1,
+    height: 14,
+    elevation: 0,
+} as ComponentProps;
 
 type XZLengths = {
     readonly x: number,
@@ -78,9 +86,9 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
      * @returns 
      */
     private static createPoints(props: ComponentProps): ObjectPoints {
-        const topLeft = new Vector3(0, ObjectElevation.COMPONENT, props.width);
-        const topRight = new Vector3(props.length, ObjectElevation.COMPONENT, props.width);
-        const bottomRight = new Vector3(props.length, ObjectElevation.COMPONENT, 0);
+        const topLeft = new Vector3(0, ObjectElevation.COMPONENT, props.thickness);
+        const topRight = new Vector3(props.width, ObjectElevation.COMPONENT, props.thickness);
+        const bottomRight = new Vector3(props.width, ObjectElevation.COMPONENT, 0);
         const bottomLeft = new Vector3(0, ObjectElevation.COMPONENT, 0);
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
@@ -190,13 +198,13 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     public getXZLengths(): XZLengths {
         if (this.direction === Direction.LEFT || this.direction === Direction.RIGHT) {
             return {
-                x: this.props.length,
-                z: this.props.width,
+                x: this.props.width,
+                z: this.props.thickness,
             };
         } else {
             return {
-                x: this.props.width,
-                z: this.props.length,
+                x: this.props.thickness,
+                z: this.props.width,
             };
         }
     }
@@ -279,5 +287,13 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     public isDoor() {
         return this.type === ComponentType.DOOR;
+    }
+
+    public getModel() {
+        return this.props.object3d;
+    }
+
+    public getPosition(): Vector3 {
+        return this.window.position.clone();
     }
 }

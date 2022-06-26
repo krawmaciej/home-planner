@@ -27,10 +27,10 @@ export class PlanToArrangerConverter {
 
     public convertPlanObjects(sceneObjects: SceneObjectsState) {
         const sceneWallFacesMeshes = this.convertPlacedWalls(sceneObjects.placedWalls);
-        const sceneComponentFramesMeshes = this.convertWallComponents(sceneObjects.wallComponents);
+        const sceneWallComponents = this.convertWallComponents(sceneObjects.wallComponents);
         const sceneFloorsMeshes = this.convertFloors(sceneObjects.floors);
         const sceneCeilingsMeshes = this.createCeilings(sceneObjects.floors, sceneObjects.wallsHeight);
-        return { ...sceneWallFacesMeshes, sceneComponentFramesMeshes, sceneFloorsMeshes, sceneCeilingsMeshes };
+        return { ...sceneWallFacesMeshes, sceneComponents: sceneWallComponents, sceneFloorsMeshes, sceneCeilingsMeshes };
     }
 
     private convertPlacedWalls(placedWalls: Array<PlacedWall>) {
@@ -56,8 +56,21 @@ export class PlanToArrangerConverter {
     private convertWallComponents(wallComponents: Array<IPlacedWallComponent>) {
         // todo: save in wall component 4 materials, one per frame face
         // todo: allow each wall face material to be set separately
-        const creator = new ComponentFrameCreator(DEFAULT_WALL_MATERIAL.clone());
-        return wallComponents.map(wc => creator.createFromWallComponent(wc));
+        const frameMaterial = DEFAULT_WALL_MATERIAL.clone();
+        const creator = new ComponentFrameCreator(frameMaterial);
+        const frames = wallComponents.map(wc => creator.createFromWallComponent(wc));
+        const models = wallComponents.flatMap(component => {
+            const model = component.getModel();
+            if (model) {
+                const newModel = model.clone();
+                const frameCenter = component.getElevation() + (component.getHeight() / 2.0);
+                newModel.position.copy(component.getPosition().setY(frameCenter));
+                return newModel;
+            } else {
+                return [];
+            }
+        });
+        return { frames, models };
     }
 
     private convertFloors(floors: Array<Floor>) {

@@ -1,3 +1,7 @@
+ TODO:
+ - add mirroring for doors
+ - handle offseting
+ - fix purple door z fighting by setting width to smaller value and setting margins positive to compensate to 90 cm
 
  - linked list as walls representation, connections containing components
  - conversion from 2d to 3d, why can't walls overlap: https://en.wikipedia.org/wiki/Z-fighting and https://en.wikipedia.org/wiki/Z-buffering

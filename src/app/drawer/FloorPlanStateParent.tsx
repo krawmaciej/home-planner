@@ -12,14 +12,18 @@ import {
 import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {Scene} from "three";
+import {ComponentProps} from "./objects/window/WallComponent";
 
 type Props = {
     className?: string,
     sceneObjects: SceneObjectsState,
+    doorDefinitions: Array<ComponentProps>,
+    // windowDefinitions: Array<ComponentProps>,
+    // objectDefinitions: Array<ComponentProps>,
     scene: Scene,
 }
 
-export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, scene }: Props) => {
+export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, scene }: Props) => {
 
     const [floorPlanState, setFloorPlanState] = useState<FloorPlanState>(createFloorPlanState);
     const [zoom, setZoom] = useState<number>(0.6); // todo: retrieve zoom from state or from cam handler
@@ -67,6 +71,7 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, scene }: P
                 placedWalls={sceneObjects.placedWalls}
                 wallComponents={sceneObjects.wallComponents}
                 floors={sceneObjects.floors}
+                doorDefinitions={doorDefinitions}
             />
         </>
     );
