@@ -3,7 +3,7 @@ import {PlacedWall} from "../../drawer/objects/wall/PlacedWall";
 import {ConnectionType, WallFace} from "../../drawer/objects/wall/WallSide";
 import {SceneWallFaceMeshes} from "../objects/SceneWallFaceMeshes";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
-import {Path, Quaternion, Shape, ShapeGeometry, Vector2, Vector3} from "three";
+import { Path, Quaternion, Shape, ShapeGeometry, Vector2, Vector3} from "three";
 import {PathPropsBuilder} from "./PathPropsBuilder";
 import {FloatingPointsPathsFixer} from "./FloatingPointsPathsFixer";
 import {DEFAULT_WALL_MATERIAL, ObjectPoints, ObjectSideOrientation} from "../../drawer/constants/Types";
@@ -46,7 +46,7 @@ export class PlanToArrangerConverter {
         ); // todo: use map instead of flat map and create wall aggregating all wallfaces,
            // todo: draw diagram for also updating Connection material when wallface material is updated.
 
-        const wallCoversCreator = new WallCoversCreator(DEFAULT_WALL_MATERIAL);
+        const wallCoversCreator = new WallCoversCreator();
         const wallCoverMeshes = placedWalls.map(wall => wallCoversCreator.fromObjectPoints(wall.props));
 
         sceneWallFaceMeshes.put(wallFaceMeshes);
@@ -57,6 +57,12 @@ export class PlanToArrangerConverter {
         // todo: save in wall component 4 materials, one per frame face
         // todo: allow each wall face material to be set separately
         const frameMaterial = DEFAULT_WALL_MATERIAL.clone();
+        // fix frame z fighting with model
+        frameMaterial.setValues({
+            polygonOffset: true,
+            polygonOffsetUnits: 0.1,
+            polygonOffsetFactor: -2,
+        });
         const creator = new ComponentFrameCreator(frameMaterial);
         const frames = wallComponents.map(wc => creator.createFromWallComponent(wc));
         const models = wallComponents.flatMap(component => {

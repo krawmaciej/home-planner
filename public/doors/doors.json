@@ -2,6 +2,8 @@
     {
         "name": "Białe drzwi",
         "file": "purple-door/scene.gltf",
+        "thumbnail": "purple-door/thumbnail.jpg",
+        "mirror": "WITH_OFFSET",
         "width": 90,
         "rotate": {
             "x": 0,
@@ -11,6 +13,28 @@
         "offsetPosition": {
             "x": 0,
             "y": 0,
+            "z": 7
+        },
+        "holeMargins": {
+            "horizontal": 0,
+            "top": 0,
+            "bottom": 0
+        }
+    },
+    {
+        "name": "Proste drzwi",
+        "file": "simple_door/scene.gltf",
+        "thumbnail": "simple_door/thumbnail.jpg",
+        "mirror": "WITH_OFFSET",
+        "width": 100,
+        "rotate": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "offsetPosition": {
+            "x": -10,
+            "y": 5,
             "z": 0
         },
         "holeMargins": {

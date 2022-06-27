@@ -1,5 +1,5 @@
 import { BufferGeometry, Mesh, MeshStandardMaterial} from "three";
-import {ObjectPoint, ObjectPoints} from "../../drawer/constants/Types";
+import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectPoints} from "../../drawer/constants/Types";
 import { Attributes, Coordinate, Facing} from "../constants/Types";
 import {WallConstruction} from "../../drawer/components/DrawerMath";
 import {AttributesToGeometry} from "./AttributesToGeometry";
@@ -7,17 +7,22 @@ import {AttributesToGeometry} from "./AttributesToGeometry";
 export class WallCoversCreator {
 
     private static readonly ERROR_MESSAGE = (coordinates: number[]) => `Malformed Vector3 with coordinates: ${coordinates} while creating wall covers.`;
+    private static readonly MATERIAL = WallCoversCreator.createMaterial();
 
-    private readonly coverMeshMaterial: MeshStandardMaterial;
-
-    constructor(coverMeshMaterial: MeshStandardMaterial) {
-        this.coverMeshMaterial = coverMeshMaterial;
+    private static createMaterial() {
+        const material = DEFAULT_WALL_MATERIAL.clone();
+        material.setValues({
+            polygonOffset: true,
+            polygonOffsetUnits: 0.1,
+            polygonOffsetFactor: -1,
+        });
+        return material;
     }
 
     public fromObjectPoints({ points, height }: WallConstruction): Mesh<BufferGeometry, MeshStandardMaterial> {
         const attributes = WallCoversCreator.createAttributes(points, height);
         const geometry = AttributesToGeometry.process(attributes);
-        return new Mesh(geometry, this.coverMeshMaterial);
+        return new Mesh(geometry, WallCoversCreator.MATERIAL);
     }
 
     private static createAttributes(points: ObjectPoints, height: number): Array<Attributes> {

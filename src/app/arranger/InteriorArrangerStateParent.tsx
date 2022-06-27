@@ -114,7 +114,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
         gltfLoader.loadAsync('/doors/offset_pos_door/door.gltf').then(gltf => {
             const group = new Group();
             group.add(gltf.scene);
-            scene.add(group);
+            // scene.add(group);
             // door.scale.multiplyScalar(0.1);
             // door.children.forEach(child => {
             //     if (child instanceof Mesh) {
@@ -136,7 +136,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
             const box3 = new Box3().setFromObject(gltf.scene);
             const boxNotModifiable = box3.clone();
             const box3Helper = new Box3Helper(boxNotModifiable, new Color(0xffff00));
-            scene.add(box3Helper);
+            // scene.add(box3Helper);
 
             console.log("box3: ", box3);
             const min = box3.min.clone();
@@ -165,7 +165,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
 
 
             const box3Helper2 = new Box3Helper(box3, new Color(0x00ff00));
-            scene.add(box3Helper2);
+            // scene.add(box3Helper2);
 
             gltf.scene.position.sub(center);
 
@@ -184,8 +184,8 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
 
             // scene.add(scene2);
 
-            transform.attach(group);
-            scene.add(transform);
+            // transform.attach(group);
+            // scene.add(transform);
         });
     }, [sceneObjects]);
 
