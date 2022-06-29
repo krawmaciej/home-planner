@@ -50,27 +50,27 @@ const xyzToVector3 = ({x, y, z}: { x: number, y: number, z: number }) => {
     return new Vector3(x, y, z);
 };
 
-const getScaleVector = (dimensions: Dimensions, box3: Box3) => {
+const getAxisScales = (dimensions: Dimensions, box3: Box3) => {
     const objectWidth     = box3.max.x - box3.min.x;
     const objectHeight    = box3.max.y - box3.min.y;
     const objectThickness = box3.max.z - box3.min.z;
 
     const scale = (dimensions.width / 10) / objectWidth;
-    const vectorArray = [scale];
+    const scaling = {
+        x: scale,
+        y: scale,
+        z: scale,
+    };
 
     if (dimensions.height) {
-        vectorArray.push((dimensions.height / 10) / objectHeight);
-    } else {
-        vectorArray.push(scale);
+        scaling.y = (dimensions.height / 10) / objectHeight;
     }
 
     if (dimensions.thickness) {
-        vectorArray.push((dimensions.thickness / 10) / objectThickness);
-    } else {
-        vectorArray.push(scale);
+        scaling.z = (dimensions.thickness / 10) / objectThickness;
     }
 
-    return new Vector3().fromArray(vectorArray);
+    return scaling;
 };
 
 export const loadDoors = async () => {
@@ -86,8 +86,8 @@ export const loadDoors = async () => {
         gltf.rotateOnAxis(Z_AXIS, doorDefinition.rotate.z * RADIAN_MULTIPLIER);
 
         const box3 = new Box3().setFromObject(gltf);
-        const scaleVector = getScaleVector(doorDefinition.dimensions, box3);
-        gltf.applyMatrix4(new Matrix4().makeScale(scaleVector));
+        const axisScales = getAxisScales(doorDefinition.dimensions, box3);
+        gltf.applyMatrix4(new Matrix4().makeScale(axisScales.x, axisScales.y, axisScales.z));
 
         box3.setFromObject(gltf);
         const center = box3.getCenter(new Vector3());
