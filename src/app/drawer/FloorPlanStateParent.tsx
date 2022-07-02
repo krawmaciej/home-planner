@@ -18,12 +18,12 @@ type Props = {
     className?: string,
     sceneObjects: SceneObjectsState,
     doorDefinitions: Array<ComponentProps>,
-    // windowDefinitions: Array<ComponentProps>,
+    windowDefinitions: Array<ComponentProps>,
     // objectDefinitions: Array<ComponentProps>,
     scene: Scene,
 }
 
-export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, scene }: Props) => {
+export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, windowDefinitions, scene }: Props) => {
 
     const [floorPlanState, setFloorPlanState] = useState<FloorPlanState>(createFloorPlanState);
     const [zoom, setZoom] = useState<number>(0.6); // todo: retrieve zoom from state or from cam handler
@@ -72,6 +72,7 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
                 wallComponents={sceneObjects.wallComponents}
                 floors={sceneObjects.floors}
                 doorDefinitions={doorDefinitions}
+                windowDefinitions={windowDefinitions}
             />
         </>
     );

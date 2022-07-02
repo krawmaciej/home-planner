@@ -11,6 +11,8 @@ export enum ComponentType {
 }
 
 export type ComponentProps = {
+    readonly name: string,
+    readonly thumbnail: string,
     readonly object3d?: Object3D,
     readonly width: number,
     readonly thickness: number,
@@ -18,10 +20,17 @@ export type ComponentProps = {
     readonly elevation: number,
 }
 
-export const DEFAULT_MUTABLE_DOOR_PROPS = {
+export const DEFAULT_MUTABLE_WINDOW_PROPS = {
     width: 6,
     thickness: 1,
-    height: 14,
+    height: 10,
+    elevation: 9,
+} as ComponentProps;
+
+export const DEFAULT_MUTABLE_DOOR_PROPS = {
+    width: 8,
+    thickness: 1,
+    height: 20,
     elevation: 0,
 } as ComponentProps;
 

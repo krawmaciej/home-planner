@@ -1,6 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import {ComponentProps, DEFAULT_MUTABLE_DOOR_PROPS} from "../objects/window/WallComponent";
+import {
+    DEFAULT_MUTABLE_DOOR_PROPS,
+    DEFAULT_MUTABLE_WINDOW_PROPS
+} from "../objects/window/WallComponent";
 import { WallComponentAddingIH } from "../UI/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";
@@ -15,11 +18,7 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
         throw new Error("Context in WallComponentController is undefined.");
     }
 
-    const { current: windowsToSelect } = useRef<Array<ComponentProps>>([
-        { width: 8, thickness: 1, height: 10, elevation: 4 },
-        { width: 12, thickness: 1, height: 5.5, elevation: 8 },
-        { width: 6, thickness: 1, height: 14, elevation: 0 },
-    ]);
+    const [windowsToSelect, setWindowsToSelect] = useState([DEFAULT_MUTABLE_WINDOW_PROPS]);
     const [doorsToSelect, setDoorsToSelect] = useState([DEFAULT_MUTABLE_DOOR_PROPS]);
 
     const [windowSelection, setWindowSelection] = useState<number | undefined>(undefined);
@@ -64,6 +63,10 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     useEffect(() => {
         setDoorsToSelect([DEFAULT_MUTABLE_DOOR_PROPS, ...context.doorDefinitions]);
     }, [context.doorDefinitions]);
+
+    useEffect(() => {
+        setWindowsToSelect([DEFAULT_MUTABLE_WINDOW_PROPS, ...context.windowDefinitions]);
+    }, [context.windowDefinitions]);
 
     useEffect(() => cancelAddingComponent, [inputHandler]);
 
