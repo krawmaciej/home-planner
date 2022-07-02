@@ -21,6 +21,8 @@ export type ComponentProps = {
 }
 
 export const DEFAULT_MUTABLE_WINDOW_PROPS = {
+    name: "Otwór",
+    thumbnail: "hole_thumbnail.jpg",
     width: 6,
     thickness: 1,
     height: 10,
@@ -28,6 +30,8 @@ export const DEFAULT_MUTABLE_WINDOW_PROPS = {
 } as ComponentProps;
 
 export const DEFAULT_MUTABLE_DOOR_PROPS = {
+    name: "Otwór",
+    thumbnail: "hole_thumbnail.jpg",
     width: 8,
     thickness: 1,
     height: 20,
