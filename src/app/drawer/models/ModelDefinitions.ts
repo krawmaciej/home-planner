@@ -7,7 +7,6 @@ export type ModelDefinition = {
     dimensions: Dimensions,
     rotate: Rotation,
     offsetPosition: OffsetPosition,
-    holeMargins: HoleMargins,
 }
 
 export type Dimensions = {
@@ -23,9 +22,3 @@ export type Rotation = {
 }
 
 export type OffsetPosition = Rotation;
-
-export type HoleMargins = {
-    horizontal: number,
-    top: number,
-    bottom: number,
-}

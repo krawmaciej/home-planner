@@ -16,11 +16,6 @@
             "x": 0,
             "y": 0,
             "z": 6
-        },
-        "holeMargins": {
-            "horizontal": 0,
-            "top": 0,
-            "bottom": 0
         }
     },
     {
@@ -40,11 +35,6 @@
             "x": 0,
             "y": 0,
             "z": 0
-        },
-        "holeMargins": {
-            "horizontal": 0,
-            "top": 0,
-            "bottom": 0
         }
     },
     {
@@ -64,11 +54,6 @@
             "x": 0,
             "y": 0,
             "z": 0
-        },
-        "holeMargins": {
-            "horizontal": 0,
-            "top": 0,
-            "bottom": 0
         }
     },
     {
@@ -88,11 +73,6 @@
             "x": 0,
             "y": 0,
             "z": 0
-        },
-        "holeMargins": {
-            "horizontal": 0,
-            "top": 0,
-            "bottom": 0
         }
     }
 ]
