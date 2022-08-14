@@ -28,14 +28,17 @@ const ARROW_GEOMETRY = new BufferGeometry().setFromPoints([
 
 type ComponentType = {
     shape: Line<BufferGeometry, Material>,
+    placed: boolean,
 }
 
 const DOOR_TYPE: ComponentType = {
     shape: new Line(ARROW_GEOMETRY, DEFAULT_MATERIAL),
+    placed: false,
 };
 
 const WINDOW_TYPE: ComponentType = {
     shape: new Line(ARROW_GEOMETRY, DEFAULT_MATERIAL),
+    placed: false,
 };
 
 export type ComponentProps = {
@@ -105,9 +108,11 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         points.push(points[ObjectPoint.BOTTOM_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
         this.window = new Line(geometry, material ?? DEFAULT_MATERIAL);
-        const typeShape = type.shape.clone();
-        typeShape.material = material ?? DEFAULT_MATERIAL;
-        this.window.add(typeShape);
+        if (type.placed) {
+            const typeShape = type.shape.clone();
+            typeShape.material = material ?? DEFAULT_MATERIAL;
+            this.window.add(typeShape);
+        }
         this.window.matrixAutoUpdate = false; // will be updated on each change position
         this.orientation = Direction.DOWN;
         this.collided = false;
@@ -170,7 +175,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     }
 
     public createPlacedComponent(parentWall: PlacedWall): IPlacedWallComponent {
-        const placed = new WallComponent(this.props, PLACED_MATERIAL, this.type);
+        const placed = new WallComponent(this.props, PLACED_MATERIAL, { ...this.type, placed: true });
         placed.setParentWall(parentWall);
         placed.changePosition(this.window.position);
         return placed;
@@ -222,10 +227,17 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         this.window.localToWorld(third);
         this.window.localToWorld(fourth);
 
-        if (this.orientation === Direction.LEFT || this.orientation === Direction.RIGHT) {
-            return [fourth, first, second, third];
-        } else {
-            return [first, second, third, fourth];
+        switch (this.orientation) {
+            case Direction.DOWN:
+                return [first, second, third, fourth];
+            case Direction.LEFT:
+                return [second, third, fourth, first];
+            case Direction.UP:
+                return [third, fourth, first, second];
+            case Direction.RIGHT:
+                return [fourth, first, second, third];
+            default:
+                throw new Error(`Component's ${JSON.stringify(this)} orientation: ${this.orientation} is invalid.`);
         }
     }
 
