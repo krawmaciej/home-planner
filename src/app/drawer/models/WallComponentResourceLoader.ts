@@ -16,7 +16,12 @@ const WINDOWS_DEFINITION_FILE = "windows.json";
 
 const createFetchPromise = async (fileName: string) => {
     const file = await fetch(fileName);
-    return await file.json();
+    try {
+        return await file.json() as Promise<Array<ModelDefinition>>;
+    } catch (e) {
+        console.error(`Model definitions file: ${fileName} is malformed.`, e);
+        return Promise.resolve([]);
+    }
 };
 
 const doorsPromise = createFetchPromise(`${DOORS_PATH}/${DOORS_DEFINITION_FILE}`);
@@ -57,14 +62,25 @@ export const loadWindows = async () => {
     return await loadModels(windowsPromise, WINDOWS_PATH);
 };
 
-const loadModels = async (modelsPromise: Promise<any>, path: string) => {
+async function handleFileLoad(gltfLoader: GLTFLoader, path: string, doorDefinition: ModelDefinition) {
+    try {
+        return (await gltfLoader.loadAsync(`${path}/${doorDefinition.file}`)).scene;
+    } catch (e) {
+        console.error(`Error loading file ${JSON.stringify(doorDefinition)}`, e);
+        return undefined;
+    }
+}
+
+const loadModels = async (modelsPromise: Promise<Array<ModelDefinition>>, path: string) => {
     const result = new Array<ComponentProps>();
     const gltfLoader = new GLTFLoader();
-    const doorDefinitions = await modelsPromise as Array<ModelDefinition>;
+    const doorDefinitions = await modelsPromise;
     for (const doorDefinition of doorDefinitions) {
         const model = new Group();
-
-        const gltf = (await gltfLoader.loadAsync(`${path}/${doorDefinition.file}`)).scene;
+        const gltf = await handleFileLoad(gltfLoader, path, doorDefinition);
+        if (gltf === undefined) {
+            continue;
+        }
         gltf.rotateOnAxis(X_AXIS, doorDefinition.rotate.x * RADIAN_MULTIPLIER);
         gltf.rotateOnAxis(Y_AXIS, doorDefinition.rotate.y * RADIAN_MULTIPLIER);
         gltf.rotateOnAxis(Z_AXIS, doorDefinition.rotate.z * RADIAN_MULTIPLIER);

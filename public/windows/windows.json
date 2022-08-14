@@ -1,6 +1,6 @@
 [
     {
-        "name": "Okno1",
+        "name": "Zwykłe okno",
         "file": "residential_window/scene.gltf",
         "thumbnail": "residential_window/thumbnail.jpg",
         "elevation": 90,
@@ -24,9 +24,57 @@
         }
     },
     {
-        "name": "Okno2",
+        "name": "Przesuwane okno",
         "file": "sliding_window/scene.gltf",
         "thumbnail": "sliding_window/thumbnail.jpg",
+        "elevation": 90,
+        "dimensions": {
+            "width": 100
+        },
+        "rotate": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "offsetPosition": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "holeMargins": {
+            "horizontal": 0,
+            "top": 0,
+            "bottom": 0
+        }
+    },
+    {
+        "name": "Okno 1",
+        "file": "window_1/scene.glb",
+        "thumbnail": "window_1/thumbnail.jpg",
+        "elevation": 90,
+        "dimensions": {
+            "width": 100
+        },
+        "rotate": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "offsetPosition": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "holeMargins": {
+            "horizontal": 0,
+            "top": 0,
+            "bottom": 0
+        }
+    },
+    {
+        "name": "Okno 2",
+        "file": "window_2/scene.gltf",
+        "thumbnail": "window_2/thumbnail.jpg",
         "elevation": 90,
         "dimensions": {
             "width": 100
