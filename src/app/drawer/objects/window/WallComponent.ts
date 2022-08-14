@@ -6,9 +6,37 @@ import {IPlacedWallComponent} from "./IPlacedWallComponent";
 import {Direction} from "../wall/Direction";
 import {PlacedWall} from "../wall/PlacedWall";
 
-export enum ComponentType {
-    WINDOW, DOOR,
+const DEFAULT_MATERIAL = new LineBasicMaterial({
+    color: 0x333333,
+});
+
+const COLLIDING_MATERIAL = new LineBasicMaterial({
+    color: 0xaa3333,
+});
+
+const PLACED_MATERIAL = new LineBasicMaterial({
+    color: 0x000000,
+});
+
+const ARROW_GEOMETRY = new BufferGeometry().setFromPoints([
+    new Vector3(0, ObjectElevation.COMPONENT, 0),
+    new Vector3(0, ObjectElevation.COMPONENT, 1.5),
+    new Vector3(-0.5, ObjectElevation.COMPONENT, 1),
+    new Vector3(0, ObjectElevation.COMPONENT, 1.5),
+    new Vector3(0.5, ObjectElevation.COMPONENT, 1),
+]);
+
+type ComponentType = {
+    shape: Line<BufferGeometry, Material>,
 }
+
+const DOOR_TYPE: ComponentType = {
+    shape: new Line(ARROW_GEOMETRY, DEFAULT_MATERIAL),
+};
+
+const WINDOW_TYPE: ComponentType = {
+    shape: new Line(ARROW_GEOMETRY, DEFAULT_MATERIAL),
+};
 
 export type ComponentProps = {
     readonly name: string,
@@ -46,17 +74,17 @@ type XZLengths = {
 export class WallComponent implements IMovingWallComponent, IPlacedWallComponent {
 
     public static createMovingDoor(props: ComponentProps): IMovingWallComponent {
-        return new WallComponent(props, WallComponent.defaultMaterial, ComponentType.DOOR);
+        return new WallComponent(props, DEFAULT_MATERIAL, DOOR_TYPE);
     }
 
     public static createMovingWindow(props: ComponentProps): IMovingWallComponent {
-        return new WallComponent(props, WallComponent.defaultMaterial, ComponentType.WINDOW);
+        return new WallComponent(props, DEFAULT_MATERIAL, WINDOW_TYPE);
     }
 
     private static readonly FRONT_ROTATION = new Quaternion();
     private static readonly BACK_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI);
-    private static readonly LEFT_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2.0);
-    private static readonly RIGHT_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), - Math.PI / 2.0);
+    private static readonly LEFT_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0),  - Math.PI / 2.0);
+    private static readonly RIGHT_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2.0);
     private static readonly orientationQuaternionMap = new Map<Vector2D, Quaternion>([
         [Direction.DOWN, WallComponent.FRONT_ROTATION],
         [Direction.UP, WallComponent.BACK_ROTATION],
@@ -64,31 +92,22 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         [Direction.RIGHT, WallComponent.RIGHT_ROTATION],
     ]);
 
-    private static readonly defaultMaterial = new LineBasicMaterial({
-        color: 0x333333,
-    });
-
-    private static readonly collidingMaterial = new LineBasicMaterial({
-        color: 0xaa3333,
-    });
-
-    private static readonly placedMaterial = new LineBasicMaterial({
-        color: 0x000000,
-    });
-
     private readonly props: ComponentProps;
     private readonly window: Line<BufferGeometry, Material>;
     private orientation: Vector2D;
     private parentWall: undefined | PlacedWall; // not yet placed wall component can also have a parent wall
     private collided: boolean;
-    private type: ComponentType;
+    private readonly type: ComponentType;
 
     public constructor(props: ComponentProps, material: LineBasicMaterial, type: ComponentType) {
         this.props = props;
         const points = WallComponent.createPoints(props);
         points.push(points[ObjectPoint.BOTTOM_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
-        this.window = new Line(geometry, material ?? WallComponent.defaultMaterial);
+        this.window = new Line(geometry, material ?? DEFAULT_MATERIAL);
+        const typeShape = type.shape.clone();
+        typeShape.material = material ?? DEFAULT_MATERIAL;
+        this.window.add(typeShape);
         this.window.matrixAutoUpdate = false; // will be updated on each change position
         this.orientation = Direction.DOWN;
         this.collided = false;
@@ -151,7 +170,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     }
 
     public createPlacedComponent(parentWall: PlacedWall): IPlacedWallComponent {
-        const placed = new WallComponent(this.props, WallComponent.placedMaterial, this.type);
+        const placed = new WallComponent(this.props, PLACED_MATERIAL, this.type);
         placed.setParentWall(parentWall);
         placed.changePosition(this.window.position);
         return placed;
@@ -227,9 +246,9 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     public setParentWall(wall: PlacedWall) {
         this.parentWall = wall;
         if (wall.props.direction === Direction.LEFT || wall.props.direction === Direction.RIGHT) {
-            this.changeRotation(Direction.DOWN);
+            this.changeOrientation(Direction.DOWN);
         } else {
-            this.changeRotation(Direction.LEFT);
+            this.changeOrientation(Direction.LEFT);
         }
     }
 
@@ -265,13 +284,16 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         this.changePosition(newWindowMiddlePosition);
     }
 
-    private changeRotation(orientation: Vector2D): void {
+    public changeOrientation(orientation: Vector2D): void {
         this.orientation = orientation;
         const quaternion = WallComponent.orientationQuaternionMap.get(orientation);
         if (quaternion === undefined) {
             throw new Error("Wall component orientation has no quaternion mapped!");
         }
+        console.log("Changing orientation: ", orientation);
         this.window.setRotationFromQuaternion(quaternion);
+        this.window.updateMatrix();
+        this.window.updateMatrixWorld(true);
     }
 
     public getParentWall(): PlacedWall | undefined {
@@ -280,12 +302,20 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     public setNotCollided(): void {
         this.collided = false;
-        this.window.material = WallComponent.defaultMaterial;
+        this.window.traverse(it => {
+            if (it instanceof Line) {
+                it.material = DEFAULT_MATERIAL;
+            }
+        });
     }
 
     public setCollided(): void {
         this.collided = true;
-        this.window.material = WallComponent.collidingMaterial;
+        this.window.traverse(it => {
+            if (it instanceof Line) {
+                it.material = COLLIDING_MATERIAL;
+            }
+        });
     }
 
     public collides(): boolean {
@@ -305,7 +335,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     }
 
     public isDoor() {
-        return this.type === ComponentType.DOOR;
+        return this.type === DOOR_TYPE;
     }
 
     public getModel() {

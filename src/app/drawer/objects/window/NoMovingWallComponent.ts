@@ -1,13 +1,17 @@
+import { Vector3 } from "three";
 import {ObjectPoints, Vector2D} from "../../constants/Types";
 import {IMovingWallComponent} from "./IMovingWallComponent";
 import {IPlacedWallComponent} from "./IPlacedWallComponent";
 
 export class NoMovingWallComponent implements IMovingWallComponent {
     private static readonly instance = new NoMovingWallComponent();
+
     public static getInstance(): NoMovingWallComponent {
         return this.instance;
     }
-    private constructor() {}
+
+    private constructor() {
+    }
 
     createPlacedComponent(): IPlacedWallComponent {
         throw new Error("Called method on a not initialized component.");

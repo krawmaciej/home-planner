@@ -6,6 +6,7 @@ import {CollisionDetector} from "./CollisionDetector";
 import {NoMovingWallComponent} from "../objects/window/NoMovingWallComponent";
 import {IMovingWallComponent} from "../objects/window/IMovingWallComponent";
 import {IPlacedWallComponent} from "../objects/window/IPlacedWallComponent";
+import {Direction} from "../objects/wall/Direction";
 
 export class WallComponentAdder {
 
@@ -15,6 +16,7 @@ export class WallComponentAdder {
     private readonly placedWallComponents: Array<IPlacedWallComponent>; // used to detect collisions with other components
 
     private movingComponent: IMovingWallComponent = NoMovingWallComponent.getInstance();
+    private orientingComponent: IPlacedWallComponent | undefined;
     private snapStep: number;
 
     public constructor(
@@ -81,25 +83,26 @@ export class WallComponentAdder {
         return this.movingComponent;
     }
 
-    public addComponentToWall(position: Vector3) {
+    public addComponentToWall(position: Vector3): boolean {
         // todo: might be good idea to show to which WallSide the component will be added
         if (this.movingComponent === undefined) {
-            return;
+            return false;
         }
 
         // check wall collision
         const component = this.moveComponent(position); // move moving component so that it appears in same place as placed
         const parentWall = component.getParentWall();
         if (parentWall === undefined || component.collides()) {
-            return;
+            return false;
         }
-
 
         const placedComponent: IPlacedWallComponent = this.movingComponent.createPlacedComponent(parentWall);
         placedComponent.addTo(this.scene); // first add to scene so that component has world coordinates
         parentWall.addComponent(placedComponent);
         this.placedWallComponents.push(placedComponent);
-        console.log("parent wall with added component: ", parentWall);
+        this.orientingComponent = placedComponent;
+        this.movingComponent.removeFrom(this.scene);
+        return true;
     }
 
     /**
@@ -108,6 +111,30 @@ export class WallComponentAdder {
     public removeMovingComponent() {
         this.movingComponent.removeFrom(this.scene);
         this.movingComponent = NoMovingWallComponent.getInstance();
+    }
+
+    /**
+     * Change orientation of component placed on a wall.
+     * @param point direction of an orientation
+     */
+    public orientComponent(point: Vector3) {
+        if (this.orientingComponent === undefined) {
+            return;
+        }
+        if (this.orientingComponent.getOrientation() === Direction.DOWN ||
+            this.orientingComponent.getOrientation() === Direction.UP) {
+            if (point.z > this.orientingComponent.getPosition().z) {
+                this.orientingComponent.changeOrientation(Direction.DOWN);
+            } else {
+                this.orientingComponent.changeOrientation(Direction.UP);
+            }
+        } else {
+            if (point.x > this.orientingComponent.getPosition().x) {
+                this.orientingComponent.changeOrientation(Direction.RIGHT);
+            } else {
+                this.orientingComponent.changeOrientation(Direction.LEFT);
+            }
+        }
     }
 
     public getSnapStep(): number {

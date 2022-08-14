@@ -1,8 +1,8 @@
-import { Vector3 } from "three";
-import { ObjectElevation } from "../../../constants/Types";
-import { ComponentProps } from "../../../objects/window/WallComponent";
-import { IInputHandler } from "../../../../common/canvas/inputHandler/IInputHandler";
-import { WallComponentPointer, State } from "./WallComponentPointer";
+import {Vector3} from "three";
+import {ObjectElevation} from "../../../constants/Types";
+import {ComponentProps} from "../../../objects/window/WallComponent";
+import {IInputHandler} from "../../../../common/canvas/inputHandler/IInputHandler";
+import {State, WallComponentPointer} from "./WallComponentPointer";
 import {Observer} from "../../../controllers/WallComponentController";
 import {WallComponentAdder} from "../../../components/WallComponentAdder";
 
@@ -45,20 +45,26 @@ export class WallComponentAddingIH implements IInputHandler {
     public handleMovement(point: Vector3): void {
         point.setY(ObjectElevation.MOVING); // y coordinate is elevation
         if (this.pointer.getState() === State.SELECTED) {
-            this.pointer.move(point); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
+            this.pointer.move(); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
             this.wallComponentAdder.showMovingComponent(point);
         } else if (this.pointer.getState() === State.MOVING) {
-            this.pointer.move(point); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
+            this.pointer.move(); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
             const distance = this.wallComponentAdder.moveComponent(point).getDistanceFromParentWall();
             this.observer.setDistance(distance);
+        } else if (this.pointer.getState() === State.ORIENTING) {
+            this.wallComponentAdder.orientComponent(point);
         }
     }
 
     public handleClick(point: Vector3): void {
         point.setY(ObjectElevation.COMPONENT); // y coordinate is elevation
         if (this.pointer.getState() === State.MOVING) {
-            this.pointer.place(point);
-            this.wallComponentAdder.addComponentToWall(point);
+            if (this.wallComponentAdder.addComponentToWall(point)) {
+                this.pointer.place();
+            }
+        } else if (this.pointer.getState() === State.ORIENTING) {
+            this.pointer.orient();
+            this.wallComponentAdder.orientComponent(point);
         }
     }
 
