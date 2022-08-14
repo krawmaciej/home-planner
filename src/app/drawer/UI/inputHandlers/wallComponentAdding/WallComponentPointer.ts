@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 
 export enum State {
-    NONE, SELECTED, MOVING,
+    NONE, SELECTED, MOVING, PLACED,
 }
 
 export class WallComponentPointer {
@@ -26,7 +26,7 @@ export class WallComponentPointer {
     }
 
     public place(position: Vector3) {
-        this.state = State.MOVING;
+        this.state = State.PLACED;
         this.position = position;
     }
 

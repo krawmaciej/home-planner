@@ -57,8 +57,6 @@ export class WallComponentAddingIH implements IInputHandler {
     public handleClick(point: Vector3): void {
         point.setY(ObjectElevation.COMPONENT); // y coordinate is elevation
         if (this.pointer.getState() === State.MOVING) {
-            // todo: if it was possible to place it, otherwise don't place and continue moving
-            console.log("placed on: ", point);
             this.pointer.place(point);
             this.wallComponentAdder.addComponentToWall(point);
         }

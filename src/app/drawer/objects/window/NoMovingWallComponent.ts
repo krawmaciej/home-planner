@@ -54,7 +54,7 @@ export class NoMovingWallComponent implements IMovingWallComponent {
     collides(): boolean {
         throw new Error("Called method on a not initialized component.");
     }
-    getDirection(): Vector2D {
+    getOrientation(): Vector2D {
         throw new Error("Called method on a not initialized component.");
     }
     isDoor(): boolean {

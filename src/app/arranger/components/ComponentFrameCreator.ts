@@ -55,7 +55,7 @@ export class ComponentFrameCreator {
         const points = wallComponent.getObjectPointsOnScene();
         const elevation = wallComponent.getElevation();
         const height = wallComponent.getHeight();
-        const direction = wallComponent.getDirection();
+        const orientation = wallComponent.getOrientation();
 
         // bottom points
         const bottomLeft = ComponentFrameCreator.elevate(points[ObjectPoint.BOTTOM_LEFT], elevation);
@@ -72,73 +72,205 @@ export class ComponentFrameCreator {
             { first: Coordinate.X, second: Coordinate.Z } :
             { first: Coordinate.Z, second: Coordinate.X };
 
-        if (direction === Direction.LEFT || direction === Direction.RIGHT) {
+        if (orientation === Direction.LEFT || orientation === Direction.RIGHT) {
             return [
                 // bottom
-                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[Coordinate.X],  bottomLeft[Coordinate.Z]]  },
-                { position: bottomRight, normal: Facing.UP, uv: [bottomRight[Coordinate.X], bottomRight[Coordinate.Z]] },
-                { position: topRight,    normal: Facing.UP, uv: [topRight[Coordinate.X],    topRight[Coordinate.Z]]    },
-                { position: topRight,    normal: Facing.UP, uv: [topRight[Coordinate.X],    topRight[Coordinate.Z]]    },
-                { position: topLeft,     normal: Facing.UP, uv: [topLeft[Coordinate.X],     topLeft[Coordinate.Z]]     },
-                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[Coordinate.X],  bottomLeft[Coordinate.Z]]  },
+                {
+                    position: bottomLeft,
+                    normal: Facing.UP,
+                    uv: [bottomLeft[uvRotatedBottomStrategy.first], bottomLeft[uvRotatedBottomStrategy.second]]
+                },
+                {
+                    position: bottomRight,
+                    normal: Facing.UP,
+                    uv: [bottomRight[uvRotatedBottomStrategy.first], bottomRight[uvRotatedBottomStrategy.second]]
+                },
+                {
+                    position: topRight,
+                    normal: Facing.UP,
+                    uv: [topRight[uvRotatedBottomStrategy.first], topRight[uvRotatedBottomStrategy.second]]
+                },
+                {
+                    position: topRight,
+                    normal: Facing.UP,
+                    uv: [topRight[uvRotatedBottomStrategy.first], topRight[uvRotatedBottomStrategy.second]]
+                },
+                {
+                    position: topLeft,
+                    normal: Facing.UP,
+                    uv: [topLeft[uvRotatedBottomStrategy.first], topLeft[uvRotatedBottomStrategy.second]]
+                },
+                {
+                    position: bottomLeft,
+                    normal: Facing.UP,
+                    uv: [bottomLeft[uvRotatedBottomStrategy.first], bottomLeft[uvRotatedBottomStrategy.second]]
+                },
 
                 // top
-                { position: bottomLeftWithHeight,  normal: Facing.DOWN, uv: [bottomLeftWithHeight[Coordinate.X],  bottomLeftWithHeight[Coordinate.Z]]  },
-                { position: topLeftWithHeight,     normal: Facing.DOWN, uv: [topLeftWithHeight[Coordinate.X],     topLeftWithHeight[Coordinate.Z]]     },
-                { position: topRightWithHeight,    normal: Facing.DOWN, uv: [topRightWithHeight[Coordinate.X],    topRightWithHeight[Coordinate.Z]]    },
-                { position: topRightWithHeight,    normal: Facing.DOWN, uv: [topRightWithHeight[Coordinate.X],    topRightWithHeight[Coordinate.Z]]    },
-                { position: bottomRightWithHeight, normal: Facing.DOWN, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Z]] },
-                { position: bottomLeftWithHeight,  normal: Facing.DOWN, uv: [bottomLeftWithHeight[Coordinate.X],  bottomLeftWithHeight[Coordinate.Z]]  },
+                {
+                    position: bottomLeftWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [bottomLeftWithHeight[Coordinate.Z], bottomLeftWithHeight[Coordinate.X]]
+                },
+                {
+                    position: topLeftWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [topLeftWithHeight[Coordinate.Z], topLeftWithHeight[Coordinate.X]]
+                },
+                {
+                    position: topRightWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [topRightWithHeight[Coordinate.Z], topRightWithHeight[Coordinate.X]]
+                },
+                {
+                    position: topRightWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [topRightWithHeight[Coordinate.Z], topRightWithHeight[Coordinate.X]]
+                },
+                {
+                    position: bottomRightWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [bottomRightWithHeight[Coordinate.Z], bottomRightWithHeight[Coordinate.X]]
+                },
+                {
+                    position: bottomLeftWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [bottomLeftWithHeight[Coordinate.Z], bottomLeftWithHeight[Coordinate.X]]
+                },
 
-                // left
-                { position: bottomLeft,           normal: Facing.RIGHT, uv: [bottomLeft[Coordinate.Z],           bottomLeft[Coordinate.Y]]           },
-                { position: topLeft,              normal: Facing.RIGHT, uv: [topLeft[Coordinate.Z],              topLeft[Coordinate.Y]]              },
-                { position: topLeftWithHeight,    normal: Facing.RIGHT, uv: [topLeftWithHeight[Coordinate.Z],    topLeftWithHeight[Coordinate.Y]]    },
-                { position: topLeftWithHeight,    normal: Facing.RIGHT, uv: [topLeftWithHeight[Coordinate.Z],    topLeftWithHeight[Coordinate.Y]]    },
-                { position: bottomLeftWithHeight, normal: Facing.RIGHT, uv: [bottomLeftWithHeight[Coordinate.Z], bottomLeftWithHeight[Coordinate.Y]] },
-                { position: bottomLeft,           normal: Facing.RIGHT, uv: [bottomLeft[Coordinate.Z],           bottomLeft[Coordinate.Y]]           },
+                // front (world-orientation-wise)
+                {position: bottomLeft, normal: Facing.BACK, uv: [bottomLeft[Coordinate.X], bottomLeft[Coordinate.Y]]},
+                {
+                    position: bottomLeftWithHeight,
+                    normal: Facing.BACK,
+                    uv: [bottomLeftWithHeight[Coordinate.X], bottomLeftWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: bottomRightWithHeight,
+                    normal: Facing.BACK,
+                    uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: bottomRightWithHeight,
+                    normal: Facing.BACK,
+                    uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: bottomRight,
+                    normal: Facing.BACK,
+                    uv: [bottomRight[Coordinate.X], bottomRight[Coordinate.Y]]
+                },
+                {position: bottomLeft, normal: Facing.BACK, uv: [bottomLeft[Coordinate.X], bottomLeft[Coordinate.Y]]},
 
-                // right
-                { position: bottomRight,           normal: Facing.LEFT, uv: [bottomRight[Coordinate.Z],           bottomRight[Coordinate.Y]]           },
-                { position: bottomRightWithHeight, normal: Facing.LEFT, uv: [bottomRightWithHeight[Coordinate.Z], bottomRightWithHeight[Coordinate.Y]] },
-                { position: topRightWithHeight,    normal: Facing.LEFT, uv: [topRightWithHeight[Coordinate.Z],    topRightWithHeight[Coordinate.Y]]    },
-                { position: topRightWithHeight,    normal: Facing.LEFT, uv: [topRightWithHeight[Coordinate.Z],    topRightWithHeight[Coordinate.Y]]    },
-                { position: topRight,              normal: Facing.LEFT, uv: [topRight[Coordinate.Z],              topRight[Coordinate.Y]]              },
-                { position: bottomRight,           normal: Facing.LEFT, uv: [bottomRight[Coordinate.Z],           bottomRight[Coordinate.Y]]           },
+                // back (world-orientation-wise)
+                {position: topLeft, normal: Facing.FRONT, uv: [topLeft[Coordinate.X], topLeft[Coordinate.Y]]},
+                {position: topRight, normal: Facing.FRONT, uv: [topRight[Coordinate.X], topRight[Coordinate.Y]]},
+                {
+                    position: topRightWithHeight,
+                    normal: Facing.FRONT,
+                    uv: [topRightWithHeight[Coordinate.X], topRightWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: topRightWithHeight,
+                    normal: Facing.FRONT,
+                    uv: [topRightWithHeight[Coordinate.X], topRightWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: topLeftWithHeight,
+                    normal: Facing.FRONT,
+                    uv: [topLeftWithHeight[Coordinate.X], topLeftWithHeight[Coordinate.Y]]
+                },
+                {position: topLeft, normal: Facing.FRONT, uv: [topLeft[Coordinate.X], topLeft[Coordinate.Y]]},
             ];
         } else {
             return [
                 // bottom
-                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[uvRotatedBottomStrategy.first],  bottomLeft[uvRotatedBottomStrategy.second]]  },
-                { position: bottomRight, normal: Facing.UP, uv: [bottomRight[uvRotatedBottomStrategy.first], bottomRight[uvRotatedBottomStrategy.second]] },
-                { position: topRight,    normal: Facing.UP, uv: [topRight[uvRotatedBottomStrategy.first],    topRight[uvRotatedBottomStrategy.second]]    },
-                { position: topRight,    normal: Facing.UP, uv: [topRight[uvRotatedBottomStrategy.first],    topRight[uvRotatedBottomStrategy.second]]    },
-                { position: topLeft,     normal: Facing.UP, uv: [topLeft[uvRotatedBottomStrategy.first],     topLeft[uvRotatedBottomStrategy.second]]     },
-                { position: bottomLeft,  normal: Facing.UP, uv: [bottomLeft[uvRotatedBottomStrategy.first],  bottomLeft[uvRotatedBottomStrategy.second]]  },
+                {position: bottomLeft, normal: Facing.UP, uv: [bottomLeft[Coordinate.X], bottomLeft[Coordinate.Z]]},
+                {position: bottomRight, normal: Facing.UP, uv: [bottomRight[Coordinate.X], bottomRight[Coordinate.Z]]},
+                {position: topRight, normal: Facing.UP, uv: [topRight[Coordinate.X], topRight[Coordinate.Z]]},
+                {position: topRight, normal: Facing.UP, uv: [topRight[Coordinate.X], topRight[Coordinate.Z]]},
+                {position: topLeft, normal: Facing.UP, uv: [topLeft[Coordinate.X], topLeft[Coordinate.Z]]},
+                {position: bottomLeft, normal: Facing.UP, uv: [bottomLeft[Coordinate.X], bottomLeft[Coordinate.Z]]},
 
                 // top
-                { position: bottomLeftWithHeight,  normal: Facing.DOWN, uv: [bottomLeftWithHeight[Coordinate.Z],  bottomLeftWithHeight[Coordinate.X]]  },
-                { position: topLeftWithHeight,     normal: Facing.DOWN, uv: [topLeftWithHeight[Coordinate.Z],     topLeftWithHeight[Coordinate.X]]     },
-                { position: topRightWithHeight,    normal: Facing.DOWN, uv: [topRightWithHeight[Coordinate.Z],    topRightWithHeight[Coordinate.X]]    },
-                { position: topRightWithHeight,    normal: Facing.DOWN, uv: [topRightWithHeight[Coordinate.Z],    topRightWithHeight[Coordinate.X]]    },
-                { position: bottomRightWithHeight, normal: Facing.DOWN, uv: [bottomRightWithHeight[Coordinate.Z], bottomRightWithHeight[Coordinate.X]] },
-                { position: bottomLeftWithHeight,  normal: Facing.DOWN, uv: [bottomLeftWithHeight[Coordinate.Z],  bottomLeftWithHeight[Coordinate.X]]  },
+                {
+                    position: bottomLeftWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [bottomLeftWithHeight[Coordinate.X], bottomLeftWithHeight[Coordinate.Z]]
+                },
+                {
+                    position: topLeftWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [topLeftWithHeight[Coordinate.X], topLeftWithHeight[Coordinate.Z]]
+                },
+                {
+                    position: topRightWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [topRightWithHeight[Coordinate.X], topRightWithHeight[Coordinate.Z]]
+                },
+                {
+                    position: topRightWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [topRightWithHeight[Coordinate.X], topRightWithHeight[Coordinate.Z]]
+                },
+                {
+                    position: bottomRightWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Z]]
+                },
+                {
+                    position: bottomLeftWithHeight,
+                    normal: Facing.DOWN,
+                    uv: [bottomLeftWithHeight[Coordinate.X], bottomLeftWithHeight[Coordinate.Z]]
+                },
 
-                // front (world-orientation-wise)
-                { position: bottomLeft,            normal: Facing.BACK, uv: [bottomLeft[Coordinate.X],            bottomLeft[Coordinate.Y]]            },
-                { position: bottomLeftWithHeight,  normal: Facing.BACK, uv: [bottomLeftWithHeight[Coordinate.X],  bottomLeftWithHeight[Coordinate.Y]]  },
-                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
-                { position: bottomRightWithHeight, normal: Facing.BACK, uv: [bottomRightWithHeight[Coordinate.X], bottomRightWithHeight[Coordinate.Y]] },
-                { position: bottomRight,           normal: Facing.BACK, uv: [bottomRight[Coordinate.X],           bottomRight[Coordinate.Y]]           },
-                { position: bottomLeft,            normal: Facing.BACK, uv: [bottomLeft[Coordinate.X],            bottomLeft[Coordinate.Y]]            },
+                // left
+                {position: bottomLeft, normal: Facing.RIGHT, uv: [bottomLeft[Coordinate.Z], bottomLeft[Coordinate.Y]]},
+                {position: topLeft, normal: Facing.RIGHT, uv: [topLeft[Coordinate.Z], topLeft[Coordinate.Y]]},
+                {
+                    position: topLeftWithHeight,
+                    normal: Facing.RIGHT,
+                    uv: [topLeftWithHeight[Coordinate.Z], topLeftWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: topLeftWithHeight,
+                    normal: Facing.RIGHT,
+                    uv: [topLeftWithHeight[Coordinate.Z], topLeftWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: bottomLeftWithHeight,
+                    normal: Facing.RIGHT,
+                    uv: [bottomLeftWithHeight[Coordinate.Z], bottomLeftWithHeight[Coordinate.Y]]
+                },
+                {position: bottomLeft, normal: Facing.RIGHT, uv: [bottomLeft[Coordinate.Z], bottomLeft[Coordinate.Y]]},
 
-                // back (world-orientation-wise)
-                { position: topLeft,            normal: Facing.FRONT, uv: [topLeft[Coordinate.X],            topLeft[Coordinate.Y]]            },
-                { position: topRight,           normal: Facing.FRONT, uv: [topRight[Coordinate.X],           topRight[Coordinate.Y]]           },
-                { position: topRightWithHeight, normal: Facing.FRONT, uv: [topRightWithHeight[Coordinate.X], topRightWithHeight[Coordinate.Y]] },
-                { position: topRightWithHeight, normal: Facing.FRONT, uv: [topRightWithHeight[Coordinate.X], topRightWithHeight[Coordinate.Y]] },
-                { position: topLeftWithHeight,  normal: Facing.FRONT, uv: [topLeftWithHeight[Coordinate.X],  topLeftWithHeight[Coordinate.Y]]  },
-                { position: topLeft,            normal: Facing.FRONT, uv: [topLeft[Coordinate.X],            topLeft[Coordinate.Y]]            },
+                // right
+                {
+                    position: bottomRight,
+                    normal: Facing.LEFT,
+                    uv: [bottomRight[Coordinate.Z], bottomRight[Coordinate.Y]]
+                },
+                {
+                    position: bottomRightWithHeight,
+                    normal: Facing.LEFT,
+                    uv: [bottomRightWithHeight[Coordinate.Z], bottomRightWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: topRightWithHeight,
+                    normal: Facing.LEFT,
+                    uv: [topRightWithHeight[Coordinate.Z], topRightWithHeight[Coordinate.Y]]
+                },
+                {
+                    position: topRightWithHeight,
+                    normal: Facing.LEFT,
+                    uv: [topRightWithHeight[Coordinate.Z], topRightWithHeight[Coordinate.Y]]
+                },
+                {position: topRight, normal: Facing.LEFT, uv: [topRight[Coordinate.Z], topRight[Coordinate.Y]]},
+                {
+                    position: bottomRight,
+                    normal: Facing.LEFT,
+                    uv: [bottomRight[Coordinate.Z], bottomRight[Coordinate.Y]]
+                },
             ];
         }
     }
