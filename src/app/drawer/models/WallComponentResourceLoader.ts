@@ -1,6 +1,6 @@
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ComponentProps} from "../objects/window/WallComponent";
-import {Box3, Group, Material, Matrix4, Mesh, Vector3} from "three";
+import {Box3, Group, Material, Matrix4, Mesh, Object3D, Vector3} from "three";
 import {Dimensions, ModelDefinition} from "./ModelDefinitions";
 
 const X_AXIS = new Vector3(1, 0, 0);
@@ -55,11 +55,31 @@ const getAxisScales = (dimensions: Dimensions, box3: Box3) => {
 };
 
 export const loadDoors = async () => {
-    return await loadModels(doorsPromise, DOORS_PATH);
+    return await loadModels(doorsPromise, DOORS_PATH, (modelDefinition, model, box3) => {
+        return {
+            name: modelDefinition.name,
+            thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
+            object3d: model,
+            width: modelDefinition.dimensions.width / 10,
+            thickness: 1,
+            height: box3.max.y - box3.min.y,
+            elevation: (modelDefinition.elevation ?? 0) / 10,
+        } as ComponentProps;
+    });
 };
 
 export const loadWindows = async () => {
-    return await loadModels(windowsPromise, WINDOWS_PATH);
+    return await loadModels(windowsPromise, WINDOWS_PATH, (modelDefinition, model, box3) => {
+        return {
+            name: modelDefinition.name,
+            thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
+            object3d: model,
+            width: modelDefinition.dimensions.width / 10,
+            thickness: 1,
+            height: box3.max.y - box3.min.y,
+            elevation: (modelDefinition.elevation ?? 0) / 10,
+        } as ComponentProps;
+    });
 };
 
 async function handleFileLoad(gltfLoader: GLTFLoader, path: string, doorDefinition: ModelDefinition) {
@@ -71,31 +91,35 @@ async function handleFileLoad(gltfLoader: GLTFLoader, path: string, doorDefiniti
     }
 }
 
-const loadModels = async (modelsPromise: Promise<Array<ModelDefinition>>, path: string) => {
-    const result = new Array<ComponentProps>();
+const loadModels = async<T>(
+    modelsPromise: Promise<Array<ModelDefinition>>,
+    path: string,
+    resultMapper: (md: ModelDefinition, obj: Object3D, box: Box3) => T
+) => {
+    const result = new Array<T>();
     const gltfLoader = new GLTFLoader();
-    const doorDefinitions = await modelsPromise;
-    for (const doorDefinition of doorDefinitions) {
+    const modelDefinitions = await modelsPromise;
+    for (const modelDefinition of modelDefinitions) {
         const model = new Group();
-        const gltf = await handleFileLoad(gltfLoader, path, doorDefinition);
+        const gltf = await handleFileLoad(gltfLoader, path, modelDefinition);
         if (gltf === undefined) {
             continue;
         }
-        gltf.rotateOnAxis(X_AXIS, doorDefinition.rotate.x * RADIAN_MULTIPLIER);
-        gltf.rotateOnAxis(Y_AXIS, doorDefinition.rotate.y * RADIAN_MULTIPLIER);
-        gltf.rotateOnAxis(Z_AXIS, doorDefinition.rotate.z * RADIAN_MULTIPLIER);
+        gltf.rotateOnAxis(X_AXIS, modelDefinition.rotate.x * RADIAN_MULTIPLIER);
+        gltf.rotateOnAxis(Y_AXIS, modelDefinition.rotate.y * RADIAN_MULTIPLIER);
+        gltf.rotateOnAxis(Z_AXIS, modelDefinition.rotate.z * RADIAN_MULTIPLIER);
 
         const box3 = new Box3().setFromObject(gltf);
-        const axisScales = getAxisScales(doorDefinition.dimensions, box3);
+        const axisScales = getAxisScales(modelDefinition.dimensions, box3);
         gltf.applyMatrix4(new Matrix4().makeScale(axisScales.x, axisScales.y, axisScales.z));
 
         box3.setFromObject(gltf);
         const center = box3.getCenter(new Vector3());
         gltf.position.sub(center);
-        const offset = xyzToVector3(doorDefinition.offsetPosition).multiplyScalar(0.1);
+        const offset = xyzToVector3(modelDefinition.offsetPosition).multiplyScalar(0.1);
         gltf.position.add(offset);
         model.add(gltf);
-        if (doorDefinition.doubleSided) {
+        if (modelDefinition.doubleSided) {
             const mirrored = gltf.clone();
             model.add(mirrored);
             mirrored.applyMatrix4(new Matrix4().makeScale(1, 1, -1));
@@ -111,15 +135,7 @@ const loadModels = async (modelsPromise: Promise<Array<ModelDefinition>>, path: 
                 }
             });
         }
-        result.push({
-            name: doorDefinition.name,
-            thumbnail: doorDefinition.thumbnail, // todo: then load is as ahref or something
-            object3d: model,
-            width: doorDefinition.dimensions.width / 10,
-            thickness: 1,
-            height: box3.max.y - box3.min.y,
-            elevation: (doorDefinition.elevation ?? 0) / 10,
-        } as ComponentProps);
+        result.push(resultMapper(modelDefinition, model, box3));
     }
     return result;
 };
