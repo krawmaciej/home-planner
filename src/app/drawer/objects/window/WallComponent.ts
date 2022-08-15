@@ -298,12 +298,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     public changeOrientation(orientation: Vector2D): void {
         this.orientation = orientation;
-        const quaternion = WallComponent.orientationQuaternionMap.get(orientation);
-        if (quaternion === undefined) {
-            throw new Error("Wall component orientation has no quaternion mapped!");
-        }
-        console.log("Changing orientation: ", orientation);
-        this.window.setRotationFromQuaternion(quaternion);
+        this.window.setRotationFromQuaternion(this.getRotation());
         this.window.updateMatrix();
         this.window.updateMatrixWorld(true);
     }
@@ -336,6 +331,14 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     public getOrientation(): Vector2D {
         return this.orientation;
+    }
+
+    public getRotation(): Quaternion {
+        const quaternion = WallComponent.orientationQuaternionMap.get(this.orientation);
+        if (quaternion === undefined) {
+            throw new Error("Wall component orientation has no quaternion mapped!");
+        }
+        return quaternion;
     }
 
     public getElevation(): number {

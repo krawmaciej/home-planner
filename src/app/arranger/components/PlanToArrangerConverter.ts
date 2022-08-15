@@ -71,6 +71,7 @@ export class PlanToArrangerConverter {
                 const newModel = model.clone();
                 const frameCenter = component.getElevation() + (component.getHeight() / 2.0);
                 newModel.position.copy(component.getPosition().setY(frameCenter));
+                newModel.setRotationFromQuaternion(component.getRotation());
                 return newModel;
             } else {
                 return [];
