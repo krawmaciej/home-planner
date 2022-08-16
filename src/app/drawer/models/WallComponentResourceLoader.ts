@@ -2,6 +2,7 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ComponentProps} from "../objects/window/WallComponent";
 import {Box3, Group, Material, Matrix4, Mesh, Object3D, Vector3} from "three";
 import {Dimensions, ModelDefinition} from "./ModelDefinitions";
+import {ObjectProps} from "../../arranger/objects/ImportedObject";
 
 const X_AXIS = new Vector3(1, 0, 0);
 const Y_AXIS = new Vector3(0, 1, 0);
@@ -13,6 +14,8 @@ const DOORS_PATH = "/doors";
 const DOORS_DEFINITION_FILE = "doors.json";
 const WINDOWS_PATH = "/windows";
 const WINDOWS_DEFINITION_FILE = "windows.json";
+const OBJECTS_PATH = "/objects";
+const OBJECTS_DEFINITION_FILE = "objects.json";
 
 const createFetchPromise = async (fileName: string) => {
     const file = await fetch(fileName);
@@ -26,6 +29,7 @@ const createFetchPromise = async (fileName: string) => {
 
 const doorsPromise = createFetchPromise(`${DOORS_PATH}/${DOORS_DEFINITION_FILE}`);
 const windowsPromise = createFetchPromise(`${WINDOWS_PATH}/${WINDOWS_DEFINITION_FILE}`);
+const objectsPromise = createFetchPromise(`${OBJECTS_PATH}/${OBJECTS_DEFINITION_FILE}`);
 
 const xyzToVector3 = ({x, y, z}: { x: number, y: number, z: number }) => {
     return new Vector3(x, y, z);
@@ -63,7 +67,7 @@ export const loadDoors = async () => {
             width: modelDefinition.dimensions.width / 10,
             thickness: 1,
             height: box3.max.y - box3.min.y,
-            elevation: (modelDefinition.elevation ?? 0) / 10,
+            elevation: 0,
         } as ComponentProps;
     });
 };
@@ -79,6 +83,16 @@ export const loadWindows = async () => {
             height: box3.max.y - box3.min.y,
             elevation: (modelDefinition.elevation ?? 0) / 10,
         } as ComponentProps;
+    });
+};
+
+export const loadObjects = async () => {
+    return await loadModels(windowsPromise, WINDOWS_PATH, (modelDefinition, model, box3) => {
+        return {
+            name: modelDefinition.name,
+            thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
+            object3d: model,
+        } as ObjectProps;
     });
 };
 

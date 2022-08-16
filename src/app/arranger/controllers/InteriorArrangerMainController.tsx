@@ -1,69 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Scene } from "three";
-import { Position2D } from "../constants/Types";
-import { Wall } from "../objects/old/Wall";
-import { Window } from "../objects/old/Window";
 import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandler";
+import {ObjectProps} from "../objects/ImportedObject";
 
 type Props = {
     className?: string
     scene: Scene,
-    mainInputHandler: MainInputHandler
+    mainInputHandler: MainInputHandler,
+    objectDefinitions: Array<ObjectProps>,
 }
 
-export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
-    
-    const [windowPosition, setWindowPosition] = useState<Position2D>({
-        x: 10,
-        y: 0
-    });
-
-    const [wall, setWall] = useState<Wall>();
-
-    const [window, setWindow] = useState<Window>();
-
-    const addWall = () => {
-      const wall = Wall.create({length: 50, height: 20, width: 2});
-      scene.add(wall.mainWallFrame);
-      setWall(wall);
-    };
-
-    const addWindow = () => {
-        if (wall !== undefined) {
-            const window = Window.create(windowPosition, wall);
-            setWindow(window);
-            updateUIDisplay();
-        }
-    };
-
-    const moveRight = () => {
-        if (window !== undefined) {
-            window.translateX(0.5);
-            updateUIDisplay();
-        }
-    };
-
-    const moveUp = () => {
-        if (window !== undefined) {
-            window.translateY(0.5);
-            updateUIDisplay();
-        }
-    };
-
-    const updateUIDisplay = () => {
-        if (window !== undefined) {
-            setWindowPosition({x: window.mainWindowFrame.position.x, y: window.mainWindowFrame.position.y});
-        }
-    };
+export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInputHandler, objectDefinitions}: Props) => {
 
     return (
         <>
-            <button onClick={addWall}>Dodaj ścianę</button>
-            <button onClick={addWindow}>Dodaj okno</button>
-            <button onClick={moveRight}>Przesuń okno w prawo</button>
-            <button onClick={moveUp}>Przesuń okno w górę</button>
-            <p>Odległość od lewego boku ściany: {windowPosition.x}</p>
-            <p>Odległość od podłogi: {windowPosition.y}</p>
         </>
     );
 };

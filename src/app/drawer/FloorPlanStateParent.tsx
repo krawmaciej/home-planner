@@ -19,7 +19,6 @@ type Props = {
     sceneObjects: SceneObjectsState,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
-    // objectDefinitions: Array<ComponentProps>,
     scene: Scene,
 }
 

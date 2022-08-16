@@ -4,8 +4,7 @@ import React, {useEffect, useRef, useState} from 'react';
 
 import {
     ACESFilmicToneMapping,
-    AmbientLight, Box3, Box3Helper, Color, Group, Mesh, Object3D,
-    PerspectiveCamera,
+    AmbientLight, Box3, Box3Helper, Color, Group, PerspectiveCamera,
     Scene,
     Vector3, WebGLRenderer,
     WebGLRendererParameters
@@ -18,13 +17,14 @@ import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {PlanToArrangerConverter} from "./components/PlanToArrangerConverter";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {Geometry} from "three/examples/jsm/deprecated/Geometry";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {ObjectProps} from "./objects/ImportedObject";
 
 type Props = {
     className?: string,
     sceneObjects: SceneObjectsState,
+    objectDefinitions: Array<ObjectProps>,
 }
 
 function createBetterWebGLRenderer(rendererParams: WebGLRendererParameters) {
@@ -35,7 +35,7 @@ function createBetterWebGLRenderer(rendererParams: WebGLRendererParameters) {
     return webGLRenderer;
 }
 
-export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: Props) => {
+export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects, objectDefinitions }: Props) => {
 
     const [scene] = useState<Scene>(new Scene()); // new scene is created on component reload
 
@@ -191,16 +191,18 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects }: P
 
     return (
         <>
-            <Canvas scene={scene} renderer={renderer} cameraHandler={cameraHandler} mainInputHandler={mainInputHandler}/>
-            <InteriorArrangerMainController className={"app-bottom-menu"} scene={scene} mainInputHandler={mainInputHandler}/>
+            <Canvas
+                scene={scene}
+                renderer={renderer}
+                cameraHandler={cameraHandler}
+                mainInputHandler={mainInputHandler}
+            />
+            <InteriorArrangerMainController
+                className={"app-bottom-menu"}
+                scene={scene}
+                mainInputHandler={mainInputHandler}
+                objectDefinitions={objectDefinitions}
+            />
         </>
     );
-};
-
-const findGeometries = (object: Object3D) => {
-    const geometries = new Array<Geometry>();
-    if (object instanceof Mesh) {
-        geometries.push(object.geometry);
-    }
-    return geometries;
 };
