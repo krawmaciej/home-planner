@@ -202,6 +202,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects, obj
                 scene={scene}
                 mainInputHandler={mainInputHandler}
                 objectDefinitions={objectDefinitions}
+                placedObjects={sceneObjects.placedObjects}
             />
         </>
     );
