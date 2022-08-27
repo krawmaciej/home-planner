@@ -170,13 +170,10 @@ export class CollisionDetector {
     }
 
     public detectWallComponentCollisions(wallProps: WallConstruction, components: Array<IWallComponent>) {
-        const componentsPerpendicularToWall = components.filter(
-            cmp => ! CollisionDetector.areDirectionsSameOrientation(cmp.getDirection(), wallProps.direction)
-        );
-        return this.detectCollisions(wallProps.points, componentsPerpendicularToWall);
+        return this.detectCollisions(wallProps.points, components); // todo: this might cause an error because of removing an optimization trick
     }
 
-    private static areDirectionsSameOrientation(direction: Vector2D, otherDirection: Vector2D): boolean {
+    private static areDirectionsParallel(direction: Vector2D, otherDirection: Vector2D): boolean {
         return direction === otherDirection || Direction.getOpposite(direction) === otherDirection;// todo: move to Direction and use are numbers equal
     }
 

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import "./App.css";
 import "./app/css/PersistenceMenu.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -8,6 +8,9 @@ import {PersistenceMenu} from "./app/common/persistance/PersistenceMenu";
 import {createSceneObjectsState, SceneObjectsState} from "./app/common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./app/drawer/FloorPlanStateParent";
 import {Scene} from "three";
+import {ComponentProps} from "./app/drawer/objects/window/WallComponent";
+import {loadDoors, loadObjects, loadWindows} from "./app/drawer/models/WallComponentResourceLoader";
+import {ObjectProps} from "./app/arranger/objects/ImportedObject";
 
 enum UISelection {
     PLAN_DRAWER, INTERIOR_ARRANGER,
@@ -16,6 +19,9 @@ enum UISelection {
 export const App: React.FC = () => {
 
     const [sceneObjectsState, setSceneObjectsState] = useState<SceneObjectsState>(createSceneObjectsState);
+    const [doorDefinitions, setDoorDefinitions] = useState(new Array<ComponentProps>());
+    const [windowDefinitions, setWindowDefinitions] = useState(new Array<ComponentProps>());
+    const [objectDefinitions, setObjectDefinitions] = useState(new Array<ObjectProps>());
     const { current: floorPlanScene } = useRef<Scene>(new Scene());
 
     // load file
@@ -49,6 +55,13 @@ export const App: React.FC = () => {
         setCurrentMenu(UISelection.PLAN_DRAWER);
     };
 
+    useEffect(() => {
+        console.log("App mount");
+        loadDoors().then(doors => setDoorDefinitions(doors));
+        loadWindows().then(windows => setWindowDefinitions(windows));
+        loadObjects().then(objects => setObjectDefinitions(objects));
+    }, []);
+
     return (
         <div className="app-main-view">
             <PersistenceMenu
@@ -60,6 +73,9 @@ export const App: React.FC = () => {
             <SelectCanvas
                 selection={currentMenu}
                 sceneObjectsState={sceneObjectsState}
+                doorDefinitions={doorDefinitions}
+                windowDefinitions={windowDefinitions}
+                objectDefinitions={objectDefinitions}
                 floorPlanScene={floorPlanScene}
             />
             <input ref={inputRef} className="d-none" type="file" onChange={handleFile}/>
@@ -70,16 +86,27 @@ export const App: React.FC = () => {
 type SelectionProps = {
     selection: UISelection,
     sceneObjectsState: SceneObjectsState,
+    doorDefinitions: Array<ComponentProps>,
+    windowDefinitions: Array<ComponentProps>,
+    objectDefinitions: Array<ObjectProps>,
     floorPlanScene: Scene,
 }
 
-const SelectCanvas: React.FC<SelectionProps> = ({ selection, sceneObjectsState, floorPlanScene }: SelectionProps) => {
+const SelectCanvas: React.FC<SelectionProps> = ({
+                                                    selection,
+                                                    sceneObjectsState,
+                                                    doorDefinitions,
+                                                    windowDefinitions,
+                                                    floorPlanScene,
+                                                    objectDefinitions,
+}: SelectionProps) => {
     console.log("Select reload");
     if (selection === UISelection.INTERIOR_ARRANGER) {
         return (
             <InteriorArrangerStateParent
                 className="app-bottom-menu"
                 sceneObjects={sceneObjectsState}
+                objectDefinitions={objectDefinitions}
             />
         );
     } else {
@@ -87,6 +114,8 @@ const SelectCanvas: React.FC<SelectionProps> = ({ selection, sceneObjectsState, 
             <FloorPlanStateParent
                 className="app-bottom-menu"
                 sceneObjects={sceneObjectsState}
+                doorDefinitions={doorDefinitions}
+                windowDefinitions={windowDefinitions}
                 scene={floorPlanScene}
             />
         );

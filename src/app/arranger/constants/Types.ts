@@ -1,4 +1,6 @@
 
+export const FLOOR_LEVEL = 0;
+
 export enum Coordinate {
     X, Y, Z,
 }

@@ -1,15 +1,10 @@
-import { Group } from "three";
-import { Dimensions } from "../constants/Types";
+import {Object3D} from "three";
 
-export class ImportedObject {
-    public readonly dimensions: Dimensions = {length: 10, height: 18, width: 2};
-    public readonly mainMesh: Group = new Group(); // TODO: now empty object, change to mesh
+export type ObjectProps = {
+    readonly name: string,
+    readonly thumbnail: string,
+    readonly object3d: Object3D,
 }
 
-export class ObjectFactory {
-    private static readonly cachedObject: ImportedObject = new ImportedObject();
-
-    public static loadWindow() {
-        return this.cachedObject;
-    }
+export class ImportedObject {
 }

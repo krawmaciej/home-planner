@@ -1,13 +1,17 @@
 import {ObjectPoints, Vector2D} from "../../constants/Types";
 import {IMovingWallComponent} from "./IMovingWallComponent";
 import {IPlacedWallComponent} from "./IPlacedWallComponent";
+import {Quaternion} from "three";
 
 export class NoMovingWallComponent implements IMovingWallComponent {
     private static readonly instance = new NoMovingWallComponent();
+
     public static getInstance(): NoMovingWallComponent {
         return this.instance;
     }
-    private constructor() {}
+
+    private constructor() {
+    }
 
     createPlacedComponent(): IPlacedWallComponent {
         throw new Error("Called method on a not initialized component.");
@@ -54,7 +58,10 @@ export class NoMovingWallComponent implements IMovingWallComponent {
     collides(): boolean {
         throw new Error("Called method on a not initialized component.");
     }
-    getDirection(): Vector2D {
+    getOrientation(): Vector2D {
+        throw new Error("Called method on a not initialized component.");
+    }
+    getRotation(): Quaternion {
         throw new Error("Called method on a not initialized component.");
     }
     isDoor(): boolean {

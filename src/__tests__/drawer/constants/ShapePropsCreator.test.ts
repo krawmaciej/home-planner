@@ -1,5 +1,5 @@
 import {Vector2} from "three";
-import {PathPropsBuilder} from "../../../app/arranger/components/PathPropsBuilder";
+import {PathPropsBuilder} from "../../../app/arranger/components/converter/PathPropsBuilder";
 import {MathFloatingPoints} from "../../../app/common/components/MathFloatingPoints";
 
 describe("Test shape props builder", () => {

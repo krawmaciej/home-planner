@@ -1,4 +1,3 @@
-
  - linked list as walls representation, connections containing components
  - conversion from 2d to 3d, why can't walls overlap: https://en.wikipedia.org/wiki/Z-fighting and https://en.wikipedia.org/wiki/Z-buffering
  - solution with not overlapping walls lets easily select for which wall does the wall component belong to, and it also solves z-fighting problem.

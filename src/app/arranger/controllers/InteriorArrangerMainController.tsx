@@ -1,69 +1,110 @@
-import React, { useState } from "react";
-import { Scene } from "three";
-import { Position2D } from "../constants/Types";
-import { Wall } from "../objects/old/Wall";
-import { Window } from "../objects/old/Window";
+import React, {createContext, useContext, useState} from "react";
+import {Object3D, Scene} from "three";
 import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandler";
+import {ObjectProps} from "../objects/ImportedObject";
+import {Button} from "react-bootstrap";
+import {ObjectsController} from "./ObjectsController";
+
+const DEFAULT_VARIANT = "dark";
+const SELECTED_VARIANT = "light";
+
+type InteriorArrangerContextType = {
+    scene: Scene,
+    mainInputHandler: MainInputHandler,
+    objectDefinitions: Array<ObjectProps>,
+    placedObjects: Array<Object3D>,
+    changeMenuName: (menuName: string) => void,
+}
+
+export const InteriorArrangerContext = createContext<InteriorArrangerContextType | undefined>(undefined);
 
 type Props = {
     className?: string
     scene: Scene,
-    mainInputHandler: MainInputHandler
+    mainInputHandler: MainInputHandler,
+    objectDefinitions: Array<ObjectProps>,
+    placedObjects: Array<Object3D>,
 }
 
-export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInputHandler}: Props) => {
-    
-    const [windowPosition, setWindowPosition] = useState<Position2D>({
-        x: 10,
-        y: 0
-    });
+enum Selection {
+    DEFAULT, OBJECTS, // EDIT_CEILINGS more menus
+}
 
-    const [wall, setWall] = useState<Wall>();
+type DisplayMenuProps = {
+    currentSelection: Selection,
+    selectDefaultMenu: () => void,
+    changeSelection: (selection: Selection) => void,
+}
 
-    const [window, setWindow] = useState<Window>();
+type ChangeMenuProps = Pick<DisplayMenuProps, "changeSelection">
 
-    const addWall = () => {
-      const wall = Wall.create({length: 50, height: 20, width: 2});
-      scene.add(wall.mainWallFrame);
-      setWall(wall);
+export type SelectDefaultMenuProps = Pick<DisplayMenuProps, "selectDefaultMenu">
+
+const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefaultMenu, changeSelection }) => {
+    switch (currentSelection) {
+        case Selection.DEFAULT:
+            return (
+                <Default changeSelection={changeSelection}/>
+            );
+        case Selection.OBJECTS:
+            return (
+                <ObjectsController selectDefaultMenu={selectDefaultMenu}/>
+            );
+    }
+};
+
+const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
+    const context = useContext(InteriorArrangerContext);
+    if (context === undefined) {
+        throw new Error("Context in Default is undefined.");
+    }
+    context.changeMenuName("Rzut 3D");
+
+    return (
+        <Button onClick={() => changeSelection(Selection.OBJECTS)} variant={DEFAULT_VARIANT}>
+            Obiekty...
+        </Button>
+        // more default menu buttons
+    );
+};
+
+export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInputHandler, objectDefinitions, placedObjects}) => {
+
+    const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
+    const [menuName, setMenuName] = useState("");
+
+    const selectDefaultMenu = () => {
+        setMenuSelection(Selection.DEFAULT);
     };
 
-    const addWindow = () => {
-        if (wall !== undefined) {
-            const window = Window.create(windowPosition, wall);
-            setWindow(window);
-            updateUIDisplay();
-        }
+    const changeSelection = (selection: Selection) => {
+        setMenuSelection(selection);
     };
 
-    const moveRight = () => {
-        if (window !== undefined) {
-            window.translateX(0.5);
-            updateUIDisplay();
-        }
+    const changeMenuName = (menuName: string) => {
+        setMenuName(menuName);
     };
 
-    const moveUp = () => {
-        if (window !== undefined) {
-            window.translateY(0.5);
-            updateUIDisplay();
-        }
-    };
-
-    const updateUIDisplay = () => {
-        if (window !== undefined) {
-            setWindowPosition({x: window.mainWindowFrame.position.x, y: window.mainWindowFrame.position.y});
-        }
+    // dependency container
+    const context: InteriorArrangerContextType = {
+        scene,
+        mainInputHandler,
+        objectDefinitions,
+        placedObjects,
+        changeMenuName,
     };
 
     return (
         <>
-            <button onClick={addWall}>Dodaj ścianę</button>
-            <button onClick={addWindow}>Dodaj okno</button>
-            <button onClick={moveRight}>Przesuń okno w prawo</button>
-            <button onClick={moveUp}>Przesuń okno w górę</button>
-            <p>Odległość od lewego boku ściany: {windowPosition.x}</p>
-            <p>Odległość od podłogi: {windowPosition.y}</p>
+            {menuName}
+            <InteriorArrangerContext.Provider value={context}>
+                <DisplayMenu
+                    currentSelection={menuSelection}
+                    selectDefaultMenu={selectDefaultMenu}
+                    changeSelection={changeSelection}
+                />
+            </InteriorArrangerContext.Provider>
         </>
     );
 };
+
