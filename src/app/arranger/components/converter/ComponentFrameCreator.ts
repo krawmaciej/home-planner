@@ -1,16 +1,16 @@
-import {ObjectPoint} from "../../drawer/constants/Types";
-import {Attributes, Coordinate, Facing, FLOOR_LEVEL} from "../constants/Types";
+import {ObjectPoint} from "../../../drawer/constants/Types";
+import {Attributes, Coordinate, Facing, FLOOR_LEVEL} from "../../constants/Types";
 import {
     Mesh,
     MeshBasicMaterialParameters,
     MeshStandardMaterial,
     Vector3
 } from "three";
-import {loadHardwoodTxt} from "../loaders/Textures";
-import {Direction} from "../../drawer/objects/wall/Direction";
+import {loadHardwoodTxt} from "../../loaders/Textures";
+import {Direction} from "../../../drawer/objects/wall/Direction";
 import {AttributesToGeometry} from "./AttributesToGeometry";
-import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
-import {MathFloatingPoints} from "../../common/components/MathFloatingPoints";
+import {IPlacedWallComponent} from "../../../drawer/objects/window/IPlacedWallComponent";
+import {MathFloatingPoints} from "../../../common/components/MathFloatingPoints";
 
 export class ComponentFrameCreator {
 

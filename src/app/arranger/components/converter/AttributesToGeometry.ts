@@ -1,4 +1,4 @@
-import {AttributeName, AttributeNumber, Attributes} from "../constants/Types";
+import {AttributeName, AttributeNumber, Attributes} from "../../constants/Types";
 import {BufferAttribute, BufferGeometry} from "three";
 
 export class AttributesToGeometry {

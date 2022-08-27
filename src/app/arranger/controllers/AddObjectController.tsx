@@ -1,7 +1,8 @@
 import {ObjectProps} from "../objects/ImportedObject";
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Button} from "react-bootstrap";
 import {InteriorArrangerContext} from "./InteriorArrangerMainController";
+import {ObjectAdder} from "../components/ObjectAdder";
 
 const DEFAULT_VARIANT = "dark";
 const SELECTED_VARIANT = "light";
@@ -17,8 +18,23 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu}) => {
     if (context === undefined) {
         throw new Error("Context in AddObjectController is undefined.");
     }
+    context.changeMenuName("Dodaj obiekt");
 
+    const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.scene, context.placedObjects));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
+
+    useEffect(() => {
+        setObjectAdder(new ObjectAdder(context.scene, context.placedObjects));
+    }, [context.scene, context.placedObjects]);
+
+    const selectObject = (index: number) => {
+        const objectProps = context.objectDefinitions.at(index);
+        if (!objectProps) {
+            throw new Error(`Selected invalid index: ${index} from objectDefinitions: ${JSON.stringify(objectProps)}`);
+        }
+        objectAdder.add(objectProps.object3d);
+        setIndexSelection(index);
+    };
 
     return (
         <>
@@ -28,7 +44,7 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu}) => {
             <SelectObjects
                 objects={context.objectDefinitions}
                 objectIndex={indexSelection}
-                handleIndexSelection={setIndexSelection}
+                handleIndexSelection={selectObject}
             />
         </>
     );

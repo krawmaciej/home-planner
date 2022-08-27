@@ -1,7 +1,7 @@
 import { BufferGeometry, Mesh, MeshStandardMaterial} from "three";
-import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectPoints} from "../../drawer/constants/Types";
-import { Attributes, Coordinate, Facing} from "../constants/Types";
-import {WallConstruction} from "../../drawer/components/DrawerMath";
+import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectPoints} from "../../../drawer/constants/Types";
+import { Attributes, Coordinate, Facing} from "../../constants/Types";
+import {WallConstruction} from "../../../drawer/components/DrawerMath";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 
 export class WallCoversCreator {

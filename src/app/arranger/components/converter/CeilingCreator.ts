@@ -1,8 +1,8 @@
-import {Floor} from "../../drawer/objects/floor/Floor";
+import {Floor} from "../../../drawer/objects/floor/Floor";
 import { Mesh, MeshBasicMaterialParameters} from "three";
-import { Attributes, Coordinate, Facing} from "../constants/Types";
-import {loadHardwoodTxt} from "../loaders/Textures";
-import {ObjectPoint} from "../../drawer/constants/Types";
+import { Attributes, Coordinate, Facing} from "../../constants/Types";
+import {loadHardwoodTxt} from "../../loaders/Textures";
+import {ObjectPoint} from "../../../drawer/constants/Types";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 
 export class CeilingCreator {

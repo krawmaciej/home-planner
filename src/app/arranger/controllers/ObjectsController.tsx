@@ -1,6 +1,6 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {Button} from "react-bootstrap";
-import {SelectDefaultMenuProps} from "./InteriorArrangerMainController";
+import {InteriorArrangerContext, SelectDefaultMenuProps} from "./InteriorArrangerMainController";
 import {AddObjectController} from "./AddObjectController";
 
 const DEFAULT_VARIANT = "dark";
@@ -31,6 +31,12 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
 };
 
 const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectDefaultMenu">> = ({ changeSelection, upperSelectDefaultMenu }) => {
+    const context = useContext(InteriorArrangerContext);
+    if (context === undefined) {
+        throw new Error("Context in Default is undefined.");
+    }
+    context.changeMenuName("Obiekty");
+
     return (
         <>
             <Button onClick={upperSelectDefaultMenu} variant={DEFAULT_VARIANT}>
@@ -45,6 +51,12 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
 
 
 export const ObjectsController: React.FC<SelectDefaultMenuProps> = ({ selectDefaultMenu: upperSelectDefaultMenu }) => {
+
+    const context = useContext(InteriorArrangerContext);
+    if (context === undefined) {
+        throw new Error("Context in Default is undefined.");
+    }
+    context.changeMenuName("Rzut 3D");
 
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
 

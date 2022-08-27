@@ -15,7 +15,7 @@ import { VoidIH } from "../common/canvas/inputHandler/VoidIH";
 import {ICameraHandler, PerspectiveCameraHandler} from "../common/canvas/ICameraHandler";
 import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
-import {PlanToArrangerConverter} from "./components/PlanToArrangerConverter";
+import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";

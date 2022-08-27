@@ -1,6 +1,6 @@
 import {PathProps} from "./PathPropsBuilder";
 import {Vector2} from "three";
-import {MathFloatingPoints} from "../../common/components/MathFloatingPoints";
+import {MathFloatingPoints} from "../../../common/components/MathFloatingPoints";
 
 type BoundingPoints = { min: Vector2, max: Vector2 };
 

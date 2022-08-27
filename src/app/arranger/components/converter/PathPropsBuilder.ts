@@ -1,5 +1,5 @@
 import {Vector2} from "three";
-import {ArrangerMath} from "./ArrangerMath";
+import {ArrangerMath} from "../ArrangerMath";
 
 export type PathProps = [Vector2, Vector2, Vector2, Vector2, Vector2]
 
