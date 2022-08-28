@@ -56,7 +56,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
 const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
     const context = useContext(InteriorArrangerContext);
     if (context === undefined) {
-        throw new Error("Context in Default is undefined.");
+        throw new Error("Context in Interrior Arranger's Default is undefined.");
     }
     context.changeMenuName("Rzut 3D");
 

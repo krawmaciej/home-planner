@@ -1,79 +1,40 @@
 import "../css/MainStyle.css";
 
-import React, {useEffect, useRef, useState} from 'react';
-
-import {
-    ACESFilmicToneMapping,
-    AmbientLight, Box3, Box3Helper, Color, Group, PerspectiveCamera,
+import React, {useEffect, useState} from 'react';
+import { Box3, Box3Helper, Color, Group,
     Scene,
-    Vector3, WebGLRenderer,
-    WebGLRendererParameters
+    Vector3
 } from 'three';
 import { InteriorArrangerMainController } from "./controllers/InteriorArrangerMainController";
-import { MainInputHandler } from "../common/canvas/inputHandler/MainInputHandler";
-import { VoidIH } from "../common/canvas/inputHandler/VoidIH";
-import {ICameraHandler, PerspectiveCameraHandler} from "../common/canvas/ICameraHandler";
 import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
-import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {TransformControls} from "three/examples/jsm/controls/TransformControls";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {ObjectProps} from "./objects/ImportedObject";
+import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
+import {createInteriorArrangerState, initializeInteriorArrangerState} from "../common/context/InteriorArrangerDefaults";
 
 type Props = {
     className?: string,
+    scene: Scene,
     sceneObjects: SceneObjectsState,
     objectDefinitions: Array<ObjectProps>,
 }
 
-function createBetterWebGLRenderer(rendererParams: WebGLRendererParameters) {
-    const webGLRenderer = new WebGLRenderer(rendererParams);
-    webGLRenderer.toneMapping = ACESFilmicToneMapping;
-    webGLRenderer.toneMappingExposure = 1;
-    // webGLRenderer.outputEncoding = sRGBEncoding;
-    return webGLRenderer;
-}
-
-export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects, objectDefinitions }: Props) => {
-
-    const [scene] = useState<Scene>(new Scene()); // new scene is created on component reload
-
+export const InteriorArrangerStateParent: React.FC<Props> = ({ scene, sceneObjects, objectDefinitions }: Props) => {
+    
+    const [interiorArrangerState, setInteriorArrangerState] = useState(createInteriorArrangerState);
     const [zoom, setZoom] = useState<number>(0.6);
-
-    const { current: cameraHandler } = useRef<ICameraHandler>(
-        new PerspectiveCameraHandler(new PerspectiveCamera(50), Math.PI)
-    );
-    const { current: planObjectsConverter } = useRef<PlanToArrangerConverter>(new PlanToArrangerConverter());
-    const mainInputHandler: MainInputHandler = new MainInputHandler(new VoidIH());
-    const rendererParams: WebGLRendererParameters = {
-        precision: "highp",
-        antialias: true,
-    };
-
-    const { current: renderer } = useRef(createBetterWebGLRenderer(rendererParams));
-    const { current: orbit } = useRef(new OrbitControls(cameraHandler.getCamera(), renderer.domElement));
-    const { current: transform } = useRef(new TransformControls(cameraHandler.getCamera(), renderer.domElement));
+    
+    const [ planObjectsConverter ] = useState(new PlanToArrangerConverter());
 
     const setCameraZoomHandler = (zoom: number) => {
-        cameraHandler.setZoom(zoom);
+        interiorArrangerState.cameraHandler.setZoom(zoom);
         setZoom(zoom);
     };
 
     useEffect(() => {
-        // const hemiLight = new HemisphereLight("white", "grey");
-        // const directLight = new DirectionalLight("white", 1);
-        // directLight.position.set(0, 40, 20);
-        // directLight.target.position.set(0, 0, 0);
-        //
-        // scene.add(directLight);
-
-        const light = new AmbientLight( 0xffffff ); // soft white light
-        scene.add(light);
-
-        cameraHandler.setPosition(new Vector3(0, 50, 20));
-        cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
-        cameraHandler.setZoom(zoom);
+        initializeInteriorArrangerState(scene, interiorArrangerState);
+        interiorArrangerState.cameraHandler.setZoom(zoom);
 
         // todo: return stuff that's to be inserted into map which will be held as state in this component.
         const temp = planObjectsConverter.convertPlanObjects(sceneObjects);
@@ -187,20 +148,20 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects, obj
             // transform.attach(group);
             // scene.add(transform);
         });
-    }, [sceneObjects]);
+    }, [sceneObjects, interiorArrangerState, scene]);
 
     return (
         <>
             <Canvas
                 scene={scene}
-                renderer={renderer}
-                cameraHandler={cameraHandler}
-                mainInputHandler={mainInputHandler}
+                renderer={interiorArrangerState.renderer}
+                cameraHandler={interiorArrangerState.cameraHandler}
+                mainInputHandler={interiorArrangerState.mainInputHandler}
             />
             <InteriorArrangerMainController
                 className={"app-bottom-menu"}
                 scene={scene}
-                mainInputHandler={mainInputHandler}
+                mainInputHandler={interiorArrangerState.mainInputHandler}
                 objectDefinitions={objectDefinitions}
                 placedObjects={sceneObjects.placedObjects}
             />

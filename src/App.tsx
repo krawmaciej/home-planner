@@ -18,11 +18,12 @@ enum UISelection {
 
 export const App: React.FC = () => {
 
+    const [sharedScene] = useState(new Scene());
+
     const [sceneObjectsState, setSceneObjectsState] = useState<SceneObjectsState>(createSceneObjectsState);
     const [doorDefinitions, setDoorDefinitions] = useState(new Array<ComponentProps>());
     const [windowDefinitions, setWindowDefinitions] = useState(new Array<ComponentProps>());
     const [objectDefinitions, setObjectDefinitions] = useState(new Array<ObjectProps>());
-    const { current: floorPlanScene } = useRef<Scene>(new Scene());
 
     // load file
     const inputRef = useRef<HTMLInputElement>(null);
@@ -76,7 +77,7 @@ export const App: React.FC = () => {
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}
                 objectDefinitions={objectDefinitions}
-                floorPlanScene={floorPlanScene}
+                sharedScene={sharedScene}
             />
             <input ref={inputRef} className="d-none" type="file" onChange={handleFile}/>
         </div>
@@ -89,7 +90,7 @@ type SelectionProps = {
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
     objectDefinitions: Array<ObjectProps>,
-    floorPlanScene: Scene,
+    sharedScene: Scene,
 }
 
 const SelectCanvas: React.FC<SelectionProps> = ({
@@ -97,7 +98,7 @@ const SelectCanvas: React.FC<SelectionProps> = ({
                                                     sceneObjectsState,
                                                     doorDefinitions,
                                                     windowDefinitions,
-                                                    floorPlanScene,
+                                                    sharedScene,
                                                     objectDefinitions,
 }: SelectionProps) => {
     console.log("Select reload");
@@ -105,6 +106,7 @@ const SelectCanvas: React.FC<SelectionProps> = ({
         return (
             <InteriorArrangerStateParent
                 className="app-bottom-menu"
+                scene={sharedScene}
                 sceneObjects={sceneObjectsState}
                 objectDefinitions={objectDefinitions}
             />
@@ -116,7 +118,7 @@ const SelectCanvas: React.FC<SelectionProps> = ({
                 sceneObjects={sceneObjectsState}
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}
-                scene={floorPlanScene}
+                scene={sharedScene}
             />
         );
     }

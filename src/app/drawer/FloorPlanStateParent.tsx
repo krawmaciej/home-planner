@@ -41,7 +41,7 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
         initializeFloorPlan(scene, floorPlanState);
         floorPlanState.cameraHandler.setZoom(zoom);
         console.log("scene objects change.");
-    }, [sceneObjects]);
+    }, [sceneObjects, scene, floorPlanState]);
 
     useEffect(() => {
         console.log("floor plan state change");

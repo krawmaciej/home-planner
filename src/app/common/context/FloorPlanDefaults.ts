@@ -1,4 +1,11 @@
-import {Color, GridHelper, OrthographicCamera, Scene, Vector3, WebGLRenderer} from "three";
+import {
+    Color,
+    GridHelper,
+    OrthographicCamera,
+    Scene,
+    Vector3,
+    WebGLRenderer
+} from "three";
 import {ICameraHandler, OrthographicCameraHandler} from "../canvas/ICameraHandler";
 import {MainInputHandler} from "../canvas/inputHandler/MainInputHandler";
 import {WallThickness} from "../../drawer/objects/wall/WallThickness";
