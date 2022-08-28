@@ -12,6 +12,7 @@ import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {Scene} from "three";
 import {ComponentProps} from "./objects/window/WallComponent";
+import {disposeSceneObjects} from "../common/context/SceneOperations";
 
 type Props = {
     className?: string,
@@ -32,7 +33,7 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
     };
 
     useEffect(() => {
-        console.log("On mount");
+        console.log("Floor plan state on mount");
     }, []);
 
     useEffect(() => {
@@ -40,16 +41,12 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
         // disposeSceneObjects(scene, floorPlanState.renderer);
         initializeFloorPlan(scene, floorPlanState);
         floorPlanState.cameraHandler.setZoom(zoom);
-        console.log("scene objects change.");
     }, [sceneObjects, scene, floorPlanState]);
 
     useEffect(() => {
-        console.log("floor plan state change");
-    }, [floorPlanState]);
-
-    useEffect(() => {
         return () => {
-            console.log("unmount");
+            disposeSceneObjects(scene, floorPlanState.renderer);
+            console.log("floor plan state on dismount");
         };
     }, []);
 

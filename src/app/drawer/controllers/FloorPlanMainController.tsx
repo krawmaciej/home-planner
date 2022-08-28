@@ -1,4 +1,4 @@
-import React, {createContext, useEffect, useRef, useState} from "react";
+import React, {createContext, useRef, useState} from "react";
 import { WallComponentController } from "./WallComponentController";
 import { ControllerFactory, ComponentProvider } from "./ControllerFactory";
 import { SelectMainController } from "./SelectMainController";
@@ -93,11 +93,6 @@ export const FloorPlanMainController: React.FC<Props> = ({
     const [wallComponentAdder] = useState(new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, 5 / 10)); // todo: same as above
     const [floorsDrawer] = useState(new FloorsDrawer(scene, collisionDetector, floors, placedWalls));
 
-    useEffect(() => {
-        console.log("Floorplanmain controller mounted");
-        setType(MainControllerType.SELECT);
-    }, []);
-
     // dependency container
     const context: FloorPlanContextType = {
         mainInputHandler,
@@ -110,8 +105,6 @@ export const FloorPlanMainController: React.FC<Props> = ({
         doorDefinitions,
         windowDefinitions,
     };
-
-    console.log("context should be reloaded now with different wall drawer and compo adder");
 
     return (
         <FloorPlanContext.Provider value={context}>

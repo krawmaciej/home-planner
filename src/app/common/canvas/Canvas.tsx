@@ -8,7 +8,6 @@ import {
 } from "three";
 import { MainInputHandler } from "./inputHandler/MainInputHandler";
 import {ICameraHandler} from "./ICameraHandler";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 type Pointer = {
     onCanvas: boolean,
@@ -19,8 +18,7 @@ type Pointer = {
 type Props = {
     scene: Scene,
     renderer: WebGLRenderer,
-    controls?: OrbitControls,
-    cameraHandler: ICameraHandler,
+    cameraHandler: ICameraHandler, // todo: this all will be global and updated in App.tsx
     mainInputHandler: MainInputHandler,
 }
 
@@ -163,6 +161,9 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 
 };
 
+// todo: move Canvas to app an have whole canvas state as global, if something has to change update objects themselves, don't rerender
 export const Canvas = memo(CanvasBase, (prev, next) => {
-    return prev.scene === next.scene;
+    const b = prev.scene === next.scene;
+    console.log("boolean canvas comparison", b);
+    return b;
 });

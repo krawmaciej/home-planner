@@ -57,7 +57,6 @@ export const App: React.FC = () => {
     };
 
     useEffect(() => {
-        console.log("App mount");
         loadDoors().then(doors => setDoorDefinitions(doors));
         loadWindows().then(windows => setWindowDefinitions(windows));
         loadObjects().then(objects => setObjectDefinitions(objects));
@@ -101,7 +100,6 @@ const SelectCanvas: React.FC<SelectionProps> = ({
                                                     sharedScene,
                                                     objectDefinitions,
 }: SelectionProps) => {
-    console.log("Select reload");
     if (selection === UISelection.INTERIOR_ARRANGER) {
         return (
             <InteriorArrangerStateParent
@@ -115,10 +113,10 @@ const SelectCanvas: React.FC<SelectionProps> = ({
         return (
             <FloorPlanStateParent
                 className="app-bottom-menu"
+                scene={sharedScene}
                 sceneObjects={sceneObjectsState}
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}
-                scene={sharedScene}
             />
         );
     }

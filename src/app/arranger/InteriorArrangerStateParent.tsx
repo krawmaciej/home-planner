@@ -12,6 +12,7 @@ import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ObjectProps} from "./objects/ImportedObject";
 import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
 import {createInteriorArrangerState, initializeInteriorArrangerState} from "../common/context/InteriorArrangerDefaults";
+import {disposeSceneObjects} from "../common/context/SceneOperations";
 
 type Props = {
     className?: string,
@@ -31,6 +32,17 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ scene, sceneObjec
         interiorArrangerState.cameraHandler.setZoom(zoom);
         setZoom(zoom);
     };
+
+    useEffect(() => {
+        console.log("interior arranger state on mount");
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            console.log("interior arranger state on dismount");
+            disposeSceneObjects(scene, interiorArrangerState.renderer);
+        };
+    }, []);
 
     useEffect(() => {
         // disposeSceneObjects(scene, interiorArrangerState.renderer);

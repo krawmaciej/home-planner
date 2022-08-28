@@ -61,7 +61,6 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
 
     useEffect(() => {
         context.changeMenuName("Rzut 3D");
-        console.log("in default");
     }, [context.changeMenuName]);
 
     return (
@@ -87,8 +86,6 @@ export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInpu
 
     const changeMenuName = (newMenuName: string) => {
         setMenuName(newMenuName);
-        console.log("I've been called lol ", newMenuName);
-        console.log(menuName);
     };
 
     // dependency container
