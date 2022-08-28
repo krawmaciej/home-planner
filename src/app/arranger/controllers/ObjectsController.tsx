@@ -62,15 +62,6 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
 
 
 export const ObjectsController: React.FC<SelectDefaultMenuProps> = ({ selectDefaultMenu: upperSelectDefaultMenu }) => {
-    const context = useContext(InteriorArrangerContext);
-    if (context === undefined) {
-        throw new Error("Context in Objects Controller is undefined.");
-    }
-
-    useEffect(() => {
-        context.changeMenuName("Rzut 3D");
-    }, [context.changeMenuName]);
-
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
 
     const selectDefaultMenu = () => {

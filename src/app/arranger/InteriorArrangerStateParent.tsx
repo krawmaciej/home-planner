@@ -25,7 +25,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ scene, sceneObjec
     const [interiorArrangerState, setInteriorArrangerState] = useState(createInteriorArrangerState);
     const [zoom, setZoom] = useState<number>(0.6);
     
-    const [ planObjectsConverter ] = useState(new PlanToArrangerConverter());
+    const [planObjectsConverter] = useState(new PlanToArrangerConverter());
 
     const setCameraZoomHandler = (zoom: number) => {
         interiorArrangerState.cameraHandler.setZoom(zoom);
@@ -33,6 +33,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ scene, sceneObjec
     };
 
     useEffect(() => {
+        // disposeSceneObjects(scene, interiorArrangerState.renderer);
         initializeInteriorArrangerState(scene, interiorArrangerState);
         interiorArrangerState.cameraHandler.setZoom(zoom);
 

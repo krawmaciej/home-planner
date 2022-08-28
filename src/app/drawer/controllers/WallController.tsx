@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import { WallDrawingIH } from "../UI/inputHandlers/wallDrawing/WallDrawingIH";
+import { WallDrawingIH } from "../IO/inputHandlers/wallDrawing/WallDrawingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";
 

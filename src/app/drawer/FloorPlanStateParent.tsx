@@ -4,7 +4,6 @@ import React, {useEffect, useState} from 'react';
 
 import {FloorPlanMainController} from "./controllers/FloorPlanMainController";
 import {
-    clearScene,
     createFloorPlanState,
     FloorPlanState,
     initializeFloorPlan
@@ -37,7 +36,8 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
     }, []);
 
     useEffect(() => {
-        clearScene(scene, sceneObjects);
+        // clearScene(scene, sceneObjects);
+        // disposeSceneObjects(scene, floorPlanState.renderer);
         initializeFloorPlan(scene, floorPlanState);
         floorPlanState.cameraHandler.setZoom(zoom);
         console.log("scene objects change.");

@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import {Object3D, Scene} from "three";
 import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandler";
 import {ObjectProps} from "../objects/ImportedObject";
@@ -58,7 +58,11 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
     if (context === undefined) {
         throw new Error("Context in Interrior Arranger's Default is undefined.");
     }
-    context.changeMenuName("Rzut 3D");
+
+    useEffect(() => {
+        context.changeMenuName("Rzut 3D");
+        console.log("in default");
+    }, [context.changeMenuName]);
 
     return (
         <Button onClick={() => changeSelection(Selection.OBJECTS)} variant={DEFAULT_VARIANT}>
@@ -81,8 +85,10 @@ export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInpu
         setMenuSelection(selection);
     };
 
-    const changeMenuName = (menuName: string) => {
-        setMenuName(menuName);
+    const changeMenuName = (newMenuName: string) => {
+        setMenuName(newMenuName);
+        console.log("I've been called lol ", newMenuName);
+        console.log(menuName);
     };
 
     // dependency container
