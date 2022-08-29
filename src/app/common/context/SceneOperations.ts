@@ -12,7 +12,6 @@ type TraverseObject = {
 }
 
 export const disposeSceneObjects = (scene: Scene, renderer: WebGLRenderer) => {
-
     const objectsToRemove = new Array<Object3D<any>>();
 
     scene.traverse(o => {
@@ -35,7 +34,6 @@ export const disposeSceneObjects = (scene: Scene, renderer: WebGLRenderer) => {
         objectsToRemove.push(o);
     });
 
-    console.log(objectsToRemove);
     scene.remove(...objectsToRemove);
 
     renderer.renderLists.dispose();

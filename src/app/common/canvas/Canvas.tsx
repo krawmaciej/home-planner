@@ -24,6 +24,7 @@ type Props = {
 const CanvasBase: React.FC<Props> = (props: Props) => {
 
     console.log("Canvas: ", props.scene.id);
+    console.log(props);
 
     const mount = useRef<HTMLDivElement>(null);
 
@@ -48,13 +49,6 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             width = mount?.current?.clientWidth ?? 0;
             height = mount?.current?.clientHeight ?? 0;
 
-            // camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / - 2, frustumSize / 2, 0.1, 500);
-            // camera = new PerspectiveCamera(50, width / height, 0.1, 1000);
-
-            // renderer.setSize(width, height); // todo: remove
-
-            // controls = new OrbitControls(camera, renderer.domElement);
-
             // render in given space on webpage
             mount?.current?.appendChild(props.renderer.domElement);
 
@@ -75,24 +69,22 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
         }
 
         function render() {
-            if (!pointer.onCanvas) {
-                props.renderer.render(props.scene, props.mainCameraHandler.getCamera());
-                return; // if pointer not on canvas then skip
+            if (pointer.onCanvas) {
+                const unprojection = pointer.vectorToUnproject.clone().unproject(props.mainCameraHandler.getCamera());
+
+                if (pointer.clicked) {
+                    props.mainInputHandler.handleClick(unprojection);
+                    // the click was read
+                    pointer = {
+                        onCanvas: pointer.onCanvas,
+                        vectorToUnproject: pointer.vectorToUnproject.clone(),
+                        clicked: false
+                    };
+                } else {
+                    props.mainInputHandler.handleMovement(unprojection);
+                }
             }
 
-            const unprojection = pointer.vectorToUnproject.clone().unproject(props.mainCameraHandler.getCamera());
-
-            if (pointer.clicked) {
-                props.mainInputHandler.handleClick(unprojection);
-                // the click was read
-                pointer = {
-                    onCanvas: pointer.onCanvas,
-                    vectorToUnproject: pointer.vectorToUnproject.clone(),
-                    clicked: false
-                };
-            } else {
-                props.mainInputHandler.handleMovement(unprojection);
-            }
             props.renderer.render(props.scene, props.mainCameraHandler.getCamera());
         }
 
@@ -101,7 +93,6 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             height = mount?.current?.clientHeight ?? 0;
             const aspect = width / height;
             props.mainCameraHandler.setAspectRatio(aspect);
-            // props.controls?.update(); // // only required if controls.enableDamping = true, or if controls.autoRotate = true
             props.renderer.setSize(width, height);
             render();
         }
@@ -157,7 +148,6 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 
 };
 
-// todo: move Canvas to app an have whole canvas state as global, if something has to change update objects themselves, don't rerender
 export const Canvas = memo(CanvasBase, (prev, next) => {
     return prev.scene === next.scene;
 });

@@ -2,28 +2,26 @@ import {
     Color,
     GridHelper,
     OrthographicCamera,
-    Scene,
     Vector3,
     WebGLRenderer
 } from "three";
 import {OrthographicCameraHandler} from "../canvas/ICameraHandler";
-import {MainInputHandler} from "../canvas/inputHandler/MainInputHandler";
-import {WallThickness} from "../../drawer/objects/wall/WallThickness";
-import {VoidIH} from "../canvas/inputHandler/VoidIH";
 import { ObjectElevation} from "../../drawer/constants/Types";
-import {SceneObjectsState} from "./SceneObjectsDefaults";
 import {CanvasState} from "./CanvasDefaults";
 
 export type FloorPlanState = {
-    wallThickness: WallThickness,
+    camera: OrthographicCameraHandler,
 }
 
-export const createCameraHandler = () => {
-    return new OrthographicCameraHandler(new OrthographicCamera(0, 0, 0, 0, 0.1, 500), 18);
+export const createFloorPlanState = (): FloorPlanState => {
+    return {
+        camera: createCameraHandler(),
+    };
 };
 
-export const createMainInputHandler = () => {
-    return new MainInputHandler(new VoidIH());
+export const createCameraHandler = () => {
+    console.log("I've broken camera handler");
+    return new OrthographicCameraHandler(new OrthographicCamera(0, 0, 0, 0, 0.1, 500), 18);
 };
 
 export const createRenderer = () => {
@@ -31,12 +29,6 @@ export const createRenderer = () => {
         precision: "highp",
         antialias: true,
     });
-};
-
-export const createFloorPlanState = (): FloorPlanState => {
-    return {
-        wallThickness: new WallThickness(1.0),
-    };
 };
 
 export const initializeWithFloorPlan = (canvasState: CanvasState) => {
@@ -48,9 +40,5 @@ export const initializeWithFloorPlan = (canvasState: CanvasState) => {
 
     canvasState.mainCameraHandler.setPosition(new Vector3(0.0, 5.0, 0.0)); // todo: move floor plan to state
     canvasState.mainCameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
-};
-
-export const clearScene = (scene: Scene, sceneObjectsState: SceneObjectsState) => {
-    sceneObjectsState.placedWalls.forEach(wall => wall.removeFrom(scene));
-    sceneObjectsState.wallComponents.forEach(component => component.removeFrom(scene));
+    console.log("set positions and all on floor", canvasState);
 };

@@ -6,8 +6,6 @@ import {
     WebGLRenderer,
 } from "three";
 import {PerspectiveCameraHandler} from "../canvas/ICameraHandler";
-import {MainInputHandler} from "../canvas/inputHandler/MainInputHandler";
-import {VoidIH} from "../canvas/inputHandler/VoidIH";
 import {SceneObjectsState} from "./SceneObjectsDefaults";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
@@ -15,16 +13,22 @@ import {CanvasState} from "./CanvasDefaults";
 import {MainCameraHandler} from "../MainCameraHandler";
 
 export type InteriorArrangerState = {
+    camera: PerspectiveCameraHandler,
     orbitControls: OrbitControls,
     transformControls: TransformControls,
 }
 
-export const createCameraHandler = () => {
-    return new PerspectiveCameraHandler(new PerspectiveCamera(50), Math.PI);
+export const createInteriorArrangerState = (renderer: WebGLRenderer): InteriorArrangerState => {
+    const camera = createCameraHandler();
+    return {
+        camera: camera,
+        orbitControls: createOrbitControls(camera.getCamera(), renderer.domElement),
+        transformControls: createTransformControls(camera.getCamera(), renderer.domElement),
+    };
 };
 
-export const createInputHandler = () => {
-    return new VoidIH();
+export const createCameraHandler = () => {
+    return new PerspectiveCameraHandler(new PerspectiveCamera(50), Math.PI);
 };
 
 export const createOrbitControls = (camera: Camera, domElement: HTMLElement) => {
@@ -39,27 +43,6 @@ const updateRenderer = (renderer: WebGLRenderer) => {
     renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1;
     // renderer.outputEncoding = sRGBEncoding;
-};
-
-const updateCameraHandler = (mainCameraHandler: MainCameraHandler) => {
-    mainCameraHandler.changeHandler(createCameraHandler());
-};
-
-const updateInputHandler = (mainInputHandler: MainInputHandler) => {
-    mainInputHandler.changeHandlingStrategy(createInputHandler());
-};
-
-export const updateWithInteriorArranger = (canvasState: CanvasState) => {
-    updateRenderer(canvasState.renderer);
-    updateCameraHandler(canvasState.mainCameraHandler);
-    updateInputHandler(canvasState.mainInputHandler);
-};
-
-export const createInteriorArrangerState = ({renderer, mainCameraHandler}: CanvasState): InteriorArrangerState => {
-    return {
-        orbitControls: createOrbitControls(mainCameraHandler.getCamera(), renderer.domElement),
-        transformControls: createTransformControls(mainCameraHandler.getCamera(), renderer.domElement),
-    };
 };
 
 export const initializeWithInteriorArranger = (canvasState: CanvasState) => {

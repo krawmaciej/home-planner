@@ -4,25 +4,27 @@ import React, {useEffect, useState} from 'react';
 
 import {FloorPlanMainController} from "./controllers/FloorPlanMainController";
 import {
-    FloorPlanState,
     initializeWithFloorPlan
 } from "../common/context/FloorPlanDefaults";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {ComponentProps} from "./objects/window/WallComponent";
 import {disposeSceneObjects} from "../common/context/SceneOperations";
 import {CanvasState} from "../common/context/CanvasDefaults";
+import {WallThickness} from "./objects/wall/WallThickness";
+import {WebGLRenderer} from "three";
 
 type Props = {
     className?: string,
+    renderer: WebGLRenderer,
     sceneObjects: SceneObjectsState,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
     canvasState: CanvasState,
 }
 
-export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, windowDefinitions, canvasState }) => {
+export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, windowDefinitions, canvasState, renderer }) => {
 
-    const [floorPlanState, setFloorPlanState] = useState<FloorPlanState | undefined>();
+    const [wallThickness, setWallThickness] = useState(new WallThickness(1.0));
     const [zoom, setZoom] = useState<number>(0.6); // todo: retrieve zoom from state or from cam handler
 
     const setCameraZoomHandler = (zoom: number) => {
@@ -33,18 +35,18 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
     useEffect(() => {
         return () => {
             console.log("floor plan state on dismount");
-            disposeSceneObjects(canvasState.scene, canvasState.renderer);
+            disposeSceneObjects(canvasState.scene, renderer);
         };
     }, []);
 
     useEffect(() => {
-        disposeSceneObjects(canvasState.scene, canvasState.renderer);
+        disposeSceneObjects(canvasState.scene, renderer);
         initializeWithFloorPlan(canvasState);
 
         canvasState.mainCameraHandler.setZoom(zoom);
     }, [sceneObjects, canvasState]);
 
-    if (floorPlanState === undefined) {
+    if (wallThickness === undefined) {
         return (<p>Wczytywanie...</p>);
     } else {
         return (
@@ -53,7 +55,7 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
                     className={"app-bottom-menu"}
                     scene={canvasState.scene}
                     mainInputHandler={canvasState.mainInputHandler}
-                    wallThickness={floorPlanState.wallThickness}
+                    wallThickness={wallThickness}
                     wallHeight={sceneObjects.wallsHeight}
                     placedWalls={sceneObjects.placedWalls}
                     wallComponents={sceneObjects.wallComponents}

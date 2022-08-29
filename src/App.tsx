@@ -12,14 +12,23 @@ import {loadDoors, loadObjects, loadWindows} from "./app/drawer/models/WallCompo
 import {ObjectProps} from "./app/arranger/objects/ImportedObject";
 import {Canvas} from "./app/common/canvas/Canvas";
 import {CanvasState, createCanvasState} from "./app/common/context/CanvasDefaults";
+import { createFloorPlanState} from "./app/common/context/FloorPlanDefaults";
+import {createInteriorArrangerState} from "./app/common/context/InteriorArrangerDefaults";
+import {ACESFilmicToneMapping, WebGLRenderer} from "three";
 
-enum UISelection {
-    PLAN_DRAWER, INTERIOR_ARRANGER,
+type Props = {
+    renderer: WebGLRenderer,
 }
 
-export const App: React.FC = () => {
+enum UISelection {
+    FLOOR_PLAN, INTERIOR_ARRANGER,
+}
+
+export const App: React.FC<Props> = ({ renderer }) => {
 
     const [canvasState] = useState(createCanvasState);
+    const [floorPlanState] = useState(createFloorPlanState);
+    const [interiorArrangerState] = useState(createInteriorArrangerState(renderer));
     
     const [sceneObjectsState, setSceneObjectsState] = useState<SceneObjectsState>(createSceneObjectsState);
     const [doorDefinitions, setDoorDefinitions] = useState(new Array<ComponentProps>());
@@ -47,14 +56,36 @@ export const App: React.FC = () => {
         fileReader.readAsText(file);
     };
 
-    const [currentMenu, setCurrentMenu] = useState<UISelection>(UISelection.PLAN_DRAWER);
+    const [currentMenu, setCurrentMenu] = useState(UISelection.FLOOR_PLAN);
+
+    // update canvasState
+    useEffect(() => {
+        if (currentMenu === UISelection.FLOOR_PLAN) {
+            canvasState.mainCameraHandler.changeHandler(floorPlanState.camera);
+
+            console.log("toneMap: ", renderer.toneMapping);
+            console.log("toneExpo: ", renderer.toneMappingExposure);
+            console.log("outputEnc: ", renderer.outputEncoding);
+            return;
+        }
+
+        if (currentMenu === UISelection.INTERIOR_ARRANGER) {
+            canvasState.mainCameraHandler.changeHandler(interiorArrangerState.camera);
+            interiorArrangerState.transformControls.camera = interiorArrangerState.camera.getCamera();
+            interiorArrangerState.orbitControls.object = interiorArrangerState.camera.getCamera();
+            renderer.toneMapping = ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1;
+            // renderer.outputEncoding = sRGBEncoding;
+            return;
+        }
+    }, [currentMenu]);
 
     const chooseInteriorArranger = () => {
         setCurrentMenu(UISelection.INTERIOR_ARRANGER);
     };
 
     const choosePlanDrawer = () => {
-        setCurrentMenu(UISelection.PLAN_DRAWER);
+        setCurrentMenu(UISelection.FLOOR_PLAN);
     };
 
     useEffect(() => {
@@ -73,12 +104,13 @@ export const App: React.FC = () => {
             />
             <Canvas
                 scene={canvasState.scene}
-                renderer={canvasState.renderer}
+                renderer={renderer}
                 mainCameraHandler={canvasState.mainCameraHandler}
                 mainInputHandler={canvasState.mainInputHandler}
             />
             <SelectController
                 selection={currentMenu}
+                renderer={renderer}
                 sceneObjectsState={sceneObjectsState}
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}
@@ -92,6 +124,7 @@ export const App: React.FC = () => {
 
 type SelectionProps = {
     selection: UISelection,
+    renderer: WebGLRenderer,
     sceneObjectsState: SceneObjectsState,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
@@ -101,6 +134,7 @@ type SelectionProps = {
 
 const SelectController: React.FC<SelectionProps> = ({
                                                     selection,
+                                                    renderer,
                                                     sceneObjectsState,
                                                     doorDefinitions,
                                                     windowDefinitions,
@@ -109,22 +143,28 @@ const SelectController: React.FC<SelectionProps> = ({
 }: SelectionProps) => {
     if (selection === UISelection.INTERIOR_ARRANGER) {
         return (
-            <InteriorArrangerStateParent
-                className="app-bottom-menu"
-                canvasState={canvasState}
-                sceneObjects={sceneObjectsState}
-                objectDefinitions={objectDefinitions}
-            />
+            <>
+                <InteriorArrangerStateParent
+                    className="app-bottom-menu"
+                    renderer={renderer}
+                    canvasState={canvasState}
+                    sceneObjects={sceneObjectsState}
+                    objectDefinitions={objectDefinitions}
+                />
+            </>
         );
     } else {
         return (
-            <FloorPlanStateParent
-                className="app-bottom-menu"
-                canvasState={canvasState}
-                sceneObjects={sceneObjectsState}
-                doorDefinitions={doorDefinitions}
-                windowDefinitions={windowDefinitions}
-            />
+            <>
+                <FloorPlanStateParent
+                    className="app-bottom-menu"
+                    renderer={renderer}
+                    canvasState={canvasState}
+                    sceneObjects={sceneObjectsState}
+                    doorDefinitions={doorDefinitions}
+                    windowDefinitions={windowDefinitions}
+                />
+            </>
         );
     }
 };
