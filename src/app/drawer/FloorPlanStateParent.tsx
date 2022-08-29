@@ -3,9 +3,6 @@ import "../css/MainStyle.css";
 import React, {useEffect, useState} from 'react';
 
 import {FloorPlanMainController} from "./controllers/FloorPlanMainController";
-import {
-    initializeWithFloorPlan
-} from "../common/context/FloorPlanDefaults";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {ComponentProps} from "./objects/window/WallComponent";
 import {disposeSceneObjects} from "../common/context/SceneOperations";
@@ -37,12 +34,9 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
             console.log("floor plan state on dismount");
             disposeSceneObjects(canvasState.scene, renderer);
         };
-    }, []);
+    }, [sceneObjects, canvasState]);
 
     useEffect(() => {
-        disposeSceneObjects(canvasState.scene, renderer);
-        initializeWithFloorPlan(canvasState);
-
         canvasState.mainCameraHandler.setZoom(zoom);
     }, [sceneObjects, canvasState]);
 

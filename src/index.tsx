@@ -1,14 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { App } from './App';
-import {WebGLRenderer} from "three";
-
-const renderer = new WebGLRenderer();
+import {App} from "./App";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App renderer={renderer}/>
+    <App/>
   </React.StrictMode>,
   document.getElementById('root')
 );

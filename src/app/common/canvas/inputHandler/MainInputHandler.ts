@@ -1,5 +1,6 @@
 import { Vector3 } from "three";
 import { IInputHandler } from "./IInputHandler";
+import {VoidIH} from "./VoidIH";
 
 /**
  * It is stateful because it is shared in canvas.
@@ -9,8 +10,8 @@ export class MainInputHandler {
 
     private delegate: IInputHandler;
 
-    public constructor(inputHandler: IInputHandler) {
-        this.delegate = inputHandler;
+    public constructor() {
+        this.delegate = new VoidIH();
     }
 
     public changeHandlingStrategy(inputHandler: IInputHandler) {
@@ -23,5 +24,9 @@ export class MainInputHandler {
     
     public handleClick(point: Vector3): void {
         this.delegate.handleClick(point);
+    }
+
+    public detachCurrentHandler() {
+        this.delegate = new VoidIH();
     }
 }

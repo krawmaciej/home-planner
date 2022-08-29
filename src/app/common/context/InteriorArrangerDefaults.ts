@@ -1,34 +1,25 @@
 import {
     ACESFilmicToneMapping, AmbientLight, Camera,
-    PerspectiveCamera,
     Scene,
     Vector3,
     WebGLRenderer,
 } from "three";
-import {PerspectiveCameraHandler} from "../canvas/ICameraHandler";
 import {SceneObjectsState} from "./SceneObjectsDefaults";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {CanvasState} from "./CanvasDefaults";
-import {MainCameraHandler} from "../MainCameraHandler";
+import {PerspectiveCameraHandler} from "../canvas/ICameraHandler";
 
 export type InteriorArrangerState = {
-    camera: PerspectiveCameraHandler,
     orbitControls: OrbitControls,
     transformControls: TransformControls,
 }
 
-export const createInteriorArrangerState = (renderer: WebGLRenderer): InteriorArrangerState => {
-    const camera = createCameraHandler();
+export const createInteriorArrangerState = (camera: Camera, renderer: WebGLRenderer): InteriorArrangerState => {
     return {
-        camera: camera,
-        orbitControls: createOrbitControls(camera.getCamera(), renderer.domElement),
-        transformControls: createTransformControls(camera.getCamera(), renderer.domElement),
+        orbitControls: createOrbitControls(camera, renderer.domElement),
+        transformControls: createTransformControls(camera, renderer.domElement),
     };
-};
-
-export const createCameraHandler = () => {
-    return new PerspectiveCameraHandler(new PerspectiveCamera(50), Math.PI);
 };
 
 export const createOrbitControls = (camera: Camera, domElement: HTMLElement) => {
@@ -36,7 +27,9 @@ export const createOrbitControls = (camera: Camera, domElement: HTMLElement) => 
 };
 
 export const createTransformControls = (camera: Camera, domElement: HTMLElement) => {
-    return new TransformControls(camera, domElement);
+    const transformControls = new TransformControls(camera, domElement);
+    transformControls.enabled = false;
+    return transformControls;
 };
 
 const updateRenderer = (renderer: WebGLRenderer) => {
@@ -45,12 +38,12 @@ const updateRenderer = (renderer: WebGLRenderer) => {
     // renderer.outputEncoding = sRGBEncoding;
 };
 
-export const initializeWithInteriorArranger = (canvasState: CanvasState) => {
+export const initializeWithInteriorArranger = ({ scene }: CanvasState, cameraHandler: PerspectiveCameraHandler) => {
     const light = new AmbientLight( 0xffffff ); // soft white light
-    canvasState.scene.add(light);
+    scene.add(light);
 
-    canvasState.mainCameraHandler.setPosition(new Vector3(0, 50, 20));
-    canvasState.mainCameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
+    cameraHandler.setPosition(new Vector3(0, 50, 20));
+    cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
 };
 
 export const clearScene = (scene: Scene, sceneObjectsState: SceneObjectsState) => {

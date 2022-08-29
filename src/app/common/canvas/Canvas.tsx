@@ -69,20 +69,23 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
         }
 
         function render() {
-            if (pointer.onCanvas) {
-                const unprojection = pointer.vectorToUnproject.clone().unproject(props.mainCameraHandler.getCamera());
+            if (!pointer.onCanvas) {
+                props.renderer.render(props.scene, props.mainCameraHandler.getCamera());
+                return; // if pointer not on canvas then skip
+            }
 
-                if (pointer.clicked) {
-                    props.mainInputHandler.handleClick(unprojection);
-                    // the click was read
-                    pointer = {
-                        onCanvas: pointer.onCanvas,
-                        vectorToUnproject: pointer.vectorToUnproject.clone(),
-                        clicked: false
-                    };
-                } else {
-                    props.mainInputHandler.handleMovement(unprojection);
-                }
+            const unprojection = pointer.vectorToUnproject.clone().unproject(props.mainCameraHandler.getCamera());
+
+            if (pointer.clicked) {
+                props.mainInputHandler.handleClick(unprojection);
+                // the click was read
+                pointer = {
+                    onCanvas: pointer.onCanvas,
+                    vectorToUnproject: pointer.vectorToUnproject.clone(),
+                    clicked: false
+                };
+            } else {
+                props.mainInputHandler.handleMovement(unprojection);
             }
 
             props.renderer.render(props.scene, props.mainCameraHandler.getCamera());

@@ -7,9 +7,6 @@ import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ObjectProps} from "./objects/ImportedObject";
 import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
-import {
-    initializeWithInteriorArranger,
-} from "../common/context/InteriorArrangerDefaults";
 import {disposeSceneObjects} from "../common/context/SceneOperations";
 import {CanvasState} from "../common/context/CanvasDefaults";
 
@@ -36,12 +33,9 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
             console.log("interior arranger state on dismount");
             disposeSceneObjects(canvasState.scene, renderer);
         };
-    }, []);
+    }, [sceneObjects, canvasState]);
 
     useEffect(() => {
-        disposeSceneObjects(canvasState.scene, renderer);
-        initializeWithInteriorArranger(canvasState);
-
         canvasState.mainCameraHandler.setZoom(zoom);
 
         // todo: return stuff that's to be inserted into map which will be held as state in this component.
