@@ -1,13 +1,9 @@
 import "../../css/MainStyle.css";
 
 import React, {memo, useLayoutEffect, useRef} from "react";
-import {
-    Scene,
-    Vector3,
-    WebGLRenderer,
-} from "three";
-import { MainInputHandler } from "./inputHandler/MainInputHandler";
-import {ICameraHandler} from "./ICameraHandler";
+import {Scene, Vector3, WebGLRenderer,} from "three";
+import {MainInputHandler} from "./inputHandler/MainInputHandler";
+import {MainCameraHandler} from "../MainCameraHandler";
 
 type Pointer = {
     onCanvas: boolean,
@@ -18,7 +14,7 @@ type Pointer = {
 type Props = {
     scene: Scene,
     renderer: WebGLRenderer,
-    cameraHandler: ICameraHandler, // todo: this all will be global and updated in App.tsx
+    mainCameraHandler: MainCameraHandler,
     mainInputHandler: MainInputHandler,
 }
 
@@ -80,11 +76,11 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 
         function render() {
             if (!pointer.onCanvas) {
-                props.renderer.render(props.scene, props.cameraHandler.getCamera());
+                props.renderer.render(props.scene, props.mainCameraHandler.getCamera());
                 return; // if pointer not on canvas then skip
             }
 
-            const unprojection = pointer.vectorToUnproject.clone().unproject(props.cameraHandler.getCamera());
+            const unprojection = pointer.vectorToUnproject.clone().unproject(props.mainCameraHandler.getCamera());
 
             if (pointer.clicked) {
                 props.mainInputHandler.handleClick(unprojection);
@@ -97,14 +93,14 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             } else {
                 props.mainInputHandler.handleMovement(unprojection);
             }
-            props.renderer.render(props.scene, props.cameraHandler.getCamera());
+            props.renderer.render(props.scene, props.mainCameraHandler.getCamera());
         }
 
         function handleResize() {
             width = mount?.current?.clientWidth ?? 0;
             height = mount?.current?.clientHeight ?? 0;
             const aspect = width / height;
-            props.cameraHandler.setAspectRatio(aspect);
+            props.mainCameraHandler.setAspectRatio(aspect);
             // props.controls?.update(); // // only required if controls.enableDamping = true, or if controls.autoRotate = true
             props.renderer.setSize(width, height);
             render();
@@ -163,7 +159,5 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 
 // todo: move Canvas to app an have whole canvas state as global, if something has to change update objects themselves, don't rerender
 export const Canvas = memo(CanvasBase, (prev, next) => {
-    const b = prev.scene === next.scene;
-    console.log("boolean canvas comparison", b);
-    return b;
+    return prev.scene === next.scene;
 });

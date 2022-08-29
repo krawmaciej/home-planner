@@ -2,52 +2,53 @@ import "../css/MainStyle.css";
 
 import React, {useEffect, useState} from 'react';
 import { Box3, Box3Helper, Color, Group,
-    Scene,
     Vector3
 } from 'three';
 import { InteriorArrangerMainController } from "./controllers/InteriorArrangerMainController";
-import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ObjectProps} from "./objects/ImportedObject";
 import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
-import {createInteriorArrangerState, initializeInteriorArrangerState} from "../common/context/InteriorArrangerDefaults";
+import {
+    createInteriorArrangerState,
+    initializeWithInteriorArranger,
+    InteriorArrangerState
+} from "../common/context/InteriorArrangerDefaults";
 import {disposeSceneObjects} from "../common/context/SceneOperations";
+import {CanvasState} from "../common/context/CanvasDefaults";
 
 type Props = {
     className?: string,
-    scene: Scene,
+    canvasState: CanvasState
     sceneObjects: SceneObjectsState,
     objectDefinitions: Array<ObjectProps>,
 }
 
-export const InteriorArrangerStateParent: React.FC<Props> = ({ scene, sceneObjects, objectDefinitions }: Props) => {
+export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, sceneObjects, objectDefinitions }) => {
     
-    const [interiorArrangerState, setInteriorArrangerState] = useState(createInteriorArrangerState);
-    const [zoom, setZoom] = useState<number>(0.6);
-    
+    const [zoom, setZoom] = useState(0.6);
+    const [interiorArrangerState, setInteriorArrangerState] = useState<InteriorArrangerState | undefined>();
     const [planObjectsConverter] = useState(new PlanToArrangerConverter());
 
     const setCameraZoomHandler = (zoom: number) => {
-        interiorArrangerState.cameraHandler.setZoom(zoom);
+        canvasState.mainCameraHandler.setZoom(zoom);
         setZoom(zoom);
     };
 
     useEffect(() => {
-        console.log("interior arranger state on mount");
-    }, []);
-
-    useEffect(() => {
         return () => {
             console.log("interior arranger state on dismount");
-            disposeSceneObjects(scene, interiorArrangerState.renderer);
+            disposeSceneObjects(canvasState.scene, canvasState.renderer);
         };
     }, []);
 
     useEffect(() => {
-        // disposeSceneObjects(scene, interiorArrangerState.renderer);
-        initializeInteriorArrangerState(scene, interiorArrangerState);
-        interiorArrangerState.cameraHandler.setZoom(zoom);
+        disposeSceneObjects(canvasState.scene, canvasState.renderer);
+        initializeWithInteriorArranger(canvasState);
+        setInteriorArrangerState(createInteriorArrangerState(canvasState));
+
+
+        canvasState.mainCameraHandler.setZoom(zoom);
 
         // todo: return stuff that's to be inserted into map which will be held as state in this component.
         const temp = planObjectsConverter.convertPlanObjects(sceneObjects);
@@ -68,7 +69,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ scene, sceneObjec
         //     mesh.castShadow = true;
         // });
 
-        scene.add(...allMeshes);
+        canvasState.scene.add(...allMeshes);
 
         // scene.add(...wallFaceMeshes);
         // scene.add(...temp.wallCoverMeshes);
@@ -161,23 +162,21 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ scene, sceneObjec
             // transform.attach(group);
             // scene.add(transform);
         });
-    }, [sceneObjects, interiorArrangerState, scene]);
+    }, [sceneObjects, canvasState]);
 
-    return (
-        <>
-            <Canvas
-                scene={scene}
-                renderer={interiorArrangerState.renderer}
-                cameraHandler={interiorArrangerState.cameraHandler}
-                mainInputHandler={interiorArrangerState.mainInputHandler}
-            />
-            <InteriorArrangerMainController
-                className={"app-bottom-menu"}
-                scene={scene}
-                mainInputHandler={interiorArrangerState.mainInputHandler}
-                objectDefinitions={objectDefinitions}
-                placedObjects={sceneObjects.placedObjects}
-            />
-        </>
-    );
+    if (interiorArrangerState === undefined) {
+        return (<p>Wczytywanie...</p>);
+    } else {
+        return (
+            <>
+                <InteriorArrangerMainController
+                    className={"app-bottom-menu"}
+                    scene={canvasState.scene}
+                    mainInputHandler={canvasState.mainInputHandler}
+                    objectDefinitions={objectDefinitions}
+                    placedObjects={sceneObjects.placedObjects}
+                />
+            </>
+        );
+    }
 };

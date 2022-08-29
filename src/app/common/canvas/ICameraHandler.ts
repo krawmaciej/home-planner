@@ -8,6 +8,24 @@ export interface ICameraHandler {
     setAspectRatio(aspect: number): ICameraHandler;
 }
 
+export class NoCameraHandler implements ICameraHandler {
+    getCamera(): Camera {
+        throw new Error("Tried to get camera from NoCameraHandler."); // todo: might break some stuff...
+    }
+    setAspectRatio(): ICameraHandler {
+        return this;
+    }
+    setLookAt(): ICameraHandler {
+        return this;
+    }
+    setPosition(): ICameraHandler {
+        return this;
+    }
+    setZoom(): ICameraHandler {
+        return this;
+    }
+}
+
 export class OrthographicCameraHandler implements ICameraHandler {
 
     private readonly camera: OrthographicCamera;

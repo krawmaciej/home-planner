@@ -7,10 +7,11 @@ import {InteriorArrangerStateParent} from "./app/arranger/InteriorArrangerStateP
 import {PersistenceMenu} from "./app/common/persistance/PersistenceMenu";
 import {createSceneObjectsState, SceneObjectsState} from "./app/common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./app/drawer/FloorPlanStateParent";
-import {Scene} from "three";
 import {ComponentProps} from "./app/drawer/objects/window/WallComponent";
 import {loadDoors, loadObjects, loadWindows} from "./app/drawer/models/WallComponentResourceLoader";
 import {ObjectProps} from "./app/arranger/objects/ImportedObject";
+import {Canvas} from "./app/common/canvas/Canvas";
+import {CanvasState, createCanvasState} from "./app/common/context/CanvasDefaults";
 
 enum UISelection {
     PLAN_DRAWER, INTERIOR_ARRANGER,
@@ -18,8 +19,8 @@ enum UISelection {
 
 export const App: React.FC = () => {
 
-    const [sharedScene] = useState(new Scene());
-
+    const [canvasState] = useState(createCanvasState);
+    
     const [sceneObjectsState, setSceneObjectsState] = useState<SceneObjectsState>(createSceneObjectsState);
     const [doorDefinitions, setDoorDefinitions] = useState(new Array<ComponentProps>());
     const [windowDefinitions, setWindowDefinitions] = useState(new Array<ComponentProps>());
@@ -70,13 +71,19 @@ export const App: React.FC = () => {
                 chooseInteriorArranger={chooseInteriorArranger}
                 choosePlanDrawer={choosePlanDrawer}
             />
-            <SelectCanvas
+            <Canvas
+                scene={canvasState.scene}
+                renderer={canvasState.renderer}
+                mainCameraHandler={canvasState.mainCameraHandler}
+                mainInputHandler={canvasState.mainInputHandler}
+            />
+            <SelectController
                 selection={currentMenu}
                 sceneObjectsState={sceneObjectsState}
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}
                 objectDefinitions={objectDefinitions}
-                sharedScene={sharedScene}
+                canvasState={canvasState}
             />
             <input ref={inputRef} className="d-none" type="file" onChange={handleFile}/>
         </div>
@@ -89,22 +96,22 @@ type SelectionProps = {
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
     objectDefinitions: Array<ObjectProps>,
-    sharedScene: Scene,
+    canvasState: CanvasState,
 }
 
-const SelectCanvas: React.FC<SelectionProps> = ({
+const SelectController: React.FC<SelectionProps> = ({
                                                     selection,
                                                     sceneObjectsState,
                                                     doorDefinitions,
                                                     windowDefinitions,
-                                                    sharedScene,
                                                     objectDefinitions,
+                                                    canvasState,
 }: SelectionProps) => {
     if (selection === UISelection.INTERIOR_ARRANGER) {
         return (
             <InteriorArrangerStateParent
                 className="app-bottom-menu"
-                scene={sharedScene}
+                canvasState={canvasState}
                 sceneObjects={sceneObjectsState}
                 objectDefinitions={objectDefinitions}
             />
@@ -113,7 +120,7 @@ const SelectCanvas: React.FC<SelectionProps> = ({
         return (
             <FloorPlanStateParent
                 className="app-bottom-menu"
-                scene={sharedScene}
+                canvasState={canvasState}
                 sceneObjects={sceneObjectsState}
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}

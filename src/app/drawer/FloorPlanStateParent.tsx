@@ -4,72 +4,64 @@ import React, {useEffect, useState} from 'react';
 
 import {FloorPlanMainController} from "./controllers/FloorPlanMainController";
 import {
-    createFloorPlanState,
     FloorPlanState,
     initializeFloorPlan
 } from "../common/context/FloorPlanDefaults";
-import {Canvas} from "../common/canvas/Canvas";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
-import {Scene} from "three";
 import {ComponentProps} from "./objects/window/WallComponent";
 import {disposeSceneObjects} from "../common/context/SceneOperations";
+import {CanvasState} from "../common/context/CanvasDefaults";
 
 type Props = {
     className?: string,
     sceneObjects: SceneObjectsState,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
-    scene: Scene,
+    canvasState: CanvasState,
 }
 
-export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, windowDefinitions, scene }: Props) => {
+export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, windowDefinitions, canvasState }) => {
 
-    const [floorPlanState, setFloorPlanState] = useState<FloorPlanState>(createFloorPlanState);
+    const [floorPlanState, setFloorPlanState] = useState<FloorPlanState | undefined>();
     const [zoom, setZoom] = useState<number>(0.6); // todo: retrieve zoom from state or from cam handler
 
     const setCameraZoomHandler = (zoom: number) => {
-        floorPlanState.cameraHandler.setZoom(zoom);
+        canvasState.mainCameraHandler.setZoom(zoom);
         setZoom(zoom);
     };
 
     useEffect(() => {
-        console.log("Floor plan state on mount");
-    }, []);
-
-    useEffect(() => {
-        // clearScene(scene, sceneObjects);
-        // disposeSceneObjects(scene, floorPlanState.renderer);
-        initializeFloorPlan(scene, floorPlanState);
-        floorPlanState.cameraHandler.setZoom(zoom);
-    }, [sceneObjects, scene, floorPlanState]);
-
-    useEffect(() => {
         return () => {
-            disposeSceneObjects(scene, floorPlanState.renderer);
             console.log("floor plan state on dismount");
+            disposeSceneObjects(canvasState.scene, canvasState.renderer);
         };
     }, []);
 
-    return (
-        <>
-            <Canvas
-                scene={scene}
-                renderer={floorPlanState.renderer}
-                cameraHandler={floorPlanState.cameraHandler}
-                mainInputHandler={floorPlanState.mainInputHandler}
-            />
-            <FloorPlanMainController
-                className={"app-bottom-menu"}
-                scene={scene}
-                mainInputHandler={floorPlanState.mainInputHandler}
-                wallThickness={floorPlanState.wallThickness}
-                wallHeight={sceneObjects.wallsHeight}
-                placedWalls={sceneObjects.placedWalls}
-                wallComponents={sceneObjects.wallComponents}
-                floors={sceneObjects.floors}
-                doorDefinitions={doorDefinitions}
-                windowDefinitions={windowDefinitions}
-            />
-        </>
-    );
+    useEffect(() => {
+        disposeSceneObjects(canvasState.scene, canvasState.renderer);
+        initializeFloorPlan(scene, floorPlanState);
+
+        floorPlanState.cameraHandler.setZoom(zoom);
+    }, [sceneObjects, canvasState]);
+
+    if (floorPlanState === undefined) {
+        return (<p>Wczytywanie...</p>);
+    } else {
+        return (
+            <>
+                <FloorPlanMainController
+                    className={"app-bottom-menu"}
+                    scene={canvasState.scene}
+                    mainInputHandler={canvasState.mainInputHandler}
+                    wallThickness={floorPlanState.wallThickness}
+                    wallHeight={sceneObjects.wallsHeight}
+                    placedWalls={sceneObjects.placedWalls}
+                    wallComponents={sceneObjects.wallComponents}
+                    floors={sceneObjects.floors}
+                    doorDefinitions={doorDefinitions}
+                    windowDefinitions={windowDefinitions}
+                />
+            </>
+        );
+    }
 };

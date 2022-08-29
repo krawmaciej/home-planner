@@ -2,7 +2,7 @@ import { Vector3 } from "three";
 import { IInputHandler } from "./IInputHandler";
 
 /**
- * It is stateful because it is used by the canvas.
+ * It is stateful because it is shared in canvas.
  * (Is not a delegate itself to not allow nesting.)
  */
 export class MainInputHandler {
