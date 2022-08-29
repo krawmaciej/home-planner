@@ -4,6 +4,7 @@ import React, {memo, useLayoutEffect, useRef} from "react";
 import {Scene, Vector3, WebGLRenderer,} from "three";
 import {MainInputHandler} from "./inputHandler/MainInputHandler";
 import {MainCameraHandler} from "../MainCameraHandler";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 type Pointer = {
     onCanvas: boolean,
@@ -58,6 +59,9 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             mount?.current?.addEventListener("pointerdown", handlePointerDown);
             mount?.current?.addEventListener("pointerenter", handlePointerEnter);
             mount?.current?.addEventListener("pointerleave", handlePointerLeave);
+
+            const orbitControls = new OrbitControls(props.mainCameraHandler.getCamera(), props.renderer.domElement);
+            orbitControls.update();
 
             animate();
             handleResize();
