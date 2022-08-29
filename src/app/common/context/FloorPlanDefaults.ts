@@ -6,17 +6,15 @@ import {
     Vector3,
     WebGLRenderer
 } from "three";
-import {ICameraHandler, OrthographicCameraHandler} from "../canvas/ICameraHandler";
+import {OrthographicCameraHandler} from "../canvas/ICameraHandler";
 import {MainInputHandler} from "../canvas/inputHandler/MainInputHandler";
 import {WallThickness} from "../../drawer/objects/wall/WallThickness";
 import {VoidIH} from "../canvas/inputHandler/VoidIH";
 import { ObjectElevation} from "../../drawer/constants/Types";
 import {SceneObjectsState} from "./SceneObjectsDefaults";
+import {CanvasState} from "./CanvasDefaults";
 
 export type FloorPlanState = {
-    cameraHandler: ICameraHandler,
-    renderer: WebGLRenderer,
-    mainInputHandler: MainInputHandler,
     wallThickness: WallThickness,
 }
 
@@ -35,24 +33,21 @@ export const createRenderer = () => {
     });
 };
 
-export const createFloorPlanState = () => {
+export const createFloorPlanState = (): FloorPlanState => {
     return {
-        cameraHandler: createCameraHandler(),
-        renderer: createRenderer(),
-        mainInputHandler: createMainInputHandler(),
         wallThickness: new WallThickness(1.0),
-    } as FloorPlanState;
+    };
 };
 
-export const initializeFloorPlan = (scene: Scene, { cameraHandler }: FloorPlanState) => {
-    scene.background = new Color(0x999999);
+export const initializeWithFloorPlan = (canvasState: CanvasState) => {
+    canvasState.scene.background = new Color(0x999999);
 
     const grid = new GridHelper(100, 100, 0xbbbbbb, 0xbbbbbb);
     grid.position.setY(ObjectElevation.GRID);
-    scene.add(grid);
+    canvasState.scene.add(grid);
 
-    cameraHandler.setPosition(new Vector3(0.0, 5.0, 0.0)); // todo: move floor plan to state
-    cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
+    canvasState.mainCameraHandler.setPosition(new Vector3(0.0, 5.0, 0.0)); // todo: move floor plan to state
+    canvasState.mainCameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
 };
 
 export const clearScene = (scene: Scene, sceneObjectsState: SceneObjectsState) => {

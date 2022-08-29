@@ -5,7 +5,7 @@ import React, {useEffect, useState} from 'react';
 import {FloorPlanMainController} from "./controllers/FloorPlanMainController";
 import {
     FloorPlanState,
-    initializeFloorPlan
+    initializeWithFloorPlan
 } from "../common/context/FloorPlanDefaults";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {ComponentProps} from "./objects/window/WallComponent";
@@ -39,9 +39,9 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
 
     useEffect(() => {
         disposeSceneObjects(canvasState.scene, canvasState.renderer);
-        initializeFloorPlan(scene, floorPlanState);
+        initializeWithFloorPlan(canvasState);
 
-        floorPlanState.cameraHandler.setZoom(zoom);
+        canvasState.mainCameraHandler.setZoom(zoom);
     }, [sceneObjects, canvasState]);
 
     if (floorPlanState === undefined) {

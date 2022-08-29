@@ -10,7 +10,7 @@ export interface ICameraHandler {
 
 export class NoCameraHandler implements ICameraHandler {
     getCamera(): Camera {
-        throw new Error("Tried to get camera from NoCameraHandler."); // todo: might break some stuff...
+        return new PerspectiveCamera(); // todo: might break some stuff...
     }
     setAspectRatio(): ICameraHandler {
         return this;

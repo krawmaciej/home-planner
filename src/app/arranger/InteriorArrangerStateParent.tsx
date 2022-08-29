@@ -44,8 +44,8 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
 
     useEffect(() => {
         disposeSceneObjects(canvasState.scene, canvasState.renderer);
-        initializeWithInteriorArranger(canvasState);
-        setInteriorArrangerState(createInteriorArrangerState(canvasState));
+        initializeWithInteriorArranger(canvasState); // this depends on below, todo: move to single method
+        setInteriorArrangerState(createInteriorArrangerState(canvasState)); // this depends on above
 
 
         canvasState.mainCameraHandler.setZoom(zoom);
