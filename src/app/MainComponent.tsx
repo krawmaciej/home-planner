@@ -82,7 +82,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanCameraHandle
             interiorArrangerState.transformControls.camera = interiorArrangerCameraHandler.getCamera();
             interiorArrangerState.transformControls.enabled = false;
             interiorArrangerState.orbitControls.object = interiorArrangerCameraHandler.getCamera();
-            interiorArrangerState.orbitControls.enabled = false; // todo: disabled for testing temporary controls set in canvas
+            interiorArrangerState.orbitControls.enabled = true; // todo: disabled for testing temporary controls set in canvas
             renderer.toneMapping = ACESFilmicToneMapping;
             renderer.toneMappingExposure = 1;
 
@@ -91,6 +91,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanCameraHandle
             console.log("outputEnc: ", renderer.outputEncoding);
 
             initializeWithInteriorArranger(canvasState, interiorArrangerCameraHandler);
+            interiorArrangerState.orbitControls.update();
 
             // renderer.outputEncoding = sRGBEncoding;
             return;
