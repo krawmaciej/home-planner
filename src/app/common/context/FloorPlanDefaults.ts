@@ -1,22 +1,6 @@
-import {
-    Color,
-    GridHelper,
-    WebGLRenderer
-} from "three";
-import {OrthographicCameraHandler} from "../canvas/ICameraHandler";
-import { ObjectElevation} from "../../drawer/constants/Types";
+import {Color, GridHelper} from "three";
+import {ObjectElevation} from "../../drawer/constants/Types";
 import {CanvasState} from "./CanvasDefaults";
-
-export type FloorPlanState = {
-    camera: OrthographicCameraHandler,
-}
-
-export const createRenderer = () => {
-    return new WebGLRenderer({
-        precision: "highp",
-        antialias: true,
-    });
-};
 
 export const initializeWithFloorPlan = ({ scene }: CanvasState) => {
     scene.background = new Color(0x999999);
