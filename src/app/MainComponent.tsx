@@ -13,9 +13,10 @@ import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";
 import {CanvasState, createCanvasState} from "./common/context/CanvasDefaults";
 import {initializeWithInteriorArranger} from "./common/context/InteriorArrangerDefaults";
-import { WebGLRenderer} from "three";
+import {WebGLRenderer} from "three";
 import {initializeWithFloorPlan} from "./common/context/FloorPlanDefaults";
 import {FloorPlanState, InteriorArrangerState} from "../App";
+import {ICameraHandler} from "./common/canvas/ICameraHandler";
 
 type Props = {
     renderer: WebGLRenderer,
@@ -29,8 +30,16 @@ enum UISelection {
 
 export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, interiorArrangerState }) => {
 
-    const [canvasState] = useState<CanvasState>(createCanvasState(floorPlanState));
-    // const [floorPlanState] = useState(createFloorPlanState);
+    const getCurrentCameraHandler = (selection: UISelection): ICameraHandler => {
+        switch (selection) {
+            case UISelection.FLOOR_PLAN:
+                return floorPlanState.cameraHandler;
+            case UISelection.INTERIOR_ARRANGER:
+                return interiorArrangerState.cameraHandler;
+        }
+    };
+
+    const [canvasState] = useState<CanvasState>(createCanvasState);
 
     const [sceneObjectsState, setSceneObjectsState] = useState<SceneObjectsState>(createSceneObjectsState);
     const [doorDefinitions, setDoorDefinitions] = useState(new Array<ComponentProps>());
@@ -63,7 +72,6 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
     // update canvasState
     useEffect(() => {
         if (currentMenu === UISelection.FLOOR_PLAN) {
-            canvasState.mainCameraHandler.changeHandler(floorPlanState.cameraHandler);
             canvasState.mainInputHandler.detachCurrentHandler();
             // renderer.toneMapping = NoToneMapping;
             // renderer.toneMappingExposure = 1;
@@ -76,7 +84,6 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
         }
 
         if (currentMenu === UISelection.INTERIOR_ARRANGER) {
-            canvasState.mainCameraHandler.changeHandler(interiorArrangerState.cameraHandler);
             canvasState.mainInputHandler.detachCurrentHandler();
             // renderer.toneMapping = ACESFilmicToneMapping;
             // renderer.toneMappingExposure = 1;
@@ -117,12 +124,13 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
             <Canvas
                 scene={canvasState.scene}
                 renderer={renderer}
-                mainCameraHandler={canvasState.mainCameraHandler}
+                cameraHandler={getCurrentCameraHandler(currentMenu)}
                 mainInputHandler={canvasState.mainInputHandler}
             />
             <SelectController
                 selection={currentMenu}
                 renderer={renderer}
+                cameraHandler={getCurrentCameraHandler(currentMenu)}
                 sceneObjectsState={sceneObjectsState}
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}
@@ -137,6 +145,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
 type SelectionProps = {
     selection: UISelection,
     renderer: WebGLRenderer,
+    cameraHandler: ICameraHandler,
     sceneObjectsState: SceneObjectsState,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
@@ -147,6 +156,7 @@ type SelectionProps = {
 const SelectController: React.FC<SelectionProps> = ({
                                                     selection,
                                                     renderer,
+                                                    cameraHandler,
                                                     sceneObjectsState,
                                                     doorDefinitions,
                                                     windowDefinitions,
@@ -159,6 +169,7 @@ const SelectController: React.FC<SelectionProps> = ({
                 <InteriorArrangerStateParent
                     className="app-bottom-menu"
                     renderer={renderer}
+                    cameraHandler={cameraHandler}
                     canvasState={canvasState}
                     sceneObjects={sceneObjectsState}
                     objectDefinitions={objectDefinitions}
@@ -171,6 +182,7 @@ const SelectController: React.FC<SelectionProps> = ({
                 <FloorPlanStateParent
                     className="app-bottom-menu"
                     renderer={renderer}
+                    cameraHandler={cameraHandler}
                     canvasState={canvasState}
                     sceneObjects={sceneObjectsState}
                     doorDefinitions={doorDefinitions}

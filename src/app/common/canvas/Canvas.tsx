@@ -3,7 +3,7 @@ import "../../css/MainStyle.css";
 import React, {memo, useLayoutEffect, useRef} from "react";
 import {Scene, Vector3, WebGLRenderer,} from "three";
 import {MainInputHandler} from "./inputHandler/MainInputHandler";
-import {MainCameraHandler} from "../MainCameraHandler";
+import {ICameraHandler} from "./ICameraHandler";
 
 type Pointer = {
     onCanvas: boolean,
@@ -14,7 +14,7 @@ type Pointer = {
 type Props = {
     scene: Scene,
     renderer: WebGLRenderer,
-    mainCameraHandler: MainCameraHandler,
+    cameraHandler: ICameraHandler,
     mainInputHandler: MainInputHandler,
 }
 
@@ -23,7 +23,7 @@ type Props = {
  */
 const CanvasBase: React.FC<Props> = (props: Props) => {
 
-    console.log("Canvas: ", props.scene.id);
+    console.log("Canvas reloaded: ", props.scene.id);
     console.log(props);
 
     const mount = useRef<HTMLDivElement>(null);
@@ -70,11 +70,11 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 
         function render() {
             if (!pointer.onCanvas) {
-                props.renderer.render(props.scene, props.mainCameraHandler.getCamera());
+                props.renderer.render(props.scene, props.cameraHandler.getCamera());
                 return; // if pointer not on canvas then skip
             }
 
-            const unprojection = pointer.vectorToUnproject.clone().unproject(props.mainCameraHandler.getCamera());
+            const unprojection = pointer.vectorToUnproject.clone().unproject(props.cameraHandler.getCamera());
 
             if (pointer.clicked) {
                 props.mainInputHandler.handleClick(unprojection);
@@ -88,14 +88,14 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
                 props.mainInputHandler.handleMovement(unprojection);
             }
 
-            props.renderer.render(props.scene, props.mainCameraHandler.getCamera());
+            props.renderer.render(props.scene, props.cameraHandler.getCamera());
         }
 
         function handleResize() {
             width = mount?.current?.clientWidth ?? 0;
             height = mount?.current?.clientHeight ?? 0;
             const aspect = width / height;
-            props.mainCameraHandler.setAspectRatio(aspect); // todo: two cameras need to be handled here, but first rerendering canvas will be tried
+            props.cameraHandler.setAspectRatio(aspect); // todo: two cameras need to be handled here, but first rerendering canvas will be tried
             props.renderer.setSize(width, height);
             render();
         }
@@ -152,5 +152,5 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 };
 
 export const Canvas = memo(CanvasBase, (prev, next) => {
-    return prev.scene === next.scene;
+    return (prev.scene === next.scene) && (prev.cameraHandler === next.cameraHandler);
 });

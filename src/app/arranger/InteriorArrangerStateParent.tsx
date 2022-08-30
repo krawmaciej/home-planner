@@ -9,6 +9,7 @@ import {ObjectProps} from "./objects/ImportedObject";
 import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
 import {disposeSceneObjects} from "../common/context/SceneOperations";
 import {CanvasState} from "../common/context/CanvasDefaults";
+import {ICameraHandler} from "../common/canvas/ICameraHandler";
 
 type Props = {
     className?: string,
@@ -16,15 +17,16 @@ type Props = {
     canvasState: CanvasState
     sceneObjects: SceneObjectsState,
     objectDefinitions: Array<ObjectProps>,
+    cameraHandler: ICameraHandler,
 }
 
-export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, sceneObjects, objectDefinitions, renderer }) => {
+export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, sceneObjects, objectDefinitions, renderer, cameraHandler }) => {
     
     const [zoom, setZoom] = useState(0.6);
     const [planObjectsConverter] = useState(new PlanToArrangerConverter());
 
     const setCameraZoomHandler = (zoom: number) => {
-        canvasState.mainCameraHandler.setZoom(zoom);
+        cameraHandler.setZoom(zoom);
         setZoom(zoom);
     };
 
@@ -36,7 +38,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {
-        canvasState.mainCameraHandler.setZoom(zoom);
+        cameraHandler.setZoom(zoom);
 
         // todo: return stuff that's to be inserted into map which will be held as state in this component.
         const temp = planObjectsConverter.convertPlanObjects(sceneObjects);
