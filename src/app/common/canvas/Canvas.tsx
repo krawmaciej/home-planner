@@ -4,7 +4,6 @@ import React, {memo, useLayoutEffect, useRef} from "react";
 import {Scene, Vector3, WebGLRenderer,} from "three";
 import {MainInputHandler} from "./inputHandler/MainInputHandler";
 import {MainCameraHandler} from "../MainCameraHandler";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 
 type Pointer = {
     onCanvas: boolean,
@@ -60,9 +59,6 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             mount?.current?.addEventListener("pointerenter", handlePointerEnter);
             mount?.current?.addEventListener("pointerleave", handlePointerLeave);
 
-            const orbitControls = new OrbitControls(props.mainCameraHandler.getCamera(), props.renderer.domElement);
-            orbitControls.update();
-
             animate();
             handleResize();
         }
@@ -99,7 +95,7 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             width = mount?.current?.clientWidth ?? 0;
             height = mount?.current?.clientHeight ?? 0;
             const aspect = width / height;
-            props.mainCameraHandler.setAspectRatio(aspect);
+            props.mainCameraHandler.setAspectRatio(aspect); // todo: two cameras need to be handled here, but first rerendering canvas will be tried
             props.renderer.setSize(width, height);
             render();
         }

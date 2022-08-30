@@ -1,24 +1,20 @@
 import {
     ACESFilmicToneMapping, AmbientLight, Camera,
     Scene,
-    Vector3,
     WebGLRenderer,
 } from "three";
 import {SceneObjectsState} from "./SceneObjectsDefaults";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {CanvasState} from "./CanvasDefaults";
-import {PerspectiveCameraHandler} from "../canvas/ICameraHandler";
 
 export type InteriorArrangerState = {
-    orbitControls: OrbitControls,
-    transformControls: TransformControls,
+    orbitControls: OrbitControls | undefined,
 }
 
 export const createInteriorArrangerState = (camera: Camera, renderer: WebGLRenderer): InteriorArrangerState => {
     return {
-        orbitControls: createOrbitControls(camera, renderer.domElement),
-        transformControls: createTransformControls(camera, renderer.domElement),
+        orbitControls: undefined,
     };
 };
 
@@ -38,12 +34,9 @@ const updateRenderer = (renderer: WebGLRenderer) => {
     // renderer.outputEncoding = sRGBEncoding;
 };
 
-export const initializeWithInteriorArranger = ({ scene }: CanvasState, cameraHandler: PerspectiveCameraHandler) => {
+export const initializeWithInteriorArranger = ({ scene }: CanvasState) => {
     const light = new AmbientLight( 0xffffff ); // soft white light
     scene.add(light);
-
-    cameraHandler.setPosition(new Vector3(0, 50, 20));
-    cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
 };
 
 export const clearScene = (scene: Scene, sceneObjectsState: SceneObjectsState) => {

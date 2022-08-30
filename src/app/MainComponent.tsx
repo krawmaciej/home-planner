@@ -13,7 +13,7 @@ import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";
 import {CanvasState, createCanvasState} from "./common/context/CanvasDefaults";
 import {createInteriorArrangerState, initializeWithInteriorArranger} from "./common/context/InteriorArrangerDefaults";
-import {ACESFilmicToneMapping, NoToneMapping, WebGLRenderer} from "three";
+import { WebGLRenderer} from "three";
 import {OrthographicCameraHandler, PerspectiveCameraHandler} from "./common/canvas/ICameraHandler";
 import {initializeWithFloorPlan} from "./common/context/FloorPlanDefaults";
 
@@ -66,9 +66,9 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanCameraHandle
         if (currentMenu === UISelection.FLOOR_PLAN) {
             canvasState.mainCameraHandler.changeHandler(floorPlanCameraHandler);
             canvasState.mainInputHandler.detachCurrentHandler();
-            renderer.toneMapping = NoToneMapping;
-            renderer.toneMappingExposure = 1;
-            initializeWithFloorPlan(canvasState, floorPlanCameraHandler);
+            // renderer.toneMapping = NoToneMapping;
+            // renderer.toneMappingExposure = 1;
+            initializeWithFloorPlan(canvasState);
 
             console.log("toneMap: ", renderer.toneMapping);
             console.log("toneExpo: ", renderer.toneMappingExposure);
@@ -79,19 +79,14 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanCameraHandle
         if (currentMenu === UISelection.INTERIOR_ARRANGER) {
             canvasState.mainCameraHandler.changeHandler(interiorArrangerCameraHandler);
             canvasState.mainInputHandler.detachCurrentHandler();
-            interiorArrangerState.transformControls.camera = interiorArrangerCameraHandler.getCamera();
-            interiorArrangerState.transformControls.enabled = false;
-            interiorArrangerState.orbitControls.object = interiorArrangerCameraHandler.getCamera();
-            interiorArrangerState.orbitControls.enabled = true; // todo: disabled for testing temporary controls set in canvas
-            renderer.toneMapping = ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1;
+            // renderer.toneMapping = ACESFilmicToneMapping;
+            // renderer.toneMappingExposure = 1;
 
             console.log("toneMap: ", renderer.toneMapping);
             console.log("toneExpo: ", renderer.toneMappingExposure);
             console.log("outputEnc: ", renderer.outputEncoding);
 
-            initializeWithInteriorArranger(canvasState, interiorArrangerCameraHandler);
-            interiorArrangerState.orbitControls.update();
+            initializeWithInteriorArranger(canvasState); // camera is moved into its place, but orbit controls aren't updated
 
             // renderer.outputEncoding = sRGBEncoding;
             return;
