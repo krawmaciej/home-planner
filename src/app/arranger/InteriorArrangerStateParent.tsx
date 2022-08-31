@@ -31,10 +31,8 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
     };
 
     useEffect(() => {
-        return () => {
-            console.log("interior arranger state on dismount");
-            disposeSceneObjects(canvasState.scene, renderer);
-        };
+        console.log("interior arranger state on dismount");
+        disposeSceneObjects(canvasState.scene, renderer);
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {

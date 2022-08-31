@@ -10,6 +10,7 @@ import {CanvasState} from "../common/context/CanvasDefaults";
 import {WallThickness} from "./objects/wall/WallThickness";
 import {WebGLRenderer} from "three";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
+import {addCurrentSceneObjects} from "./components/CurrentSceneObjects";
 
 type Props = {
     className?: string,
@@ -31,15 +32,14 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
         setZoom(zoom);
     };
 
-    useEffect(() => {
-        return () => {
+    useEffect(() => () => {
             console.log("floor plan state on dismount");
             disposeSceneObjects(canvasState.scene, renderer);
-        };
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {
         cameraHandler.setZoom(zoom);
+        addCurrentSceneObjects(sceneObjects, canvasState.scene);
     }, [sceneObjects, canvasState]);
 
     if (wallThickness === undefined) {
