@@ -16,6 +16,7 @@ export class FloorsDrawingIH implements IInputHandler {
     public constructor(floorsDrawer: FloorsDrawer) {
         this.floorsDrawer = floorsDrawer;
         this.pointer = new FloorsPointer();
+        console.log("created new floor IH");
     }
 
     public handleMovement(point: Vector3): void {

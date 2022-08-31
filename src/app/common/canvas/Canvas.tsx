@@ -23,9 +23,6 @@ type Props = {
  */
 const CanvasBase: React.FC<Props> = (props: Props) => {
 
-    console.log("Canvas reloaded: ", props.scene.id);
-    console.log(props);
-
     const mount = useRef<HTMLDivElement>(null);
 
     function getOffsetPosition(event: PointerEvent, width: number, height: number) {
@@ -37,11 +34,14 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
     }
 
     useLayoutEffect(() => {
+
         let width: number;
         let height: number;
-
-
-        let pointer: Pointer = { onCanvas: false, vectorToUnproject: new Vector3(), clicked: false };
+        let pointer: Pointer = {
+            onCanvas: false,
+            vectorToUnproject: new Vector3(),
+            clicked: false,
+        };
 
         init();
 
@@ -143,6 +143,13 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             };
         }
 
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            mount?.current?.removeEventListener("pointermove", handlePointerMove);
+            mount?.current?.removeEventListener("pointerdown", handlePointerDown);
+            mount?.current?.removeEventListener("pointerenter", handlePointerEnter);
+            mount?.current?.removeEventListener("pointerleave", handlePointerLeave);
+        };
     }, [props]);
 
     return (

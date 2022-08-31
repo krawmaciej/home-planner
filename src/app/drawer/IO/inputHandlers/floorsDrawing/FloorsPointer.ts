@@ -16,6 +16,7 @@ export class FloorsPointer {
         this.startPosition = FloorsPointer.UNSET_POSITION;
         this.endPosition = FloorsPointer.UNSET_POSITION;
         this.state = DrawingState.NONE;
+        console.log("Created new floors pointer");
     }
 
     public beginDrawing(position: Vector3): void {

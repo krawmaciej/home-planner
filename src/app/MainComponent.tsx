@@ -13,7 +13,7 @@ import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";
 import {CanvasState, createCanvasState} from "./common/context/CanvasDefaults";
 import {initializeWithInteriorArranger} from "./common/context/InteriorArrangerDefaults";
-import {WebGLRenderer} from "three";
+import {ACESFilmicToneMapping, NoToneMapping, WebGLRenderer} from "three";
 import {initializeWithFloorPlan} from "./common/context/FloorPlanDefaults";
 import {FloorPlanState, InteriorArrangerState} from "../App";
 import {ICameraHandler} from "./common/canvas/ICameraHandler";
@@ -73,26 +73,26 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
     useEffect(() => {
         if (currentMenu === UISelection.FLOOR_PLAN) {
             canvasState.mainInputHandler.detachCurrentHandler();
-            // renderer.toneMapping = NoToneMapping;
-            // renderer.toneMappingExposure = 1;
+            interiorArrangerState.transformControls.enabled = false;
+            interiorArrangerState.transformControls.enabled = false;
+
+            renderer.toneMapping = NoToneMapping;
+            renderer.toneMappingExposure = 1;
+
             initializeWithFloorPlan(canvasState);
 
-            console.log("toneMap: ", renderer.toneMapping);
-            console.log("toneExpo: ", renderer.toneMappingExposure);
-            console.log("outputEnc: ", renderer.outputEncoding);
             return;
         }
 
         if (currentMenu === UISelection.INTERIOR_ARRANGER) {
             canvasState.mainInputHandler.detachCurrentHandler();
-            // renderer.toneMapping = ACESFilmicToneMapping;
-            // renderer.toneMappingExposure = 1;
+            interiorArrangerState.transformControls.enabled = true;
+            interiorArrangerState.transformControls.enabled = true;
 
-            console.log("toneMap: ", renderer.toneMapping);
-            console.log("toneExpo: ", renderer.toneMappingExposure);
-            console.log("outputEnc: ", renderer.outputEncoding);
+            renderer.toneMapping = ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1;
 
-            initializeWithInteriorArranger(canvasState); // camera is moved into its place, but orbit controls aren't updated
+            initializeWithInteriorArranger(canvasState);
 
             // renderer.outputEncoding = sRGBEncoding;
             return;
