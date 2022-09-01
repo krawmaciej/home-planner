@@ -28,11 +28,6 @@ export const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) =
 
     return (
         <>
-            <div>
-                {context?.placedWalls.map(v => {
-                    return (<p key={v.wall.id}>{JSON.stringify(v.wall.id)}</p>);
-                })}
-            </div>
             <button onClick={goBack}>Powrót</button>
             <button onClick={cancelWallDrawing}>Anuluj</button>
         </>

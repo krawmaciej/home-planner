@@ -30,7 +30,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
         setZoom(zoom);
     };
 
-    useEffect(() => {
+    useEffect(() => () => {
         console.log("interior arranger state on dismount");
         disposeSceneObjects(canvasState.scene, renderer);
     }, [sceneObjects, canvasState]);
@@ -50,7 +50,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
             ...temp.sceneComponents.frames,
             ...temp.sceneFloorsMeshes,
             ...temp.sceneCeilingsMeshes,
-        ];
+        ]; // todo: keep those meshes in state arrays, display spinner instead of menu until all loaded
 
         // allMeshes.forEach(mesh => {
         //     mesh.receiveShadow = true;

@@ -10,7 +10,7 @@ import {CanvasState} from "../common/context/CanvasDefaults";
 import {WallThickness} from "./objects/wall/WallThickness";
 import {WebGLRenderer} from "three";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
-import {addCurrentSceneObjects} from "./components/CurrentSceneObjects";
+import {addCurrentSceneObjects} from "./components/CurrentSceneObjectsAdder";
 
 type Props = {
     className?: string,
