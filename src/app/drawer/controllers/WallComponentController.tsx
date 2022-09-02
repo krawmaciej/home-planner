@@ -1,3 +1,5 @@
+import spinner from "../../../loading-spinner.gif";
+
 import React, { useContext, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import {
@@ -28,8 +30,8 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
         throw new Error("Context in WallComponentController is undefined.");
     }
 
-    const [windowsToSelect, setWindowsToSelect] = useState([DEFAULT_MUTABLE_WINDOW_PROPS]);
-    const [doorsToSelect, setDoorsToSelect] = useState([DEFAULT_MUTABLE_DOOR_PROPS]);
+    const [windowsToSelect, setWindowsToSelect] = useState<Array<ComponentProps>>([]);
+    const [doorsToSelect, setDoorsToSelect] = useState<Array<ComponentProps>>([]);
 
     const [componentSelection, setComponentSelection] = useState(ComponentSelection.NONE);
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
@@ -90,7 +92,7 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
         if (selection === ComponentSelection.DOORS) {
             return doorsToSelect;
         }
-        return null;
+        return [];
     };
 
     const display = () => {
@@ -120,14 +122,14 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     return (
         <>
             <button onClick={goBack}>Powrót</button>
-            { display() }
             <button onClick={cancelAddingComponent}>Anuluj</button>
+            { display() }
         </>
     );
 };
 
 type SelectComponentsProps = {
-    components: Array<ComponentProps> | null,
+    components: Array<ComponentProps>,
     componentIndex: number | undefined,
     handleIndexSelection: (index: number) => void,
     componentToWindowDistance: number | undefined,
@@ -139,8 +141,12 @@ const SelectComponents = ({
                               handleIndexSelection,
                               componentToWindowDistance
                           }: SelectComponentsProps) => {
-    if (!components) {
+    if (components.length === 0) {
         return null;
+    }
+
+    if (components.length === 1) {
+        return (<div><img src={spinner} alt="loading"/></div>);
     }
 
     let message = "Brak wybranej ściany";
@@ -167,7 +173,7 @@ const SelectComponents = ({
                     );
                 }
             )}
-            <p>Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {message}.</p> :
+            <p>Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {message}.</p>
         </div>
     );
 };
