@@ -1,10 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import "../App.css";
-import "./css/PersistenceMenu.css";
+import "./css/HeaderMenu.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import {InteriorArrangerStateParent} from "./arranger/InteriorArrangerStateParent";
-import {PersistenceMenu} from "./common/persistance/PersistenceMenu";
+import {HeaderMenu} from "./common/persistance/HeaderMenu";
 import {createSceneObjectsState, SceneObjectsState} from "./common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./drawer/FloorPlanStateParent";
 import {ComponentProps} from "./drawer/objects/window/WallComponent";
@@ -115,7 +115,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
 
     return (
         <div className="app-main-view">
-            <PersistenceMenu
+            <HeaderMenu
                 className="app-top-menu"
                 openFile={handleStateLoad}
                 chooseInteriorArranger={chooseInteriorArranger}

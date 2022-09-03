@@ -67,6 +67,12 @@ export const ObjectsController: React.FC<SelectDefaultMenuProps> = ({ selectDefa
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
     const [transformSelectedIndex, setTransformSelectedIndex] = useState<number>();
 
+    useEffect(() => {
+        if (menuSelection !== Selection.TRANSFORM) {
+            setTransformSelectedIndex(undefined);
+        }
+    }, [menuSelection]);
+
     const selectDefaultMenu = () => {
         setMenuSelection(Selection.DEFAULT);
     };
