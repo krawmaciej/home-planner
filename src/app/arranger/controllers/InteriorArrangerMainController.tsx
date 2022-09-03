@@ -4,6 +4,7 @@ import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandle
 import {ObjectProps} from "../objects/ImportedObject";
 import {Button} from "react-bootstrap";
 import {ObjectsController} from "./ObjectsController";
+import {InteriorArrangerState} from "../../../App";
 
 const DEFAULT_VARIANT = "dark";
 const SELECTED_VARIANT = "light";
@@ -15,6 +16,7 @@ type InteriorArrangerContextType = {
     placedObjects: Array<ObjectProps>,
     changeMenuName: (menuName: string) => void,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
+    interiorArrangerState: InteriorArrangerState,
 }
 
 export const InteriorArrangerContext = createContext<InteriorArrangerContextType | undefined>(undefined);
@@ -26,6 +28,7 @@ type Props = {
     objectDefinitions: Array<ObjectProps>,
     placedObjects: Array<ObjectProps>,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
+    interiorArrangerState: InteriorArrangerState,
 }
 
 enum Selection {
@@ -78,8 +81,9 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
                                                                     mainInputHandler,
                                                                     objectDefinitions,
                                                                     placedObjects,
-                                                                    updatePlacedObjectsToggle
-                                                                }) => {
+                                                                    updatePlacedObjectsToggle,
+                                                                    interiorArrangerState,
+}) => {
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
     const [menuName, setMenuName] = useState("");
 
@@ -103,6 +107,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
         placedObjects,
         changeMenuName,
         updatePlacedObjectsToggle,
+        interiorArrangerState,
     };
 
     return (

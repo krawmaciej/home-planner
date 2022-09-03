@@ -136,6 +136,8 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
                 windowDefinitions={windowDefinitions}
                 objectDefinitions={objectDefinitions}
                 canvasState={canvasState}
+                interiorArrangerState={interiorArrangerState}
+                floorPlanState={floorPlanState}
             />
             <input ref={inputRef} className="d-none" type="file" onChange={handleFile}/>
         </div>
@@ -151,6 +153,8 @@ type SelectionProps = {
     windowDefinitions: Array<ComponentProps>,
     objectDefinitions: Array<ObjectProps>,
     canvasState: CanvasState,
+    interiorArrangerState: InteriorArrangerState,
+    floorPlanState: FloorPlanState,
 }
 
 const SelectController: React.FC<SelectionProps> = ({
@@ -162,7 +166,8 @@ const SelectController: React.FC<SelectionProps> = ({
                                                     windowDefinitions,
                                                     objectDefinitions,
                                                     canvasState,
-}: SelectionProps) => {
+                                                    interiorArrangerState,
+}) => {
     if (selection === UISelection.INTERIOR_ARRANGER) {
         return (
             <>
@@ -173,6 +178,7 @@ const SelectController: React.FC<SelectionProps> = ({
                     canvasState={canvasState}
                     sceneObjects={sceneObjectsState}
                     objectDefinitions={objectDefinitions}
+                    interiorArrangerState={interiorArrangerState}
                 />
             </>
         );

@@ -11,6 +11,7 @@ import {disposeSceneObjects} from "../common/context/SceneOperations";
 import {CanvasState} from "../common/context/CanvasDefaults";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import spinner from "../../loading-spinner.gif";
+import {InteriorArrangerState} from "../../App";
 
 type Props = {
     className?: string,
@@ -19,10 +20,17 @@ type Props = {
     sceneObjects: SceneObjectsState,
     objectDefinitions: Array<ObjectProps>,
     cameraHandler: ICameraHandler,
+    interiorArrangerState: InteriorArrangerState,
 }
 
-export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, sceneObjects, objectDefinitions, renderer, cameraHandler }) => {
-    
+export const InteriorArrangerStateParent: React.FC<Props> = ({
+                                                                 canvasState,
+                                                                 sceneObjects,
+                                                                 objectDefinitions,
+                                                                 renderer,
+                                                                 cameraHandler,
+                                                                 interiorArrangerState,
+}) => {
     const [planObjectsConverter] = useState(new PlanToArrangerConverter());
     const [zoom, setZoom] = useState(0.6);
 
@@ -191,6 +199,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
                 objectDefinitions={objectDefinitions}
                 placedObjects={sceneObjects.placedObjects}
                 updatePlacedObjectsToggle={updatePlacedObjectsToggle}
+                interiorArrangerState={interiorArrangerState}
             />
         </>
     );

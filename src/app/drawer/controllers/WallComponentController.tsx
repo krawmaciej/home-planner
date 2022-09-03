@@ -149,9 +149,10 @@ const SelectComponents = ({
         return (<div><img src={spinner} alt="loading"/></div>);
     }
 
-    let message = "Brak wybranej ściany";
+    let distanceParagraph = null;
     if (componentToWindowDistance !== undefined) {
-        message = Math.round(componentToWindowDistance * 10).toString() + "cm"; // display with precision to 1 cm.
+        const distance = Math.round(componentToWindowDistance * 10).toString() + "cm"; // display with precision to 1 cm.
+        distanceParagraph = (<p>Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {distance}.</p>);
     }
 
     return (
@@ -173,7 +174,7 @@ const SelectComponents = ({
                     );
                 }
             )}
-            <p>Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {message}.</p>
+            {distanceParagraph}
         </div>
     );
 };
