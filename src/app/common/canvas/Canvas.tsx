@@ -77,7 +77,10 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             const unprojection = pointer.vectorToUnproject.clone().unproject(props.cameraHandler.getCamera());
 
             if (pointer.clicked) {
-                props.mainInputHandler.handleClick(unprojection);
+                props.mainInputHandler.handleClick({
+                    unprojected: unprojection,
+                    canvasCoords: { x: pointer.vectorToUnproject.x, y: pointer.vectorToUnproject.y },
+                });
                 // the click was read
                 pointer = {
                     onCanvas: pointer.onCanvas,
@@ -85,7 +88,10 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
                     clicked: false
                 };
             } else {
-                props.mainInputHandler.handleMovement(unprojection);
+                props.mainInputHandler.handleMovement({
+                    unprojected: unprojection,
+                    canvasCoords: { x: pointer.vectorToUnproject.x, y: pointer.vectorToUnproject.y },
+                });
             }
 
             props.renderer.render(props.scene, props.cameraHandler.getCamera());

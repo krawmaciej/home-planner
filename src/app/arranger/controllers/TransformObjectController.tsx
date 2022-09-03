@@ -3,6 +3,7 @@ import {Button} from "react-bootstrap";
 import {InteriorArrangerContext} from "./InteriorArrangerMainController";
 import {ObjectProps} from "../objects/ImportedObject";
 import {ObjectTransformer} from "../components/ObjectTransformer";
+import {SelectObjectIH} from "../IO/inputHandlers/SelectObjectIH";
 
 const DEFAULT_VARIANT = "dark";
 const SELECTED_VARIANT = "light";
@@ -20,6 +21,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     }
 
     const [objectTransformer, setObjectTransformer] = useState(new ObjectTransformer(context.scene, context.interiorArrangerState));
+    const [inputHandler, setInputHandler] = useState(new SelectObjectIH(context.interiorArrangerState.cameraHandler.getCamera(), context.placedObjects));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
@@ -48,6 +50,14 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
             selectObject(initialSelectedIndex);
         }
     }, [initialSelectedIndex]);
+
+    useEffect(() => {
+        context.mainInputHandler.changeHandlingStrategy(inputHandler);
+    }, [inputHandler]);
+
+    useEffect(() => {
+        setInputHandler(new SelectObjectIH(context.interiorArrangerState.cameraHandler.getCamera(), context.placedObjects));
+    }, [context.interiorArrangerState, context.placedObjects]);
 
     return (
         <>

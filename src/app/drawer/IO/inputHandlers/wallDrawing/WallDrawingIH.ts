@@ -1,7 +1,7 @@
-import { Vector3 } from "three";
 import { WallDrawer } from "../../../components/WallDrawer";
 import { DrawingState, WallPointer } from "./WallPointer";
 import { IInputHandler } from "../../../../common/canvas/inputHandler/IInputHandler";
+import {InputPoint} from "../../../../common/canvas/inputHandler/MainInputHandler";
 
 /**
  * Stateful input handler for drawing new walls.
@@ -17,16 +17,16 @@ export class WallDrawingIH implements IInputHandler {
         this.pointer = new WallPointer();
     }
 
-    public handleMovement(point: Vector3): void {
-        this.pointer = this.pointer.changePosition(point);
+    public handleMovement({ unprojected }: InputPoint): void {
+        this.pointer = this.pointer.changePosition(unprojected);
         this.process();
     }
 
-    public handleClick(point: Vector3): void {
+    public handleClick({ unprojected }: InputPoint): void {
         if (this.pointer.state === DrawingState.NONE) {
-            this.pointer = this.pointer.startDrawing(point);
+            this.pointer = this.pointer.startDrawing(unprojected);
         } else if (this.pointer.state === DrawingState.DRAWING) {
-            this.pointer = this.pointer.stopDrawing(point);
+            this.pointer = this.pointer.stopDrawing(unprojected);
         }
         this.process();
     }

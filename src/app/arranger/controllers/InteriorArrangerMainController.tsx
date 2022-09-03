@@ -1,4 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
+
 import {Scene} from "three";
 import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandler";
 import {ObjectProps} from "../objects/ImportedObject";

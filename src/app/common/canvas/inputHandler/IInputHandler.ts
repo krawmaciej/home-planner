@@ -1,7 +1,7 @@
-import { Vector3 } from "three";
+import {InputPoint} from "./MainInputHandler";
 
 export interface IInputHandler {
-    handleMovement(point: Vector3): void;
-    handleClick(point: Vector3): void;
+    handleMovement(point: InputPoint): void;
+    handleClick(point: InputPoint): void;
     handleCancel(): void;
 }
