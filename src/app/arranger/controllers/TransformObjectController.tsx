@@ -1,8 +1,7 @@
-import {ObjectProps} from "../objects/ImportedObject";
 import React, {useContext, useEffect, useState} from "react";
 import {Button} from "react-bootstrap";
 import {InteriorArrangerContext} from "./InteriorArrangerMainController";
-import {ObjectAdder} from "../components/ObjectAdder";
+import {Object3D} from "three";
 
 const DEFAULT_VARIANT = "dark";
 const SELECTED_VARIANT = "light";
@@ -16,30 +15,24 @@ type Props = {
 export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, initialSelectedIndex}) => {
     const context = useContext(InteriorArrangerContext);
     if (context === undefined) {
-        throw new Error("Context in AddObjectController is undefined.");
+        throw new Error("Context in TransformObjectController is undefined.");
     }
 
     useEffect(() => {
         context.changeMenuName("Przesuń/Obróć obiekt");
     }, [context.changeMenuName]);
 
-    const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.scene, context.placedObjects));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
-        setIndexSelection(indexSelection);
+        setIndexSelection(initialSelectedIndex);
     }, [initialSelectedIndex]);
 
-    useEffect(() => {
-        setObjectAdder(new ObjectAdder(context.scene, context.placedObjects));
-    }, [context.scene, context.placedObjects]);
-
     const selectObject = (index: number) => {
-        const objectProps = context.objectDefinitions.at(index);
-        if (!objectProps) {
-            throw new Error(`Selected invalid index: ${index} from objectDefinitions: ${JSON.stringify(objectProps)}`);
+        const placedObject = context.placedObjects.at(index);
+        if (!placedObject) {
+            throw new Error(`Selected invalid index: ${index} from placedObjects: ${JSON.stringify(placedObject)}`);
         }
-        objectAdder.add(objectProps.object3d);
         setIndexSelection(index);
     };
 
@@ -49,7 +42,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
                 Powrót
             </Button>
             <SelectObjects
-                objects={context.objectDefinitions}
+                placedObjects={context.placedObjects}
                 objectIndex={indexSelection}
                 handleIndexSelection={selectObject}
             />
@@ -58,23 +51,23 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
 };
 
 type SelectObjectProps = {
-    objects: Array<ObjectProps> | null,
+    placedObjects: Array<Object3D<any>>,
     objectIndex: number | undefined,
     handleIndexSelection: (index: number) => void,
 }
 
 const SelectObjects = ({
-                           objects,
+                           placedObjects,
                            objectIndex,
                            handleIndexSelection,
                        }: SelectObjectProps) => {
-    if (!objects) {
-        return null;
+    if (placedObjects.length === 0) {
+        return (<p>Brak obiektów do edycji, dodaj obiekt.</p>);
     }
 
     return (
         <div>
-            {objects.map((object, index) => {
+            {placedObjects.map((object, index) => {
                     let buttonVariant = DEFAULT_VARIANT;
                     if (objectIndex === index) {
                         buttonVariant = SELECTED_VARIANT;
@@ -86,7 +79,7 @@ const SelectObjects = ({
                             variant={buttonVariant}
                             className="btn-sm small"
                         >
-                            {object.name}
+                            {object.id}
                         </Button>
                     );
                 }

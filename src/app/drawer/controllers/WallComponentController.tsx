@@ -30,8 +30,8 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
         throw new Error("Context in WallComponentController is undefined.");
     }
 
-    const [windowsToSelect, setWindowsToSelect] = useState<Array<ComponentProps>>([]);
-    const [doorsToSelect, setDoorsToSelect] = useState<Array<ComponentProps>>([]);
+    const [windowsToSelect, setWindowsToSelect] = useState(new Array<ComponentProps>());
+    const [doorsToSelect, setDoorsToSelect] = useState(new Array<ComponentProps>());
 
     const [componentSelection, setComponentSelection] = useState(ComponentSelection.NONE);
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);

@@ -60,7 +60,7 @@ export const App: React.FC = () => {
     }, [renderer]);
 
     if (floorPlanState === undefined || interiorArrangerState === undefined) {
-        return (<img src={spinner} alt="loading"/>);
+        return (<div><img src={spinner} alt="loading"/></div>);
     }
 
     return (

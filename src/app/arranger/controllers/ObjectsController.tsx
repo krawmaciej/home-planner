@@ -7,7 +7,7 @@ import {TransformObjectController} from "./TransformObjectController";
 const DEFAULT_VARIANT = "dark";
 const SELECTED_VARIANT = "light";
 
-enum Selection {
+export enum Selection {
     DEFAULT, ADD, TRANSFORM,
 }
 
@@ -16,9 +16,11 @@ type DisplayMenuProps = {
     selectDefaultMenu: () => void,
     upperSelectDefaultMenu: () => void,
     changeSelection: (selection: Selection) => void,
+    transformSelectedIndex?: number,
+    objectAddedHandler: (index: number) => void,
 }
 
-const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefaultMenu, changeSelection, upperSelectDefaultMenu }) => {
+const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefaultMenu, changeSelection, upperSelectDefaultMenu, transformSelectedIndex, objectAddedHandler }) => {
     switch (currentSelection) {
         case Selection.DEFAULT:
             return (
@@ -26,11 +28,11 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             );
         case Selection.ADD:
             return (
-                <AddObjectController selectDefaultMenu={selectDefaultMenu}/>
+                <AddObjectController selectDefaultMenu={selectDefaultMenu} objectAddedHandler={objectAddedHandler}/>
             );
         case Selection.TRANSFORM:
             return (
-                <TransformObjectController selectDefaultMenu={selectDefaultMenu}/>
+                <TransformObjectController selectDefaultMenu={selectDefaultMenu} initialSelectedIndex={transformSelectedIndex}/>
             );
     }
 };
@@ -63,6 +65,7 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
 
 export const ObjectsController: React.FC<SelectDefaultMenuProps> = ({ selectDefaultMenu: upperSelectDefaultMenu }) => {
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
+    const [transformSelectedIndex, setTransformSelectedIndex] = useState<number>();
 
     const selectDefaultMenu = () => {
         setMenuSelection(Selection.DEFAULT);
@@ -72,12 +75,19 @@ export const ObjectsController: React.FC<SelectDefaultMenuProps> = ({ selectDefa
         setMenuSelection(selection);
     };
 
+    const objectAddedHandler = (index: number) => {
+        setTransformSelectedIndex(index);
+        setMenuSelection(Selection.TRANSFORM);
+    };
+
     return (
         <DisplayMenu
             currentSelection={menuSelection}
             selectDefaultMenu={selectDefaultMenu}
             upperSelectDefaultMenu={upperSelectDefaultMenu}
             changeSelection={changeSelection}
+            transformSelectedIndex={transformSelectedIndex}
+            objectAddedHandler={objectAddedHandler}
         />
     );
 };

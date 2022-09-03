@@ -10,15 +10,16 @@ const SELECTED_VARIANT = "light";
 type Props = {
     className?: string
     selectDefaultMenu: () => void,
+    objectAddedHandler: (index: number) => void,
 }
 
-export const AddObjectController: React.FC<Props> = ({selectDefaultMenu}) => {
+export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, objectAddedHandler}) => {
     const context = useContext(InteriorArrangerContext);
     if (context === undefined) {
         throw new Error("Context in AddObjectController is undefined.");
     }
 
-    const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.scene, context.placedObjects));
+    const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.scene, context.placedObjects, context.updatePlacedObjectsToggle));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
@@ -26,17 +27,16 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu}) => {
     }, [context.changeMenuName]);
 
     useEffect(() => {
-        setObjectAdder(new ObjectAdder(context.scene, context.placedObjects));
-    }, [context.scene, context.placedObjects]);
+        setObjectAdder(new ObjectAdder(context.scene, context.placedObjects, context.updatePlacedObjectsToggle));
+    }, [context.scene, context.placedObjects, context.updatePlacedObjectsToggle]);
 
     const selectObject = (index: number) => {
         const objectProps = context.objectDefinitions.at(index);
         if (!objectProps) {
             throw new Error(`Selected invalid index: ${index} from objectDefinitions: ${JSON.stringify(objectProps)}`);
         }
-        objectAdder.add(objectProps.object3d);
-
-        setIndexSelection(index);
+        const indexOfAddedObject = objectAdder.add(objectProps.object3d);
+        objectAddedHandler(indexOfAddedObject);
     };
 
     return (

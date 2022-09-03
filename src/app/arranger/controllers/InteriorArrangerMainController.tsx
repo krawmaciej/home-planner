@@ -14,6 +14,7 @@ type InteriorArrangerContextType = {
     objectDefinitions: Array<ObjectProps>,
     placedObjects: Array<Object3D>,
     changeMenuName: (menuName: string) => void,
+    updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
 }
 
 export const InteriorArrangerContext = createContext<InteriorArrangerContextType | undefined>(undefined);
@@ -24,6 +25,7 @@ type Props = {
     mainInputHandler: MainInputHandler,
     objectDefinitions: Array<ObjectProps>,
     placedObjects: Array<Object3D>,
+    updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
 }
 
 enum Selection {
@@ -71,8 +73,13 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
     );
 };
 
-export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInputHandler, objectDefinitions, placedObjects}) => {
-
+export const InteriorArrangerMainController: React.FC<Props> = ({
+                                                                    scene,
+                                                                    mainInputHandler,
+                                                                    objectDefinitions,
+                                                                    placedObjects,
+                                                                    updatePlacedObjectsToggle
+                                                                }) => {
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
     const [menuName, setMenuName] = useState("");
 
@@ -95,6 +102,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInpu
         objectDefinitions,
         placedObjects,
         changeMenuName,
+        updatePlacedObjectsToggle,
     };
 
     return (
