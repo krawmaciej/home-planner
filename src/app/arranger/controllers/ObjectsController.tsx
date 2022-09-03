@@ -56,7 +56,7 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
                 Dodaj obiekt
             </Button>
             <Button onClick={() => changeSelection(Selection.TRANSFORM)} variant={DEFAULT_VARIANT}>
-                Przesuń/Obróć obiekt
+                Edytuj dodane obiekty
             </Button>
         </>
     );

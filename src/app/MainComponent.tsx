@@ -8,7 +8,7 @@ import {HeaderMenu} from "./common/persistance/HeaderMenu";
 import {createSceneObjectsState, SceneObjectsState} from "./common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./drawer/FloorPlanStateParent";
 import {ComponentProps} from "./drawer/objects/window/WallComponent";
-import {loadDoors, loadObjects, loadWindows} from "./drawer/models/WallComponentResourceLoader";
+import {loadDoors, loadObjects, loadWindows} from "./common/models/ResourceLoaders";
 import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";
 import {CanvasState, createCanvasState} from "./common/context/CanvasDefaults";

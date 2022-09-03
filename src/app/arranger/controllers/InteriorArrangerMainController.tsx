@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
-import {Object3D, Scene} from "three";
+import {Scene} from "three";
 import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandler";
 import {ObjectProps} from "../objects/ImportedObject";
 import {Button} from "react-bootstrap";
@@ -12,7 +12,7 @@ type InteriorArrangerContextType = {
     scene: Scene,
     mainInputHandler: MainInputHandler,
     objectDefinitions: Array<ObjectProps>,
-    placedObjects: Array<Object3D>,
+    placedObjects: Array<ObjectProps>,
     changeMenuName: (menuName: string) => void,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
 }
@@ -24,7 +24,7 @@ type Props = {
     scene: Scene,
     mainInputHandler: MainInputHandler,
     objectDefinitions: Array<ObjectProps>,
-    placedObjects: Array<Object3D>,
+    placedObjects: Array<ObjectProps>,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
 }
 

@@ -1,7 +1,7 @@
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {ComponentProps} from "../objects/window/WallComponent";
+import {ComponentProps} from "../../drawer/objects/window/WallComponent";
 import {Box3, Group, Material, Matrix4, Mesh, Object3D, Vector3} from "three";
-import {Dimensions, ModelDefinition} from "./ModelDefinitions";
+import {Dimensions, ModelDefinition} from "./ModelDefinition";
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
 
 const X_AXIS = new Vector3(1, 0, 0);

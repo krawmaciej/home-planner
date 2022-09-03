@@ -51,6 +51,8 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
 
         const wallFaceMeshes = [...temp.sceneWallFaceMeshes.meshToWallFaceMap.keys()];
 
+
+
         const allMeshes = [
             ...wallFaceMeshes,
             ...temp.wallCoverMeshes,
@@ -58,7 +60,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ canvasState, scen
             ...temp.sceneComponents.frames,
             ...temp.sceneFloorsMeshes,
             ...temp.sceneCeilingsMeshes,
-            ...sceneObjects.placedObjects,
+            ...sceneObjects.placedObjects.map(op => op.object3d),
         ]; // todo: keep those meshes in state arrays, display spinner instead of menu until all loaded
 
         // allMeshes.forEach(mesh => {

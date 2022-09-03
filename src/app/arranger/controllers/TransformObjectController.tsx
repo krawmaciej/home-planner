@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Button} from "react-bootstrap";
 import {InteriorArrangerContext} from "./InteriorArrangerMainController";
-import {Object3D} from "three";
+import {ObjectProps} from "../objects/ImportedObject";
 
 const DEFAULT_VARIANT = "dark";
 const SELECTED_VARIANT = "light";
@@ -19,7 +19,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     }
 
     useEffect(() => {
-        context.changeMenuName("Przesuń/Obróć obiekt");
+        context.changeMenuName("Edytuj dodane obiekty");
     }, [context.changeMenuName]);
 
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
@@ -51,7 +51,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
 };
 
 type SelectObjectProps = {
-    placedObjects: Array<Object3D<any>>,
+    placedObjects: Array<ObjectProps>,
     objectIndex: number | undefined,
     handleIndexSelection: (index: number) => void,
 }
@@ -79,7 +79,7 @@ const SelectObjects = ({
                             variant={buttonVariant}
                             className="btn-sm small"
                         >
-                            {object.id}
+                            {object.name}
                         </Button>
                     );
                 }

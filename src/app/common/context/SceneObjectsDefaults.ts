@@ -2,11 +2,11 @@ import {PlacedWall} from "../../drawer/objects/wall/PlacedWall";
 import {Floor} from "../../drawer/objects/floor/Floor";
 import {DEFAULT_WALL_HEIGHT} from "../../drawer/constants/Types";
 import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
-import {Object3D} from "three";
+import {ObjectProps} from "../../arranger/objects/ImportedObject";
 
 export type SceneObjectsState = {
     wallsHeight: number,
-    placedObjects: Array<Object3D>,
+    placedObjects: Array<ObjectProps>,
     placedWalls: Array<PlacedWall>,
     wallComponents: Array<IPlacedWallComponent>,
     floors: Array<Floor>,
@@ -14,7 +14,7 @@ export type SceneObjectsState = {
 }
 
 export const createPlacedObjects = () => {
-    return new Array<Object3D>();
+    return new Array<ObjectProps>();
 };
 
 export const createPlacedWalls = () => {

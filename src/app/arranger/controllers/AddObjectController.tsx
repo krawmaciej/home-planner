@@ -35,7 +35,7 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, objectA
         if (!objectProps) {
             throw new Error(`Selected invalid index: ${index} from objectDefinitions: ${JSON.stringify(objectProps)}`);
         }
-        const indexOfAddedObject = objectAdder.add(objectProps.object3d);
+        const indexOfAddedObject = objectAdder.add(objectProps);
         objectAddedHandler(indexOfAddedObject);
     };
 
