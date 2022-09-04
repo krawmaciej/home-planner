@@ -44,7 +44,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     const selectObject = (index: number) => {
         const placedObject = context.sceneObjectsState.placedObjects.at(index);
         if (!placedObject) {
-            throw new Error(`Selected invalid index: ${index} from placedObjects: ${JSON.stringify(placedObject)}`);
+            throw new Error(`Selected invalid index: ${index} from placedObjects.`);
         }
         setIndexSelection(index);
         objectTransformer.startTransforming(placedObject);

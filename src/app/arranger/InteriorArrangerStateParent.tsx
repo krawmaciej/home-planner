@@ -1,7 +1,7 @@
 import "../css/MainStyle.css";
 
 import React, {useEffect, useState} from 'react';
-import {Box3, Box3Helper, Color, Group, Object3D, Vector3, WebGLRenderer} from 'three';
+import {Box3, Box3Helper, Color, Group, Vector3, WebGLRenderer} from 'three';
 import {InteriorArrangerMainController} from "./controllers/InteriorArrangerMainController";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
@@ -12,6 +12,14 @@ import {CanvasState} from "../common/context/CanvasDefaults";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import spinner from "../../loading-spinner.gif";
 import {InteriorArrangerState} from "../../App";
+import {ConvertedPlanObject} from "./objects/ConvertedPlanObject";
+
+export type ConvertedObjects = {
+    wallFaces: Array<ConvertedPlanObject>,
+    wallFrames?: Array<ConvertedPlanObject>,
+    floors?: Array<ConvertedPlanObject>,
+    ceilings?: Array<ConvertedPlanObject>,
+}
 
 type Props = {
     className?: string,
@@ -34,11 +42,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
     const [planObjectsConverter] = useState(new PlanToArrangerConverter());
     const [zoom, setZoom] = useState(0.6);
 
-    const [immutableObjects, setImmutableObjects] = useState<Array<Object3D>>();
-    const [walls, setWalls] = useState<Array<Object3D>>();
-    const [wallFrames, setWallFrames] = useState<Array<Object3D>>();
-    const [floors, setFloors] = useState<Array<Object3D>>();
-    const [ceilings, setCeilings] = useState<Array<Object3D>>();
+    const [convertedObjects, setConvertedObjects] = useState<ConvertedObjects>();
 
     const [, updatePlacedObjectsToggle] = useState(false);
 
@@ -57,19 +61,15 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
 
         const temp = planObjectsConverter.convertPlanObjects(sceneObjects);
 
-        const wallFaceMeshes = [...temp.sceneWallFaceMeshes.meshToWallFaceMap.keys()];
-
-
-
         const allMeshes = [
-            ...wallFaceMeshes,
+            ...temp.wallFaceMeshes.map(wfm => wfm.object3d),
             ...temp.wallCoverMeshes,
             ...temp.sceneComponents.models,
             ...temp.sceneComponents.frames,
             ...temp.sceneFloorsMeshes,
             ...temp.sceneCeilingsMeshes,
-            ...sceneObjects.placedObjects.map(op => op.object3d),
-        ]; // todo: keep those meshes in state arrays, display spinner instead of menu until all loaded
+            ...sceneObjects.placedObjects.map(po => po.object3d),
+        ];
 
         // allMeshes.forEach(mesh => {
         //     mesh.receiveShadow = true;
@@ -80,13 +80,9 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
             canvasState.scene.add(...allMeshes);
         }
 
-        setImmutableObjects([...temp.wallCoverMeshes, ...temp.sceneComponents.models]);
-        setWalls([...wallFaceMeshes]);
-        setWallFrames([...temp.sceneComponents.frames]); // todo: hold some kind of maps, that will propagate changes from arranger into scene models, somehow
-        setFloors([...temp.sceneFloorsMeshes]);
-        setCeilings([...temp.sceneCeilingsMeshes]);
-
-
+        setConvertedObjects({
+            wallFaces: [...temp.wallFaceMeshes], // todo: return convertedObjects from convert plan objects
+        });
 
         // scene.add(...wallFaceMeshes);
         // scene.add(...temp.wallCoverMeshes);
@@ -181,12 +177,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
         });
     }, [sceneObjects, canvasState]);
 
-    if (immutableObjects === undefined ||
-        walls === undefined ||
-        wallFrames === undefined ||
-        floors === undefined ||
-        ceilings === undefined
-    ) {
+    if (convertedObjects === undefined) {
         return (<div><img src={spinner} alt="loading"/></div>);
     }
 
@@ -199,6 +190,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
                 interiorArrangerState={interiorArrangerState}
                 objectDefinitions={objectDefinitions}
                 updatePlacedObjectsToggle={updatePlacedObjectsToggle}
+                convertedObjects={convertedObjects}
             />
         </>
     );

@@ -86,13 +86,13 @@ export const loadWindows = async () => {
     });
 };
 
-export const loadObjects = async () => {
+export const loadObjects = async (): Promise<ObjectProps[]> => {
     return await loadModels(windowsPromise, WINDOWS_PATH, (modelDefinition, model, box3) => {
         return {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
             object3d: model,
-        } as ObjectProps;
+        };
     });
 };
 

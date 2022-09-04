@@ -1,7 +1,6 @@
-import {Object3D} from "three";
+import {ConvertedPlanObject} from "./ConvertedPlanObject";
 
-export type ObjectProps = {
+export type ObjectProps = ConvertedPlanObject & {
     readonly name: string,
     readonly thumbnail: string,
-    readonly object3d: Object3D,
 }

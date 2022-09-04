@@ -7,6 +7,8 @@ import {InteriorArrangerState} from "../../../App";
 import {SECONDARY_VARIANT} from "../constants/Types";
 import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 import {CanvasState} from "../../common/context/CanvasDefaults";
+import { WallsAppearanceController } from "./WallsAppearanceController";
+import {ConvertedObjects} from "../InteriorArrangerStateParent";
 
 type InteriorArrangerContextType = {
     canvasState: CanvasState,
@@ -15,6 +17,7 @@ type InteriorArrangerContextType = {
     objectDefinitions: Array<ObjectProps>,
     changeMenuName: (menuName: string) => void,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
+    convertedObjects: ConvertedObjects,
 }
 
 export const InteriorArrangerContext = createContext<InteriorArrangerContextType | undefined>(undefined);
@@ -26,10 +29,11 @@ type Props = {
     interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
+    convertedObjects: ConvertedObjects,
 }
 
 enum Selection {
-    DEFAULT, OBJECTS, // EDIT_CEILINGS more menus
+    DEFAULT, OBJECTS, WALLS,
 }
 
 type DisplayMenuProps = {
@@ -51,6 +55,10 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
         case Selection.OBJECTS:
             return (
                 <ObjectsController selectDefaultMenu={selectDefaultMenu}/>
+            );
+        case Selection.WALLS:
+            return (
+                <WallsAppearanceController selectDefaultMenu={selectDefaultMenu}/>
             );
     }
 };
@@ -74,7 +82,13 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
             >
                 Obiekty...
             </Button>
-            {/*more default menu buttons*/}
+            <Button
+                onClick={() => changeSelection(Selection.WALLS)}
+                variant={SECONDARY_VARIANT}
+                className="side-by-side-child btn-sm"
+            >
+                Edytuj wygląd ścian
+            </Button>
         </div>
     );
 };
@@ -85,6 +99,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
                                                                     interiorArrangerState,
                                                                     objectDefinitions,
                                                                     updatePlacedObjectsToggle,
+                                                                    convertedObjects,
 }) => {
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
     const [menuName, setMenuName] = useState("");
@@ -109,6 +124,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
         objectDefinitions,
         changeMenuName,
         updatePlacedObjectsToggle,
+        convertedObjects,
     };
 
     return (

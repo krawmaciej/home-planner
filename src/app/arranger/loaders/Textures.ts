@@ -7,7 +7,6 @@ export const loadHardwoodTxt = async () => {
     const txt = await textureLoader.loadAsync("/textures/hardwood.jpg");
     txt.wrapT = RepeatWrapping;
     txt.wrapS = RepeatWrapping;
-    console.log("THIS SHOULD BE CALLED ONLY ONCE PER TEXTURE!");
     return txt;
 };
 

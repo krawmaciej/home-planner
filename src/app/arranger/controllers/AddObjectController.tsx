@@ -8,10 +8,10 @@ import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../constants
 type Props = {
     className?: string
     selectDefaultMenu: () => void,
-    objectAddedHandler: (index: number) => void,
+    addObjectToTransformObjectTransfer: (index: number) => void,
 }
 
-export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, objectAddedHandler}) => {
+export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, addObjectToTransformObjectTransfer}) => {
     const context = useContext(InteriorArrangerContext);
     if (context === undefined) {
         throw new Error("Context in AddObjectController is undefined.");
@@ -34,7 +34,7 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, objectA
             throw new Error(`Selected invalid index: ${index} from objectDefinitions: ${JSON.stringify(objectProps)}`);
         }
         const indexOfAddedObject = objectAdder.add(objectProps);
-        objectAddedHandler(indexOfAddedObject);
+        addObjectToTransformObjectTransfer(indexOfAddedObject);
     };
 
     return (

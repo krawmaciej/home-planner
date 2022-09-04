@@ -1,8 +1,7 @@
 import {SceneObjectsState} from "../../../common/context/SceneObjectsDefaults";
 import {PlacedWall} from "../../../drawer/objects/wall/PlacedWall";
 import {ConnectionType, WallFace} from "../../../drawer/objects/wall/WallSide";
-import {SceneWallFaceMeshes} from "../../objects/SceneWallFaceMeshes";
-import {WallFaceMesh} from "../../objects/WallFaceMesh";
+import {createWallFaceMesh, WallFaceMesh} from "../../objects/WallFaceMesh";
 import { Path, Quaternion, Shape, ShapeGeometry, Vector2, Vector3} from "three";
 import {PathPropsBuilder} from "./PathPropsBuilder";
 import {FloatingPointsPathsFixer} from "./FloatingPointsPathsFixer";
@@ -34,8 +33,6 @@ export class PlanToArrangerConverter {
     }
 
     private convertPlacedWalls(placedWalls: Array<PlacedWall>) {
-        const sceneWallFaceMeshes = new SceneWallFaceMeshes();
-
         const wallFaceMeshes = placedWalls.flatMap(wall =>
             wall.wallSides.getWallSides()
                 .flatMap((ws, idx) =>
@@ -49,8 +46,7 @@ export class PlanToArrangerConverter {
         const wallCoversCreator = new WallCoversCreator();
         const wallCoverMeshes = placedWalls.map(wall => wallCoversCreator.fromObjectPoints(wall.props));
 
-        sceneWallFaceMeshes.put(wallFaceMeshes);
-        return { sceneWallFaceMeshes, wallCoverMeshes };
+        return { wallFaceMeshes, wallCoverMeshes };
     }
 
     private convertWallComponents(wallComponents: Array<IPlacedWallComponent>) {
@@ -98,7 +94,7 @@ export class PlanToArrangerConverter {
         shapeGeometry.translate(-wallFace.firstPoint.x, 0, -wallFace.firstPoint.z); // make corner around which to rotate a center of geometry
 
         const txtRotation = PlanToArrangerConverter.getTxtRotation(orientation);
-        return new WallFaceMesh(shapeGeometry, wallFace, -Math.PI/2.0, txtRotation);
+        return createWallFaceMesh(shapeGeometry, wallFace, -Math.PI/2.0, txtRotation);
     }
 
     // todo: make wall height settable from main menu
