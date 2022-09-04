@@ -3,6 +3,7 @@ import {DrawingState, FloorsPointer} from "./FloorsPointer";
 import {IInputHandler} from "../../../../common/canvas/inputHandler/IInputHandler";
 import {FloorsDrawer} from "../../../components/FloorsDrawer";
 import {ObjectElevation} from "../../../constants/Types";
+import {InputPoint} from "../../../../common/canvas/inputHandler/MainInputHandler";
 
 /**
  * Stateful input handler for drawing new floors.
@@ -16,10 +17,11 @@ export class FloorsDrawingIH implements IInputHandler {
     public constructor(floorsDrawer: FloorsDrawer) {
         this.floorsDrawer = floorsDrawer;
         this.pointer = new FloorsPointer();
+        console.log("created new floor IH");
     }
 
-    public handleMovement(point: Vector3): void {
-        const position = FloorsDrawingIH.snapToGrid(point);
+    public handleMovement({ unprojected }: InputPoint): void {
+        const position = FloorsDrawingIH.snapToGrid(unprojected);
         switch (this.pointer.state) {
             case DrawingState.NONE:
                 // no op
@@ -36,8 +38,8 @@ export class FloorsDrawingIH implements IInputHandler {
         }
     }
 
-    public handleClick(point: Vector3): void {
-        const position = FloorsDrawingIH.snapToGrid(point);
+    public handleClick({ unprojected }: InputPoint): void {
+        const position = FloorsDrawingIH.snapToGrid(unprojected);
 
         switch (this.pointer.state) {
             case DrawingState.NONE:

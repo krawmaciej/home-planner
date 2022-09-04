@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";
-import {FloorsDrawingIH} from "../UI/inputHandlers/floorsDrawing/FloorsDrawingIH";
+import {FloorsDrawingIH} from "../IO/inputHandlers/floorsDrawing/FloorsDrawingIH";
 
 export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
 

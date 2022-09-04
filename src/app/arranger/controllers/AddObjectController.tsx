@@ -3,44 +3,47 @@ import React, {useContext, useEffect, useState} from "react";
 import {Button} from "react-bootstrap";
 import {InteriorArrangerContext} from "./InteriorArrangerMainController";
 import {ObjectAdder} from "../components/ObjectAdder";
-
-const DEFAULT_VARIANT = "dark";
-const SELECTED_VARIANT = "light";
+import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../constants/Types";
 
 type Props = {
     className?: string
     selectDefaultMenu: () => void,
+    objectAddedHandler: (index: number) => void,
 }
 
-export const AddObjectController: React.FC<Props> = ({selectDefaultMenu}) => {
-
+export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, objectAddedHandler}) => {
     const context = useContext(InteriorArrangerContext);
     if (context === undefined) {
         throw new Error("Context in AddObjectController is undefined.");
     }
-    context.changeMenuName("Dodaj obiekt");
 
-    const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.scene, context.placedObjects));
+    const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.canvasState.scene, context.sceneObjectsState.placedObjects, context.updatePlacedObjectsToggle));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
-        setObjectAdder(new ObjectAdder(context.scene, context.placedObjects));
-    }, [context.scene, context.placedObjects]);
+        context.changeMenuName("Dodaj obiekt");
+    }, [context.changeMenuName]);
+
+    useEffect(() => {
+        setObjectAdder(new ObjectAdder(context.canvasState.scene, context.sceneObjectsState.placedObjects, context.updatePlacedObjectsToggle));
+    }, [context.canvasState, context.sceneObjectsState, context.updatePlacedObjectsToggle]);
 
     const selectObject = (index: number) => {
         const objectProps = context.objectDefinitions.at(index);
         if (!objectProps) {
             throw new Error(`Selected invalid index: ${index} from objectDefinitions: ${JSON.stringify(objectProps)}`);
         }
-        objectAdder.add(objectProps.object3d);
-        setIndexSelection(index);
+        const indexOfAddedObject = objectAdder.add(objectProps);
+        objectAddedHandler(indexOfAddedObject);
     };
 
     return (
         <>
-            <Button onClick={selectDefaultMenu} variant={DEFAULT_VARIANT}>
-                Powrót
-            </Button>
+            <div className="side-by-side-parent">
+                <Button onClick={selectDefaultMenu} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
+                    Powrót
+                </Button>
+            </div>
             <SelectObjects
                 objects={context.objectDefinitions}
                 objectIndex={indexSelection}
@@ -68,7 +71,7 @@ const SelectObjects = ({
     return (
         <div>
             {objects.map((object, index) => {
-                    let buttonVariant = DEFAULT_VARIANT;
+                    let buttonVariant = SECONDARY_VARIANT;
                     if (objectIndex === index) {
                         buttonVariant = SELECTED_VARIANT;
                     }

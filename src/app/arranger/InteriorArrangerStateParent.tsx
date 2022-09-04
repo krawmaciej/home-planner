@@ -1,84 +1,65 @@
 import "../css/MainStyle.css";
 
-import React, {useEffect, useRef, useState} from 'react';
-
-import {
-    ACESFilmicToneMapping,
-    AmbientLight, Box3, Box3Helper, Color, Group, PerspectiveCamera,
-    Scene,
-    Vector3, WebGLRenderer,
-    WebGLRendererParameters
-} from 'three';
-import { InteriorArrangerMainController } from "./controllers/InteriorArrangerMainController";
-import { MainInputHandler } from "../common/canvas/inputHandler/MainInputHandler";
-import { VoidIH } from "../common/canvas/inputHandler/VoidIH";
-import {ICameraHandler, PerspectiveCameraHandler} from "../common/canvas/ICameraHandler";
-import {Canvas} from "../common/canvas/Canvas";
+import React, {useEffect, useState} from 'react';
+import {Box3, Box3Helper, Color, Group, Object3D, Vector3, WebGLRenderer} from 'three';
+import {InteriorArrangerMainController} from "./controllers/InteriorArrangerMainController";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
-import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {TransformControls} from "three/examples/jsm/controls/TransformControls";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {ObjectProps} from "./objects/ImportedObject";
+import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
+import {disposeSceneObjects} from "../common/context/SceneOperations";
+import {CanvasState} from "../common/context/CanvasDefaults";
+import {ICameraHandler} from "../common/canvas/ICameraHandler";
+import spinner from "../../loading-spinner.gif";
+import {InteriorArrangerState} from "../../App";
 
 type Props = {
     className?: string,
+    renderer: WebGLRenderer,
+    canvasState: CanvasState,
     sceneObjects: SceneObjectsState,
     objectDefinitions: Array<ObjectProps>,
+    cameraHandler: ICameraHandler,
+    interiorArrangerState: InteriorArrangerState,
 }
 
-function createBetterWebGLRenderer(rendererParams: WebGLRendererParameters) {
-    const webGLRenderer = new WebGLRenderer(rendererParams);
-    webGLRenderer.toneMapping = ACESFilmicToneMapping;
-    webGLRenderer.toneMappingExposure = 1;
-    // webGLRenderer.outputEncoding = sRGBEncoding;
-    return webGLRenderer;
-}
+export const InteriorArrangerStateParent: React.FC<Props> = ({
+                                                                 canvasState,
+                                                                 sceneObjects,
+                                                                 objectDefinitions,
+                                                                 renderer,
+                                                                 cameraHandler,
+                                                                 interiorArrangerState,
+}) => {
+    const [planObjectsConverter] = useState(new PlanToArrangerConverter());
+    const [zoom, setZoom] = useState(0.6);
 
-export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects, objectDefinitions }: Props) => {
+    const [immutableObjects, setImmutableObjects] = useState<Array<Object3D>>();
+    const [walls, setWalls] = useState<Array<Object3D>>();
+    const [wallFrames, setWallFrames] = useState<Array<Object3D>>();
+    const [floors, setFloors] = useState<Array<Object3D>>();
+    const [ceilings, setCeilings] = useState<Array<Object3D>>();
 
-    const [scene] = useState<Scene>(new Scene()); // new scene is created on component reload
-
-    const [zoom, setZoom] = useState<number>(0.6);
-
-    const { current: cameraHandler } = useRef<ICameraHandler>(
-        new PerspectiveCameraHandler(new PerspectiveCamera(50), Math.PI)
-    );
-    const { current: planObjectsConverter } = useRef<PlanToArrangerConverter>(new PlanToArrangerConverter());
-    const mainInputHandler: MainInputHandler = new MainInputHandler(new VoidIH());
-    const rendererParams: WebGLRendererParameters = {
-        precision: "highp",
-        antialias: true,
-    };
-
-    const { current: renderer } = useRef(createBetterWebGLRenderer(rendererParams));
-    const { current: orbit } = useRef(new OrbitControls(cameraHandler.getCamera(), renderer.domElement));
-    const { current: transform } = useRef(new TransformControls(cameraHandler.getCamera(), renderer.domElement));
+    const [, updatePlacedObjectsToggle] = useState(false);
 
     const setCameraZoomHandler = (zoom: number) => {
         cameraHandler.setZoom(zoom);
         setZoom(zoom);
     };
 
+    useEffect(() => () => {
+        console.log("interior arranger state on dismount");
+        disposeSceneObjects(canvasState.scene, renderer);
+    }, [sceneObjects, canvasState]);
+
     useEffect(() => {
-        // const hemiLight = new HemisphereLight("white", "grey");
-        // const directLight = new DirectionalLight("white", 1);
-        // directLight.position.set(0, 40, 20);
-        // directLight.target.position.set(0, 0, 0);
-        //
-        // scene.add(directLight);
-
-        const light = new AmbientLight( 0xffffff ); // soft white light
-        scene.add(light);
-
-        cameraHandler.setPosition(new Vector3(0, 50, 20));
-        cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
         cameraHandler.setZoom(zoom);
 
-        // todo: return stuff that's to be inserted into map which will be held as state in this component.
         const temp = planObjectsConverter.convertPlanObjects(sceneObjects);
 
         const wallFaceMeshes = [...temp.sceneWallFaceMeshes.meshToWallFaceMap.keys()];
+
+
 
         const allMeshes = [
             ...wallFaceMeshes,
@@ -87,14 +68,25 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects, obj
             ...temp.sceneComponents.frames,
             ...temp.sceneFloorsMeshes,
             ...temp.sceneCeilingsMeshes,
-        ];
+            ...sceneObjects.placedObjects.map(op => op.object3d),
+        ]; // todo: keep those meshes in state arrays, display spinner instead of menu until all loaded
 
         // allMeshes.forEach(mesh => {
         //     mesh.receiveShadow = true;
         //     mesh.castShadow = true;
         // });
 
-        scene.add(...allMeshes);
+        if (allMeshes.length > 0) {
+            canvasState.scene.add(...allMeshes);
+        }
+
+        setImmutableObjects([...temp.wallCoverMeshes, ...temp.sceneComponents.models]);
+        setWalls([...wallFaceMeshes]);
+        setWallFrames([...temp.sceneComponents.frames]); // todo: hold some kind of maps, that will propagate changes from arranger into scene models, somehow
+        setFloors([...temp.sceneFloorsMeshes]);
+        setCeilings([...temp.sceneCeilingsMeshes]);
+
+
 
         // scene.add(...wallFaceMeshes);
         // scene.add(...temp.wallCoverMeshes);
@@ -187,22 +179,26 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({ sceneObjects, obj
             // transform.attach(group);
             // scene.add(transform);
         });
-    }, [sceneObjects]);
+    }, [sceneObjects, canvasState]);
+
+    if (immutableObjects === undefined ||
+        walls === undefined ||
+        wallFrames === undefined ||
+        floors === undefined ||
+        ceilings === undefined
+    ) {
+        return (<div><img src={spinner} alt="loading"/></div>);
+    }
 
     return (
         <>
-            <Canvas
-                scene={scene}
-                renderer={renderer}
-                cameraHandler={cameraHandler}
-                mainInputHandler={mainInputHandler}
-            />
             <InteriorArrangerMainController
                 className={"app-bottom-menu"}
-                scene={scene}
-                mainInputHandler={mainInputHandler}
+                canvasState={canvasState}
+                sceneObjectsState={sceneObjects}
+                interiorArrangerState={interiorArrangerState}
                 objectDefinitions={objectDefinitions}
-                placedObjects={sceneObjects.placedObjects}
+                updatePlacedObjectsToggle={updatePlacedObjectsToggle}
             />
         </>
     );

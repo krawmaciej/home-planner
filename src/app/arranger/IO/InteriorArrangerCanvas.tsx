@@ -9,6 +9,7 @@ type Props = {
   scene: Scene
 }
 
+//todo: remove, old used now only as a reference
 export function InteriorArrangerCanvas({scene}: Props) {
 
   const mount = useRef<HTMLDivElement>(null);

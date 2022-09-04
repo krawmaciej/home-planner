@@ -1,29 +1,31 @@
-import React, {createContext, useContext, useState} from "react";
-import {Object3D, Scene} from "three";
-import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandler";
+import React, {createContext, useContext, useEffect, useState} from "react";
+
 import {ObjectProps} from "../objects/ImportedObject";
 import {Button} from "react-bootstrap";
 import {ObjectsController} from "./ObjectsController";
-
-const DEFAULT_VARIANT = "dark";
-const SELECTED_VARIANT = "light";
+import {InteriorArrangerState} from "../../../App";
+import {SECONDARY_VARIANT} from "../constants/Types";
+import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
+import {CanvasState} from "../../common/context/CanvasDefaults";
 
 type InteriorArrangerContextType = {
-    scene: Scene,
-    mainInputHandler: MainInputHandler,
+    canvasState: CanvasState,
+    sceneObjectsState: SceneObjectsState,
+    interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
-    placedObjects: Array<Object3D>,
     changeMenuName: (menuName: string) => void,
+    updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
 }
 
 export const InteriorArrangerContext = createContext<InteriorArrangerContextType | undefined>(undefined);
 
 type Props = {
     className?: string
-    scene: Scene,
-    mainInputHandler: MainInputHandler,
+    canvasState: CanvasState,
+    sceneObjectsState: SceneObjectsState,
+    interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
-    placedObjects: Array<Object3D>,
+    updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
 }
 
 enum Selection {
@@ -56,20 +58,34 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
 const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
     const context = useContext(InteriorArrangerContext);
     if (context === undefined) {
-        throw new Error("Context in Default is undefined.");
+        throw new Error("Context in Interrior Arranger's Default is undefined.");
     }
-    context.changeMenuName("Rzut 3D");
+
+    useEffect(() => {
+        context.changeMenuName("Rzut 3D");
+    }, [context.changeMenuName]);
 
     return (
-        <Button onClick={() => changeSelection(Selection.OBJECTS)} variant={DEFAULT_VARIANT}>
-            Obiekty...
-        </Button>
-        // more default menu buttons
+        <div className="side-by-side-parent">
+            <Button
+                onClick={() => changeSelection(Selection.OBJECTS)}
+                variant={SECONDARY_VARIANT}
+                className="side-by-side-child btn-sm"
+            >
+                Obiekty...
+            </Button>
+            {/*more default menu buttons*/}
+        </div>
     );
 };
 
-export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInputHandler, objectDefinitions, placedObjects}) => {
-
+export const InteriorArrangerMainController: React.FC<Props> = ({
+                                                                    canvasState,
+                                                                    sceneObjectsState,
+                                                                    interiorArrangerState,
+                                                                    objectDefinitions,
+                                                                    updatePlacedObjectsToggle,
+}) => {
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
     const [menuName, setMenuName] = useState("");
 
@@ -81,17 +97,18 @@ export const InteriorArrangerMainController: React.FC<Props> = ({scene, mainInpu
         setMenuSelection(selection);
     };
 
-    const changeMenuName = (menuName: string) => {
-        setMenuName(menuName);
+    const changeMenuName = (newMenuName: string) => {
+        setMenuName(newMenuName);
     };
 
     // dependency container
     const context: InteriorArrangerContextType = {
-        scene,
-        mainInputHandler,
+        canvasState,
+        sceneObjectsState,
+        interiorArrangerState,
         objectDefinitions,
-        placedObjects,
         changeMenuName,
+        updatePlacedObjectsToggle,
     };
 
     return (

@@ -1,24 +1,37 @@
-import {Box3, Object3D, Scene, Vector3} from "three";
+import {Scene} from "three";
+import {ObjectProps} from "../objects/ImportedObject";
+import {findHalfOfObjectHeight} from "./ObjectOperations";
 
 export class ObjectAdder {
     private readonly scene: Scene;
-    private readonly placedObjects: Array<Object3D<any>>;
+    private readonly placedObjects: Array<ObjectProps>;
+    private readonly updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void;
 
-    public constructor(scene: Scene, placedObjects: Array<Object3D<any>>) {
+    public constructor(scene: Scene, placedObjects: Array<ObjectProps>, updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void) {
         this.scene = scene;
         this.placedObjects = placedObjects;
+        this.updatePlacedObjectsToggle = updatePlacedObjectsToggle;
     }
 
-    public add(object3d: Object3D<any>) {
-        const placedObject = object3d.clone();
-        this.scene.add(placedObject);
+    /**
+     * Adds object3D to scene and updates placedObjects array.
+     * Returns index of newly added object3D in placedObjects array.
+     * @param objectProps
+     */
+    public add(objectProps: ObjectProps): number {
+        const placedObject: ObjectProps = {
+            ...objectProps,
+            object3d: objectProps.object3d.clone()
+        };
+        this.scene.add(placedObject.object3d);
         ObjectAdder.alignObjectBottomWithFloor(placedObject);
         this.placedObjects.push(placedObject);
+        this.updatePlacedObjectsToggle(prev => !prev);
+        return this.placedObjects.indexOf(placedObject);
     }
 
-    private static alignObjectBottomWithFloor(placedObject: Object3D<any>) {
-        const box3 = new Box3().setFromObject(placedObject);
-        const box3Size = box3.getSize(new Vector3());
-        placedObject.translateY(box3Size.y / 2);
+    private static alignObjectBottomWithFloor({ object3d }: ObjectProps) {
+        const halfHeight = findHalfOfObjectHeight(object3d);
+        object3d.translateY(halfHeight);
     }
 }

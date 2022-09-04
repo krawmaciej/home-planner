@@ -42,3 +42,7 @@ export class Facing {
     public static readonly DOWN = [0, -1, 0];
     public static readonly BACK = [0, 0, -1];
 }
+
+export const PRIMARY_VARIANT = "dark";
+export const SECONDARY_VARIANT = "secondary";
+export const SELECTED_VARIANT = "light";

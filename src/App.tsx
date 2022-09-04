@@ -1,123 +1,76 @@
-import React, {useEffect, useRef, useState} from 'react';
-import "./App.css";
-import "./app/css/PersistenceMenu.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+import spinner from "./loading-spinner.gif";
 
-import {InteriorArrangerStateParent} from "./app/arranger/InteriorArrangerStateParent";
-import {PersistenceMenu} from "./app/common/persistance/PersistenceMenu";
-import {createSceneObjectsState, SceneObjectsState} from "./app/common/context/SceneObjectsDefaults";
-import {FloorPlanStateParent} from "./app/drawer/FloorPlanStateParent";
-import {Scene} from "three";
-import {ComponentProps} from "./app/drawer/objects/window/WallComponent";
-import {loadDoors, loadObjects, loadWindows} from "./app/drawer/models/WallComponentResourceLoader";
-import {ObjectProps} from "./app/arranger/objects/ImportedObject";
+import React, {useEffect, useState} from "react";
+import {MainComponent} from "./app/MainComponent";
+import {OrthographicCamera, PerspectiveCamera, Vector3, WebGLRenderer} from "three";
+import {OrthographicCameraHandler, PerspectiveCameraHandler} from "./app/common/canvas/ICameraHandler";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 
-enum UISelection {
-    PLAN_DRAWER, INTERIOR_ARRANGER,
+export type FloorPlanState = {
+    cameraHandler: OrthographicCameraHandler,
 }
+
+export type InteriorArrangerState = {
+    cameraHandler: PerspectiveCameraHandler,
+    orbitControls: OrbitControls,
+    transformControls: TransformControls,
+}
+
+const createRenderer = () => {
+    return new WebGLRenderer({
+        precision: "highp",
+        antialias: true,
+    });
+};
+
+const initialFloorPlanState = (): FloorPlanState => {
+    const cameraHandler = new OrthographicCameraHandler(new OrthographicCamera(0, 0, 0, 0, 0.1, 500), 18);
+    cameraHandler.setPosition(new Vector3(0.0, 5.0, 0.0)); // todo: move floor plan to state
+    cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
+    return {
+        cameraHandler,
+    };
+};
+
+const initialInteriorArrangerState = (renderer: WebGLRenderer): InteriorArrangerState => {
+    const cameraHandler = new PerspectiveCameraHandler(new PerspectiveCamera(50), Math.PI);
+    cameraHandler.setPosition(new Vector3(0, 50, 20));
+    cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
+
+    const orbitControls = new OrbitControls(cameraHandler.getCamera(), renderer.domElement);
+    const transformControls = new TransformControls(cameraHandler.getCamera(), renderer.domElement);
+    transformControls.addEventListener("dragging-changed", event => {
+        orbitControls.enabled = !event.value;
+    });
+    transformControls.enabled = false;
+    return {
+        cameraHandler,
+        orbitControls,
+        transformControls,
+    };
+};
 
 export const App: React.FC = () => {
 
-    const [sceneObjectsState, setSceneObjectsState] = useState<SceneObjectsState>(createSceneObjectsState);
-    const [doorDefinitions, setDoorDefinitions] = useState(new Array<ComponentProps>());
-    const [windowDefinitions, setWindowDefinitions] = useState(new Array<ComponentProps>());
-    const [objectDefinitions, setObjectDefinitions] = useState(new Array<ObjectProps>());
-    const { current: floorPlanScene } = useRef<Scene>(new Scene());
-
-    // load file
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    const handleStateLoad = () => {
-        inputRef?.current?.click();
-    };
-
-    const handleFile = () => {
-        const file = inputRef?.current?.files?.item(0);
-        if (file === null || file === undefined) {
-            throw new Error("Expected loaded file but nothing found");
-        }
-
-        const fileReader = new FileReader();
-        fileReader.onload = (event) => {
-            console.log(event);
-            setSceneObjectsState(createSceneObjectsState());
-        };
-        fileReader.readAsText(file);
-    };
-
-    const [currentMenu, setCurrentMenu] = useState<UISelection>(UISelection.PLAN_DRAWER);
-
-    const chooseInteriorArranger = () => {
-        setCurrentMenu(UISelection.INTERIOR_ARRANGER);
-    };
-
-    const choosePlanDrawer = () => {
-        setCurrentMenu(UISelection.PLAN_DRAWER);
-    };
+    const [renderer] = useState(createRenderer);
+    const [floorPlanState, setFloorPlanState] = useState<FloorPlanState | undefined>();
+    const [interiorArrangerState, setInteriorArrangerState] = useState<InteriorArrangerState | undefined>();
 
     useEffect(() => {
-        console.log("App mount");
-        loadDoors().then(doors => setDoorDefinitions(doors));
-        loadWindows().then(windows => setWindowDefinitions(windows));
-        loadObjects().then(objects => setObjectDefinitions(objects));
-    }, []);
+        setFloorPlanState(initialFloorPlanState());
+        setInteriorArrangerState(initialInteriorArrangerState(renderer));
+    }, [renderer]);
+
+    if (floorPlanState === undefined || interiorArrangerState === undefined) {
+        return (<div><img src={spinner} alt="loading"/></div>);
+    }
 
     return (
-        <div className="app-main-view">
-            <PersistenceMenu
-                className="app-top-menu"
-                openFile={handleStateLoad}
-                chooseInteriorArranger={chooseInteriorArranger}
-                choosePlanDrawer={choosePlanDrawer}
-            />
-            <SelectCanvas
-                selection={currentMenu}
-                sceneObjectsState={sceneObjectsState}
-                doorDefinitions={doorDefinitions}
-                windowDefinitions={windowDefinitions}
-                objectDefinitions={objectDefinitions}
-                floorPlanScene={floorPlanScene}
-            />
-            <input ref={inputRef} className="d-none" type="file" onChange={handleFile}/>
-        </div>
+        <MainComponent
+            renderer={renderer}
+            floorPlanState={floorPlanState}
+            interiorArrangerState={interiorArrangerState}
+        />
     );
-};
-
-type SelectionProps = {
-    selection: UISelection,
-    sceneObjectsState: SceneObjectsState,
-    doorDefinitions: Array<ComponentProps>,
-    windowDefinitions: Array<ComponentProps>,
-    objectDefinitions: Array<ObjectProps>,
-    floorPlanScene: Scene,
-}
-
-const SelectCanvas: React.FC<SelectionProps> = ({
-                                                    selection,
-                                                    sceneObjectsState,
-                                                    doorDefinitions,
-                                                    windowDefinitions,
-                                                    floorPlanScene,
-                                                    objectDefinitions,
-}: SelectionProps) => {
-    console.log("Select reload");
-    if (selection === UISelection.INTERIOR_ARRANGER) {
-        return (
-            <InteriorArrangerStateParent
-                className="app-bottom-menu"
-                sceneObjects={sceneObjectsState}
-                objectDefinitions={objectDefinitions}
-            />
-        );
-    } else {
-        return (
-            <FloorPlanStateParent
-                className="app-bottom-menu"
-                sceneObjects={sceneObjectsState}
-                doorDefinitions={doorDefinitions}
-                windowDefinitions={windowDefinitions}
-                scene={floorPlanScene}
-            />
-        );
-    }
 };

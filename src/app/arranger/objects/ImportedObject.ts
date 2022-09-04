@@ -5,6 +5,3 @@ export type ObjectProps = {
     readonly thumbnail: string,
     readonly object3d: Object3D,
 }
-
-export class ImportedObject {
-}

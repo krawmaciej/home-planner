@@ -1,3 +1,5 @@
+import spinner from "../../../loading-spinner.gif";
+
 import React, { useContext, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import {
@@ -5,9 +7,10 @@ import {
     DEFAULT_MUTABLE_DOOR_PROPS,
     DEFAULT_MUTABLE_WINDOW_PROPS
 } from "../objects/window/WallComponent";
-import { WallComponentAddingIH } from "../UI/inputHandlers/wallComponentAdding/WallComponentAddingIH";
+import { WallComponentAddingIH } from "../IO/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";
+import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../../arranger/constants/Types";
 
 export type Observer = {
     setDistance: React.Dispatch<React.SetStateAction<number | undefined>>,
@@ -19,17 +22,14 @@ enum ComponentSelection {
     DOORS,
 }
 
-const DEFAULT_VARIANT = "dark";
-const SELECTED_VARIANT = "light";
-
 export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
     const context = useContext(FloorPlanContext);
     if (context === undefined) {
         throw new Error("Context in WallComponentController is undefined.");
     }
 
-    const [windowsToSelect, setWindowsToSelect] = useState([DEFAULT_MUTABLE_WINDOW_PROPS]);
-    const [doorsToSelect, setDoorsToSelect] = useState([DEFAULT_MUTABLE_DOOR_PROPS]);
+    const [windowsToSelect, setWindowsToSelect] = useState(new Array<ComponentProps>());
+    const [doorsToSelect, setDoorsToSelect] = useState(new Array<ComponentProps>());
 
     const [componentSelection, setComponentSelection] = useState(ComponentSelection.NONE);
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
@@ -90,12 +90,12 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
         if (selection === ComponentSelection.DOORS) {
             return doorsToSelect;
         }
-        return null;
+        return [];
     };
 
     const display = () => {
-        const windowButtonVariant = componentSelection === ComponentSelection.WINDOWS ? SELECTED_VARIANT : DEFAULT_VARIANT;
-        const doorButtonVariant = componentSelection === ComponentSelection.DOORS ? SELECTED_VARIANT : DEFAULT_VARIANT;
+        const windowButtonVariant = componentSelection === ComponentSelection.WINDOWS ? PRIMARY_VARIANT : SECONDARY_VARIANT;
+        const doorButtonVariant = componentSelection === ComponentSelection.DOORS ? PRIMARY_VARIANT : SECONDARY_VARIANT;
 
         const components = getComponentsToDisplay(componentSelection);
 
@@ -120,14 +120,14 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     return (
         <>
             <button onClick={goBack}>Powrót</button>
-            { display() }
             <button onClick={cancelAddingComponent}>Anuluj</button>
+            { display() }
         </>
     );
 };
 
 type SelectComponentsProps = {
-    components: Array<ComponentProps> | null,
+    components: Array<ComponentProps>,
     componentIndex: number | undefined,
     handleIndexSelection: (index: number) => void,
     componentToWindowDistance: number | undefined,
@@ -139,19 +139,24 @@ const SelectComponents = ({
                               handleIndexSelection,
                               componentToWindowDistance
                           }: SelectComponentsProps) => {
-    if (!components) {
+    if (components.length === 0) {
         return null;
     }
 
-    let message = "Brak wybranej ściany";
+    if (components.length === 1) {
+        return (<div><img src={spinner} alt="loading"/></div>);
+    }
+
+    let distanceParagraph = null;
     if (componentToWindowDistance !== undefined) {
-        message = Math.round(componentToWindowDistance * 10).toString() + "cm"; // display with precision to 1 cm.
+        const distance = Math.round(componentToWindowDistance * 10).toString() + "cm"; // display with precision to 1 cm.
+        distanceParagraph = (<p>Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {distance}.</p>);
     }
 
     return (
         <div>
             {components.map((component, index) => {
-                    let buttonVariant = DEFAULT_VARIANT;
+                    let buttonVariant = SECONDARY_VARIANT;
                     if (componentIndex === index) {
                         buttonVariant = SELECTED_VARIANT;
                     }
@@ -167,7 +172,7 @@ const SelectComponents = ({
                     );
                 }
             )}
-            <p>Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {message}.</p> :
+            {distanceParagraph}
         </div>
     );
 };

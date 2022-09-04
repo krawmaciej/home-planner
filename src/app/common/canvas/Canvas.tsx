@@ -1,14 +1,10 @@
 import "../../css/MainStyle.css";
 
 import React, {memo, useLayoutEffect, useRef} from "react";
-import {
-    Scene,
-    Vector3,
-    WebGLRenderer,
-} from "three";
-import { MainInputHandler } from "./inputHandler/MainInputHandler";
+import {Scene, Vector3, WebGLRenderer,} from "three";
+import {MainInputHandler} from "./inputHandler/MainInputHandler";
 import {ICameraHandler} from "./ICameraHandler";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {ICanvasObserver} from "./ICanvasObserver";
 
 type Pointer = {
     onCanvas: boolean,
@@ -19,17 +15,15 @@ type Pointer = {
 type Props = {
     scene: Scene,
     renderer: WebGLRenderer,
-    controls?: OrbitControls,
     cameraHandler: ICameraHandler,
     mainInputHandler: MainInputHandler,
+    observers: Array<ICanvasObserver>,
 }
 
 /**
  * Whole {@link Props} passed here consist of stateful objects, Component does not need to be rerendered.
  */
 const CanvasBase: React.FC<Props> = (props: Props) => {
-
-    console.log("Canvas: ", props.scene.id);
 
     const mount = useRef<HTMLDivElement>(null);
 
@@ -42,24 +36,20 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
     }
 
     useLayoutEffect(() => {
+
         let width: number;
         let height: number;
-
-
-        let pointer: Pointer = { onCanvas: false, vectorToUnproject: new Vector3(), clicked: false };
+        let pointer: Pointer = {
+            onCanvas: false,
+            vectorToUnproject: new Vector3(),
+            clicked: false,
+        };
 
         init();
 
         function init() {
             width = mount?.current?.clientWidth ?? 0;
             height = mount?.current?.clientHeight ?? 0;
-
-            // camera = new OrthographicCamera(frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / - 2, frustumSize / 2, 0.1, 500);
-            // camera = new PerspectiveCamera(50, width / height, 0.1, 1000);
-
-            // renderer.setSize(width, height); // todo: remove
-
-            // controls = new OrbitControls(camera, renderer.domElement);
 
             // render in given space on webpage
             mount?.current?.appendChild(props.renderer.domElement);
@@ -81,6 +71,8 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
         }
 
         function render() {
+            props.observers.forEach(o => o.beforeRender());
+
             if (!pointer.onCanvas) {
                 props.renderer.render(props.scene, props.cameraHandler.getCamera());
                 return; // if pointer not on canvas then skip
@@ -89,7 +81,10 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             const unprojection = pointer.vectorToUnproject.clone().unproject(props.cameraHandler.getCamera());
 
             if (pointer.clicked) {
-                props.mainInputHandler.handleClick(unprojection);
+                props.mainInputHandler.handleClick({
+                    unprojected: unprojection,
+                    canvasCoords: { x: pointer.vectorToUnproject.x, y: pointer.vectorToUnproject.y },
+                });
                 // the click was read
                 pointer = {
                     onCanvas: pointer.onCanvas,
@@ -97,8 +92,12 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
                     clicked: false
                 };
             } else {
-                props.mainInputHandler.handleMovement(unprojection);
+                props.mainInputHandler.handleMovement({
+                    unprojected: unprojection,
+                    canvasCoords: { x: pointer.vectorToUnproject.x, y: pointer.vectorToUnproject.y },
+                });
             }
+
             props.renderer.render(props.scene, props.cameraHandler.getCamera());
         }
 
@@ -106,8 +105,7 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             width = mount?.current?.clientWidth ?? 0;
             height = mount?.current?.clientHeight ?? 0;
             const aspect = width / height;
-            props.cameraHandler.setAspectRatio(aspect);
-            // props.controls?.update(); // // only required if controls.enableDamping = true, or if controls.autoRotate = true
+            props.cameraHandler.setAspectRatio(aspect); // todo: two cameras need to be handled here, but first rerendering canvas will be tried
             props.renderer.setSize(width, height);
             render();
         }
@@ -155,6 +153,13 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             };
         }
 
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            mount?.current?.removeEventListener("pointermove", handlePointerMove);
+            mount?.current?.removeEventListener("pointerdown", handlePointerDown);
+            mount?.current?.removeEventListener("pointerenter", handlePointerEnter);
+            mount?.current?.removeEventListener("pointerleave", handlePointerLeave);
+        };
     }, [props]);
 
     return (
@@ -164,5 +169,5 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 };
 
 export const Canvas = memo(CanvasBase, (prev, next) => {
-    return prev.scene === next.scene;
+    return (prev.scene === next.scene) && (prev.cameraHandler === next.cameraHandler);
 });

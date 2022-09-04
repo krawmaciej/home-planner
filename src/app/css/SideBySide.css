@@ -1,0 +1,8 @@
+.side-by-side-parent {
+    display: flex;
+}
+
+.side-by-side-child {
+    flex: 1;
+    margin: .05rem .05rem;
+}
