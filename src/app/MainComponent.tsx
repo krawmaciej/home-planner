@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import "../App.css";
 import "./css/HeaderMenu.css";
+import "./css/SideBySide.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import {InteriorArrangerStateParent} from "./arranger/InteriorArrangerStateParent";
@@ -126,6 +127,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
                 renderer={renderer}
                 cameraHandler={getCurrentCameraHandler(currentMenu)}
                 mainInputHandler={canvasState.mainInputHandler}
+                observers={canvasState.observers}
             />
             <SelectController
                 selection={currentMenu}

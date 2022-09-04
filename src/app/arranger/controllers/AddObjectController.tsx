@@ -3,9 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {Button} from "react-bootstrap";
 import {InteriorArrangerContext} from "./InteriorArrangerMainController";
 import {ObjectAdder} from "../components/ObjectAdder";
-
-const DEFAULT_VARIANT = "dark";
-const SELECTED_VARIANT = "light";
+import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../constants/Types";
 
 type Props = {
     className?: string
@@ -41,9 +39,11 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, objectA
 
     return (
         <>
-            <Button onClick={selectDefaultMenu} variant={DEFAULT_VARIANT}>
-                Powrót
-            </Button>
+            <div className="side-by-side-parent">
+                <Button onClick={selectDefaultMenu} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
+                    Powrót
+                </Button>
+            </div>
             <SelectObjects
                 objects={context.objectDefinitions}
                 objectIndex={indexSelection}
@@ -71,7 +71,7 @@ const SelectObjects = ({
     return (
         <div>
             {objects.map((object, index) => {
-                    let buttonVariant = DEFAULT_VARIANT;
+                    let buttonVariant = SECONDARY_VARIANT;
                     if (objectIndex === index) {
                         buttonVariant = SELECTED_VARIANT;
                     }

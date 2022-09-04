@@ -2,7 +2,7 @@
  * It is stateful because it is shared in canvas.
  * (Is not a delegate itself to not allow nesting.)
  */
-import {ICameraHandler} from "./canvas/ICameraHandler";
+import {ICameraHandler} from "./ICameraHandler";
 import {Camera, Vector3} from "three";
 
 export class MainCameraHandler {

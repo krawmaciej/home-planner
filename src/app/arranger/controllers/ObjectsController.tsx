@@ -3,9 +3,7 @@ import {Button} from "react-bootstrap";
 import {InteriorArrangerContext, SelectDefaultMenuProps} from "./InteriorArrangerMainController";
 import {AddObjectController} from "./AddObjectController";
 import {TransformObjectController} from "./TransformObjectController";
-
-const DEFAULT_VARIANT = "dark";
-const SELECTED_VARIANT = "light";
+import {PRIMARY_VARIANT, SECONDARY_VARIANT} from "../constants/Types";
 
 export enum Selection {
     DEFAULT, ADD, TRANSFORM,
@@ -49,15 +47,22 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
 
     return (
         <>
-            <Button onClick={upperSelectDefaultMenu} variant={DEFAULT_VARIANT}>
-                Powrót
-            </Button>
-            <Button onClick={() => changeSelection(Selection.ADD)} variant={DEFAULT_VARIANT}>
-                Dodaj obiekt
-            </Button>
-            <Button onClick={() => changeSelection(Selection.TRANSFORM)} variant={DEFAULT_VARIANT}>
-                Edytuj dodane obiekty
-            </Button>
+            <div className="side-by-side-parent">
+                <Button onClick={upperSelectDefaultMenu} variant={PRIMARY_VARIANT}
+                    className="side-by-side-child btn-sm">
+                    Powrót
+                </Button>
+            </div>
+            <div className="side-by-side-parent">
+                <Button onClick={() => changeSelection(Selection.ADD)} variant={SECONDARY_VARIANT}
+                        className="btn-sm side-by-side-child">
+                    Dodaj obiekt
+                </Button>
+                <Button onClick={() => changeSelection(Selection.TRANSFORM)} variant={SECONDARY_VARIANT}
+                        className="btn-sm side-by-side-child">
+                    Edytuj dodane obiekty
+                </Button>
+            </div>
         </>
     );
 };

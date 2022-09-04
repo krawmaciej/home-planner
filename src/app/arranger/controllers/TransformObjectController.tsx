@@ -4,9 +4,7 @@ import {InteriorArrangerContext} from "./InteriorArrangerMainController";
 import {ObjectProps} from "../objects/ImportedObject";
 import {ObjectTransformer} from "../components/ObjectTransformer";
 import {SelectObjectIH} from "../IO/inputHandlers/SelectObjectIH";
-
-const DEFAULT_VARIANT = "dark";
-const SELECTED_VARIANT = "light";
+import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../constants/Types";
 
 type Props = {
     className?: string
@@ -21,7 +19,6 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     }
 
     const [objectTransformer, setObjectTransformer] = useState(new ObjectTransformer(context.scene, context.interiorArrangerState));
-    const [inputHandler, setInputHandler] = useState(new SelectObjectIH(context.interiorArrangerState.cameraHandler.getCamera(), context.placedObjects));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
@@ -43,6 +40,19 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
         }
         setIndexSelection(index);
         objectTransformer.startTransforming(placedObject);
+        context.mainInputHandler.detachCurrentHandler();
+    };
+
+    const cancelSelection = () => {
+        objectTransformer.stopTransforming();
+        setIndexSelection(undefined);
+    };
+
+    const deleteObject = (index: number) => {
+        context.placedObjects.splice(index, 1);
+        context.updatePlacedObjectsToggle(prev => !prev);
+        objectTransformer.removeObject();
+        cancelSelection();
     };
 
     useEffect(() => {
@@ -52,25 +62,52 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     }, [initialSelectedIndex]);
 
     useEffect(() => {
-        context.mainInputHandler.changeHandlingStrategy(inputHandler);
-    }, [inputHandler]);
+        if (indexSelection === undefined) {
+            context.mainInputHandler.changeHandlingStrategy(new SelectObjectIH(
+                context.interiorArrangerState.cameraHandler.getCamera(),
+                context.placedObjects,
+                selectObject
+            ));
+        }
+        return () => {
+            context.mainInputHandler.detachCurrentHandler();
+        };
+    }, [indexSelection, context.mainInputHandler]);
 
-    useEffect(() => {
-        setInputHandler(new SelectObjectIH(context.interiorArrangerState.cameraHandler.getCamera(), context.placedObjects));
-    }, [context.interiorArrangerState, context.placedObjects]);
+    let cancelButton = null;
+    if (indexSelection !== undefined) {
+        cancelButton = (
+            <Button
+                onClick={() => cancelSelection()}
+                variant={PRIMARY_VARIANT}
+                className="side-by-side-child btn-sm"
+            >
+                Anuluj
+            </Button>
+        );
+    }
 
     return (
         <>
-            <Button onClick={selectDefaultMenu} variant={DEFAULT_VARIANT}>
-                Powrót
-            </Button>
+            <div className="side-by-side-parent">
+                <Button
+                    onClick={selectDefaultMenu}
+                    variant={PRIMARY_VARIANT}
+                    className="side-by-side-child btn-sm"
+                >
+                    Powrót
+                </Button>
+                {cancelButton}
+            </div>
             <SelectObjects
                 placedObjects={context.placedObjects}
                 objectIndex={indexSelection}
                 handleIndexSelection={selectObject}
             />
             <TransformMode
+                indexSelection={indexSelection}
                 objectTransformer={objectTransformer}
+                deleteObject={deleteObject}
             />
         </>
     );
@@ -94,7 +131,7 @@ const SelectObjects: React.FC<SelectObjectProps> = ({
     return (
         <div>
             {placedObjects.map((object, index) => {
-                    let buttonVariant = DEFAULT_VARIANT;
+                    let buttonVariant = SECONDARY_VARIANT;
                     if (objectIndex === index) {
                         buttonVariant = SELECTED_VARIANT;
                     }
@@ -103,7 +140,7 @@ const SelectObjects: React.FC<SelectObjectProps> = ({
                             key={index}
                             onClick={() => handleIndexSelection(index)}
                             variant={buttonVariant}
-                            className="btn-sm small"
+                            className="btn-sm small side-by-side-child"
                         >
                             {object.name}
                         </Button>
@@ -115,27 +152,54 @@ const SelectObjects: React.FC<SelectObjectProps> = ({
 };
 
 type TransformModeProps = {
+    indexSelection: number | undefined,
     objectTransformer: ObjectTransformer,
+    deleteObject: (index: number) => void,
 }
 
-const TransformMode: React.FC<TransformModeProps> = ({ objectTransformer }) => {
-    if (!objectTransformer.isTransforming()) {
+const TransformMode: React.FC<TransformModeProps> = ({ objectTransformer, indexSelection, deleteObject }) => {
+    if (indexSelection === undefined) {
         return null;
     }
     return (
         <>
-            <Button onClick={() => objectTransformer.setToTranslateMode()}>
-                Przesuwanie
-            </Button>
-            <Button onClick={() => objectTransformer.setToRotateMode()}>
-                Obracanie
-            </Button>
-            <Button onClick={() => objectTransformer.resetTranslate()}>
-                Resetuj pozycje do początkowej
-            </Button>
-            <Button onClick={() => objectTransformer.resetRotation()}>
-                Resetuj rotacje do początkowej
-            </Button>
+            <div className="side-by-side-parent">
+                <Button
+                    onClick={() => objectTransformer.setToTranslateMode()}
+                    variant={SECONDARY_VARIANT}
+                    className="btn-sm side-by-side-child"
+                >
+                    Przesuwanie
+                </Button>
+                <Button
+                    onClick={() => objectTransformer.setToRotateMode()}
+                    variant={SECONDARY_VARIANT}
+                    className="btn-sm side-by-side-child"
+                >
+                    Obracanie
+                </Button>
+                <Button
+                    onClick={() => objectTransformer.resetTranslate()}
+                    variant={SECONDARY_VARIANT}
+                    className="btn-sm side-by-side-child"
+                >
+                    Resetuj pozycje do początkowej
+                </Button>
+                <Button
+                    onClick={() => objectTransformer.resetRotation()}
+                    variant={SECONDARY_VARIANT}
+                    className="btn-sm side-by-side-child"
+                >
+                    Resetuj rotacje do początkowej
+                </Button>
+                <Button
+                    onClick={() => deleteObject(indexSelection)}
+                    variant={SECONDARY_VARIANT}
+                    className="btn-sm side-by-side-child"
+                >
+                    Usuń obiekt
+                </Button>
+            </div>
         </>
     );
 };

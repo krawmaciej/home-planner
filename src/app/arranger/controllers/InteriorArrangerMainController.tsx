@@ -6,9 +6,7 @@ import {ObjectProps} from "../objects/ImportedObject";
 import {Button} from "react-bootstrap";
 import {ObjectsController} from "./ObjectsController";
 import {InteriorArrangerState} from "../../../App";
-
-const DEFAULT_VARIANT = "dark";
-const SELECTED_VARIANT = "light";
+import {SECONDARY_VARIANT} from "../constants/Types";
 
 type InteriorArrangerContextType = {
     scene: Scene,
@@ -70,10 +68,16 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
     }, [context.changeMenuName]);
 
     return (
-        <Button onClick={() => changeSelection(Selection.OBJECTS)} variant={DEFAULT_VARIANT}>
-            Obiekty...
-        </Button>
-        // more default menu buttons
+        <div className="side-by-side-parent">
+            <Button
+                onClick={() => changeSelection(Selection.OBJECTS)}
+                variant={SECONDARY_VARIANT}
+                className="side-by-side-child btn-sm"
+            >
+                Obiekty...
+            </Button>
+            {/*more default menu buttons*/}
+        </div>
     );
 };
 

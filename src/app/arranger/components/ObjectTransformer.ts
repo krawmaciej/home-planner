@@ -42,10 +42,16 @@ export class ObjectTransformer {
     }
 
     public setToTranslateMode() {
+        this.transformControls.showX = true;
+        this.transformControls.showY = true;
+        this.transformControls.showZ = true;
         this.transformControls.setMode("translate");
     }
 
     public setToRotateMode() {
+        this.transformControls.showX = false;
+        this.transformControls.showY = true;
+        this.transformControls.showZ = false;
         this.transformControls.setMode("rotate");
     }
 
@@ -55,5 +61,12 @@ export class ObjectTransformer {
 
     public resetRotation() {
         this.transformControls.object?.rotation.set(0, 0, 0);
+    }
+
+    public removeObject() {
+        const object = this.transformControls.object;
+        if (object !== undefined) {
+            this.scene.remove(object);
+        }
     }
 }

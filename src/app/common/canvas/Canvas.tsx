@@ -4,6 +4,7 @@ import React, {memo, useLayoutEffect, useRef} from "react";
 import {Scene, Vector3, WebGLRenderer,} from "three";
 import {MainInputHandler} from "./inputHandler/MainInputHandler";
 import {ICameraHandler} from "./ICameraHandler";
+import {ICanvasObserver} from "./ICanvasObserver";
 
 type Pointer = {
     onCanvas: boolean,
@@ -16,6 +17,7 @@ type Props = {
     renderer: WebGLRenderer,
     cameraHandler: ICameraHandler,
     mainInputHandler: MainInputHandler,
+    observers: Array<ICanvasObserver>,
 }
 
 /**
@@ -69,6 +71,8 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
         }
 
         function render() {
+            props.observers.forEach(o => o.beforeRender());
+
             if (!pointer.onCanvas) {
                 props.renderer.render(props.scene, props.cameraHandler.getCamera());
                 return; // if pointer not on canvas then skip

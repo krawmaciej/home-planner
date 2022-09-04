@@ -10,6 +10,7 @@ import {
 import { WallComponentAddingIH } from "../IO/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";
+import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../../arranger/constants/Types";
 
 export type Observer = {
     setDistance: React.Dispatch<React.SetStateAction<number | undefined>>,
@@ -20,9 +21,6 @@ enum ComponentSelection {
     WINDOWS,
     DOORS,
 }
-
-const DEFAULT_VARIANT = "dark";
-const SELECTED_VARIANT = "light";
 
 export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
     const context = useContext(FloorPlanContext);
@@ -96,8 +94,8 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     };
 
     const display = () => {
-        const windowButtonVariant = componentSelection === ComponentSelection.WINDOWS ? SELECTED_VARIANT : DEFAULT_VARIANT;
-        const doorButtonVariant = componentSelection === ComponentSelection.DOORS ? SELECTED_VARIANT : DEFAULT_VARIANT;
+        const windowButtonVariant = componentSelection === ComponentSelection.WINDOWS ? PRIMARY_VARIANT : SECONDARY_VARIANT;
+        const doorButtonVariant = componentSelection === ComponentSelection.DOORS ? PRIMARY_VARIANT : SECONDARY_VARIANT;
 
         const components = getComponentsToDisplay(componentSelection);
 
@@ -158,7 +156,7 @@ const SelectComponents = ({
     return (
         <div>
             {components.map((component, index) => {
-                    let buttonVariant = DEFAULT_VARIANT;
+                    let buttonVariant = SECONDARY_VARIANT;
                     if (componentIndex === index) {
                         buttonVariant = SELECTED_VARIANT;
                     }
