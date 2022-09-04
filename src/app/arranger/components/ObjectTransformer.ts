@@ -1,44 +1,34 @@
 import {InteriorArrangerState} from "../../../App";
 import {Scene} from "three";
 import {ObjectProps} from "../objects/ImportedObject";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {TransformCollisionDetector} from "./TransformCollisionDetector";
+import {CanvasState} from "../../common/context/CanvasDefaults";
+import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 
 export class ObjectTransformer {
     private readonly scene: Scene;
-    private readonly orbitControls: OrbitControls;
     private readonly transformControls: TransformControls;
     private readonly collisionDetector: TransformCollisionDetector;
 
-    public constructor(scene: Scene, { orbitControls, transformControls }: InteriorArrangerState) {
+    public constructor({ scene, observers }: CanvasState, { transformControls }: InteriorArrangerState, { wallsHeight }: SceneObjectsState) {
         this.scene = scene;
-        this.orbitControls = orbitControls;
         this.transformControls = transformControls;
-        this.collisionDetector = new TransformCollisionDetector();
+        this.collisionDetector = new TransformCollisionDetector(wallsHeight, observers);
     }
 
     public startTransforming(placedObject: ObjectProps) {
-        this.transformControls.addEventListener("dragging-changed", event => {
-            this.orbitControls.enabled = !event.value;
-            if (placedObject.object3d.position.y < 0) {
-                placedObject.object3d.position.y = 0;
-            }
-        });
-
+        this.collisionDetector.setObject(placedObject);
         this.transformControls.enabled = true;
         this.transformControls.attach(placedObject.object3d);
         this.scene.add(this.transformControls);
     }
 
     public stopTransforming() {
+        this.collisionDetector.unsetObject();
         this.scene.remove(this.transformControls);
         this.transformControls.detach();
         this.transformControls.enabled = false;
-    }
-
-    public isTransforming(): boolean {
-        return this.transformControls.object !== undefined;
     }
 
     public setToTranslateMode() {
@@ -65,6 +55,7 @@ export class ObjectTransformer {
 
     public removeObject() {
         const object = this.transformControls.object;
+        this.collisionDetector.unsetObject();
         if (object !== undefined) {
             this.scene.remove(object);
         }

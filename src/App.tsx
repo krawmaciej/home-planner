@@ -40,6 +40,9 @@ const initialInteriorArrangerState = (renderer: WebGLRenderer): InteriorArranger
 
     const orbitControls = new OrbitControls(cameraHandler.getCamera(), renderer.domElement);
     const transformControls = new TransformControls(cameraHandler.getCamera(), renderer.domElement);
+    transformControls.addEventListener("dragging-changed", event => {
+        orbitControls.enabled = !event.value;
+    });
     transformControls.enabled = false;
     return {
         cameraHandler,

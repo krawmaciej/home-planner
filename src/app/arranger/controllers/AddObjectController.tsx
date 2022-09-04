@@ -17,7 +17,7 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, objectA
         throw new Error("Context in AddObjectController is undefined.");
     }
 
-    const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.scene, context.placedObjects, context.updatePlacedObjectsToggle));
+    const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.canvasState.scene, context.sceneObjectsState.placedObjects, context.updatePlacedObjectsToggle));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
@@ -25,8 +25,8 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, objectA
     }, [context.changeMenuName]);
 
     useEffect(() => {
-        setObjectAdder(new ObjectAdder(context.scene, context.placedObjects, context.updatePlacedObjectsToggle));
-    }, [context.scene, context.placedObjects, context.updatePlacedObjectsToggle]);
+        setObjectAdder(new ObjectAdder(context.canvasState.scene, context.sceneObjectsState.placedObjects, context.updatePlacedObjectsToggle));
+    }, [context.canvasState, context.sceneObjectsState, context.updatePlacedObjectsToggle]);
 
     const selectObject = (index: number) => {
         const objectProps = context.objectDefinitions.at(index);

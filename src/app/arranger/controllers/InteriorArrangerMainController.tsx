@@ -1,33 +1,31 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 
-import {Scene} from "three";
-import {MainInputHandler} from "../../common/canvas/inputHandler/MainInputHandler";
 import {ObjectProps} from "../objects/ImportedObject";
 import {Button} from "react-bootstrap";
 import {ObjectsController} from "./ObjectsController";
 import {InteriorArrangerState} from "../../../App";
 import {SECONDARY_VARIANT} from "../constants/Types";
+import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
+import {CanvasState} from "../../common/context/CanvasDefaults";
 
 type InteriorArrangerContextType = {
-    scene: Scene,
-    mainInputHandler: MainInputHandler,
+    canvasState: CanvasState,
+    sceneObjectsState: SceneObjectsState,
+    interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
-    placedObjects: Array<ObjectProps>,
     changeMenuName: (menuName: string) => void,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
-    interiorArrangerState: InteriorArrangerState,
 }
 
 export const InteriorArrangerContext = createContext<InteriorArrangerContextType | undefined>(undefined);
 
 type Props = {
     className?: string
-    scene: Scene,
-    mainInputHandler: MainInputHandler,
-    objectDefinitions: Array<ObjectProps>,
-    placedObjects: Array<ObjectProps>,
-    updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
+    canvasState: CanvasState,
+    sceneObjectsState: SceneObjectsState,
     interiorArrangerState: InteriorArrangerState,
+    objectDefinitions: Array<ObjectProps>,
+    updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
 }
 
 enum Selection {
@@ -82,12 +80,11 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
 };
 
 export const InteriorArrangerMainController: React.FC<Props> = ({
-                                                                    scene,
-                                                                    mainInputHandler,
-                                                                    objectDefinitions,
-                                                                    placedObjects,
-                                                                    updatePlacedObjectsToggle,
+                                                                    canvasState,
+                                                                    sceneObjectsState,
                                                                     interiorArrangerState,
+                                                                    objectDefinitions,
+                                                                    updatePlacedObjectsToggle,
 }) => {
     const [menuSelection, setMenuSelection] = useState(Selection.DEFAULT);
     const [menuName, setMenuName] = useState("");
@@ -106,13 +103,12 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
 
     // dependency container
     const context: InteriorArrangerContextType = {
-        scene,
-        mainInputHandler,
+        canvasState,
+        sceneObjectsState,
+        interiorArrangerState,
         objectDefinitions,
-        placedObjects,
         changeMenuName,
         updatePlacedObjectsToggle,
-        interiorArrangerState,
     };
 
     return (

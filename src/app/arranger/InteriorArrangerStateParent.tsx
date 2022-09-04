@@ -16,7 +16,7 @@ import {InteriorArrangerState} from "../../App";
 type Props = {
     className?: string,
     renderer: WebGLRenderer,
-    canvasState: CanvasState
+    canvasState: CanvasState,
     sceneObjects: SceneObjectsState,
     objectDefinitions: Array<ObjectProps>,
     cameraHandler: ICameraHandler,
@@ -194,12 +194,11 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
         <>
             <InteriorArrangerMainController
                 className={"app-bottom-menu"}
-                scene={canvasState.scene}
-                mainInputHandler={canvasState.mainInputHandler}
-                objectDefinitions={objectDefinitions}
-                placedObjects={sceneObjects.placedObjects}
-                updatePlacedObjectsToggle={updatePlacedObjectsToggle}
+                canvasState={canvasState}
+                sceneObjectsState={sceneObjects}
                 interiorArrangerState={interiorArrangerState}
+                objectDefinitions={objectDefinitions}
+                updatePlacedObjectsToggle={updatePlacedObjectsToggle}
             />
         </>
     );

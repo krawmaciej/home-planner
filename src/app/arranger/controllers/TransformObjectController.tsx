@@ -18,7 +18,11 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
         throw new Error("Context in TransformObjectController is undefined.");
     }
 
-    const [objectTransformer, setObjectTransformer] = useState(new ObjectTransformer(context.scene, context.interiorArrangerState));
+    const [objectTransformer, setObjectTransformer] = useState(new ObjectTransformer(
+        context.canvasState,
+        context.interiorArrangerState,
+        context.sceneObjectsState,
+    ));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
@@ -27,20 +31,24 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
 
     useEffect(() => {
         context.interiorArrangerState.transformControls.setMode("translate");
-        setObjectTransformer(new ObjectTransformer(context.scene, context.interiorArrangerState));
+        setObjectTransformer(new ObjectTransformer(
+            context.canvasState,
+            context.interiorArrangerState,
+            context.sceneObjectsState,
+        ));
         return () => {
             objectTransformer.stopTransforming();
         };
-    }, [context.scene, context.interiorArrangerState]);
+    }, [context.canvasState, context.sceneObjectsState, context.interiorArrangerState]);
 
     const selectObject = (index: number) => {
-        const placedObject = context.placedObjects.at(index);
+        const placedObject = context.sceneObjectsState.placedObjects.at(index);
         if (!placedObject) {
             throw new Error(`Selected invalid index: ${index} from placedObjects: ${JSON.stringify(placedObject)}`);
         }
         setIndexSelection(index);
         objectTransformer.startTransforming(placedObject);
-        context.mainInputHandler.detachCurrentHandler();
+        context.canvasState.mainInputHandler.detachCurrentHandler();
     };
 
     const cancelSelection = () => {
@@ -49,7 +57,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     };
 
     const deleteObject = (index: number) => {
-        context.placedObjects.splice(index, 1);
+        context.sceneObjectsState.placedObjects.splice(index, 1);
         context.updatePlacedObjectsToggle(prev => !prev);
         objectTransformer.removeObject();
         cancelSelection();
@@ -63,16 +71,16 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
 
     useEffect(() => {
         if (indexSelection === undefined) {
-            context.mainInputHandler.changeHandlingStrategy(new SelectObjectIH(
+            context.canvasState.mainInputHandler.changeHandlingStrategy(new SelectObjectIH(
                 context.interiorArrangerState.cameraHandler.getCamera(),
-                context.placedObjects,
+                context.sceneObjectsState.placedObjects,
                 selectObject
             ));
         }
         return () => {
-            context.mainInputHandler.detachCurrentHandler();
+            context.canvasState.mainInputHandler.detachCurrentHandler();
         };
-    }, [indexSelection, context.mainInputHandler]);
+    }, [indexSelection, context.canvasState]);
 
     let cancelButton = null;
     if (indexSelection !== undefined) {
@@ -100,7 +108,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
                 {cancelButton}
             </div>
             <SelectObjects
-                placedObjects={context.placedObjects}
+                placedObjects={context.sceneObjectsState.placedObjects}
                 objectIndex={indexSelection}
                 handleIndexSelection={selectObject}
             />

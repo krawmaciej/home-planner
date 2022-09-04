@@ -1,5 +1,6 @@
-import {Box3, Scene, Vector3} from "three";
+import {Scene} from "three";
 import {ObjectProps} from "../objects/ImportedObject";
+import {findHalfOfObjectHeight} from "./ObjectOperations";
 
 export class ObjectAdder {
     private readonly scene: Scene;
@@ -30,8 +31,7 @@ export class ObjectAdder {
     }
 
     private static alignObjectBottomWithFloor({ object3d }: ObjectProps) {
-        const box3 = new Box3().setFromObject(object3d);
-        const box3Size = box3.getSize(new Vector3());
-        object3d.translateY(box3Size.y / 2);
+        const halfHeight = findHalfOfObjectHeight(object3d);
+        object3d.translateY(halfHeight);
     }
 }
