@@ -37,7 +37,6 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
 
     useLayoutEffect(() => {
         return () => {
-            console.log("dismount with: ", convertedObject);
             convertedObject.object3d.material.emissive.setHex(highlightToggle.originalEmissive);
         };
     }, [convertedObject]);
@@ -47,6 +46,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
     }, [color]);
 
     const buttonText = highlightToggle.highlighted ? "Wyłącz podświetlenie obiektu" : "Włącz podświetlenie obiektu";
+    console.log(convertedObject.textureRotation);
 
     return (
         <div className="side-by-side-parent">
@@ -62,7 +62,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
             <Dropdown drop="up" className="side-by-side-child-only-flex">
                 <Dropdown.Toggle variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">Wybierz teksturę</Dropdown.Toggle>
                 <Dropdown.Menu>
-                    Heh
+                    {"gfdg"}
                 </Dropdown.Menu>
             </Dropdown>
         </div>

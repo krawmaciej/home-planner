@@ -14,7 +14,7 @@ import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";
 import {CanvasState, createCanvasState} from "./common/context/CanvasDefaults";
 import {initializeWithInteriorArranger} from "./common/context/InteriorArrangerDefaults";
-import {ACESFilmicToneMapping, NoToneMapping, WebGLRenderer} from "three";
+import { WebGLRenderer} from "three";
 import {initializeWithFloorPlan} from "./common/context/FloorPlanDefaults";
 import {FloorPlanState, InteriorArrangerState} from "../App";
 import {ICameraHandler} from "./common/canvas/ICameraHandler";
@@ -74,11 +74,8 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
     useEffect(() => {
         if (currentMenu === UISelection.FLOOR_PLAN) {
             canvasState.mainInputHandler.detachCurrentHandler();
+            interiorArrangerState.orbitControls.enabled = false;
             interiorArrangerState.transformControls.enabled = false;
-            interiorArrangerState.transformControls.enabled = false;
-
-            renderer.toneMapping = NoToneMapping;
-            renderer.toneMappingExposure = 1;
 
             initializeWithFloorPlan(canvasState);
 
@@ -87,15 +84,11 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
 
         if (currentMenu === UISelection.INTERIOR_ARRANGER) {
             canvasState.mainInputHandler.detachCurrentHandler();
+            interiorArrangerState.orbitControls.enabled = true;
             interiorArrangerState.transformControls.enabled = true;
-            interiorArrangerState.transformControls.enabled = true;
 
-            renderer.toneMapping = ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1;
+            initializeWithInteriorArranger(canvasState, interiorArrangerState);
 
-            initializeWithInteriorArranger(canvasState);
-
-            // renderer.outputEncoding = sRGBEncoding;
             return;
         }
     }, [currentMenu]);

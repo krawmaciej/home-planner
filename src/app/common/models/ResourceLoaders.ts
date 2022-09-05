@@ -1,8 +1,9 @@
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ComponentProps} from "../../drawer/objects/window/WallComponent";
-import {Box3, Group, Material, Matrix4, Mesh, Object3D, Vector3} from "three";
+import {Box3, DoubleSide, Group, Material, Matrix4, Mesh, MeshBasicMaterialParameters, Object3D, Vector3} from "three";
 import {Dimensions, ModelDefinition} from "./ModelDefinition";
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
+import {loadHardwoodTxt} from "../../arranger/loaders/Textures";
 
 const X_AXIS = new Vector3(1, 0, 0);
 const Y_AXIS = new Vector3(0, 1, 0);
@@ -154,3 +155,15 @@ const loadModels = async<T>(
     }
     return result;
 };
+
+// loadHardwoodTxt().then(txt => {
+//     txt.repeat.set(0.1, 0.1);
+//     txt.rotation = txtRotation;
+//     wallFace.connection.material.setValues({
+//         map: txt,
+//         side: DoubleSide,
+//         color: 0x888888,
+//     } as MeshBasicMaterialParameters);
+//
+//     wallFace.connection.material.needsUpdate = true;
+// });

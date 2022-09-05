@@ -1,8 +1,9 @@
-import {MeshStandardMaterial, Vector3} from "three";
+import {DoubleSide, MeshStandardMaterial, Vector3} from "three";
 
 export const DEFAULT_WALL_HEIGHT = 25;
 export const DEFAULT_WALL_MATERIAL = new MeshStandardMaterial({
     color: 0xbbbbbb,
+    side: DoubleSide,
 });
 
 export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({ color: 0x444444 });

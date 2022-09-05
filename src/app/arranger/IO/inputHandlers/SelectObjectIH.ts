@@ -44,7 +44,7 @@ export class SelectObjectIH implements IInputHandler {
 
             if (intersectedPrevParent) {
                 const convertedPlanObject = this.objectsMap.get(intersectedPrevParent);
-                console.log("Found converted plan object!!", convertedPlanObject);
+                // console.log("Found converted plan object!!", convertedPlanObject);
                 const values = [...this.objectsMap.values()];
                 for (let i = 0; i < values.length; i++) {
                     if (values[i] === convertedPlanObject) {

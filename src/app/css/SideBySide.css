@@ -1,5 +1,6 @@
 .side-by-side-parent {
     display: flex;
+    width: 100%;
 }
 
 .side-by-side-child {
