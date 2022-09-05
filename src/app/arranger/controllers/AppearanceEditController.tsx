@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useLayoutEffect, useState} from "react";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
 import {Button, Dropdown} from "react-bootstrap";
 import {SECONDARY_VARIANT} from "../constants/Types";
 import {ChromePicker} from "react-color";
 
 type Props = {
-    convertedObject: WallFaceMesh | undefined,
+    convertedObject: WallFaceMesh,
 }
 
 type HighlightToggle = {
@@ -14,10 +14,6 @@ type HighlightToggle = {
 }
 
 export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) => {
-    if (convertedObject === undefined) {
-        return null;
-    }
-
     const [highlightToggle, setHighlightToggle] = useState<HighlightToggle>({
         highlighted: true,
         originalEmissive: convertedObject.object3d.material.emissive.getHex(),
@@ -39,12 +35,12 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
         }
     }, [highlightToggle]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         return () => {
             console.log("dismount with: ", convertedObject);
             convertedObject.object3d.material.emissive.setHex(highlightToggle.originalEmissive);
         };
-    }, []);
+    }, [convertedObject]);
 
     useEffect(() => {
         convertedObject.object3d.material.color.set(color);

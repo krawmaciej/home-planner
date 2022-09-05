@@ -65,7 +65,7 @@ const SelectObjects = ({
                            handleIndexSelection,
                        }: SelectObjectProps) => {
     if (!objects) {
-        return null;
+        return null; // it's fine in this component as it's stateless
     }
 
     return (

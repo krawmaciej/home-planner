@@ -4,7 +4,6 @@ import {Button} from "react-bootstrap";
 import {PRIMARY_VARIANT} from "../constants/Types";
 import {SelectObjectIH} from "../IO/inputHandlers/SelectObjectIH";
 import {AppearanceEditController} from "./AppearanceEditController";
-import {WallFaceMesh} from "../objects/WallFaceMesh";
 
 type Props = {
     selectDefaultMenu: () => void,
@@ -22,22 +21,16 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
 
     const [wallFaceIndex, setWallFaceIndex] = useState<number | undefined>();
 
-    let wallFace: WallFaceMesh | undefined;
-
-    const getWallFace = (index: number | undefined) => {
-        if (index === undefined) {
-            return undefined;
-        }
-        return context.convertedObjects.wallFaces.at(index);
-    };
-
-    const selectWallFace = (index: number) => {
-        wallFace = getWallFace(index);
+    const getWallFace = (index: number) => {
+        const wallFace = context.convertedObjects.wallFaces.at(index);
         if (wallFace === undefined) {
             throw new Error(`Selected invalid index: ${index} from wallFaces.`);
         }
+        return wallFace;
+    };
+
+    const selectWallFace = (index: number) => {
         setWallFaceIndex(index);
-        console.log("Selected wall face index: ", index);
     };
 
     useEffect(() => {
@@ -54,6 +47,7 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
     }, [context.interiorArrangerState, context.convertedObjects, context.canvasState]);
 
     let cancelButton = null;
+    let appearanceEdit = null;
     if (wallFaceIndex !== undefined) {
         cancelButton = (
             <Button
@@ -63,6 +57,11 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
             >
                 Anuluj
             </Button>
+        );
+        appearanceEdit = (
+            <AppearanceEditController
+                convertedObject={getWallFace(wallFaceIndex)}
+            />
         );
     }
 
@@ -78,9 +77,7 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
                 </Button>
                 {cancelButton}
             </div>
-            <AppearanceEditController
-                convertedObject={getWallFace(wallFaceIndex)}
-            />
+            {appearanceEdit}
         </>
     );
 };

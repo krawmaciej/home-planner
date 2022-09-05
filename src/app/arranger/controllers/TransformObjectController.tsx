@@ -167,7 +167,7 @@ type TransformModeProps = {
 
 const TransformMode: React.FC<TransformModeProps> = ({ objectTransformer, indexSelection, deleteObject }) => {
     if (indexSelection === undefined) {
-        return null;
+        return null; // it's fine in this component as it's stateless
     }
     return (
         <>

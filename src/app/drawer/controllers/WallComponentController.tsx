@@ -140,7 +140,7 @@ const SelectComponents = ({
                               componentToWindowDistance
                           }: SelectComponentsProps) => {
     if (components.length === 0) {
-        return null;
+        return null; // it's fine in this component as it's stateless
     }
 
     if (components.length === 1) {
