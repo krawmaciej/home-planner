@@ -22,8 +22,12 @@ export class TransformCollisionDetector implements ICanvasObserver {
         if (this.checked === undefined) {
             return; // no op
         }
-        const object3d = this.checked.objectProps.object3d;
-        const halfHeight = this.checked.cachedHalfHeight;
+        this.resolveFloorAndCeilingCollisions(this.checked);
+    }
+
+    private resolveFloorAndCeilingCollisions(checked: Checked) {
+        const object3d = checked.objectProps.object3d;
+        const halfHeight = checked.cachedHalfHeight;
         if (object3d.position.y - halfHeight < 0) {
             object3d.position.y = halfHeight;
         } else if (object3d.position.y + halfHeight > this.wallSize) {

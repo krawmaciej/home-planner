@@ -1,4 +1,4 @@
-import {BufferGeometry, Line, Material, Vector3} from "three";
+import {BufferGeometry, Line, Material, MeshStandardMaterial, Vector3} from "three";
 import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
 import {MathFloatingPoints} from "../../../common/components/MathFloatingPoints";
 import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
@@ -177,13 +177,13 @@ class SideNode {
 class Connection {
     public next: SideNode | undefined;
     public type: ConnectionType;
-    public readonly material: Material;
+    public readonly material: MeshStandardMaterial;
     public readonly components: Array<IPlacedWallComponent>; // holds wall's connection doors/windows
     public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices wih components array
-    public constructor(next: SideNode | undefined, type: ConnectionType, material?: Material) {
+    public constructor(next: SideNode | undefined, type: ConnectionType, material?: MeshStandardMaterial) {
         this.next = next;
         this.type = type;
-        this.material = material ?? DEFAULT_WALL_MATERIAL.clone();
+        this.material = material?.clone() ?? DEFAULT_WALL_MATERIAL.clone();
         this.components = new Array<IPlacedWallComponent>();
         this.componentsAttributes = new Array<ComponentAttributes>();
     }

@@ -3,6 +3,9 @@ import {InteriorArrangerContext} from "./InteriorArrangerMainController";
 import {Button} from "react-bootstrap";
 import {PRIMARY_VARIANT} from "../constants/Types";
 import {SelectObjectIH} from "../IO/inputHandlers/SelectObjectIH";
+import {AppearanceEditController} from "./AppearanceEditController";
+import {ConvertedPlanObject} from "../objects/ConvertedPlanObject";
+import {WallFaceMesh} from "../objects/WallFaceMesh";
 
 type Props = {
     selectDefaultMenu: () => void,
@@ -20,9 +23,18 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
 
     const [wallFaceIndex, setWallFaceIndex] = useState<number | undefined>();
 
+    let wallFace: WallFaceMesh | undefined;
+
+    const getWallFace = (index: number | undefined) => {
+        if (index === undefined) {
+            return undefined;
+        }
+        return context.convertedObjects.wallFaces.at(index);
+    };
+
     const selectWallFace = (index: number) => {
-        const wallFace = context.convertedObjects.wallFaces.at(index);
-        if (!wallFace) {
+        wallFace = getWallFace(index);
+        if (wallFace === undefined) {
             throw new Error(`Selected invalid index: ${index} from wallFaces.`);
         }
         setWallFaceIndex(index);
@@ -42,15 +54,21 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
         };
     }, [context.interiorArrangerState, context.convertedObjects, context.canvasState]);
 
+    console.log("object: ", wallFace);
     return (
-        <div className="side-by-side-parent">
-            <Button
-                onClick={selectDefaultMenu}
-                variant={PRIMARY_VARIANT}
-                className="side-by-side-child btn-sm"
-            >
-                Powrót
-            </Button>
-        </div>
+        <>
+            <div className="side-by-side-parent">
+                <Button
+                    onClick={selectDefaultMenu}
+                    variant={PRIMARY_VARIANT}
+                    className="side-by-side-child btn-sm"
+                >
+                    Powrót
+                </Button>
+            </div>
+            <AppearanceEditController
+                convertedObject={getWallFace(wallFaceIndex)}
+            />
+        </>
     );
 };

@@ -1,9 +1,9 @@
-import {DoubleSide, Mesh, MeshBasicMaterialParameters, ShapeGeometry} from "three";
+import {DoubleSide, Mesh, MeshBasicMaterialParameters, MeshStandardMaterial, ShapeGeometry} from "three";
 import {WallFace} from "../../drawer/objects/wall/WallSide";
 import {loadHardwoodTxt} from "../loaders/Textures";
-import {ConvertedPlanObject} from "./ConvertedPlanObject";
 
-export type WallFaceMesh = ConvertedPlanObject & {
+export type WallFaceMesh = {
+    readonly object3d: Mesh<ShapeGeometry, MeshStandardMaterial>,
     readonly wallFace: WallFace,
 }
 

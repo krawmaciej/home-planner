@@ -13,9 +13,10 @@ import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import spinner from "../../loading-spinner.gif";
 import {InteriorArrangerState} from "../../App";
 import {ConvertedPlanObject} from "./objects/ConvertedPlanObject";
+import {WallFaceMesh} from "./objects/WallFaceMesh";
 
 export type ConvertedObjects = {
-    wallFaces: Array<ConvertedPlanObject>,
+    wallFaces: Array<WallFaceMesh>,
     wallFrames?: Array<ConvertedPlanObject>,
     floors?: Array<ConvertedPlanObject>,
     ceilings?: Array<ConvertedPlanObject>,
