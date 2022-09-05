@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
-import {Button, DropdownButton} from "react-bootstrap";
+import {Button, Dropdown} from "react-bootstrap";
+import {SECONDARY_VARIANT} from "../constants/Types";
 import {ChromePicker} from "react-color";
 
 type Props = {
@@ -40,9 +41,10 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
 
     useEffect(() => {
         return () => {
+            console.log("dismount with: ", convertedObject);
             convertedObject.object3d.material.emissive.setHex(highlightToggle.originalEmissive);
         };
-    }, [convertedObject]);
+    }, []);
 
     useEffect(() => {
         convertedObject.object3d.material.color.set(color);
@@ -51,13 +53,22 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
     const buttonText = highlightToggle.highlighted ? "Wyłącz podświetlenie obiektu" : "Włącz podświetlenie obiektu";
 
     return (
-        <>
-            <Button onClick={toggleHighlighted}>
+        <div className="side-by-side-parent">
+            <Button onClick={toggleHighlighted} variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">
                 {buttonText}
             </Button>
-            <DropdownButton title="Wybór koloru" drop="up">
-                <ChromePicker color={color} onChange={value => setColor(value.hex)}/>
-            </DropdownButton>
-        </>
+            <Dropdown drop="up" className="side-by-side-child-only-flex">
+                <Dropdown.Toggle variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">Wybierz kolor</Dropdown.Toggle>
+                <Dropdown.Menu>
+                    <ChromePicker color={color} onChange={value => setColor(value.hex)}/>
+                </Dropdown.Menu>
+            </Dropdown>
+            <Dropdown drop="up" className="side-by-side-child-only-flex">
+                <Dropdown.Toggle variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">Wybierz teksturę</Dropdown.Toggle>
+                <Dropdown.Menu>
+                    Heh
+                </Dropdown.Menu>
+            </Dropdown>
+        </div>
     );
 };

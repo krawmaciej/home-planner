@@ -4,7 +4,6 @@ import {Button} from "react-bootstrap";
 import {PRIMARY_VARIANT} from "../constants/Types";
 import {SelectObjectIH} from "../IO/inputHandlers/SelectObjectIH";
 import {AppearanceEditController} from "./AppearanceEditController";
-import {ConvertedPlanObject} from "../objects/ConvertedPlanObject";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
 
 type Props = {
@@ -54,7 +53,19 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
         };
     }, [context.interiorArrangerState, context.convertedObjects, context.canvasState]);
 
-    console.log("object: ", wallFace);
+    let cancelButton = null;
+    if (wallFaceIndex !== undefined) {
+        cancelButton = (
+            <Button
+                onClick={() => setWallFaceIndex(undefined)}
+                variant={PRIMARY_VARIANT}
+                className="side-by-side-child btn-sm"
+            >
+                Anuluj
+            </Button>
+        );
+    }
+
     return (
         <>
             <div className="side-by-side-parent">
@@ -65,6 +76,7 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
                 >
                     Powrót
                 </Button>
+                {cancelButton}
             </div>
             <AppearanceEditController
                 convertedObject={getWallFace(wallFaceIndex)}
