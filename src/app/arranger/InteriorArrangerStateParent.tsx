@@ -7,7 +7,7 @@ import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ObjectProps} from "./objects/ImportedObject";
 import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
-import {disposeSceneObjects} from "../common/context/SceneOperations";
+import {disposeSceneObjects, enableShadows} from "../common/context/SceneOperations";
 import {CanvasState} from "../common/context/CanvasDefaults";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import spinner from "../../loading-spinner.gif";
@@ -176,6 +176,8 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
             // transform.attach(group);
             // scene.add(transform);
         });
+
+        enableShadows(canvasState.scene);
     }, [sceneObjects, canvasState]);
 
     if (convertedObjects === undefined) {

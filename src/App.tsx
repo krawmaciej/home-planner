@@ -34,9 +34,10 @@ const initialFloorPlanState = (): FloorPlanState => {
 };
 
 const initialInteriorArrangerState = (renderer: WebGLRenderer): InteriorArrangerState => {
-    new DirectionalLight();
-    const cameraPointLight = new PointLight(0xffffff, 0.3);
-    const cameraHandler = new PerspectiveCameraHandler(new PerspectiveCamera(50), cameraPointLight, Math.PI);
+    const cameraLight = new DirectionalLight(0xffffff, 0.3);
+    new PointLight(0xffffff, 0.3);
+    cameraLight.castShadow = true;
+    const cameraHandler = new PerspectiveCameraHandler(new PerspectiveCamera(50), cameraLight, Math.PI);
     cameraHandler.setPosition(new Vector3(0, 50, 20));
     cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
 
