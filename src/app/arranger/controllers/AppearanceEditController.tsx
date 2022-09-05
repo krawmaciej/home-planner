@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
-import {Button} from "react-bootstrap";
+import {Button, DropdownButton} from "react-bootstrap";
+import {ChromePicker} from "react-color";
 
 type Props = {
     convertedObject: WallFaceMesh | undefined,
@@ -20,6 +21,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
         highlighted: true,
         originalEmissive: convertedObject.object3d.material.emissive.getHex(),
     });
+    const [color, setColor] = useState("#" + convertedObject.object3d.material.color.getHexString());
 
     const toggleHighlighted = () => {
         setHighlightToggle(prev => ({
@@ -30,7 +32,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
 
     useEffect(() => {
         if (highlightToggle.highlighted) {
-            convertedObject.object3d.material.emissive.setHex(0x222222);
+            convertedObject.object3d.material.emissive.setHex(0x777777);
         } else {
             convertedObject.object3d.material.emissive.setHex(highlightToggle.originalEmissive);
         }
@@ -42,6 +44,10 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
         };
     }, [convertedObject]);
 
+    useEffect(() => {
+        convertedObject.object3d.material.color.set(color);
+    }, [color]);
+
     const buttonText = highlightToggle.highlighted ? "Wyłącz podświetlenie obiektu" : "Włącz podświetlenie obiektu";
 
     return (
@@ -49,6 +55,9 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject }) =
             <Button onClick={toggleHighlighted}>
                 {buttonText}
             </Button>
+            <DropdownButton title="Wybór koloru" drop="up">
+                <ChromePicker color={color} onChange={value => setColor(value.hex)}/>
+            </DropdownButton>
         </>
     );
 };
