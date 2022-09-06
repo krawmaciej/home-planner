@@ -2,7 +2,7 @@ import spinner from "./loading-spinner.gif";
 
 import React, {useEffect, useState} from "react";
 import {MainComponent} from "./app/MainComponent";
-import {DirectionalLight, OrthographicCamera, PerspectiveCamera, PointLight, Vector3, WebGLRenderer} from "three";
+import {OrthographicCamera, PerspectiveCamera, PointLight, Vector3, WebGLRenderer} from "three";
 import {OrthographicCameraHandler, PerspectiveCameraHandler} from "./app/common/canvas/ICameraHandler";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
@@ -34,8 +34,8 @@ const initialFloorPlanState = (): FloorPlanState => {
 };
 
 const initialInteriorArrangerState = (renderer: WebGLRenderer): InteriorArrangerState => {
-    new DirectionalLight(0xffffff, 0.3);
-    const cameraLight = new PointLight(0xffffff, 0.2);
+    const cameraLight = new PointLight(0xffffff, 0.3);
+    cameraLight.position.set(0, -25, 0);
     const cameraHandler = new PerspectiveCameraHandler(new PerspectiveCamera(50), cameraLight, Math.PI);
     cameraHandler.setPosition(new Vector3(0, 50, 20));
     cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
