@@ -7,12 +7,12 @@ import {
     Matrix4,
     Mesh,
     Object3D,
-    RepeatWrapping, Texture, TextureLoader,
+    RepeatWrapping, TextureLoader,
     Vector3
 } from "three";
 import {Dimensions, ModelDefinition} from "./ModelDefinition";
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
-import {TextureDefinition} from "./TextureDefinition";
+import {LoadedTexture, TextureDefinition} from "./TextureDefinition";
 
 const X_AXIS = new Vector3(1, 0, 0);
 const Y_AXIS = new Vector3(0, 1, 0);
@@ -112,13 +112,12 @@ export const loadObjects = async (): Promise<ObjectProps[]> => {
 
 const textureLoader = new TextureLoader();
 
-const loadTexture = async (textureDefinition: TextureDefinition) => {
-    const url = `${TEXTURES_PATH}/${textureDefinition.file}`;
+const loadTexture = async (url: string, { repeat }: TextureDefinition) => {
     const txt = await textureLoader.loadAsync(url);
     txt.wrapT = RepeatWrapping;
     txt.wrapS = RepeatWrapping;
-    if (textureDefinition.repeat !== undefined) {
-        const [x, y] = textureDefinition.repeat;
+    if (repeat !== undefined) {
+        const [x, y] = repeat;
         txt.repeat.set(x, y);
     }
     return txt;
@@ -126,9 +125,13 @@ const loadTexture = async (textureDefinition: TextureDefinition) => {
 
 export const loadTextures = async () => {
     const textureDefinitions = await texturesPromise;
-    const results = new Array<Promise<Texture>>();
+    const results = new Array<LoadedTexture>();
     for (const textureDefinition of textureDefinitions) {
-        results.push(loadTexture(textureDefinition));
+        const url = `${TEXTURES_PATH}/${textureDefinition.file}`;
+        results.push({
+            url,
+            texture: loadTexture(url, textureDefinition),
+        });
     }
     return results;
 };

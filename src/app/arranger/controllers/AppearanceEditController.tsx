@@ -1,13 +1,13 @@
-import React, {Key, useEffect, useLayoutEffect, useState} from "react";
+import React, {useEffect, useLayoutEffect, useState} from "react";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
 import {Button, Dropdown} from "react-bootstrap";
 import {SECONDARY_VARIANT} from "../constants/Types";
 import {ChromePicker} from "react-color";
-import {Texture} from "three";
+import {LoadedTexture} from "../../common/models/TextureDefinition";
 
 type Props = {
     convertedObject: WallFaceMesh,
-    texturePromises: Array<Promise<Texture>>,
+    texturePromises: Array<LoadedTexture>,
 }
 
 type HighlightToggle = {
@@ -63,7 +63,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
 
             disposeLastTexture();
 
-            texture.then(txt => {
+            texture.texture.then(txt => {
                 const clonedTexture = txt.clone();
                 clonedTexture.needsUpdate = true;
                 clonedTexture.rotation = convertedObject.textureRotation;
@@ -110,7 +110,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
 
 type TextureListProps = {
     setTextureIndex: (value: number) => void,
-    texturePromises: Array<Promise<Texture>>,
+    texturePromises: Array<LoadedTexture>,
     unsetTexture: () => void,
 }
 
@@ -127,41 +127,19 @@ export const TextureList: React.FC<TextureListProps> = ({setTextureIndex, textur
             >
                 Wyłącz teksturę
             </Button>
-            {texturePromises.map((promise, index) => {
+            {texturePromises.map((loadedTexture, index) => {
                     return (
-                        <AsynchronousButton key={index} index={index} setIndex={setTextureIndex} promise={promise}/>
+                        <Button
+                            key={index}
+                            onClick={() => setTextureIndex(index)}
+                            variant={SECONDARY_VARIANT}
+                            className="btn-sm small"
+                        >
+                            <img src={loadedTexture.url} alt={index.toString()} height="100px"/>
+                        </Button>
                     );
                 }
             )}
         </div>
-    );
-};
-
-type AsynchronousButtonProps = {
-    key: Key, // not a prop, do not use
-    index: number,
-    setIndex: (value: number) => void,
-    promise: Promise<Texture>,
-}
-
-const AsynchronousButton: React.FC<AsynchronousButtonProps> = ({ index, setIndex, promise }) => {
-    const [image, setImage] = useState();
-
-    useEffect(() => {
-        promise.then(txt => {
-            console.log(JSON.stringify(txt));
-            setImage(txt.image);
-        });
-    }, []);
-
-    return (
-        <Button
-            key={index}
-            onClick={() => setIndex(index)}
-            variant={SECONDARY_VARIANT}
-            className="btn-sm small"
-        >
-            <img src={image} alt={index.toString()}/>
-        </Button>
     );
 };

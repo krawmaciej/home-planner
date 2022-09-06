@@ -1,7 +1,7 @@
 import "../css/MainStyle.css";
 
 import React, {useEffect, useState} from 'react';
-import {Box3, Box3Helper, Color, Group, Texture, Vector3, WebGLRenderer} from 'three';
+import {Box3, Box3Helper, Color, Group, Vector3, WebGLRenderer} from 'three';
 import {InteriorArrangerMainController} from "./controllers/InteriorArrangerMainController";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
@@ -14,6 +14,7 @@ import spinner from "../../loading-spinner.gif";
 import {InteriorArrangerState} from "../../App";
 import {ConvertedPlanObject} from "./objects/ConvertedPlanObject";
 import {WallFaceMesh} from "./objects/WallFaceMesh";
+import {LoadedTexture} from "../common/models/TextureDefinition";
 
 export type ConvertedObjects = {
     wallFaces: Array<WallFaceMesh>,
@@ -28,7 +29,7 @@ type Props = {
     canvasState: CanvasState,
     sceneObjects: SceneObjectsState,
     objectDefinitions: Array<ObjectProps>,
-    textures: Array<Promise<Texture>>,
+    textures: Array<LoadedTexture>,
     cameraHandler: ICameraHandler,
     interiorArrangerState: InteriorArrangerState,
 }

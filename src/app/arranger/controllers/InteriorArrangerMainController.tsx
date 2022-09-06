@@ -9,14 +9,14 @@ import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 import {CanvasState} from "../../common/context/CanvasDefaults";
 import { WallsAppearanceController } from "./WallsAppearanceController";
 import {ConvertedObjects} from "../InteriorArrangerStateParent";
-import {Texture} from "three";
+import {LoadedTexture} from "../../common/models/TextureDefinition";
 
 type InteriorArrangerContextType = {
     canvasState: CanvasState,
     sceneObjectsState: SceneObjectsState,
     interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
-    textures: Array<Promise<Texture>>,
+    textures: Array<LoadedTexture>,
     changeMenuName: (menuName: string) => void,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
     convertedObjects: ConvertedObjects,
@@ -30,7 +30,7 @@ type Props = {
     sceneObjectsState: SceneObjectsState,
     interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
-    textures: Array<Promise<Texture>>,
+    textures: Array<LoadedTexture>,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
     convertedObjects: ConvertedObjects,
 }
