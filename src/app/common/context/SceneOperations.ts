@@ -1,4 +1,4 @@
-import {Mesh, Object3D, Scene, WebGLRenderer} from "three";
+import {Mesh, MeshStandardMaterial, Object3D, Scene, WebGLRenderer} from "three";
 
 type TraverseObject = {
     geometry?: {
@@ -39,6 +39,7 @@ export const disposeSceneObjects = (scene: Scene, renderer: WebGLRenderer) => {
     renderer.renderLists.dispose();
 };
 
+// todo: remove
 export const enableShadows = (scene: Scene) => {
     scene.traverse(o => {
         if (o === scene) {
@@ -48,6 +49,9 @@ export const enableShadows = (scene: Scene) => {
         if (o instanceof Mesh) {
             o.castShadow = true;
             o.receiveShadow = true;
+            if (o.material instanceof MeshStandardMaterial) {
+                o.material.needsUpdate = true;
+            }
         }
     });
 };

@@ -61,6 +61,7 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
         appearanceEdit = (
             <AppearanceEditController
                 convertedObject={getWallFace(wallFaceIndex)}
+                texturePromises={context.textures}
             />
         );
     }

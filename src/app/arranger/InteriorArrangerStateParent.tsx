@@ -1,13 +1,13 @@
 import "../css/MainStyle.css";
 
 import React, {useEffect, useState} from 'react';
-import {Box3, Box3Helper, Color, Group, Vector3, WebGLRenderer} from 'three';
+import {Box3, Box3Helper, Color, Group, Texture, Vector3, WebGLRenderer} from 'three';
 import {InteriorArrangerMainController} from "./controllers/InteriorArrangerMainController";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ObjectProps} from "./objects/ImportedObject";
 import {PlanToArrangerConverter} from "./components/converter/PlanToArrangerConverter";
-import {disposeSceneObjects, enableShadows} from "../common/context/SceneOperations";
+import {disposeSceneObjects} from "../common/context/SceneOperations";
 import {CanvasState} from "../common/context/CanvasDefaults";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import spinner from "../../loading-spinner.gif";
@@ -28,6 +28,7 @@ type Props = {
     canvasState: CanvasState,
     sceneObjects: SceneObjectsState,
     objectDefinitions: Array<ObjectProps>,
+    textures: Array<Promise<Texture>>,
     cameraHandler: ICameraHandler,
     interiorArrangerState: InteriorArrangerState,
 }
@@ -36,6 +37,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
                                                                  canvasState,
                                                                  sceneObjects,
                                                                  objectDefinitions,
+                                                                 textures,
                                                                  renderer,
                                                                  cameraHandler,
                                                                  interiorArrangerState,
@@ -176,8 +178,6 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
             // transform.attach(group);
             // scene.add(transform);
         });
-
-        enableShadows(canvasState.scene);
     }, [sceneObjects, canvasState]);
 
     if (convertedObjects === undefined) {
@@ -192,6 +192,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
                 sceneObjectsState={sceneObjects}
                 interiorArrangerState={interiorArrangerState}
                 objectDefinitions={objectDefinitions}
+                textures={textures}
                 updatePlacedObjectsToggle={updatePlacedObjectsToggle}
                 convertedObjects={convertedObjects}
             />

@@ -9,12 +9,14 @@ import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 import {CanvasState} from "../../common/context/CanvasDefaults";
 import { WallsAppearanceController } from "./WallsAppearanceController";
 import {ConvertedObjects} from "../InteriorArrangerStateParent";
+import {Texture} from "three";
 
 type InteriorArrangerContextType = {
     canvasState: CanvasState,
     sceneObjectsState: SceneObjectsState,
     interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
+    textures: Array<Promise<Texture>>,
     changeMenuName: (menuName: string) => void,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
     convertedObjects: ConvertedObjects,
@@ -28,6 +30,7 @@ type Props = {
     sceneObjectsState: SceneObjectsState,
     interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
+    textures: Array<Promise<Texture>>,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
     convertedObjects: ConvertedObjects,
 }
@@ -98,6 +101,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
                                                                     sceneObjectsState,
                                                                     interiorArrangerState,
                                                                     objectDefinitions,
+                                                                    textures,
                                                                     updatePlacedObjectsToggle,
                                                                     convertedObjects,
 }) => {
@@ -122,6 +126,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
         sceneObjectsState,
         interiorArrangerState,
         objectDefinitions,
+        textures,
         changeMenuName,
         updatePlacedObjectsToggle,
         convertedObjects,
