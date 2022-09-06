@@ -5,6 +5,7 @@ import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {TransformCollisionDetector} from "./TransformCollisionDetector";
 import {CanvasState} from "../../common/context/CanvasDefaults";
 import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
+import {disposeAllProperties} from "../../common/context/SceneOperations";
 
 export class ObjectTransformer {
     private readonly scene: Scene;
@@ -26,7 +27,7 @@ export class ObjectTransformer {
 
     public stopTransforming() {
         this.collisionDetector.unsetObject();
-        this.scene.remove(this.transformControls);
+        this.scene.remove(this.transformControls); // singleton global controls, no need to dispose
         this.transformControls.detach();
         this.transformControls.enabled = false;
     }
@@ -57,6 +58,7 @@ export class ObjectTransformer {
         const object = this.transformControls.object;
         this.collisionDetector.unsetObject();
         if (object !== undefined) {
+            disposeAllProperties(object);
             this.scene.remove(object);
         }
     }

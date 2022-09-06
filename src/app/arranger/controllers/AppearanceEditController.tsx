@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useState} from "react";
+import React, {Key, useEffect, useLayoutEffect, useState} from "react";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
 import {Button, Dropdown} from "react-bootstrap";
 import {SECONDARY_VARIANT} from "../constants/Types";
@@ -30,6 +30,12 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
         }));
     };
 
+    const disposeLastTexture = () => {
+        if (convertedObject.object3d.material.map !== null) {
+            convertedObject.object3d.material.map.dispose();
+        }
+    };
+
     useEffect(() => {
         if (highlightToggle.highlighted) {
             convertedObject.object3d.material.emissive.setHex(0x777777);
@@ -54,6 +60,9 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
             if (texture === undefined) {
                 throw new Error(`Selected texture index: ${textureIndex} from textures ${JSON.stringify(texturePromises)}`);
             }
+
+            disposeLastTexture();
+
             texture.then(txt => {
                 const clonedTexture = txt.clone();
                 clonedTexture.needsUpdate = true;
@@ -63,6 +72,14 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
             });
         }
     }, [textureIndex]);
+
+
+    const unsetTexture = () => {
+        disposeLastTexture();
+        convertedObject.object3d.material.map = null;
+        convertedObject.object3d.material.needsUpdate = true;
+        setTextureIndex(undefined);
+    };
 
     const buttonText = highlightToggle.highlighted ? "Wyłącz podświetlenie obiektu" : "Włącz podświetlenie obiektu";
 
@@ -80,9 +97,71 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
             <Dropdown drop="up" className="side-by-side-child-only-flex">
                 <Dropdown.Toggle variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">Wybierz teksturę</Dropdown.Toggle>
                 <Dropdown.Menu>
-                    <Button onClick={() => setTextureIndex(0)}>First txt</Button>
+                    <TextureList
+                        setTextureIndex={setTextureIndex}
+                        texturePromises={texturePromises}
+                        unsetTexture={unsetTexture}
+                    />
                 </Dropdown.Menu>
             </Dropdown>
         </div>
+    );
+};
+
+type TextureListProps = {
+    setTextureIndex: (value: number) => void,
+    texturePromises: Array<Promise<Texture>>,
+    unsetTexture: () => void,
+}
+
+export const TextureList: React.FC<TextureListProps> = ({setTextureIndex, texturePromises, unsetTexture }) => {
+
+
+
+    return (
+        <div>
+            <Button
+                onClick={unsetTexture}
+                variant={SECONDARY_VARIANT}
+                className="btn-sm small"
+            >
+                Wyłącz teksturę
+            </Button>
+            {texturePromises.map((promise, index) => {
+                    return (
+                        <AsynchronousButton key={index} index={index} setIndex={setTextureIndex} promise={promise}/>
+                    );
+                }
+            )}
+        </div>
+    );
+};
+
+type AsynchronousButtonProps = {
+    key: Key, // not a prop, do not use
+    index: number,
+    setIndex: (value: number) => void,
+    promise: Promise<Texture>,
+}
+
+const AsynchronousButton: React.FC<AsynchronousButtonProps> = ({ index, setIndex, promise }) => {
+    const [image, setImage] = useState();
+
+    useEffect(() => {
+        promise.then(txt => {
+            console.log(JSON.stringify(txt));
+            setImage(txt.image);
+        });
+    }, []);
+
+    return (
+        <Button
+            key={index}
+            onClick={() => setIndex(index)}
+            variant={SECONDARY_VARIANT}
+            className="btn-sm small"
+        >
+            <img src={image} alt={index.toString()}/>
+        </Button>
     );
 };

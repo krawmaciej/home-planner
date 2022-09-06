@@ -55,7 +55,7 @@ export const WallsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }
                 variant={PRIMARY_VARIANT}
                 className="side-by-side-child btn-sm"
             >
-                Anuluj
+                Zmień ścianę
             </Button>
         );
         appearanceEdit = (
