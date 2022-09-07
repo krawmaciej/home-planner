@@ -205,7 +205,7 @@ class Connection {
     }
 }
 
-export type PostProcessedTextureRotation = {
+type PostProcessedTextureRotation = {
     value: number,
 }
 

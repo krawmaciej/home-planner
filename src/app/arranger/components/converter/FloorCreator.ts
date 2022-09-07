@@ -1,5 +1,5 @@
 import {Floor} from "../../../drawer/objects/floor/Floor";
-import { Mesh, MeshBasicMaterialParameters} from "three";
+import { Mesh} from "three";
 import { Attributes, Coordinate, Facing} from "../../constants/Types";
 import {loadHardwoodTxt} from "../../loaders/Textures";
 import {ObjectPoint} from "../../../drawer/constants/Types";
@@ -16,11 +16,7 @@ export class FloorCreator {
             console.log("txtuuid: ", txt.uuid);
 
             txt.repeat.set(0.1, 0.1);
-            floor.meshMaterial.setValues({
-                map: txt,
-                color: 0x888888,
-                // depthWrite: false,
-            } as MeshBasicMaterialParameters);
+            floor.meshMaterial.map = txt;
 
             floor.meshMaterial.needsUpdate = true;
         });

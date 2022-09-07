@@ -5,7 +5,6 @@ import {SECONDARY_VARIANT} from "../constants/Types";
 import {ChromePicker} from "react-color";
 import {LoadedTexture} from "../../common/models/TextureDefinition";
 import {RADIAN_MULTIPLIER} from "../../common/components/CommonMathOperations";
-import {PostProcessedTextureRotation} from "../../drawer/objects/wall/WallSide";
 
 type Props = {
     convertedObject: WallFaceMesh,
@@ -24,7 +23,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
     });
     const [color, setColor] = useState("#" + convertedObject.object3d.material.color.getHexString());
     const [textureIndex, setTextureIndex] = useState<number>();
-    const [postProcessedRotation, setPostProcessedRotation] = useState(convertedObject.wallFace.postProcessedTextureRotation);
+    const [postProcessedRotation, setPostProcessedRotation] = useState(convertedObject.wallFace.postProcessedTextureRotation.value);
 
     const toggleHighlighted = () => {
         setHighlightToggle(prev => ({
@@ -58,9 +57,10 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
     }, [color]);
 
     useEffect(() => {
+        convertedObject.wallFace.postProcessedTextureRotation.value = postProcessedRotation;
         const objectTexture = convertedObject.object3d.material.map;
         if (objectTexture !== null) {
-            objectTexture.rotation = convertedObject.textureRotation + (postProcessedRotation.value * RADIAN_MULTIPLIER);
+            objectTexture.rotation = convertedObject.textureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
         }
     }, [postProcessedRotation]);
 
@@ -76,7 +76,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
             texture.texture.then(txt => {
                 const clonedTexture = txt.clone();
                 clonedTexture.needsUpdate = true;
-                clonedTexture.rotation = convertedObject.textureRotation + (postProcessedRotation.value * RADIAN_MULTIPLIER);
+                clonedTexture.rotation = convertedObject.textureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
                 convertedObject.object3d.material.map = clonedTexture;
                 convertedObject.object3d.material.needsUpdate = true;
             });
@@ -154,8 +154,8 @@ export const TextureList: React.FC<TextureListProps> = ({setTextureIndex, textur
 };
 
 type TextureRotationProps = {
-    currentRotation: PostProcessedTextureRotation,
-    setRotation: (newState: PostProcessedTextureRotation) => void,
+    currentRotation: number,
+    setRotation: (value: number) => void,
 }
 
 export const TextureRotation: React.FC<TextureRotationProps> = ({ currentRotation, setRotation }) => {
@@ -163,14 +163,14 @@ export const TextureRotation: React.FC<TextureRotationProps> = ({ currentRotatio
     const MAX_ALLOWED_ROTATION = 360;
 
     const changeRotation = (value: string) => {
-        const number = Number(value);
-        if (!isNaN(number)) {
-            if (number > MAX_ALLOWED_ROTATION) {
-                setRotation({ value: MAX_ALLOWED_ROTATION });
-            } else if (number < MIN_ALLOWED_ROTATION) {
-                setRotation({ value: MIN_ALLOWED_ROTATION });
+        const passedNumber = Number(value);
+        if (!isNaN(passedNumber)) {
+            if (passedNumber > MAX_ALLOWED_ROTATION) {
+                setRotation(MAX_ALLOWED_ROTATION);
+            } else if (passedNumber < MIN_ALLOWED_ROTATION) {
+                setRotation(MIN_ALLOWED_ROTATION);
             } else {
-                setRotation({ value: number });
+                setRotation(passedNumber);
             }
         }
     };
@@ -180,7 +180,7 @@ export const TextureRotation: React.FC<TextureRotationProps> = ({ currentRotatio
             <Form.Label size="sm" className="small">
                 Rotacja tekstury °
             </Form.Label>
-            <Form.Control size="sm" type="text" onChange={event => changeRotation(event.target.value)} value={currentRotation.value}/>
+            <Form.Control size="sm" type="text" onChange={event => changeRotation(event.target.value)} value={currentRotation}/>
         </Form.Group>
     );
 };

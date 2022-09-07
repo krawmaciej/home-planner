@@ -6,7 +6,7 @@ export const DEFAULT_WALL_MATERIAL = new MeshStandardMaterial({
     side: DoubleSide,
 });
 
-export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({ color: 0x444444 });
+export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({ color: 0xbbbbbb });
 
 export enum Precision {
     CM_100 = -1,
