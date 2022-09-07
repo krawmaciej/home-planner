@@ -4,63 +4,71 @@ import {Button} from "react-bootstrap";
 import {PRIMARY_VARIANT} from "../constants/Types";
 import {SelectObjectIH} from "../IO/inputHandlers/SelectObjectIH";
 import {AppearanceEditController} from "./AppearanceEditController";
+import {ObjectWithEditableTexture} from "../objects/ArrangerObject";
+
+type Texts = {
+    controllerName: string,
+    unselectText: string,
+}
 
 type Props = {
     selectDefaultMenu: () => void,
+    texts: Texts,
+    editableObjects: Array<ObjectWithEditableTexture>,
 }
 
-export const FloorsAppearanceController: React.FC<Props> = ({ selectDefaultMenu }) => {
+export const ObjectsAppearanceController: React.FC<Props> = ({ selectDefaultMenu, texts, editableObjects }) => {
     const context = useContext(InteriorArrangerContext);
     if (context === undefined) {
-        throw new Error("Context in WallsAppearanceController is undefined.");
+        throw new Error(`Context in AppearanceController named: ${texts.controllerName} is undefined.`);
     }
 
     useEffect(() => {
-        context.changeMenuName("Edytuj wygląd podłóg");
+        context.changeMenuName(texts.controllerName);
     }, [context.changeMenuName]);
 
-    const [floorIndex, setFloorIndex] = useState<number | undefined>();
+    const [selectedIndex, setSelectedIndex] = useState<number | undefined>();
 
-    const getWallFace = (index: number) => {
-        const wallFace = context.convertedObjects.floors.at(index);
-        if (wallFace === undefined) {
-            throw new Error(`Selected invalid index: ${index} from wallFaces.`);
+    const getEditableObject = (index: number) => {
+        const editableObject = editableObjects.at(index);
+        if (editableObject === undefined) {
+            throw new Error(`Selected invalid index: ${index} from objects ${JSON.stringify(editableObject)}.`);
         }
-        return wallFace;
+        return editableObject;
     };
 
-    const selectWallFace = (index: number) => {
-        setFloorIndex(index);
+    const selectEditableObject = (index: number) => {
+        setSelectedIndex(index);
     };
 
     useEffect(() => {
         const selectObjectIH = new SelectObjectIH(
             context.interiorArrangerState.cameraHandler.getCamera(),
-            context.convertedObjects.wallFaces,
-            selectWallFace,
+            editableObjects,
+            selectEditableObject,
         );
         context.canvasState.mainInputHandler.changeHandlingStrategy(selectObjectIH);
 
         return () => {
             context.canvasState.mainInputHandler.detachCurrentHandler();
         };
-    }, [context.interiorArrangerState, context.convertedObjects, context.canvasState]);
+    }, [context.interiorArrangerState, editableObjects, context.canvasState]);
 
-    let cancelButton = null;
+    let unselectButton = null;
     let appearanceEdit = null;
-    if (floorIndex !== undefined) {
-        cancelButton = (
+    if (selectedIndex !== undefined) {
+        unselectButton = (
             <Button
-                onClick={() => setFloorIndex(undefined)}
+                onClick={() => setSelectedIndex(undefined)}
                 variant={PRIMARY_VARIANT}
                 className="side-by-side-child btn-sm"
             >
-                Zmień ścianę
+                {texts.unselectText}
             </Button>
         );
         appearanceEdit = (
             <AppearanceEditController
-                convertedObject={getWallFace(floorIndex)}
+                editableObject={getEditableObject(selectedIndex)}
                 texturePromises={context.textures}
             />
         );
@@ -76,7 +84,7 @@ export const FloorsAppearanceController: React.FC<Props> = ({ selectDefaultMenu 
                 >
                     Powrót
                 </Button>
-                {cancelButton}
+                {unselectButton}
             </div>
             {appearanceEdit}
         </>

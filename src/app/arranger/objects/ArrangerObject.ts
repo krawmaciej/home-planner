@@ -5,7 +5,10 @@ export type ArrangerObject = {
     readonly object3d: Object3D,
 }
 
-export type ObjectWithEditableTexture = {
+/**
+ * Extends {@link ArrangerObject}.
+ */
+export type ObjectWithEditableTexture = ArrangerObject & {
     readonly object3d: Mesh<any, MeshStandardMaterial>,
     readonly postProcessedTextureRotation: PostProcessedTextureRotation,
     readonly initialTextureRotation: number,

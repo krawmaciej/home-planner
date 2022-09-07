@@ -77,7 +77,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
             wallFaces: [...allConvertedObjects.wallsWithEditableTexture],
             wallFrames: [...allConvertedObjects.sceneWallComponents.framesWithEditableTextures],
             floors: [...allConvertedObjects.sceneFloors],
-            ceilings: [...allConvertedObjects.sceneFloors],
+            ceilings: [...allConvertedObjects.sceneCeilings],
         });
     }, [sceneObjects, canvasState]);
 

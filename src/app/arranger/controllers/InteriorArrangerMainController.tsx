@@ -7,7 +7,7 @@ import {InteriorArrangerState} from "../../../App";
 import {SECONDARY_VARIANT} from "../constants/Types";
 import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 import {CanvasState} from "../../common/context/CanvasDefaults";
-import { WallsAppearanceController } from "./WallsAppearanceController";
+import { ObjectsAppearanceController } from "./ObjectsAppearanceController";
 import {ConvertedObjects} from "../InteriorArrangerStateParent";
 import {LoadedTexture} from "../../common/models/TextureDefinition";
 
@@ -19,7 +19,6 @@ type InteriorArrangerContextType = {
     textures: Array<LoadedTexture>,
     changeMenuName: (menuName: string) => void,
     updatePlacedObjectsToggle: (value: (prev: boolean) => boolean) => void,
-    convertedObjects: ConvertedObjects,
 }
 
 export const InteriorArrangerContext = createContext<InteriorArrangerContextType | undefined>(undefined);
@@ -36,20 +35,26 @@ type Props = {
 }
 
 enum Selection {
-    DEFAULT, OBJECTS, WALLS, FLOORS, CEILINGS,
+    DEFAULT= "DEFAULT",
+    OBJECTS = "Obiekty...",
+    WALLS = "Edytuj wygląd ścian",
+    FRAMES = "Edytuj wygląd framug",
+    FLOORS = "Edytuj wygląd podłóg",
+    CEILINGS = "Edytuj wygląd sufitów",
 }
 
 type DisplayMenuProps = {
     currentSelection: Selection,
     selectDefaultMenu: () => void,
     changeSelection: (selection: Selection) => void,
+    convertedObjects: ConvertedObjects,
 }
 
 type ChangeMenuProps = Pick<DisplayMenuProps, "changeSelection">
 
 export type SelectDefaultMenuProps = Pick<DisplayMenuProps, "selectDefaultMenu">
 
-const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefaultMenu, changeSelection }) => {
+const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefaultMenu, changeSelection, convertedObjects }) => {
     switch (currentSelection) {
         case Selection.DEFAULT:
             return (
@@ -61,15 +66,35 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             );
         case Selection.WALLS:
             return (
-                <WallsAppearanceController selectDefaultMenu={selectDefaultMenu}/>
+                <ObjectsAppearanceController
+                    selectDefaultMenu={selectDefaultMenu}
+                    texts={{ controllerName: Selection.WALLS, unselectText: "Edytuj inną ścianę" }}
+                    editableObjects={convertedObjects.wallFaces}
+                />
+            );
+        case Selection.FRAMES:
+            return (
+                <ObjectsAppearanceController
+                    selectDefaultMenu={selectDefaultMenu}
+                    texts={{ controllerName: Selection.FRAMES, unselectText: "Edytuj inną framugę" }}
+                    editableObjects={convertedObjects.wallFrames}
+                />
             );
         case Selection.FLOORS:
             return (
-                <WallsAppearanceController selectDefaultMenu={selectDefaultMenu}/>
+                <ObjectsAppearanceController
+                    selectDefaultMenu={selectDefaultMenu}
+                    texts={{ controllerName: Selection.FLOORS, unselectText: "Edytuj inną podłogę" }}
+                    editableObjects={convertedObjects.floors}
+                />
             );
         case Selection.CEILINGS:
             return (
-                <WallsAppearanceController selectDefaultMenu={selectDefaultMenu}/>
+                <ObjectsAppearanceController
+                    selectDefaultMenu={selectDefaultMenu}
+                    texts={{ controllerName: Selection.CEILINGS, unselectText: "Edytuj inny sufit" }}
+                    editableObjects={convertedObjects.ceilings}
+                />
             );
     }
 };
@@ -91,28 +116,35 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
                 variant={SECONDARY_VARIANT}
                 className="side-by-side-child btn-sm"
             >
-                Obiekty...
+                {Selection.OBJECTS}
             </Button>
             <Button
                 onClick={() => changeSelection(Selection.WALLS)}
                 variant={SECONDARY_VARIANT}
                 className="side-by-side-child btn-sm"
             >
-                Edytuj wygląd ścian
+                {Selection.WALLS}
+            </Button>
+            <Button
+                onClick={() => changeSelection(Selection.FRAMES)}
+                variant={SECONDARY_VARIANT}
+                className="side-by-side-child btn-sm"
+            >
+                {Selection.FRAMES}
             </Button>
             <Button
                 onClick={() => changeSelection(Selection.FLOORS)}
                 variant={SECONDARY_VARIANT}
                 className="side-by-side-child btn-sm"
             >
-                Edytuj wygląd podłóg
+                {Selection.FLOORS}
             </Button>
             <Button
                 onClick={() => changeSelection(Selection.CEILINGS)}
                 variant={SECONDARY_VARIANT}
                 className="side-by-side-child btn-sm"
             >
-                Edytuj wygląd sufitów
+                {Selection.CEILINGS}
             </Button>
         </div>
     );
@@ -151,7 +183,6 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
         textures,
         changeMenuName,
         updatePlacedObjectsToggle,
-        convertedObjects,
     };
 
     return (
@@ -162,6 +193,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
                     currentSelection={menuSelection}
                     selectDefaultMenu={selectDefaultMenu}
                     changeSelection={changeSelection}
+                    convertedObjects={convertedObjects}
                 />
             </InteriorArrangerContext.Provider>
         </>

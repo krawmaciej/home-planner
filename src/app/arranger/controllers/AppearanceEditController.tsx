@@ -1,13 +1,13 @@
 import React, {useEffect, useLayoutEffect, useState} from "react";
-import {WallFaceMesh} from "../objects/WallFaceMesh";
 import {Button, Dropdown, Form} from "react-bootstrap";
 import {SECONDARY_VARIANT} from "../constants/Types";
 import {ChromePicker} from "react-color";
 import {LoadedTexture} from "../../common/models/TextureDefinition";
 import {RADIAN_MULTIPLIER} from "../../common/components/CommonMathOperations";
+import {ObjectWithEditableTexture} from "../objects/ArrangerObject";
 
 type Props = {
-    convertedObject: WallFaceMesh,
+    editableObject: ObjectWithEditableTexture,
     texturePromises: Array<LoadedTexture>,
 }
 
@@ -16,14 +16,14 @@ type HighlightToggle = {
     originalEmissive: number,
 }
 
-export const AppearanceEditController: React.FC<Props> = ({ convertedObject, texturePromises }) => {
+export const AppearanceEditController: React.FC<Props> = ({ editableObject, texturePromises }) => {
     const [highlightToggle, setHighlightToggle] = useState<HighlightToggle>({
         highlighted: true,
-        originalEmissive: convertedObject.object3d.material.emissive.getHex(),
+        originalEmissive: editableObject.object3d.material.emissive.getHex(),
     });
-    const [color, setColor] = useState("#" + convertedObject.object3d.material.color.getHexString());
+    const [color, setColor] = useState("#" + editableObject.object3d.material.color.getHexString());
     const [textureIndex, setTextureIndex] = useState<number>();
-    const [postProcessedRotation, setPostProcessedRotation] = useState(convertedObject.wallFace.postProcessedTextureRotation.value);
+    const [postProcessedRotation, setPostProcessedRotation] = useState(editableObject.postProcessedTextureRotation.value);
 
     const toggleHighlighted = () => {
         setHighlightToggle(prev => ({
@@ -33,34 +33,34 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
     };
 
     const disposeLastTexture = () => {
-        if (convertedObject.object3d.material.map !== null) {
-            convertedObject.object3d.material.map.dispose();
+        if (editableObject.object3d.material.map !== null) {
+            editableObject.object3d.material.map.dispose();
         }
     };
 
     useEffect(() => {
         if (highlightToggle.highlighted) {
-            convertedObject.object3d.material.emissive.setHex(0x777777);
+            editableObject.object3d.material.emissive.setHex(0x777777);
         } else {
-            convertedObject.object3d.material.emissive.setHex(highlightToggle.originalEmissive);
+            editableObject.object3d.material.emissive.setHex(highlightToggle.originalEmissive);
         }
     }, [highlightToggle]);
 
     useLayoutEffect(() => {
         return () => {
-            convertedObject.object3d.material.emissive.setHex(highlightToggle.originalEmissive);
+            editableObject.object3d.material.emissive.setHex(highlightToggle.originalEmissive);
         };
-    }, [convertedObject]);
+    }, [editableObject]);
 
     useEffect(() => {
-        convertedObject.object3d.material.color.set(color);
+        editableObject.object3d.material.color.set(color);
     }, [color]);
 
     useEffect(() => {
-        convertedObject.wallFace.postProcessedTextureRotation.value = postProcessedRotation;
-        const objectTexture = convertedObject.object3d.material.map;
+        editableObject.postProcessedTextureRotation.value = postProcessedRotation;
+        const objectTexture = editableObject.object3d.material.map;
         if (objectTexture !== null) {
-            objectTexture.rotation = convertedObject.initialTextureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
+            objectTexture.rotation = editableObject.initialTextureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
         }
     }, [postProcessedRotation]);
 
@@ -76,9 +76,9 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
             texture.texture.then(txt => {
                 const clonedTexture = txt.clone();
                 clonedTexture.needsUpdate = true;
-                clonedTexture.rotation = convertedObject.initialTextureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
-                convertedObject.object3d.material.map = clonedTexture;
-                convertedObject.object3d.material.needsUpdate = true;
+                clonedTexture.rotation = editableObject.initialTextureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
+                editableObject.object3d.material.map = clonedTexture;
+                editableObject.object3d.material.needsUpdate = true;
             });
         }
     }, [textureIndex]);
@@ -86,8 +86,8 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
 
     const unsetTexture = () => {
         disposeLastTexture();
-        convertedObject.object3d.material.map = null;
-        convertedObject.object3d.material.needsUpdate = true;
+        editableObject.object3d.material.map = null;
+        editableObject.object3d.material.needsUpdate = true;
         setTextureIndex(undefined);
     };
 

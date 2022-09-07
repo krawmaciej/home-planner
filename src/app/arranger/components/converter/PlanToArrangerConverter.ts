@@ -5,7 +5,7 @@ import {createWallFaceMesh, WallFaceMesh} from "../../objects/WallFaceMesh";
 import {Path, Quaternion, Shape, ShapeGeometry, Vector2, Vector3} from "three";
 import {PathPropsBuilder} from "./PathPropsBuilder";
 import {FloatingPointsPathsFixer} from "./FloatingPointsPathsFixer";
-import {DEFAULT_WALL_MATERIAL, ObjectPoints, ObjectSideOrientation} from "../../../drawer/constants/Types";
+import {ObjectPoints, ObjectSideOrientation} from "../../../drawer/constants/Types";
 import {ArrangerMath} from "../ArrangerMath";
 import {WallCoversCreator} from "./WallCoversCreator";
 import {ComponentFrameCreator} from "./ComponentFrameCreator";
