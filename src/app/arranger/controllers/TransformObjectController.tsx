@@ -148,7 +148,7 @@ const SelectObjects: React.FC<SelectObjectProps> = ({
                             key={index}
                             onClick={() => handleIndexSelection(index)}
                             variant={buttonVariant}
-                            className="btn-sm small side-by-side-child"
+                            className="btn-sm small"
                         >
                             {object.name}
                         </Button>
