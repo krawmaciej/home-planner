@@ -1,5 +1,10 @@
 import {BufferGeometry, Line, Material, MeshStandardMaterial, Vector3} from "three";
-import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
+import {
+    DEFAULT_WALL_MATERIAL,
+    ObjectPoint,
+    ObjectSideOrientation,
+    PostProcessedTextureRotation
+} from "../../constants/Types";
 import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
 
@@ -203,10 +208,6 @@ class Connection {
         this.components.splice(index, 1);
         this.componentsAttributes.splice(index, 1);
     }
-}
-
-type PostProcessedTextureRotation = {
-    value: number,
 }
 
 export type ComponentAttributes = {

@@ -4,7 +4,7 @@ import {WallFace} from "../../drawer/objects/wall/WallSide";
 export type WallFaceMesh = {
     readonly object3d: Mesh<ShapeGeometry, MeshStandardMaterial>,
     readonly wallFace: WallFace,
-    readonly textureRotation: number,
+    readonly initialTextureRotation: number,
 }
 
 export const createWallFaceMesh = (
@@ -22,6 +22,6 @@ export const createWallFaceMesh = (
     return {
         object3d: mesh,
         wallFace,
-        textureRotation,
+        initialTextureRotation: textureRotation,
     };
 };

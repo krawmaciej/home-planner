@@ -8,6 +8,14 @@ export const DEFAULT_WALL_MATERIAL = new MeshStandardMaterial({
 
 export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({ color: 0xbbbbbb });
 
+export const DEFAULT_WALL_FRAME_MATERIAL = new MeshStandardMaterial({
+    color: 0xbbbbbb,
+    // fix frame z fighting with model
+    polygonOffset: true,
+    polygonOffsetUnits: 0.1,
+    polygonOffsetFactor: -2,
+});
+
 export enum Precision {
     CM_100 = -1,
     CM_10 = 0,
@@ -40,4 +48,8 @@ export enum ObjectPoint {
 
 export enum ObjectSideOrientation {
     BOTTOM, RIGHT, TOP, LEFT,
+}
+
+export type PostProcessedTextureRotation = {
+    value: number,
 }

@@ -36,7 +36,7 @@ type Props = {
 }
 
 enum Selection {
-    DEFAULT, OBJECTS, WALLS,
+    DEFAULT, OBJECTS, WALLS, FLOORS, CEILINGS,
 }
 
 type DisplayMenuProps = {
@@ -60,6 +60,14 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
                 <ObjectsController selectDefaultMenu={selectDefaultMenu}/>
             );
         case Selection.WALLS:
+            return (
+                <WallsAppearanceController selectDefaultMenu={selectDefaultMenu}/>
+            );
+        case Selection.FLOORS:
+            return (
+                <WallsAppearanceController selectDefaultMenu={selectDefaultMenu}/>
+            );
+        case Selection.CEILINGS:
             return (
                 <WallsAppearanceController selectDefaultMenu={selectDefaultMenu}/>
             );
@@ -91,6 +99,20 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
                 className="side-by-side-child btn-sm"
             >
                 Edytuj wygląd ścian
+            </Button>
+            <Button
+                onClick={() => changeSelection(Selection.FLOORS)}
+                variant={SECONDARY_VARIANT}
+                className="side-by-side-child btn-sm"
+            >
+                Edytuj wygląd podłóg
+            </Button>
+            <Button
+                onClick={() => changeSelection(Selection.CEILINGS)}
+                variant={SECONDARY_VARIANT}
+                className="side-by-side-child btn-sm"
+            >
+                Edytuj wygląd sufitów
             </Button>
         </div>
     );

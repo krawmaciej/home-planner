@@ -60,7 +60,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
         convertedObject.wallFace.postProcessedTextureRotation.value = postProcessedRotation;
         const objectTexture = convertedObject.object3d.material.map;
         if (objectTexture !== null) {
-            objectTexture.rotation = convertedObject.textureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
+            objectTexture.rotation = convertedObject.initialTextureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
         }
     }, [postProcessedRotation]);
 
@@ -76,7 +76,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
             texture.texture.then(txt => {
                 const clonedTexture = txt.clone();
                 clonedTexture.needsUpdate = true;
-                clonedTexture.rotation = convertedObject.textureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
+                clonedTexture.rotation = convertedObject.initialTextureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
                 convertedObject.object3d.material.map = clonedTexture;
                 convertedObject.object3d.material.needsUpdate = true;
             });

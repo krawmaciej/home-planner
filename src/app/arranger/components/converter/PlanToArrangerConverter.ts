@@ -2,17 +2,18 @@ import {SceneObjectsState} from "../../../common/context/SceneObjectsDefaults";
 import {PlacedWall} from "../../../drawer/objects/wall/PlacedWall";
 import {ConnectionType, WallFace} from "../../../drawer/objects/wall/WallSide";
 import {createWallFaceMesh, WallFaceMesh} from "../../objects/WallFaceMesh";
-import { Path, Quaternion, Shape, ShapeGeometry, Vector2, Vector3} from "three";
+import {Path, Quaternion, Shape, ShapeGeometry, Vector2, Vector3} from "three";
 import {PathPropsBuilder} from "./PathPropsBuilder";
 import {FloatingPointsPathsFixer} from "./FloatingPointsPathsFixer";
 import {DEFAULT_WALL_MATERIAL, ObjectPoints, ObjectSideOrientation} from "../../../drawer/constants/Types";
 import {ArrangerMath} from "../ArrangerMath";
 import {WallCoversCreator} from "./WallCoversCreator";
 import {ComponentFrameCreator} from "./ComponentFrameCreator";
-import {Floor} from "../../../drawer/objects/floor/Floor";
+import {FloorCeiling} from "../../../drawer/objects/floor/FloorCeiling";
 import {FloorCreator} from "./FloorCreator";
 import {CeilingCreator} from "./CeilingCreator";
 import {IPlacedWallComponent} from "../../../drawer/objects/window/IPlacedWallComponent";
+import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
 
 /**
  * Expects walls and wall component points to be in the same order.
@@ -25,20 +26,21 @@ import {IPlacedWallComponent} from "../../../drawer/objects/window/IPlacedWallCo
 export class PlanToArrangerConverter {
 
     public convertPlanObjects(sceneObjects: SceneObjectsState) {
-        const sceneWallFacesMeshes = this.convertPlacedWalls(sceneObjects.placedWalls);
+        const sceneConvertedWalls = this.convertPlacedWalls(sceneObjects.placedWalls);
         const sceneWallComponents = this.convertWallComponents(sceneObjects.wallComponents);
-        const sceneFloorsMeshes = this.convertFloors(sceneObjects.floors);
-        const sceneCeilingsMeshes = this.createCeilings(sceneObjects.floors, sceneObjects.wallsHeight);
-        return { ...sceneWallFacesMeshes, sceneComponents: sceneWallComponents, sceneFloorsMeshes, sceneCeilingsMeshes };
+        const sceneFloors = this.convertFloors(sceneObjects.floors);
+        const sceneCeilings = this.createCeilings(sceneObjects.floors, sceneObjects.wallsHeight);
+        return { ...sceneConvertedWalls, sceneWallComponents, sceneFloors, sceneCeilings };
     }
 
     private convertPlacedWalls(placedWalls: Array<PlacedWall>) {
-        const wallFaceMeshes = placedWalls.flatMap(wall =>
+        const wallsWithEditableTexture = placedWalls.flatMap(wall =>
             wall.wallSides.getWallSides()
                 .flatMap((ws, idx) =>
                     ws.wallFaceArray()
                         .filter(wf => wf.connection.type === ConnectionType.SOLID)
                         .map(wf => PlanToArrangerConverter.wallFaceToWallFaceMesh(wf, idx, wall.props.height))
+                        .map(wfm => PlanToArrangerConverter.wallFaceMeshToObjectWithEditableTexture(wfm))
                 )
         ); // todo: use map instead of flat map and create wall aggregating all wallfaces,
            // todo: draw diagram for also updating Connection material when wallface material is updated.
@@ -46,21 +48,12 @@ export class PlanToArrangerConverter {
         const wallCoversCreator = new WallCoversCreator();
         const wallCoverMeshes = placedWalls.map(wall => wallCoversCreator.fromObjectPoints(wall.props));
 
-        return { wallFaceMeshes, wallCoverMeshes };
+        return { wallsWithEditableTexture, wallCoverMeshes };
     }
 
     private convertWallComponents(wallComponents: Array<IPlacedWallComponent>) {
-        // todo: save in wall component 4 materials, one per frame face
-        // todo: allow each wall face material to be set separately
-        const frameMaterial = DEFAULT_WALL_MATERIAL.clone();
-        // fix frame z fighting with model
-        frameMaterial.setValues({
-            polygonOffset: true,
-            polygonOffsetUnits: 0.1,
-            polygonOffsetFactor: -2,
-        });
-        const creator = new ComponentFrameCreator(frameMaterial);
-        const frames = wallComponents.map(wc => creator.createFromWallComponent(wc));
+        const creator = new ComponentFrameCreator();
+        const framesWithEditableTextures = wallComponents.map(wc => creator.createFromWallComponent(wc));
         const models = wallComponents.flatMap(component => {
             const model = component.getModel();
             if (model) {
@@ -73,15 +66,15 @@ export class PlanToArrangerConverter {
                 return [];
             }
         });
-        return { frames, models };
+        return { framesWithEditableTextures, models };
     }
 
-    private convertFloors(floors: Array<Floor>) {
+    private convertFloors(floors: Array<FloorCeiling>) {
         const creator = new FloorCreator();
         return floors.map(floor => creator.createFromFloor(floor));
     }
 
-    private createCeilings(floors: Array<Floor>, wallsHeight: number) {
+    private createCeilings(floors: Array<FloorCeiling>, wallsHeight: number) {
         const creator = new CeilingCreator(wallsHeight);
         return floors.map(floor => creator.createFromFloor(floor));
     }
@@ -89,12 +82,19 @@ export class PlanToArrangerConverter {
     private static wallFaceToWallFaceMesh(wallFace: WallFace, orientation: ObjectSideOrientation, wallHeight: number): WallFaceMesh {
         const shape = PlanToArrangerConverter.wallFaceToShape(wallFace, orientation, wallHeight);
         const shapeGeometry = new ShapeGeometry(shape);
-        // PlanObjectsConverter.swapRenderedSide(shapeGeometry, wallFace); // todo: fix
         shapeGeometry.rotateX(Math.PI/2.0);
         shapeGeometry.translate(-wallFace.firstPoint.x, 0, -wallFace.firstPoint.z); // make corner around which to rotate a center of geometry
 
         const txtRotation = PlanToArrangerConverter.getTxtRotation(orientation);
         return createWallFaceMesh(shapeGeometry, wallFace, -Math.PI/2.0, txtRotation);
+    }
+
+    private static wallFaceMeshToObjectWithEditableTexture(wallFaceMesh: WallFaceMesh): ObjectWithEditableTexture {
+        return {
+            object3d: wallFaceMesh.object3d,
+            initialTextureRotation: wallFaceMesh.initialTextureRotation,
+            postProcessedTextureRotation: wallFaceMesh.wallFace.postProcessedTextureRotation,
+        };
     }
 
     // todo: make wall height settable from main menu

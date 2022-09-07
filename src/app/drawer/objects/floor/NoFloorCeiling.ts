@@ -1,9 +1,9 @@
-import {IFloor} from "./IFloor";
+import {IFloorCeiling} from "./IFloorCeiling";
 import {ObjectPoints} from "../../constants/Types";
-import {Floor} from "./Floor";
+import {FloorCeiling} from "./FloorCeiling";
 
-export class NoFloor implements IFloor {
-    public static readonly INSTANCE = new NoFloor();
+export class NoFloorCeiling implements IFloorCeiling {
+    public static readonly INSTANCE = new NoFloorCeiling();
     change(): void {
         throw new Error("Called method on a not initialized floor.");
     }
@@ -16,7 +16,7 @@ export class NoFloor implements IFloor {
     removeFrom(): void {
         throw new Error("Called method on a not initialized floor.");
     }
-    place(): Floor {
+    place(): FloorCeiling {
         throw new Error("Called method on a not initialized floor.");
     }
     collide(): void {

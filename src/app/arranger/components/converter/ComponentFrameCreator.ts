@@ -2,38 +2,25 @@ import {ObjectPoint} from "../../../drawer/constants/Types";
 import {Attributes, Coordinate, Facing, FLOOR_LEVEL} from "../../constants/Types";
 import {
     Mesh,
-    MeshBasicMaterialParameters,
-    MeshStandardMaterial,
     Vector3
 } from "three";
-import {loadHardwoodTxt} from "../../loaders/Textures";
 import {Direction} from "../../../drawer/objects/wall/Direction";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 import {IPlacedWallComponent} from "../../../drawer/objects/window/IPlacedWallComponent";
 import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
+import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
 
 export class ComponentFrameCreator {
 
-    private readonly frameMaterial: MeshStandardMaterial;
-
-    public constructor(frameMaterial: MeshStandardMaterial) {
-        this.frameMaterial = frameMaterial;
-    }
-
-    public createFromWallComponent(wallComponent: IPlacedWallComponent) {
+    public createFromWallComponent(wallComponent: IPlacedWallComponent): ObjectWithEditableTexture {
         const attributes = ComponentFrameCreator.createAttributes(wallComponent);
         const geometry = AttributesToGeometry.process(attributes);
 
-        loadHardwoodTxt().then(txt => {
-            txt.repeat.set(0.1, 0.1);
-            this.frameMaterial.setValues({
-                map: txt,
-                color: 0x888888,
-            } as MeshBasicMaterialParameters);
-
-            this.frameMaterial.needsUpdate = true;
-        });
-        return new Mesh(geometry, this.frameMaterial);
+        return {
+            object3d: new Mesh(geometry, wallComponent.getFrameMaterial()),
+            postProcessedTextureRotation: wallComponent.getPostProcessedTextureRotation(),
+            initialTextureRotation: 0,
+        };
     }
 
     private static elevate(coordinates: Vector3, elevation: number) {

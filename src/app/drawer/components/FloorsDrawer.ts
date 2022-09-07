@@ -1,8 +1,8 @@
 import { Scene, Vector3 } from "three";
 import { CollisionDetector } from "./CollisionDetector";
-import {IFloor} from "../objects/floor/IFloor";
-import {Floor} from "../objects/floor/Floor";
-import {NoFloor} from "../objects/floor/NoFloor";
+import {IFloorCeiling} from "../objects/floor/IFloorCeiling";
+import {FloorCeiling} from "../objects/floor/FloorCeiling";
+import {NoFloorCeiling} from "../objects/floor/NoFloorCeiling";
 import {DEFAULT_FLOOR_MATERIAL} from "../constants/Types";
 import {PlacedWall} from "../objects/wall/PlacedWall";
 import {ISceneObject} from "../objects/ISceneObject";
@@ -11,16 +11,16 @@ export class FloorsDrawer {
 
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;
-    private readonly placedFloors: Array<Floor>;
+    private readonly placedFloors: Array<FloorCeiling>;
     private readonly placedWalls: Array<PlacedWall>;
 
     // private readonly updateFloorsToggle: React.Dispatch<React.SetStateAction<boolean>>;
-    private drawnFloor: IFloor = NoFloor.INSTANCE; // after wall is drawn there is no more wall being drawn
+    private drawnFloor: IFloorCeiling = NoFloorCeiling.INSTANCE; // after wall is drawn there is no more wall being drawn
 
     public constructor(
         scene: Scene,
         collisionDetector: CollisionDetector,
-        floors: Array<Floor>,
+        floors: Array<FloorCeiling>,
         walls: Array<PlacedWall>, // todo: check collisions also against placed walls
         // updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
     ) {
@@ -68,7 +68,7 @@ export class FloorsDrawer {
      * Creates initial floor shape which can be changed, initially no shape is available to be changed.
      */
     public initializeFloor(start: Vector3, end: Vector3) {
-        this.drawnFloor = new Floor(start, end, DEFAULT_FLOOR_MATERIAL.clone());
+        this.drawnFloor = new FloorCeiling(start, end, DEFAULT_FLOOR_MATERIAL);
         this.drawnFloor.addTo(this.scene);
     }
 
@@ -77,6 +77,6 @@ export class FloorsDrawer {
      */
     public removeCurrentlyDrawnFloor() {
         this.drawnFloor.removeFrom(this.scene);
-        this.drawnFloor = NoFloor.INSTANCE;
+        this.drawnFloor = NoFloorCeiling.INSTANCE;
     }
 }

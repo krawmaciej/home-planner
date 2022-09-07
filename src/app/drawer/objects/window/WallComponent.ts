@@ -1,6 +1,22 @@
-import {BufferGeometry, Line, LineBasicMaterial, Material, Object3D, Quaternion, Scene, Vector3} from "three";
+import {
+    BufferGeometry,
+    Line,
+    LineBasicMaterial,
+    Material,
+    MeshStandardMaterial,
+    Object3D,
+    Quaternion,
+    Scene,
+    Vector3
+} from "three";
 import {DrawerMath} from "../../components/DrawerMath";
-import {ObjectElevation, ObjectPoint, ObjectPoints, Vector2D} from "../../constants/Types";
+import {
+    DEFAULT_WALL_FRAME_MATERIAL,
+    ObjectElevation,
+    ObjectPoint,
+    ObjectPoints, PostProcessedTextureRotation,
+    Vector2D
+} from "../../constants/Types";
 import {IMovingWallComponent} from "./IMovingWallComponent";
 import {IPlacedWallComponent} from "./IPlacedWallComponent";
 import {Direction} from "../wall/Direction";
@@ -95,6 +111,8 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         [Direction.RIGHT, WallComponent.RIGHT_ROTATION],
     ]);
 
+    private readonly frameMaterial: MeshStandardMaterial;
+    private readonly postProcessedTextureRotation: PostProcessedTextureRotation;
     private readonly props: ComponentProps;
     private readonly window: Line<BufferGeometry, Material>;
     private orientation: Vector2D;
@@ -103,6 +121,8 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     private readonly type: ComponentType;
 
     public constructor(props: ComponentProps, material: LineBasicMaterial, type: ComponentType) {
+        this.frameMaterial = DEFAULT_WALL_FRAME_MATERIAL.clone();
+        this.postProcessedTextureRotation = { value: 0 };
         this.props = props;
         const points = WallComponent.createPoints(props);
         points.push(points[ObjectPoint.BOTTOM_LEFT]);
@@ -113,7 +133,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
             typeShape.material = material ?? DEFAULT_MATERIAL;
             this.window.add(typeShape);
         }
-        this.window.matrixAutoUpdate = false; // will be updated on each change position
+        this.window.matrixAutoUpdate = false; // will be updated on each position change
         this.orientation = Direction.DOWN;
         this.collided = false;
         this.type = type;
@@ -359,5 +379,13 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     public getPosition(): Vector3 {
         return this.window.position.clone();
+    }
+
+    public getFrameMaterial(): MeshStandardMaterial {
+        return this.frameMaterial;
+    }
+
+    public getPostProcessedTextureRotation(): PostProcessedTextureRotation {
+        return this.postProcessedTextureRotation;
     }
 }
