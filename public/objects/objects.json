@@ -1,8 +1,8 @@
 [
     {
         "name": "Białe drzwi",
-        "file": "purple-door/scene.gltf",
-        "thumbnail": "purple-door/thumbnail.jpg",
+        "file": "white-door/scene.gltf",
+        "thumbnail": "white-door/thumbnail.jpg",
         "doubleSided": true,
         "dimensions": {
             "width": 90,
@@ -28,24 +28,6 @@
             "width": 100,
             "height": 180,
             "thickness": 12
-        },
-        "rotate": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-        },
-        "offsetPosition": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-        }
-    },
-    {
-        "name": "Drzwi ze szkłem",
-        "file": "door_glass/scene.gltf",
-        "thumbnail": "door_glass/thumbnail.jpg",
-        "dimensions": {
-            "width": 100
         },
         "rotate": {
             "x": 0,
