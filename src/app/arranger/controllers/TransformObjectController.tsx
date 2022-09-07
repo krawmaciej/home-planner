@@ -44,7 +44,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     const selectObject = (index: number) => {
         const placedObject = context.sceneObjectsState.placedObjects.at(index);
         if (!placedObject) {
-            throw new Error(`Selected invalid index: ${index} from placedObjects: ${JSON.stringify(placedObject)}`);
+            throw new Error(`Selected invalid index: ${index} from placedObjects.`);
         }
         setIndexSelection(index);
         objectTransformer.startTransforming(placedObject);
@@ -167,7 +167,7 @@ type TransformModeProps = {
 
 const TransformMode: React.FC<TransformModeProps> = ({ objectTransformer, indexSelection, deleteObject }) => {
     if (indexSelection === undefined) {
-        return null;
+        return null; // it's fine in this component as it's stateless
     }
     return (
         <>

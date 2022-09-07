@@ -1,3 +1,9 @@
 [
-  "hardwood.jpg", "uv-map.jpg"
+  {
+    "file": "hardwood.jpg",
+    "repeat": [0.1, 0.1]
+  },
+  {
+    "file": "uv-map.jpg"
+  }
 ]

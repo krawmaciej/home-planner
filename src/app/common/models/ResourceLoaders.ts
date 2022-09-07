@@ -1,14 +1,23 @@
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
 import {ComponentProps} from "../../drawer/objects/window/WallComponent";
-import {Box3, Group, Material, Matrix4, Mesh, Object3D, Vector3} from "three";
+import {
+    Box3,
+    Group,
+    Material,
+    Matrix4,
+    Mesh,
+    Object3D,
+    RepeatWrapping, TextureLoader,
+    Vector3
+} from "three";
 import {Dimensions, ModelDefinition} from "./ModelDefinition";
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
+import {LoadedTexture, TextureDefinition} from "./TextureDefinition";
+import {RADIAN_MULTIPLIER} from "../components/CommonMathOperations";
 
 const X_AXIS = new Vector3(1, 0, 0);
 const Y_AXIS = new Vector3(0, 1, 0);
 const Z_AXIS = new Vector3(0, 0, 1);
-
-const RADIAN_MULTIPLIER = Math.PI / 180.0;
 
 const DOORS_PATH = "/doors";
 const DOORS_DEFINITION_FILE = "doors.json";
@@ -16,20 +25,23 @@ const WINDOWS_PATH = "/windows";
 const WINDOWS_DEFINITION_FILE = "windows.json";
 const OBJECTS_PATH = "/objects";
 const OBJECTS_DEFINITION_FILE = "objects.json";
+const TEXTURES_PATH = "/textures";
+const TEXTURES_DEFINITION_FILE = "textures.json";
 
-const createFetchPromise = async (fileName: string) => {
+const createFetchPromise = async <T>(fileName: string) => {
     const file = await fetch(fileName);
     try {
-        return await file.json() as Promise<Array<ModelDefinition>>;
+        return await file.json() as Promise<Array<T>>;
     } catch (e) {
-        console.error(`Model definitions file: ${fileName} is malformed.`, e);
+        console.error(`Definitions file: ${fileName} is malformed.`, e);
         return Promise.resolve([]);
     }
 };
 
-const doorsPromise = createFetchPromise(`${DOORS_PATH}/${DOORS_DEFINITION_FILE}`);
-const windowsPromise = createFetchPromise(`${WINDOWS_PATH}/${WINDOWS_DEFINITION_FILE}`);
-const objectsPromise = createFetchPromise(`${OBJECTS_PATH}/${OBJECTS_DEFINITION_FILE}`);
+const doorsPromise = createFetchPromise<ModelDefinition>(`${DOORS_PATH}/${DOORS_DEFINITION_FILE}`);
+const windowsPromise = createFetchPromise<ModelDefinition>(`${WINDOWS_PATH}/${WINDOWS_DEFINITION_FILE}`);
+const objectsPromise = createFetchPromise<ModelDefinition>(`${OBJECTS_PATH}/${OBJECTS_DEFINITION_FILE}`);
+const texturesPromise = createFetchPromise<TextureDefinition>(`${TEXTURES_PATH}/${TEXTURES_DEFINITION_FILE}`);
 
 const xyzToVector3 = ({x, y, z}: { x: number, y: number, z: number }) => {
     return new Vector3(x, y, z);
@@ -86,14 +98,41 @@ export const loadWindows = async () => {
     });
 };
 
-export const loadObjects = async () => {
-    return await loadModels(windowsPromise, WINDOWS_PATH, (modelDefinition, model, box3) => {
+export const loadObjects = async (): Promise<ObjectProps[]> => {
+    return await loadModels(objectsPromise, OBJECTS_PATH, (modelDefinition, model, box3) => {
         return {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
             object3d: model,
-        } as ObjectProps;
+            colliding: false,
+        };
     });
+};
+
+const textureLoader = new TextureLoader();
+
+const loadTexture = async (url: string, { repeat }: TextureDefinition) => {
+    const txt = await textureLoader.loadAsync(url);
+    txt.wrapT = RepeatWrapping;
+    txt.wrapS = RepeatWrapping;
+    if (repeat !== undefined) {
+        const [x, y] = repeat;
+        txt.repeat.set(x, y);
+    }
+    return txt;
+};
+
+export const loadTextures = async () => {
+    const textureDefinitions = await texturesPromise;
+    const results = new Array<LoadedTexture>();
+    for (const textureDefinition of textureDefinitions) {
+        const url = `${TEXTURES_PATH}/${textureDefinition.file}`;
+        results.push({
+            url,
+            texture: loadTexture(url, textureDefinition),
+        });
+    }
+    return results;
 };
 
 async function handleFileLoad(gltfLoader: GLTFLoader, path: string, doorDefinition: ModelDefinition) {
@@ -153,3 +192,15 @@ const loadModels = async<T>(
     }
     return result;
 };
+
+// loadHardwoodTxt().then(txt => {
+//     txt.repeat.set(0.1, 0.1);
+//     txt.rotation = txtRotation;
+//     wallFace.connection.material.setValues({
+//         map: txt,
+//         side: DoubleSide,
+//         color: 0x888888,
+//     } as MeshBasicMaterialParameters);
+//
+//     wallFace.connection.material.needsUpdate = true;
+// });

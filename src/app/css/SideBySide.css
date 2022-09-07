@@ -1,8 +1,14 @@
 .side-by-side-parent {
     display: flex;
+    width: 100%;
 }
 
 .side-by-side-child {
     flex: 1;
+    width: 99.6%;
     margin: .05rem .05rem;
+}
+
+.side-by-side-child-only-flex {
+    flex: 1;
 }

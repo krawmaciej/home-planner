@@ -1,7 +1,6 @@
-import {Object3D} from "three";
+import {ArrangerObject} from "./ArrangerObject";
 
-export type ObjectProps = {
+export type ObjectProps = ArrangerObject & {
     readonly name: string,
     readonly thumbnail: string,
-    readonly object3d: Object3D,
 }

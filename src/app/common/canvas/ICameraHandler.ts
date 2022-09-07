@@ -1,4 +1,4 @@
-import {Camera, OrthographicCamera, PerspectiveCamera, Vector3} from "three";
+import {Camera, Light, OrthographicCamera, PerspectiveCamera, Vector3} from "three";
 
 export interface ICameraHandler {
     getCamera(): Camera;
@@ -51,9 +51,12 @@ export class OrthographicCameraHandler implements ICameraHandler {
 export class PerspectiveCameraHandler implements ICameraHandler {
 
     private readonly camera: PerspectiveCamera;
+    private readonly pointLight: Light;
 
-    public constructor(camera: PerspectiveCamera, rotateOnYAxis: number) {
+    public constructor(camera: PerspectiveCamera, pointLight: Light, rotateOnYAxis: number) {
         this.camera = camera;
+        this.pointLight = pointLight;
+        this.camera.add(pointLight);
         this.camera.rotateY(rotateOnYAxis);
     }
 

@@ -2,7 +2,7 @@ import {Vector3} from "three";
 import {Direction} from "../objects/wall/Direction";
 import {WallThickness} from "../objects/wall/WallThickness";
 import {ObjectElevation, ObjectPoints, Vector2D, ObjectPoint} from "../constants/Types";
-import {MathFloatingPoints} from "../../common/components/MathFloatingPoints";
+import {CommonMathOperations} from "../../common/components/CommonMathOperations";
 
 export type WallConstruction = {
     points: ObjectPoints,
@@ -29,7 +29,7 @@ export class DrawerMath {
     }
 
     public static areVectorsEqual(v1: Vector3, v2: Vector3): boolean {
-        return (MathFloatingPoints.areNumbersEqual(v1.x, v2.x) && MathFloatingPoints.areNumbersEqual(v1.z, v2.z));
+        return (CommonMathOperations.areNumbersEqual(v1.x, v2.x) && CommonMathOperations.areNumbersEqual(v1.z, v2.z));
     }
 
     public static isInMinAndMaxRange(num: number, min: number, max: number) {
@@ -37,7 +37,7 @@ export class DrawerMath {
             return true;
         }
         // needs checking equality because of the floating point representation
-        return MathFloatingPoints.areNumbersEqual(min, num) || MathFloatingPoints.areNumbersEqual(max, num);
+        return CommonMathOperations.areNumbersEqual(min, num) || CommonMathOperations.areNumbersEqual(max, num);
     }
 
     public static distanceBetweenPoints(v1: Vector3, v2: Vector3): number {

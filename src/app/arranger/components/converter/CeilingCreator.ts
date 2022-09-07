@@ -1,9 +1,9 @@
-import {Floor} from "../../../drawer/objects/floor/Floor";
-import { Mesh, MeshBasicMaterialParameters} from "three";
-import { Attributes, Coordinate, Facing} from "../../constants/Types";
-import {loadHardwoodTxt} from "../../loaders/Textures";
+import {FloorCeiling} from "../../../drawer/objects/floor/FloorCeiling";
+import {Mesh} from "three";
+import {Attributes, Coordinate, Facing} from "../../constants/Types";
 import {ObjectPoint} from "../../../drawer/constants/Types";
 import {AttributesToGeometry} from "./AttributesToGeometry";
+import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
 
 export class CeilingCreator {
 
@@ -13,27 +13,17 @@ export class CeilingCreator {
         this.elevation = elevation;
     }
 
-    public createFromFloor(floor: Floor) {
+    public createFromFloor(floor: FloorCeiling): ObjectWithEditableTexture {
         const attributes = this.createAttributes(floor);
         const geometry = AttributesToGeometry.process(attributes);
-
-        loadHardwoodTxt().then(txt => {
-            console.log("txtid: ", txt.id);
-            console.log("txtuuid: ", txt.uuid);
-
-            txt.repeat.set(0.1, 0.1);
-            floor.meshMaterial.setValues({
-                map: txt,
-                color: 0x888888,
-                // depthWrite: false,
-            } as MeshBasicMaterialParameters);
-
-            floor.meshMaterial.needsUpdate = true;
-        });
-        return new Mesh(geometry, floor.meshMaterial);
+        return {
+            object3d: new Mesh(geometry, floor.ceilingMaterial),
+            postProcessedTextureRotation: floor.ceilingTextureRotation,
+            initialTextureRotation: 0,
+        };
     }
 
-    private createAttributes(floor: Floor): Array<Attributes> {
+    private createAttributes(floor: FloorCeiling): Array<Attributes> {
         const points = floor.getObjectPointsOnScene();
 
         const bottomLeft = points[ObjectPoint.BOTTOM_LEFT].toArray();

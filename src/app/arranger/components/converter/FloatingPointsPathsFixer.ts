@@ -1,6 +1,6 @@
 import {PathProps} from "./PathPropsBuilder";
 import {Vector2} from "three";
-import {MathFloatingPoints} from "../../../common/components/MathFloatingPoints";
+import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 
 type BoundingPoints = { min: Vector2, max: Vector2 };
 
@@ -20,20 +20,20 @@ export class FloatingPointsPathsFixer {
 
         toFix.forEach(point => {
             let newX = point.x;
-            if (point.x < min.x || MathFloatingPoints.areNumbersEqual(point.x, min.x)) {
+            if (point.x < min.x || CommonMathOperations.areNumbersEqual(point.x, min.x)) {
                 newX = min.x;
             }
 
-            if (point.x > max.x || MathFloatingPoints.areNumbersEqual(point.x, max.x)) {
+            if (point.x > max.x || CommonMathOperations.areNumbersEqual(point.x, max.x)) {
                 newX = max.x;
             }
 
             let newY = point.y;
-            if (point.y < min.y || MathFloatingPoints.areNumbersEqual(point.y, min.y)) {
+            if (point.y < min.y || CommonMathOperations.areNumbersEqual(point.y, min.y)) {
                 newY = min.y;
             }
 
-            if (point.y > max.y || MathFloatingPoints.areNumbersEqual(point.y, max.y)) {
+            if (point.y > max.y || CommonMathOperations.areNumbersEqual(point.y, max.y)) {
                 newY = max.y;
             }
             point.setX(newX);

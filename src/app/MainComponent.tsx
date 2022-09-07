@@ -9,15 +9,16 @@ import {HeaderMenu} from "./common/persistance/HeaderMenu";
 import {createSceneObjectsState, SceneObjectsState} from "./common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./drawer/FloorPlanStateParent";
 import {ComponentProps} from "./drawer/objects/window/WallComponent";
-import {loadDoors, loadObjects, loadWindows} from "./common/models/ResourceLoaders";
+import {loadDoors, loadObjects, loadTextures, loadWindows} from "./common/models/ResourceLoaders";
 import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";
 import {CanvasState, createCanvasState} from "./common/context/CanvasDefaults";
 import {initializeWithInteriorArranger} from "./common/context/InteriorArrangerDefaults";
-import {ACESFilmicToneMapping, NoToneMapping, WebGLRenderer} from "three";
+import {WebGLRenderer} from "three";
 import {initializeWithFloorPlan} from "./common/context/FloorPlanDefaults";
 import {FloorPlanState, InteriorArrangerState} from "../App";
 import {ICameraHandler} from "./common/canvas/ICameraHandler";
+import {LoadedTexture} from "./common/models/TextureDefinition";
 
 type Props = {
     renderer: WebGLRenderer,
@@ -46,6 +47,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
     const [doorDefinitions, setDoorDefinitions] = useState(new Array<ComponentProps>());
     const [windowDefinitions, setWindowDefinitions] = useState(new Array<ComponentProps>());
     const [objectDefinitions, setObjectDefinitions] = useState(new Array<ObjectProps>());
+    const [texturePromises, setTexturePromises] = useState(new Array<LoadedTexture>());
 
     // load file
     const inputRef = useRef<HTMLInputElement>(null);
@@ -74,11 +76,8 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
     useEffect(() => {
         if (currentMenu === UISelection.FLOOR_PLAN) {
             canvasState.mainInputHandler.detachCurrentHandler();
+            interiorArrangerState.orbitControls.enabled = false;
             interiorArrangerState.transformControls.enabled = false;
-            interiorArrangerState.transformControls.enabled = false;
-
-            renderer.toneMapping = NoToneMapping;
-            renderer.toneMappingExposure = 1;
 
             initializeWithFloorPlan(canvasState);
 
@@ -87,15 +86,11 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
 
         if (currentMenu === UISelection.INTERIOR_ARRANGER) {
             canvasState.mainInputHandler.detachCurrentHandler();
+            interiorArrangerState.orbitControls.enabled = true;
             interiorArrangerState.transformControls.enabled = true;
-            interiorArrangerState.transformControls.enabled = true;
 
-            renderer.toneMapping = ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1;
+            initializeWithInteriorArranger(canvasState, interiorArrangerState);
 
-            initializeWithInteriorArranger(canvasState);
-
-            // renderer.outputEncoding = sRGBEncoding;
             return;
         }
     }, [currentMenu]);
@@ -112,6 +107,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
         loadDoors().then(doors => setDoorDefinitions(doors));
         loadWindows().then(windows => setWindowDefinitions(windows));
         loadObjects().then(objects => setObjectDefinitions(objects));
+        loadTextures().then(txts => setTexturePromises(txts));
     }, []);
 
     return (
@@ -137,6 +133,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}
                 objectDefinitions={objectDefinitions}
+                textures={texturePromises}
                 canvasState={canvasState}
                 interiorArrangerState={interiorArrangerState}
                 floorPlanState={floorPlanState}
@@ -154,6 +151,7 @@ type SelectionProps = {
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
     objectDefinitions: Array<ObjectProps>,
+    textures: Array<LoadedTexture>,
     canvasState: CanvasState,
     interiorArrangerState: InteriorArrangerState,
     floorPlanState: FloorPlanState,
@@ -167,6 +165,7 @@ const SelectController: React.FC<SelectionProps> = ({
                                                     doorDefinitions,
                                                     windowDefinitions,
                                                     objectDefinitions,
+                                                    textures,
                                                     canvasState,
                                                     interiorArrangerState,
 }) => {
@@ -180,6 +179,7 @@ const SelectController: React.FC<SelectionProps> = ({
                     canvasState={canvasState}
                     sceneObjects={sceneObjectsState}
                     objectDefinitions={objectDefinitions}
+                    textures={textures}
                     interiorArrangerState={interiorArrangerState}
                 />
             </>

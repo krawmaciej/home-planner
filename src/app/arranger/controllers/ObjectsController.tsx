@@ -15,10 +15,10 @@ type DisplayMenuProps = {
     upperSelectDefaultMenu: () => void,
     changeSelection: (selection: Selection) => void,
     transformSelectedIndex?: number,
-    objectAddedHandler: (index: number) => void,
+    addObjectToTransformObjectTransfer: (index: number) => void,
 }
 
-const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefaultMenu, changeSelection, upperSelectDefaultMenu, transformSelectedIndex, objectAddedHandler }) => {
+const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefaultMenu, changeSelection, upperSelectDefaultMenu, transformSelectedIndex, addObjectToTransformObjectTransfer }) => {
     switch (currentSelection) {
         case Selection.DEFAULT:
             return (
@@ -26,7 +26,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             );
         case Selection.ADD:
             return (
-                <AddObjectController selectDefaultMenu={selectDefaultMenu} objectAddedHandler={objectAddedHandler}/>
+                <AddObjectController selectDefaultMenu={selectDefaultMenu} addObjectToTransformObjectTransfer={addObjectToTransformObjectTransfer}/>
             );
         case Selection.TRANSFORM:
             return (
@@ -86,7 +86,7 @@ export const ObjectsController: React.FC<SelectDefaultMenuProps> = ({ selectDefa
         setMenuSelection(selection);
     };
 
-    const objectAddedHandler = (index: number) => {
+    const addObjectToTransformObjectTransfer = (index: number) => {
         setTransformSelectedIndex(index);
         setMenuSelection(Selection.TRANSFORM);
     };
@@ -98,7 +98,7 @@ export const ObjectsController: React.FC<SelectDefaultMenuProps> = ({ selectDefa
             upperSelectDefaultMenu={upperSelectDefaultMenu}
             changeSelection={changeSelection}
             transformSelectedIndex={transformSelectedIndex}
-            objectAddedHandler={objectAddedHandler}
+            addObjectToTransformObjectTransfer={addObjectToTransformObjectTransfer}
         />
     );
 };

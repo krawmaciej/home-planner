@@ -11,7 +11,7 @@ import { Scene } from "three";
 import { MainInputHandler } from "../../common/canvas/inputHandler/MainInputHandler";
 import { VoidIH } from "../../common/canvas/inputHandler/VoidIH";
 import {FloorsDrawer} from "../components/FloorsDrawer";
-import {Floor} from "../objects/floor/Floor";
+import {FloorCeiling} from "../objects/floor/FloorCeiling";
 import {FloorsController} from "./FloorsController";
 import {WallComponentAdder} from "../components/WallComponentAdder";
 import {IPlacedWallComponent} from "../objects/window/IPlacedWallComponent";
@@ -24,7 +24,7 @@ type Props = {
     wallThickness: WallThickness, // todo: might be created in this component, cause it is only used by wall adder, see todo line 71
     wallHeight: number,
     placedWalls: Array<PlacedWall>,
-    floors: Array<Floor>,
+    floors: Array<FloorCeiling>,
     wallComponents: Array<IPlacedWallComponent>,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,

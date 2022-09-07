@@ -1,6 +1,11 @@
-import {BufferGeometry, Line, Material, Vector3} from "three";
-import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
-import {MathFloatingPoints} from "../../../common/components/MathFloatingPoints";
+import {BufferGeometry, Line, Material, MeshStandardMaterial, Vector3} from "three";
+import {
+    DEFAULT_WALL_MATERIAL,
+    ObjectPoint,
+    ObjectSideOrientation,
+    PostProcessedTextureRotation
+} from "../../constants/Types";
+import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
 
 type OrientationPoints = {
@@ -78,7 +83,7 @@ export class WallSide {
         while (iterator !== undefined) {
             if (secondPoint[strategyKey] < iterator.point[strategyKey]) { // found higher
                 // cut between iterator and beforeIterator
-                if (MathFloatingPoints.areNumbersEqual(firstPoint[strategyKey],beforeIterator.point[strategyKey])) {
+                if (CommonMathOperations.areNumbersEqual(firstPoint[strategyKey],beforeIterator.point[strategyKey])) {
                     beforeIterator.connection = new Connection(secondNode, ConnectionType.HOLE);
                     secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 } else {
@@ -87,8 +92,8 @@ export class WallSide {
                     secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 }
                 break;
-            } else if (MathFloatingPoints.areNumbersEqual(secondPoint[strategyKey], iterator.point[strategyKey])) { // second point is same as existing
-                if (MathFloatingPoints.areNumbersEqual(firstPoint[strategyKey], beforeIterator.point[strategyKey])) { // swap current solid line for hole
+            } else if (CommonMathOperations.areNumbersEqual(secondPoint[strategyKey], iterator.point[strategyKey])) { // second point is same as existing
+                if (CommonMathOperations.areNumbersEqual(firstPoint[strategyKey], beforeIterator.point[strategyKey])) { // swap current solid line for hole
                     beforeIterator.connection.type = ConnectionType.HOLE;
                 } else {
                     beforeIterator.connection.next = firstNode;
@@ -125,7 +130,7 @@ export class WallSide {
             const componentPoint = componentAttributes.secondPoint[strategyKey];
             const sideNodePoint = iterator.point[strategyKey];
             if (componentPoint <= sideNodePoint ||
-                MathFloatingPoints.areNumbersEqual(componentPoint, sideNodePoint)
+                CommonMathOperations.areNumbersEqual(componentPoint, sideNodePoint)
             ) {
                 // put in connection between iterator and beforeIterator
                 beforeIterator.connection.addComponent(component, componentAttributes);
@@ -157,6 +162,7 @@ export class WallSide {
                 firstPoint: iterator.point,
                 secondPoint: iterator.connection.next.point,
                 connection: iterator.connection,
+                postProcessedTextureRotation: iterator.connection.postProcessedTextureRotation,
             });
             iterator = iterator.connection.next;
         }
@@ -177,15 +183,17 @@ class SideNode {
 class Connection {
     public next: SideNode | undefined;
     public type: ConnectionType;
-    public readonly material: Material;
+    public readonly material: MeshStandardMaterial;
     public readonly components: Array<IPlacedWallComponent>; // holds wall's connection doors/windows
     public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices wih components array
-    public constructor(next: SideNode | undefined, type: ConnectionType, material?: Material) {
+    public readonly postProcessedTextureRotation: PostProcessedTextureRotation;
+    public constructor(next: SideNode | undefined, type: ConnectionType, material?: MeshStandardMaterial) {
         this.next = next;
         this.type = type;
-        this.material = material ?? DEFAULT_WALL_MATERIAL.clone();
+        this.material = material?.clone() ?? DEFAULT_WALL_MATERIAL.clone();
         this.components = new Array<IPlacedWallComponent>();
         this.componentsAttributes = new Array<ComponentAttributes>();
+        this.postProcessedTextureRotation = { value: 0 }; // to pass as a reference and not as a value
     }
     public addComponent(component: IPlacedWallComponent, attributes: ComponentAttributes): Array<IPlacedWallComponent> {
         this.components.push(component);
@@ -217,4 +225,5 @@ export type WallFace = {
     firstPoint: Vector3,
     secondPoint: Vector3,
     connection: Connection,
+    postProcessedTextureRotation: PostProcessedTextureRotation,
 }
