@@ -36,43 +36,5 @@
             "y": 0,
             "z": 0
         }
-    },
-    {
-        "name": "Okno 1",
-        "file": "window_1/scene.glb",
-        "thumbnail": "window_1/thumbnail.jpg",
-        "elevation": 90,
-        "dimensions": {
-            "width": 100
-        },
-        "rotate": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-        },
-        "offsetPosition": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-        }
-    },
-    {
-        "name": "Okno 2",
-        "file": "window_2/scene.gltf",
-        "thumbnail": "window_2/thumbnail.jpg",
-        "elevation": 90,
-        "dimensions": {
-            "width": 100
-        },
-        "rotate": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-        },
-        "offsetPosition": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-        }
     }
 ]
