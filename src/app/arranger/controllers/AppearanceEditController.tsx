@@ -1,9 +1,11 @@
 import React, {useEffect, useLayoutEffect, useState} from "react";
 import {WallFaceMesh} from "../objects/WallFaceMesh";
-import {Button, Dropdown} from "react-bootstrap";
+import {Button, Dropdown, Form} from "react-bootstrap";
 import {SECONDARY_VARIANT} from "../constants/Types";
 import {ChromePicker} from "react-color";
 import {LoadedTexture} from "../../common/models/TextureDefinition";
+import {RADIAN_MULTIPLIER} from "../../common/components/CommonMathOperations";
+import {PostProcessedTextureRotation} from "../../drawer/objects/wall/WallSide";
 
 type Props = {
     convertedObject: WallFaceMesh,
@@ -22,6 +24,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
     });
     const [color, setColor] = useState("#" + convertedObject.object3d.material.color.getHexString());
     const [textureIndex, setTextureIndex] = useState<number>();
+    const [postProcessedRotation, setPostProcessedRotation] = useState(convertedObject.wallFace.postProcessedTextureRotation);
 
     const toggleHighlighted = () => {
         setHighlightToggle(prev => ({
@@ -55,6 +58,13 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
     }, [color]);
 
     useEffect(() => {
+        const objectTexture = convertedObject.object3d.material.map;
+        if (objectTexture !== null) {
+            objectTexture.rotation = convertedObject.textureRotation + (postProcessedRotation.value * RADIAN_MULTIPLIER);
+        }
+    }, [postProcessedRotation]);
+
+    useEffect(() => {
         if (textureIndex !== undefined) {
             const texture = texturePromises.at(textureIndex);
             if (texture === undefined) {
@@ -66,7 +76,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
             texture.texture.then(txt => {
                 const clonedTexture = txt.clone();
                 clonedTexture.needsUpdate = true;
-                clonedTexture.rotation = convertedObject.textureRotation;
+                clonedTexture.rotation = convertedObject.textureRotation + (postProcessedRotation.value * RADIAN_MULTIPLIER);
                 convertedObject.object3d.material.map = clonedTexture;
                 convertedObject.object3d.material.needsUpdate = true;
             });
@@ -104,6 +114,7 @@ export const AppearanceEditController: React.FC<Props> = ({ convertedObject, tex
                     />
                 </Dropdown.Menu>
             </Dropdown>
+            <TextureRotation currentRotation={postProcessedRotation} setRotation={setPostProcessedRotation}/>
         </div>
     );
 };
@@ -115,8 +126,6 @@ type TextureListProps = {
 }
 
 export const TextureList: React.FC<TextureListProps> = ({setTextureIndex, texturePromises, unsetTexture }) => {
-
-
 
     return (
         <div>
@@ -141,5 +150,37 @@ export const TextureList: React.FC<TextureListProps> = ({setTextureIndex, textur
                 }
             )}
         </div>
+    );
+};
+
+type TextureRotationProps = {
+    currentRotation: PostProcessedTextureRotation,
+    setRotation: (newState: PostProcessedTextureRotation) => void,
+}
+
+export const TextureRotation: React.FC<TextureRotationProps> = ({ currentRotation, setRotation }) => {
+    const MIN_ALLOWED_ROTATION = 0;
+    const MAX_ALLOWED_ROTATION = 360;
+
+    const changeRotation = (value: string) => {
+        const number = Number(value);
+        if (!isNaN(number)) {
+            if (number > MAX_ALLOWED_ROTATION) {
+                setRotation({ value: MAX_ALLOWED_ROTATION });
+            } else if (number < MIN_ALLOWED_ROTATION) {
+                setRotation({ value: MIN_ALLOWED_ROTATION });
+            } else {
+                setRotation({ value: number });
+            }
+        }
+    };
+
+    return (
+        <Form.Group>
+            <Form.Label size="sm" className="small">
+                Rotacja tekstury °
+            </Form.Label>
+            <Form.Control size="sm" type="text" onChange={event => changeRotation(event.target.value)} value={currentRotation.value}/>
+        </Form.Group>
     );
 };

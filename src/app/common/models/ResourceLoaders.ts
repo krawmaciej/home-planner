@@ -13,12 +13,11 @@ import {
 import {Dimensions, ModelDefinition} from "./ModelDefinition";
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
 import {LoadedTexture, TextureDefinition} from "./TextureDefinition";
+import {RADIAN_MULTIPLIER} from "../components/CommonMathOperations";
 
 const X_AXIS = new Vector3(1, 0, 0);
 const Y_AXIS = new Vector3(0, 1, 0);
 const Z_AXIS = new Vector3(0, 0, 1);
-
-const RADIAN_MULTIPLIER = Math.PI / 180.0;
 
 const DOORS_PATH = "/doors";
 const DOORS_DEFINITION_FILE = "doors.json";

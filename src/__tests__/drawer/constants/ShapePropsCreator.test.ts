@@ -1,6 +1,6 @@
 import {Vector2} from "three";
 import {PathPropsBuilder} from "../../../app/arranger/components/converter/PathPropsBuilder";
-import {MathFloatingPoints} from "../../../app/common/components/MathFloatingPoints";
+import {CommonMathOperations} from "../../../app/common/components/CommonMathOperations";
 
 describe("Test shape props builder", () => {
 
@@ -145,6 +145,6 @@ const checkFloatingPointEquality = (expected: Vector2[], actual: Vector2[]): voi
     expect(actual.length).toBe(expected.length);
 
     for (let i = 0; i < expected.length; i++) {
-        expect(MathFloatingPoints.areVectors2Equal(actual[i], expected[i])).toBeTruthy();
+        expect(CommonMathOperations.areVectors2Equal(actual[i], expected[i])).toBeTruthy();
     }
 };

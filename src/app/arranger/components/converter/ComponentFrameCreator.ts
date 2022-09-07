@@ -10,7 +10,7 @@ import {loadHardwoodTxt} from "../../loaders/Textures";
 import {Direction} from "../../../drawer/objects/wall/Direction";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 import {IPlacedWallComponent} from "../../../drawer/objects/window/IPlacedWallComponent";
-import {MathFloatingPoints} from "../../../common/components/MathFloatingPoints";
+import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 
 export class ComponentFrameCreator {
 
@@ -68,7 +68,7 @@ export class ComponentFrameCreator {
         const topRightWithHeight = ComponentFrameCreator.withHeight(topRight, height);
         const bottomRightWithHeight = ComponentFrameCreator.withHeight(bottomRight, height);
 
-        const uvRotatedBottomStrategy = MathFloatingPoints.areNumbersEqual(elevation, FLOOR_LEVEL) ?
+        const uvRotatedBottomStrategy = CommonMathOperations.areNumbersEqual(elevation, FLOOR_LEVEL) ?
             { first: Coordinate.X, second: Coordinate.Z } :
             { first: Coordinate.Z, second: Coordinate.X };
 
