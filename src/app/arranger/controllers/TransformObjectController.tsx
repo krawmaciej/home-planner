@@ -90,7 +90,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
                 variant={PRIMARY_VARIANT}
                 className="side-by-side-child btn-sm"
             >
-                Anuluj
+                Edytuj inny obiekt
             </Button>
         );
     }

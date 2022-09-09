@@ -114,7 +114,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     private readonly frameMaterial: MeshStandardMaterial;
     private readonly postProcessedTextureRotation: PostProcessedTextureRotation;
     private readonly props: ComponentProps;
-    private readonly window: Line<BufferGeometry, Material>;
+    private readonly window: Line<BufferGeometry, LineBasicMaterial>;
     private orientation: Vector2D;
     private parentWall: undefined | PlacedWall; // not yet placed wall component can also have a parent wall
     private collided: boolean;
@@ -208,6 +208,11 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     public removeFrom(scene: Scene): void {
         scene.remove(this.window);
         this.window.geometry.dispose();
+        this.frameMaterial.dispose();
+        const material = this.window.material;
+        if (![DEFAULT_MATERIAL, PLACED_MATERIAL, COLLIDING_MATERIAL].includes(material)) {
+            material.dispose();
+        }
     }
 
     /**
