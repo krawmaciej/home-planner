@@ -39,7 +39,6 @@ export class WallDrawingIH implements IInputHandler {
         if (this.pointer.state === DrawingState.NONE) {
             // no op
         } else if (this.pointer.state === DrawingState.DRAWING) {
-            // todo: start will be always the same, unprojection can be cached
             this.wallDrawer.moveDrawedWall(start, end);
         } else if (this.pointer.state === DrawingState.DRAW) {
             if (this.wallDrawer.drawWall(start, end)) {

@@ -22,9 +22,6 @@ export class WallBuilder {
     public static createWall(start: Vector3, end: Vector3, wallThickness: WallThickness, height: number): WallBuilder {
         const wallPoints = DrawerMath.calculateWallPoints(start, end, wallThickness, height);
         return new WallBuilder(wallPoints);
-        // might create 4 sides here
-        // IMPORTANT: sides will have their own manipulation logic called from wall when there's collision
-        // return created wall with direction and 4 corner points
     }
 
     public changeProps(props: WallConstruction): WallBuilder {
