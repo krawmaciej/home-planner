@@ -111,7 +111,7 @@ export class PlanToArrangerConverter {
         const pathsFixer = new FloatingPointsPathsFixer(wallFacePoints);
 
         // get all wall face holes
-        const holes = wallFace.connection.componentsAttributes.map(cmp => {
+        const pathPropses = wallFace.connection.componentsAttributes.map(cmp => {
             const first = new Vector2(cmp.firstPoint.x, cmp.firstPoint.z);
             const second = new Vector2(cmp.secondPoint.x, cmp.secondPoint.z);
             const componentPoints = new PathPropsBuilder(first, second)
@@ -119,8 +119,22 @@ export class PlanToArrangerConverter {
                 .withElevation(cmp.elevation)
                 .build();
             pathsFixer.fix(componentPoints);
-            return new Path().setFromPoints(componentPoints);
+            return componentPoints;
         });
+
+        // fix float point inequalities
+        for (let i = 0; i < pathPropses.length; i++) {
+            for (let j = 1; j < pathPropses.length; j++) {
+                if (i === j) {
+                    continue;
+                }
+                const toFix = pathPropses[i];
+                const compared = pathPropses[j];
+                pathsFixer.fixFloatPointInequalities(toFix, compared);
+            }
+        }
+
+        const holes = pathPropses.map(componentPoints => new Path().setFromPoints(componentPoints));
 
         const shape = new Shape().setFromPoints(wallFacePoints);
         shape.holes.push(...holes);

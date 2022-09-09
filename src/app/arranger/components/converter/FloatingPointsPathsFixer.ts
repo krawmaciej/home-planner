@@ -47,4 +47,17 @@ export class FloatingPointsPathsFixer {
         toProcess.sort((a, b) => a.y - b.y);
         return { min: toProcess[0], max: toProcess[toProcess.length - 1] };
     }
+
+    public fixFloatPointInequalities(toFix: PathProps, compared: PathProps): void {
+        toFix.forEach(fix => {
+            compared.forEach(compare => {
+                if (CommonMathOperations.areNumbersEqual(fix.x, compare.x)) {
+                    fix.setX(compare.x);
+                }
+                if (CommonMathOperations.areNumbersEqual(fix.y, compare.y)) {
+                    fix.setY(compare.y);
+                }
+            });
+        });
+    }
 }

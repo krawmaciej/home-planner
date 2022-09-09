@@ -10,10 +10,6 @@ export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({ color: 0xbbbbbb
 
 export const DEFAULT_WALL_FRAME_MATERIAL = new MeshStandardMaterial({
     color: 0xbbbbbb,
-    // fix frame z fighting with model
-    polygonOffset: true,
-    polygonOffsetUnits: 0.1,
-    polygonOffsetFactor: -2,
 });
 
 export enum Precision {
