@@ -14,21 +14,18 @@ export class FloorsDrawer {
     private readonly placedFloors: Array<FloorCeiling>;
     private readonly placedWalls: Array<PlacedWall>;
 
-    // private readonly updateFloorsToggle: React.Dispatch<React.SetStateAction<boolean>>;
-    private drawnFloor: IFloorCeiling = NoFloorCeiling.INSTANCE; // after wall is drawn there is no more wall being drawn
+    private drawnFloor: IFloorCeiling = NoFloorCeiling.INSTANCE;
 
     public constructor(
         scene: Scene,
         collisionDetector: CollisionDetector,
         floors: Array<FloorCeiling>,
-        walls: Array<PlacedWall>, // todo: check collisions also against placed walls
-        // updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
+        walls: Array<PlacedWall>,
     ) {
         this.scene = scene;
         this.collisionDetector = collisionDetector;
         this.placedFloors = floors;
         this.placedWalls = walls;
-        // this.updateFloorsToggle = updateWallsToggle;
     }
 
     /**

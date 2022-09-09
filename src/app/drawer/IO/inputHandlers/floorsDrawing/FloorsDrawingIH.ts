@@ -21,7 +21,7 @@ export class FloorsDrawingIH implements IInputHandler {
     }
 
     public handleMovement({ unprojected }: InputPoint): void {
-        const position = FloorsDrawingIH.snapToGrid(unprojected);
+        const position = FloorsDrawingIH.setElevation(unprojected);
         switch (this.pointer.state) {
             case DrawingState.NONE:
                 // no op
@@ -39,7 +39,7 @@ export class FloorsDrawingIH implements IInputHandler {
     }
 
     public handleClick({ unprojected }: InputPoint): void {
-        const position = FloorsDrawingIH.snapToGrid(unprojected);
+        const position = FloorsDrawingIH.setElevation(unprojected);
 
         switch (this.pointer.state) {
             case DrawingState.NONE:
@@ -72,11 +72,7 @@ export class FloorsDrawingIH implements IInputHandler {
         }
     }
 
-    private static snapToGrid(point: Vector3) {
-        return new Vector3(
-            Math.round(point.x),
-            ObjectElevation.FLOOR,
-            Math.round(point.z)
-        );
+    private static setElevation(point: Vector3) {
+        return point.clone().setY(ObjectElevation.FLOOR);
     }
 }

@@ -41,8 +41,11 @@ export class FloorCeiling implements IFloorCeiling {
     }
 
     private static calculateObjectPoints(p1: Vector3, p2: Vector3): ObjectPoints {
-        const [minX, maxX] = p1.x < p2.x ? [p1.x, p2.x] : [p2.x, p1.x];
-        const [minZ, maxZ] = p1.z < p2.z ? [p1.z, p2.z] : [p2.z, p1.z];
+        const [minXNotSnapped, maxXNotSnapped] = p1.x < p2.x ? [p1.x, p2.x] : [p2.x, p1.x];
+        const [minZNotSnapped, maxZNotSnapped] = p1.z < p2.z ? [p1.z, p2.z] : [p2.z, p1.z];
+
+        const [minX, maxX] = [Math.floor(minXNotSnapped), Math.ceil(maxXNotSnapped)];
+        const [minZ, maxZ] = [Math.floor(minZNotSnapped), Math.ceil(maxZNotSnapped)];
 
         const bottomLeft = new Vector3(minX, ObjectElevation.FLOOR, maxZ);
         const bottomRight = new Vector3(maxX, ObjectElevation.FLOOR, maxZ);

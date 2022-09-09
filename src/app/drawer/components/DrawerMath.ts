@@ -32,25 +32,9 @@ export class DrawerMath {
         return (CommonMathOperations.areNumbersEqual(v1.x, v2.x) && CommonMathOperations.areNumbersEqual(v1.z, v2.z));
     }
 
-    public static isInMinAndMaxRange(num: number, min: number, max: number) {
-        if (num >= min && num <= max) {
-            return true;
-        }
-        // needs checking equality because of the floating point representation
-        return CommonMathOperations.areNumbersEqual(min, num) || CommonMathOperations.areNumbersEqual(max, num);
-    }
-
     public static distanceBetweenPoints(v1: Vector3, v2: Vector3): number {
         return Math.sqrt((v1.x - v2.x) * (v1.x - v2.x) +
                             (v1.z - v2.z) * (v1.z - v2.z)
-        );
-    }
-
-    public static subtractVectors(leftOperand: Vector3, rightOperand: Vector3): Vector3 {
-        return new Vector3(
-            leftOperand.x - rightOperand.x,
-            0,
-            leftOperand.z - rightOperand.z
         );
     }
 
@@ -91,7 +75,7 @@ export class DrawerMath {
         } else if (direction === Direction.RIGHT) {
             return DrawerMath.handleRightDirection(start, end);
         }
-        throw new Error("Drawed wall has no direction");
+        throw new Error("Drawn wall has no direction");
     }
 
     private static handleDownDirection(start: Vector3, end: Vector3): ObjectPoints {

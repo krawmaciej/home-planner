@@ -16,22 +16,18 @@ export class FloorsPointer {
         this.startPosition = FloorsPointer.UNSET_POSITION;
         this.endPosition = FloorsPointer.UNSET_POSITION;
         this.state = DrawingState.NONE;
-        console.log("Created new floors pointer");
     }
 
     public beginDrawing(position: Vector3): void {
-        // assert(this.state === DrawingState.NONE, "state none when start drawing");
-        this.setState(position, FloorsPointer.UNSET_POSITION, DrawingState.INITIALIZE);
+        this.setState(position, position, DrawingState.INITIALIZE);
     }
 
     public stopDrawing(position: Vector3): void {
-        // assert(this.state === DrawingState.DRAW, "state draw when draw");
         this.setState(this.startPosition, position, DrawingState.NONE);
     }
 
     public changePosition(position: Vector3): void {
         if (this.state === DrawingState.INITIALIZE) {
-            // assert(this.startPosition !== Pointer.unsetPosition, "drawing start position shouldn't be unset");
             this.setState(this.startPosition, position, DrawingState.DRAWING);
         }
         this.setState(this.startPosition, position, this.state);
@@ -46,5 +42,4 @@ export class FloorsPointer {
         this.endPosition = end;
         this.state = state;
     }
-
 }
