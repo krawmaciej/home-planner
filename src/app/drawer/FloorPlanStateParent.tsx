@@ -4,7 +4,7 @@ import React, {useEffect, useState} from 'react';
 
 import {FloorPlanMainController} from "./controllers/FloorPlanMainController";
 import {SceneObjectsState} from "../common/context/SceneObjectsDefaults";
-import {ComponentProps} from "./objects/window/WallComponent";
+import {ComponentProps} from "./objects/component/WallComponent";
 import {disposeSceneObjects} from "../common/context/SceneOperations";
 import {CanvasState} from "../common/context/CanvasDefaults";
 import {WallThickness} from "./objects/wall/WallThickness";

@@ -8,7 +8,7 @@ import {InteriorArrangerStateParent} from "./arranger/InteriorArrangerStateParen
 import {HeaderMenu} from "./common/persistance/HeaderMenu";
 import {createSceneObjectsState, SceneObjectsState} from "./common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./drawer/FloorPlanStateParent";
-import {ComponentProps} from "./drawer/objects/window/WallComponent";
+import {ComponentProps} from "./drawer/objects/component/WallComponent";
 import {loadDoors, loadObjects, loadTextures, loadWindows} from "./common/models/ResourceLoaders";
 import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";

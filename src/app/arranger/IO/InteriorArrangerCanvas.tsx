@@ -58,7 +58,7 @@ export function InteriorArrangerCanvas({scene}: Props) {
       // const wall = Wall.create({length: 50, height: 20, width: 2});
       // scene.add(wall.mainWallFrame);
 
-      // create window in a wall
+      // create component in a wall
       // windowOfWall = Window.create({x: 10, y: 0}, wall);
       // windowOfWall.translateX(5);
 

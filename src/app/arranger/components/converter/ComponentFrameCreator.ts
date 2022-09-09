@@ -6,7 +6,7 @@ import {
 } from "three";
 import {Direction} from "../../../drawer/objects/wall/Direction";
 import {AttributesToGeometry} from "./AttributesToGeometry";
-import {IPlacedWallComponent} from "../../../drawer/objects/window/IPlacedWallComponent";
+import {IPlacedWallComponent} from "../../../drawer/objects/component/IPlacedWallComponent";
 import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
 

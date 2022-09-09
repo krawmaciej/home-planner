@@ -7,7 +7,7 @@ import { WallThickness } from "../objects/wall/WallThickness";
 import { CollisionDetector } from "./CollisionDetector";
 import { PlacedWall } from "../objects/wall/PlacedWall";
 import {FloorCeiling} from "../objects/floor/FloorCeiling";
-import {IPlacedWallComponent} from "../objects/window/IPlacedWallComponent";
+import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
 
 export class WallDrawer {
 

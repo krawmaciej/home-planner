@@ -14,8 +14,8 @@ import {FloorsDrawer} from "../components/FloorsDrawer";
 import {FloorCeiling} from "../objects/floor/FloorCeiling";
 import {FloorsController} from "./FloorsController";
 import {WallComponentAdder} from "../components/WallComponentAdder";
-import {IPlacedWallComponent} from "../objects/window/IPlacedWallComponent";
-import {ComponentProps} from "../objects/window/WallComponent";
+import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
+import {ComponentProps} from "../objects/component/WallComponent";
 
 type Props = {
     className?: string,

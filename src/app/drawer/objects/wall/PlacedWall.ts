@@ -1,11 +1,11 @@
 import {Group, Line, LineBasicMaterial, Scene, Vector3} from "three";
 import {AdjacentObject} from "../../components/CollisionDetector";
 import {WallConstruction} from "../../components/DrawerMath";
-import {ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
+import {ObjectPoint, ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
 import {ISceneObject} from "../ISceneObject";
 import {WallSides} from "./WallSides";
 import {Direction} from "./Direction";
-import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
+import {IPlacedWallComponent} from "../component/IPlacedWallComponent";
 
 export class PlacedWall implements ISceneObject {
     
@@ -102,5 +102,14 @@ export class PlacedWall implements ISceneObject {
         }
     }
 
-
+    /**
+     * Returns width of this wall.
+     */
+    public getWidth(): number {
+        if (this.props.direction === Direction.DOWN || this.props.direction === Direction.UP) {
+            return Math.abs(this.props.points[ObjectPoint.BOTTOM_LEFT].z - this.props.points[ObjectPoint.TOP_LEFT].z);
+        } else {
+            return Math.abs(this.props.points[ObjectPoint.BOTTOM_LEFT].x - this.props.points[ObjectPoint.BOTTOM_RIGHT].x);
+        }
+    }
 }

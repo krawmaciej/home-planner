@@ -19,6 +19,7 @@ export interface IWallComponent extends ISceneObject {
     setDistanceFromParentWall(distance: number): void;
     getHeight(): number;
     getElevation(): number;
+    getWidth(): number;
     setNotCollided(): void;
     setCollided(): void;
     collides(): boolean;

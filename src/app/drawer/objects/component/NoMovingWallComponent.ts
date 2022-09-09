@@ -49,6 +49,9 @@ export class NoMovingWallComponent implements IMovingWallComponent {
     getElevation(): number {
         throw new Error("Called method on a not initialized component.");
     }
+    getWidth(): number {
+        throw new Error("Called method on a not initialized component.");
+    }
     setNotCollided(): void {
         throw new Error("Called method on a not initialized component.");
     }
