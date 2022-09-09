@@ -188,6 +188,7 @@ const loadModels = async<T>(
                 }
             });
         }
+        model.scale.multiplyScalar(0.999); // fix z-fighting with component frames
         result.push(resultMapper(modelDefinition, model, box3));
     }
     return result;

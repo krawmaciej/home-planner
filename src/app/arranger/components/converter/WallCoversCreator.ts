@@ -1,4 +1,4 @@
-import {BufferGeometry, Mesh, MeshStandardMaterial} from "three";
+import {BufferGeometry, FrontSide, Mesh, MeshStandardMaterial} from "three";
 import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectPoints} from "../../../drawer/constants/Types";
 import {Attributes, Coordinate, Facing} from "../../constants/Types";
 import {WallConstruction} from "../../../drawer/components/DrawerMath";
@@ -10,7 +10,9 @@ export class WallCoversCreator {
     private static readonly MATERIAL = WallCoversCreator.createMaterial();
 
     private static createMaterial() {
-        return DEFAULT_WALL_MATERIAL.clone();
+        const meshStandardMaterial = DEFAULT_WALL_MATERIAL.clone();
+        meshStandardMaterial.side = FrontSide;
+        return meshStandardMaterial;
     }
 
     public fromObjectPoints({ points, height }: WallConstruction): Mesh<BufferGeometry, MeshStandardMaterial> {

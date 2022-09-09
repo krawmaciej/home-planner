@@ -1,6 +1,6 @@
 import {PathProps} from "./PathPropsBuilder";
 import {Vector2} from "three";
-import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
+import {CommonMathOperations, HOLE_OFFSET_FIX} from "../../../common/components/CommonMathOperations";
 
 type BoundingPoints = { min: Vector2, max: Vector2 };
 
@@ -21,20 +21,20 @@ export class FloatingPointsPathsFixer {
         toFix.forEach(point => {
             let newX = point.x;
             if (point.x < min.x || CommonMathOperations.areNumbersEqual(point.x, min.x)) {
-                newX = min.x;
+                newX = min.x + HOLE_OFFSET_FIX;
             }
 
             if (point.x > max.x || CommonMathOperations.areNumbersEqual(point.x, max.x)) {
-                newX = max.x;
+                newX = max.x - HOLE_OFFSET_FIX;
             }
 
             let newY = point.y;
             if (point.y < min.y || CommonMathOperations.areNumbersEqual(point.y, min.y)) {
-                newY = min.y;
+                newY = min.y + HOLE_OFFSET_FIX;
             }
 
             if (point.y > max.y || CommonMathOperations.areNumbersEqual(point.y, max.y)) {
-                newY = max.y;
+                newY = max.y - HOLE_OFFSET_FIX;
             }
             point.setX(newX);
             point.setY(newY);

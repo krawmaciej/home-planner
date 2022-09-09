@@ -14,6 +14,7 @@ import {FloorCreator} from "./FloorCreator";
 import {CeilingCreator} from "./CeilingCreator";
 import {IPlacedWallComponent} from "../../../drawer/objects/window/IPlacedWallComponent";
 import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
+import {HOLE_OFFSET_FIX} from "../../../common/components/CommonMathOperations";
 
 /**
  * Expects walls and wall component points to be in the same order.
@@ -112,8 +113,8 @@ export class PlanToArrangerConverter {
 
         // get all wall face holes
         const pathPropses = wallFace.connection.componentsAttributes.map(cmp => {
-            const first = new Vector2(cmp.firstPoint.x, cmp.firstPoint.z);
-            const second = new Vector2(cmp.secondPoint.x, cmp.secondPoint.z);
+            const first = new Vector2(cmp.firstPoint.x + HOLE_OFFSET_FIX, cmp.firstPoint.z + HOLE_OFFSET_FIX);
+            const second = new Vector2(cmp.secondPoint.x - HOLE_OFFSET_FIX, cmp.secondPoint.z - HOLE_OFFSET_FIX);
             const componentPoints = new PathPropsBuilder(first, second)
                 .withHeight(cmp.height)
                 .withElevation(cmp.elevation)
@@ -121,18 +122,6 @@ export class PlanToArrangerConverter {
             pathsFixer.fix(componentPoints);
             return componentPoints;
         });
-
-        // fix float point inequalities
-        for (let i = 0; i < pathPropses.length; i++) {
-            for (let j = 1; j < pathPropses.length; j++) {
-                if (i === j) {
-                    continue;
-                }
-                const toFix = pathPropses[i];
-                const compared = pathPropses[j];
-                pathsFixer.fixFloatPointInequalities(toFix, compared);
-            }
-        }
 
         const holes = pathPropses.map(componentPoints => new Path().setFromPoints(componentPoints));
 

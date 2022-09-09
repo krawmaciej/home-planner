@@ -1,6 +1,7 @@
 import {Vector2, Vector3} from "three";
 
 export const RADIAN_MULTIPLIER = Math.PI / 180.0;
+export const HOLE_OFFSET_FIX = 0.0001;
 
 export class CommonMathOperations {
 
