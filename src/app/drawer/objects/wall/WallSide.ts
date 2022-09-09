@@ -32,19 +32,18 @@ class ComponentSidePointsSingletonMap {
 }
 
 export class WallSide {
-
     // used to quickly remove component from wallSide's node
     private readonly componentToSideNode = new Map<IPlacedWallComponent, SideNode>();
 
     private readonly head: SideNode;
     private readonly tail: SideNode;
     private readonly side: ObjectSideOrientation;
-    private readonly strategyKey: "x" | "z"; // 'strategy' used for finding where to put point
+    private readonly strategyKey: "x" | "z"; // "strategy" used for finding where to put point
     
     public constructor(start: Vector3, end: Vector3, side: ObjectSideOrientation) {
         this.head = new SideNode(start);
         this.tail = new SideNode(end);
-        this.head.connection = new Connection(this.tail, ConnectionType.SOLID); // connect
+        this.head.connection = new Connection(this.tail, ConnectionType.SOLID); // connect head with tail
         this.side = side;
         const xStrategy = side === ObjectSideOrientation.TOP || side === ObjectSideOrientation.BOTTOM;
         this.strategyKey = xStrategy ? "x" : "z";
