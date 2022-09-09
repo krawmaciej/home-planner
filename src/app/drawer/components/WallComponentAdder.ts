@@ -84,7 +84,6 @@ export class WallComponentAdder {
     }
 
     public addComponentToWall(position: Vector3): boolean {
-        // todo: might be good idea to show to which WallSide the component will be added
         if (this.movingComponent === undefined) {
             return false;
         }
