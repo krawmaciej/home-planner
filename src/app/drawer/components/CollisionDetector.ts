@@ -1,5 +1,5 @@
 import {Vector3} from "three";
-import {ObjectPoint, ObjectPoints, ObjectSideOrientation, Vector2D} from "../constants/Types";
+import {ObjectPoint, ObjectPoints, ObjectSideOrientation} from "../constants/Types";
 import {ISceneObject} from "../objects/ISceneObject";
 import {PlacedWall} from "../objects/wall/PlacedWall";
 import {DrawerMath, WallConstruction} from "./DrawerMath";
@@ -16,11 +16,6 @@ export type AdjacentObject <T extends ISceneObject> = {
     toSide: ObjectSideOrientation
     adjacent: T,
     points: Array<Vector3>,
-}
-
-export type CollidingWall = {
-    wall: PlacedWall,
-    collisionArea: number,
 }
 
 export class CollisionDetector {
@@ -173,10 +168,6 @@ export class CollisionDetector {
         return this.detectCollisions(wallProps.points, components); // todo: this might cause an error because of removing an optimization trick
     }
 
-    private static areDirectionsParallel(direction: Vector2D, otherDirection: Vector2D): boolean {
-        return direction === otherDirection || Direction.getOpposite(direction) === otherDirection;// todo: move to Direction and use are numbers equal
-    }
-
     private static getOnlyFrontAndBackCollisions(collision: Collision<PlacedWall>, parentWall: PlacedWall) {
         const sideFilter = CollisionDetector.getSideFilterStrategy(parentWall);
         return collision.adjacentObjects.filter(sideFilter);
@@ -196,10 +187,6 @@ export class CollisionDetector {
 
     private static isSideVertical(adjacentWall: AdjacentObject<PlacedWall>): boolean {
         return adjacentWall.toSide === ObjectSideOrientation.LEFT || adjacentWall.toSide === ObjectSideOrientation.RIGHT;
-    }
-
-    private static average(array: Array<number>) {
-        return array.reduce((a, b) => a + b) / array.length;
     }
 
     private static getPlacedWallsWithoutParentWall(parentWall: PlacedWall, placedWalls: Array<PlacedWall>): Array<PlacedWall> {
