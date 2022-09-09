@@ -114,6 +114,22 @@ export class WallComponentAdder {
     }
 
     /**
+     * When component is being oriented and other one was selected.
+     */
+    public removeOrientingComponent() {
+        if (this.orientingComponent !== undefined) {
+            this.orientingComponent.removeFrom(this.scene);
+            this.orientingComponent.getParentWall()?.removeComponent(this.orientingComponent);
+            const index = this.placedWallComponents.indexOf(this.orientingComponent);
+            if (index === -1) {
+                throw new Error(`orienting component: ${JSON.stringify(this.orientingComponent)} was not found: ${JSON.stringify(this)}`);
+            }
+            this.placedWallComponents.splice(index, 1);
+            this.orientingComponent = undefined;
+        }
+    }
+
+    /**
      * Change orientation of component placed on a wall.
      * @param point direction of an orientation
      */

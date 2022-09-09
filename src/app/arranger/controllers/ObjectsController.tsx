@@ -42,7 +42,7 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
     }
 
     useEffect(() => {
-        context.changeMenuName("Obiekty");
+        context.changeMenuName("Dodaj lub edytuj obiekty");
     }, [context.changeMenuName]);
 
     return (

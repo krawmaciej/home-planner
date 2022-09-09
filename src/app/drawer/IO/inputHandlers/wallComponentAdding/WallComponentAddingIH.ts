@@ -27,6 +27,8 @@ export class WallComponentAddingIH implements IInputHandler {
     public handleWindowSelection(componentProps: ComponentProps) {
         if (this.pointer.getState() === State.MOVING) {
             this.wallComponentAdder.removeMovingComponent();
+        } else if (this.pointer.getState() === State.ORIENTING) {
+            this.wallComponentAdder.removeOrientingComponent();
         }
 
         this.pointer.select();
@@ -36,6 +38,8 @@ export class WallComponentAddingIH implements IInputHandler {
     public handleDoorSelection(componentProps: ComponentProps) {
         if (this.pointer.getState() === State.MOVING) {
             this.wallComponentAdder.removeMovingComponent();
+        } else if (this.pointer.getState() === State.ORIENTING) {
+            this.wallComponentAdder.removeOrientingComponent();
         }
 
         this.pointer.select();
@@ -73,6 +77,8 @@ export class WallComponentAddingIH implements IInputHandler {
         if (this.pointer.getState() === State.MOVING) {
             this.pointer.reset();
             this.wallComponentAdder.removeMovingComponent();
+        } else if (this.pointer.getState() === State.ORIENTING) {
+            this.wallComponentAdder.removeOrientingComponent();
         }
     }
 }
