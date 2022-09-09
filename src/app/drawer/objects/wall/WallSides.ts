@@ -2,7 +2,7 @@ import {Line, Material, Vector3} from "three";
 import {WallConstruction} from "../../components/DrawerMath";
 import {WallSide} from "./WallSide";
 import {ObjectPoint, ObjectSideOrientation} from "../../constants/Types";
-import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
+import {IPlacedWallComponent} from "../component/IPlacedWallComponent";
 
 /**
  * Wraps array of wall sides of a single wall.

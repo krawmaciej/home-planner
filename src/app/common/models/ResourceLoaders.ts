@@ -1,5 +1,5 @@
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import {ComponentProps} from "../../drawer/objects/window/WallComponent";
+import {ComponentProps} from "../../drawer/objects/component/WallComponent";
 import {
     Box3,
     Group,

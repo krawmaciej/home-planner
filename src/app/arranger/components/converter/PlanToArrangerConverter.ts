@@ -12,7 +12,7 @@ import {ComponentFrameCreator} from "./ComponentFrameCreator";
 import {FloorCeiling} from "../../../drawer/objects/floor/FloorCeiling";
 import {FloorCreator} from "./FloorCreator";
 import {CeilingCreator} from "./CeilingCreator";
-import {IPlacedWallComponent} from "../../../drawer/objects/window/IPlacedWallComponent";
+import {IPlacedWallComponent} from "../../../drawer/objects/component/IPlacedWallComponent";
 import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
 import {HOLE_OFFSET_FIX} from "../../../common/components/CommonMathOperations";
 
@@ -99,8 +99,8 @@ export class PlanToArrangerConverter {
     }
 
     // todo: make wall height settable from main menu
-    // todo: make window height and elevation settable from main manu
-    // todo: make sure that window highest point (offset by height) is not outside wall's height
+    // todo: make component height and elevation settable from main manu
+    // todo: make sure that component highest point (offset by height) is not outside wall's height
     private static wallFaceToShape(wallFace: WallFace, orientation: ObjectSideOrientation, wallHeight: number): Shape {
         const first = new Vector2(wallFace.firstPoint.x, wallFace.firstPoint.z);
         const second = new Vector2(wallFace.secondPoint.x, wallFace.secondPoint.z);

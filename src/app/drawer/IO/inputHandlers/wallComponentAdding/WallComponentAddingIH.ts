@@ -1,5 +1,5 @@
 import {ObjectElevation} from "../../../constants/Types";
-import {ComponentProps} from "../../../objects/window/WallComponent";
+import {ComponentProps} from "../../../objects/component/WallComponent";
 import {IInputHandler} from "../../../../common/canvas/inputHandler/IInputHandler";
 import {State, WallComponentPointer} from "./WallComponentPointer";
 import {Observer} from "../../../controllers/WallComponentController";
@@ -49,10 +49,10 @@ export class WallComponentAddingIH implements IInputHandler {
     public handleMovement({ unprojected} : InputPoint): void {
         unprojected.setY(ObjectElevation.MOVING); // y coordinate is elevation
         if (this.pointer.getState() === State.SELECTED) {
-            this.pointer.move(); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
+            this.pointer.move();
             this.wallComponentAdder.showMovingComponent(unprojected);
         } else if (this.pointer.getState() === State.MOVING) {
-            this.pointer.move(); // todo: does it need now to hold position state? also the wallPointer can now keep info only about start point
+            this.pointer.move();
             const distance = this.wallComponentAdder.moveComponent(unprojected).getDistanceFromParentWall();
             this.observer.setDistance(distance);
         } else if (this.pointer.getState() === State.ORIENTING) {

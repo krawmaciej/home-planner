@@ -4,7 +4,7 @@ import {ISceneObject} from "../objects/ISceneObject";
 import {PlacedWall} from "../objects/wall/PlacedWall";
 import {DrawerMath, WallConstruction} from "./DrawerMath";
 import {CollisionType, LiangBarsky, LiangBarskyResult} from "./LiangBarsky";
-import {IWallComponent} from "../objects/window/IWallComponent";
+import {IWallComponent} from "../objects/component/IWallComponent";
 import {Direction} from "../objects/wall/Direction";
 
 export type Collision <T extends ISceneObject> = {

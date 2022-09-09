@@ -374,6 +374,10 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         return this.props.height;
     }
 
+    public getWidth(): number {
+        return this.props.width;
+    }
+
     public isDoor() {
         return this.type === DOOR_TYPE;
     }

@@ -6,7 +6,7 @@ import {
     PostProcessedTextureRotation
 } from "../../constants/Types";
 import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
-import {IPlacedWallComponent} from "../window/IPlacedWallComponent";
+import {IPlacedWallComponent} from "../component/IPlacedWallComponent";
 
 type OrientationPoints = {
     first: ObjectPoint,

@@ -6,7 +6,7 @@ import {
     ComponentProps,
     DEFAULT_MUTABLE_DOOR_PROPS,
     DEFAULT_MUTABLE_WINDOW_PROPS
-} from "../objects/window/WallComponent";
+} from "../objects/component/WallComponent";
 import { WallComponentAddingIH } from "../IO/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import { FactorySubcomponentProps } from "./ControllerFactory";
 import { FloorPlanContext } from "./FloorPlanMainController";

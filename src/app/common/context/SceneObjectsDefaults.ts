@@ -1,7 +1,7 @@
 import {PlacedWall} from "../../drawer/objects/wall/PlacedWall";
 import {FloorCeiling} from "../../drawer/objects/floor/FloorCeiling";
 import {DEFAULT_WALL_HEIGHT} from "../../drawer/constants/Types";
-import {IPlacedWallComponent} from "../../drawer/objects/window/IPlacedWallComponent";
+import {IPlacedWallComponent} from "../../drawer/objects/component/IPlacedWallComponent";
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
 
 export type SceneObjectsState = {

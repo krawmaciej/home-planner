@@ -1,12 +1,13 @@
 import {Scene, Vector3} from "three";
 import {PlacedWall} from "../objects/wall/PlacedWall";
-import {IWallComponent} from "../objects/window/IWallComponent";
-import {WallComponent, ComponentProps} from "../objects/window/WallComponent";
+import {IWallComponent} from "../objects/component/IWallComponent";
+import {WallComponent, ComponentProps} from "../objects/component/WallComponent";
 import {CollisionDetector} from "./CollisionDetector";
-import {NoMovingWallComponent} from "../objects/window/NoMovingWallComponent";
-import {IMovingWallComponent} from "../objects/window/IMovingWallComponent";
-import {IPlacedWallComponent} from "../objects/window/IPlacedWallComponent";
+import {NoMovingWallComponent} from "../objects/component/NoMovingWallComponent";
+import {IMovingWallComponent} from "../objects/component/IMovingWallComponent";
+import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
 import {Direction} from "../objects/wall/Direction";
+import {CommonMathOperations} from "../../common/components/CommonMathOperations";
 
 export class WallComponentAdder {
 
@@ -49,7 +50,7 @@ export class WallComponentAdder {
     public moveComponent(position: Vector3): IWallComponent {
         this.movingComponent.setNotCollided(); // reset to default color
 
-        // check whether component has parent wall
+        // check whether component is placed above wall
         const parentWall = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
         if (parentWall === undefined) {
             this.movingComponent.changePosition(position);
@@ -63,6 +64,14 @@ export class WallComponentAdder {
         const currentDistance = this.movingComponent.getDistanceFromParentWall() ?? 0;
         const newDistance = Math.floor(currentDistance / this.snapStep) * this.snapStep;
         this.movingComponent.setDistanceFromParentWall(newDistance);
+
+        // check whether parent wall is smaller than component
+        const wallWidth = parentWall.getWidth();
+        const componentWidth = this.movingComponent.getWidth();
+        if (!CommonMathOperations.areNumbersEqual(wallWidth, componentWidth) && wallWidth < componentWidth) {
+            this.movingComponent.setCollided();
+            return this.movingComponent; // wall is smaller than component, do nothing
+        }
 
         // check whether component collides with other components
         const componentCollision = this.collisionDetector
