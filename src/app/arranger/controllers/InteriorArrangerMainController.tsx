@@ -41,6 +41,7 @@ enum Selection {
     FRAMES = "Edytuj wygląd framug",
     FLOORS = "Edytuj wygląd podłóg",
     CEILINGS = "Edytuj wygląd sufitów",
+    ALL_PLANNER_OBJECTS = "Edytuj wygląd ścian, framug, podłóg i sufitów"
 }
 
 type DisplayMenuProps = {
@@ -96,6 +97,19 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
                     editableObjects={convertedObjects.ceilings}
                 />
             );
+        case Selection.ALL_PLANNER_OBJECTS:
+            return (
+                <ObjectsAppearanceController
+                    selectDefaultMenu={selectDefaultMenu}
+                    texts={{ controllerName: Selection.ALL_PLANNER_OBJECTS, unselectText: "Edytuj inną ścianę, framugę, sufit lub podłogę" }}
+                    editableObjects={[
+                        ...convertedObjects.wallFaces,
+                        ...convertedObjects.wallFrames,
+                        ...convertedObjects.floors,
+                        ...convertedObjects.ceilings,
+                    ]}
+                />
+            );
     }
 };
 
@@ -110,43 +124,54 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
     }, [context.changeMenuName]);
 
     return (
-        <div className="side-by-side-parent">
-            <Button
-                onClick={() => changeSelection(Selection.OBJECTS)}
-                variant={SECONDARY_VARIANT}
-                className="side-by-side-child btn-sm"
-            >
-                {Selection.OBJECTS}
-            </Button>
-            <Button
-                onClick={() => changeSelection(Selection.WALLS)}
-                variant={SECONDARY_VARIANT}
-                className="side-by-side-child btn-sm"
-            >
-                {Selection.WALLS}
-            </Button>
-            <Button
-                onClick={() => changeSelection(Selection.FRAMES)}
-                variant={SECONDARY_VARIANT}
-                className="side-by-side-child btn-sm"
-            >
-                {Selection.FRAMES}
-            </Button>
-            <Button
-                onClick={() => changeSelection(Selection.FLOORS)}
-                variant={SECONDARY_VARIANT}
-                className="side-by-side-child btn-sm"
-            >
-                {Selection.FLOORS}
-            </Button>
-            <Button
-                onClick={() => changeSelection(Selection.CEILINGS)}
-                variant={SECONDARY_VARIANT}
-                className="side-by-side-child btn-sm"
-            >
-                {Selection.CEILINGS}
-            </Button>
-        </div>
+        <>
+            <div className="side-by-side-parent">
+                <Button
+                    onClick={() => changeSelection(Selection.OBJECTS)}
+                    variant={SECONDARY_VARIANT}
+                    className="side-by-side-child btn-sm"
+                >
+                    {Selection.OBJECTS}
+                </Button>
+                <Button
+                    onClick={() => changeSelection(Selection.WALLS)}
+                    variant={SECONDARY_VARIANT}
+                    className="side-by-side-child btn-sm"
+                >
+                    {Selection.WALLS}
+                </Button>
+                <Button
+                    onClick={() => changeSelection(Selection.FRAMES)}
+                    variant={SECONDARY_VARIANT}
+                    className="side-by-side-child btn-sm"
+                >
+                    {Selection.FRAMES}
+                </Button>
+                <Button
+                    onClick={() => changeSelection(Selection.FLOORS)}
+                    variant={SECONDARY_VARIANT}
+                    className="side-by-side-child btn-sm"
+                >
+                    {Selection.FLOORS}
+                </Button>
+                <Button
+                    onClick={() => changeSelection(Selection.CEILINGS)}
+                    variant={SECONDARY_VARIANT}
+                    className="side-by-side-child btn-sm"
+                >
+                    {Selection.CEILINGS}
+                </Button>
+            </div>
+            <div className="side-by-side-parent">
+                <Button
+                    onClick={() => changeSelection(Selection.ALL_PLANNER_OBJECTS)}
+                    variant={SECONDARY_VARIANT}
+                    className="side-by-side-child btn-sm"
+                >
+                    {Selection.ALL_PLANNER_OBJECTS}
+                </Button>
+            </div>
+        </>
     );
 };
 
