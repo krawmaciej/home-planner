@@ -1,11 +1,11 @@
-type Props<T extends number> = {
+type Props<T extends string> = {
     type: T,
-    providers: Array<() => JSX.Element>,
+    providers: Map<T, () => JSX.Element>,
 }
 
 export type ComponentProvider = () => JSX.Element;
 
-export type MainFactoryComponentProps<T extends number> = {
+export type MainFactoryComponentProps<T extends string> = {
     className?: string,
     setType: (type: T) => void,
 }
@@ -15,6 +15,10 @@ export type FactorySubcomponentProps = {
     goBack: () => void, // goes back to MainFactoryComponent
 }
 
-export const ControllerFactory = <T extends number>({ type, providers }: Props<T>) => {
-    return providers[type]();
+export const ControllerFactory = <T extends string>({ type, providers }: Props<T>) => {
+    const element = providers.get(type);
+    if (element === undefined) {
+        throw new Error(`Controller of type: ${type} not found in: ${JSON.stringify(providers)}.`);
+    }
+    return element();
 };

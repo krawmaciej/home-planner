@@ -94,33 +94,60 @@ export const WallComponentController: React.FC<FactorySubcomponentProps> = ({ go
     };
 
     const display = () => {
-        const windowButtonVariant = componentSelection === ComponentSelection.WINDOWS ? PRIMARY_VARIANT : SECONDARY_VARIANT;
-        const doorButtonVariant = componentSelection === ComponentSelection.DOORS ? PRIMARY_VARIANT : SECONDARY_VARIANT;
+        const windowButtonVariant = componentSelection === ComponentSelection.WINDOWS ? SELECTED_VARIANT : SECONDARY_VARIANT;
+        const doorButtonVariant = componentSelection === ComponentSelection.DOORS ? SELECTED_VARIANT : SECONDARY_VARIANT;
 
         const components = getComponentsToDisplay(componentSelection);
 
+        let distance = "Brak wybranej ściany";
+        if (componentToWindowDistance !== undefined) {
+            distance = Math.round(componentToWindowDistance * 10).toString() + "cm"; // display with precision to 1 cm.
+        }
+
         return (
-            <div>
-                <Button onClick={() => handleComponentSelection(ComponentSelection.WINDOWS)} variant={windowButtonVariant}>
-                    Okna
-                </Button>
-                <Button onClick={() => handleComponentSelection(ComponentSelection.DOORS)} variant={doorButtonVariant}>
-                    Drzwi
-                </Button>
-                <SelectComponents
-                    components={components}
-                    componentIndex={indexSelection}
-                    handleIndexSelection={handleIndexSelection}
-                    componentToWindowDistance={componentToWindowDistance}
-                />
-            </div>
+            <>
+                <div className="side-by-side-parent">
+                    <div className="side-by-side-child">
+                        <div className="side-by-side-parent">
+                            <Button
+                                onClick={() => handleComponentSelection(ComponentSelection.WINDOWS)}
+                                variant={windowButtonVariant}
+                                className="side-by-side-child btn-sm"
+                            >
+                                Okna
+                            </Button>
+                            <Button
+                                onClick={() => handleComponentSelection(ComponentSelection.DOORS)}
+                                variant={doorButtonVariant}
+                                className="side-by-side-child btn-sm"
+                            >
+                                Drzwi
+                            </Button>
+                        </div>
+                        <SelectComponents
+                            components={components}
+                            componentIndex={indexSelection}
+                            handleIndexSelection={handleIndexSelection}
+                        />
+                    </div>
+                    <div className="side-by-side-child small">
+                        Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {distance}.
+                    </div>
+                </div>
+            </>
         );
     };
 
     return (
         <>
-            <button onClick={goBack}>Powrót</button>
-            <button onClick={cancelAddingComponent}>Anuluj</button>
+            <div className="side-by-side-parent">
+                <Button onClick={goBack} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
+                    Powrót
+                </Button>
+                <Button onClick={cancelAddingComponent} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
+                    Anuluj
+                </Button>
+            </div>
             { display() }
         </>
     );
@@ -130,14 +157,12 @@ type SelectComponentsProps = {
     components: Array<ComponentProps>,
     componentIndex: number | undefined,
     handleIndexSelection: (index: number) => void,
-    componentToWindowDistance: number | undefined,
 }
 
 const SelectComponents = ({
                               components,
                               componentIndex,
                               handleIndexSelection,
-                              componentToWindowDistance
                           }: SelectComponentsProps) => {
     if (components.length === 0) {
         return null; // it's fine in this component as it's stateless
@@ -145,12 +170,6 @@ const SelectComponents = ({
 
     if (components.length === 1) {
         return (<div><img src={spinner} alt="loading"/></div>);
-    }
-
-    let distanceParagraph = null;
-    if (componentToWindowDistance !== undefined) {
-        const distance = Math.round(componentToWindowDistance * 10).toString() + "cm"; // display with precision to 1 cm.
-        distanceParagraph = (<p>Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {distance}.</p>);
     }
 
     return (
@@ -172,7 +191,6 @@ const SelectComponents = ({
                     );
                 }
             )}
-            {distanceParagraph}
         </div>
     );
 };

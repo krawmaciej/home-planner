@@ -35,7 +35,7 @@ type Props = {
 }
 
 enum Selection {
-    DEFAULT= "DEFAULT",
+    DEFAULT= "",
     OBJECTS = "Dodaj lub edytuj obiekty",
     WALLS = "Edytuj wygląd ścian",
     FRAMES = "Edytuj wygląd framug",
