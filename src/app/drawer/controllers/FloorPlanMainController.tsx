@@ -33,7 +33,7 @@ type Props = {
 export enum MainControllerType {
     WALLS = "Ściany",
     WINDOWS_AND_DOORS = "Okna i drzwi",
-    FLOORS = "Podłogi",
+    FLOORS = "Podłogi i sufity",
     SELECT = "",
 }
 
