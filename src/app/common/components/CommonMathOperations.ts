@@ -3,9 +3,9 @@ import {Vector2, Vector3} from "three";
 export const RADIAN_MULTIPLIER = Math.PI / 180.0;
 export const HOLE_OFFSET_FIX = 0.0001;
 
-export class CommonMathOperations {
+const TOLERANCE = 1e-4;
 
-    public static readonly COMPARISON_ACCURACY = 0.01; // one millimeter, 1 is 10 cm
+export class CommonMathOperations {
 
     public static areVectors2Equal(v1: Vector2, v2: Vector2): boolean {
         return (CommonMathOperations.areNumbersEqual(v1.x, v2.x) && CommonMathOperations.areNumbersEqual(v1.y, v2.y));
@@ -20,6 +20,6 @@ export class CommonMathOperations {
     }
 
     public static areNumbersEqual(n1: number, n2: number): boolean {
-        return Math.abs( n1 - n2) <= CommonMathOperations.COMPARISON_ACCURACY;
+        return Math.abs( n1 - n2) < TOLERANCE;
     }
 }

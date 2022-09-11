@@ -7,12 +7,14 @@ import {CollisionType, LiangBarsky, LiangBarskyResult} from "./LiangBarsky";
 import {IWallComponent} from "../objects/component/IWallComponent";
 import {Direction} from "../objects/wall/Direction";
 
-export type Collision <T extends ISceneObject> = {
+type ISceneObjectWithOnlyPoints = Pick<ISceneObject, "getObjectPointsOnScene">;
+
+export type Collision <T extends ISceneObjectWithOnlyPoints> = {
     isCollision: boolean,
     adjacentObjects: Array<AdjacentObject<T>>,
 }
 
-export type AdjacentObject <T extends ISceneObject> = {
+export type AdjacentObject <T extends ISceneObjectWithOnlyPoints> = {
     toSide: ObjectSideOrientation
     adjacent: T,
     points: Array<Vector3>,
@@ -26,8 +28,8 @@ type CheckedSides = {
 }
 
 export const ALL_SIDES: CheckedSides = { top: true, right: true, bottom: true, left: true, };
-export const LEFT_AND_RIGHT: CheckedSides = { top: true, right: true, bottom: true, left: true, };
-export const TOP_AND_BOTTOM: CheckedSides = { top: true, right: true, bottom: true, left: true, };
+export const LEFT_AND_RIGHT: CheckedSides = { top: false, right: true, bottom: false, left: true, };
+export const TOP_AND_BOTTOM: CheckedSides = { top: true, right: false, bottom: true, left: false, };
 
 export class CollisionDetector {
 
@@ -76,7 +78,7 @@ export class CollisionDetector {
      * @param checkedSides
      * @returns 
      */
-    public detectCollisions<T extends ISceneObject>(
+    public detectCollisions<T extends ISceneObjectWithOnlyPoints> (
         points: ObjectPoints,
         otherSceneObjects: Array<T>,
         checkedSides: CheckedSides,
@@ -143,7 +145,6 @@ export class CollisionDetector {
                 }
             }
 
-            console.log("ecc: ", edgeCollisionsCount);
             if (edgeCollisionsCount === 1) { // only one side collided, start and end must have been set
                 adjacentObjects.push({
                     toSide: wallSideType,
@@ -151,12 +152,9 @@ export class CollisionDetector {
                     points: collisionPoints
                 });
             } else if (edgeCollisionsCount > 1) {
-                console.log("ecc > 1: ", edgeCollisionsCount);
-                console.log("adj objects > 1: ", adjacentObjects);
                 return { isCollision: true, adjacentObjects: adjacentObjects };
             }
         }
-        console.log("false: ", adjacentObjects);
         return { isCollision: false, adjacentObjects: adjacentObjects };
     }
 
@@ -183,8 +181,24 @@ export class CollisionDetector {
         return this.detectCollisions(points, placedWallsWithoutParentWall, sides);
     }
 
-    public detectWallToComponentCollisions(wallProps: WallConstruction, components: Array<IWallComponent>) {
-        return this.detectCollisions(wallProps.points, components, ALL_SIDES); // todo: pick strategy for component's sides
+    public detectWallToComponentCollisions(wallProps: WallConstruction, components: Array<IWallComponent>): Collision<ISceneObjectWithOnlyPoints> {
+        const resultArray = new Array<Collision<ISceneObjectWithOnlyPoints>>();
+        for (const component of components) {
+            const parentWall = component.getParentWall();
+            if (parentWall === undefined) {
+                throw new Error("Cannot find adjacent wall collision for component without parent wall.");
+            }
+            const points = component.getObjectPointsOnScene();
+            const sides = CollisionDetector.pickComponentFrontAndBackSides(parentWall.props.direction);
+            resultArray.push(this.detectCollisions(points, [{ getObjectPointsOnScene: () => wallProps.points }], sides));
+        }
+        const adjacentObjects = resultArray.flatMap(collision => collision.adjacentObjects);
+        const isCollision = resultArray.map(collision => collision.isCollision)
+            .reduce((prev, current) => prev || current, false);
+        return {
+            adjacentObjects,
+            isCollision,
+        };
     }
 
     private static getPlacedWallsWithoutParentWall(parentWall: PlacedWall, placedWalls: Array<PlacedWall>): Array<PlacedWall> {
