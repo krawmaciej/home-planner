@@ -19,9 +19,11 @@ import {initializeWithFloorPlan} from "./common/context/FloorPlanDefaults";
 import {FloorPlanState, InteriorArrangerState} from "../App";
 import {ICameraHandler} from "./common/canvas/ICameraHandler";
 import {LoadedTexture} from "./common/models/TextureDefinition";
+import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 
 type Props = {
     renderer: WebGLRenderer,
+    labelRenderer: CSS2DRenderer,
     floorPlanState: FloorPlanState,
     interiorArrangerState: InteriorArrangerState,
 }
@@ -30,7 +32,7 @@ enum UISelection {
     FLOOR_PLAN, INTERIOR_ARRANGER,
 }
 
-export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, interiorArrangerState }) => {
+export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorPlanState, interiorArrangerState }) => {
 
     const getCurrentCameraHandler = (selection: UISelection): ICameraHandler => {
         switch (selection) {
@@ -121,6 +123,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, floorPlanState, inter
             <Canvas
                 scene={canvasState.scene}
                 renderer={renderer}
+                labelRenderer={labelRenderer}
                 cameraHandler={getCurrentCameraHandler(currentMenu)}
                 mainInputHandler={canvasState.mainInputHandler}
                 observers={canvasState.observers}

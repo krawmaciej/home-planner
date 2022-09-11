@@ -11,6 +11,7 @@ import { WallComponentAddingIH } from "../IO/inputHandlers/wallComponentAdding/W
 import {FloorPlanContext} from "./FloorPlanMainController";
 import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../../arranger/constants/Types";
 import {WallComponentMenu} from "./WallComponentController";
+import {convertFromAppUnitsToCm} from "../components/DisplayPrecision";
 
 export type Observer = {
     setDistance: React.Dispatch<React.SetStateAction<number | undefined>>,
@@ -113,7 +114,7 @@ export const AddWallComponentController: React.FC<AddWallComponentProps> = ({ go
 
         let distance = "Brak wybranej ściany";
         if (componentToWindowDistance !== undefined) {
-            distance = Math.round(componentToWindowDistance * 10).toString() + "cm"; // display with precision to 1 cm.
+            distance = convertFromAppUnitsToCm(componentToWindowDistance);
         }
 
         return (

@@ -3,10 +3,10 @@
   flex-flow: column;
 }
 .app-top-menu {
-  height: 100%;
+  height: 6vh;
 }
 .app-bottom-menu {
-  height: 22vh;
+  height: 19vh;
   background-color: grey;
 }
 .app-canvas {

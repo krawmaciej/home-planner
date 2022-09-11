@@ -70,4 +70,10 @@ export class NoMovingWallComponent implements IMovingWallComponent {
     isDoor(): boolean {
         throw new Error("Called method on a not initialized component.");
     }
+    addLabel(): void {
+        throw new Error("Called method on a not initialized component.");
+    }
+    removeLabel(): void {
+        throw new Error("Called method on a not initialized component.");
+    }
 }

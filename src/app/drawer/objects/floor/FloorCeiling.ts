@@ -93,6 +93,14 @@ export class FloorCeiling implements IFloorCeiling {
         FloorCeiling.updateGeometry(this.diagonal.geometry, this.getDiagonalPoints());
     }
 
+    public addLabel(): void {
+        // no op for now
+    }
+
+    public removeLabel(): void {
+        // no op for now
+    }
+
     private static updateGeometry(geometry: BufferGeometry, newGeometryPoints: Array<Vector3>) {
         const positions = geometry.attributes[AttributeName.POSITION].array as Array<number>;
         const newPositions = newGeometryPoints.flatMap(v3 => [v3.x, v3.y, v3.z]);

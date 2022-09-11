@@ -112,4 +112,12 @@ export class PlacedWall implements ISceneObject {
             return Math.abs(this.props.points[ObjectPoint.BOTTOM_LEFT].x - this.props.points[ObjectPoint.BOTTOM_RIGHT].x);
         }
     }
+
+    public addLabel(): void {
+        // no op for now
+    }
+
+    public removeLabel(): void {
+        // no op for now
+    }
 }

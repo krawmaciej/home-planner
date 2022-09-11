@@ -30,7 +30,7 @@ export class PlanToArrangerConverter {
         const sceneConvertedWalls = this.convertPlacedWalls(sceneObjects.placedWalls);
         const sceneWallComponents = this.convertWallComponents(sceneObjects.wallComponents);
         const sceneFloors = this.convertFloors(sceneObjects.floors);
-        const sceneCeilings = this.createCeilings(sceneObjects.floors, sceneObjects.wallsHeight);
+        const sceneCeilings = this.createCeilings(sceneObjects.floors, sceneObjects.wallHeight);
         return { ...sceneConvertedWalls, sceneWallComponents, sceneFloors, sceneCeilings };
     }
 

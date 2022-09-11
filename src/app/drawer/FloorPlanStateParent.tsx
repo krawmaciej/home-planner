@@ -34,7 +34,11 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
 
     useEffect(() => () => {
             console.log("floor plan state on dismount");
-            disposeSceneObjects(canvasState.scene, renderer);
+            disposeSceneObjects(canvasState.scene, renderer, [
+                ...sceneObjects.floors,
+                ...sceneObjects.wallComponents,
+                ...sceneObjects.placedWalls,
+            ]);
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {
@@ -52,7 +56,7 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
                     scene={canvasState.scene}
                     mainInputHandler={canvasState.mainInputHandler}
                     wallThickness={wallThickness}
-                    wallHeight={sceneObjects.wallsHeight}
+                    wallHeight={sceneObjects.wallHeight}
                     placedWalls={sceneObjects.placedWalls}
                     wallComponents={sceneObjects.wallComponents}
                     floors={sceneObjects.floors}

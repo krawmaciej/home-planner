@@ -5,7 +5,7 @@ import {IPlacedWallComponent} from "../../drawer/objects/component/IPlacedWallCo
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
 
 export type SceneObjectsState = {
-    wallsHeight: number,
+    wallHeight: number,
     placedObjects: Array<ObjectProps>,
     placedWalls: Array<PlacedWall>,
     wallComponents: Array<IPlacedWallComponent>,
@@ -31,7 +31,7 @@ export const createFloors = () => {
 
 export const createSceneObjectsState = (): SceneObjectsState => {
     return {
-        wallsHeight: DEFAULT_WALL_HEIGHT,
+        wallHeight: DEFAULT_WALL_HEIGHT,
         placedObjects: createPlacedObjects(),
         placedWalls: createPlacedWalls(),
         wallComponents: createPlacedWallComponents(),

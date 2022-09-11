@@ -21,6 +21,8 @@ import {IMovingWallComponent} from "./IMovingWallComponent";
 import {IPlacedWallComponent} from "./IPlacedWallComponent";
 import {Direction} from "../wall/Direction";
 import {PlacedWall} from "../wall/PlacedWall";
+import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
+import {createComponentPropsLabel} from "../../components/Labels";
 
 const DEFAULT_MATERIAL = new LineBasicMaterial({
     color: 0x333333,
@@ -42,48 +44,67 @@ const ARROW_GEOMETRY = new BufferGeometry().setFromPoints([
     new Vector3(0.5, ObjectElevation.COMPONENT, 1),
 ]);
 
-type ComponentType = {
-    shape: Line<BufferGeometry, Material>,
-    placed: boolean,
+enum ComponentType {
+    DOOR, WINDOW,
 }
 
-const DOOR_TYPE: ComponentType = {
+type ComponentShape = {
+    shape: Line<BufferGeometry, Material>,
+    placed: boolean,
+    type: ComponentType,
+    hiddenLabelProps: Array<keyof ComponentProps>,
+}
+
+const DOOR_SHAPE: ComponentShape = {
     shape: new Line(ARROW_GEOMETRY, DEFAULT_MATERIAL),
     placed: false,
+    type: ComponentType.DOOR,
+    hiddenLabelProps: ["elevation"],
 };
 
-const WINDOW_TYPE: ComponentType = {
+const WINDOW_SHAPE: ComponentShape = {
     shape: new Line(ARROW_GEOMETRY, DEFAULT_MATERIAL),
     placed: false,
+    type: ComponentType.WINDOW,
+    hiddenLabelProps: [],
 };
 
 export type ComponentProps = {
     readonly name: string,
     readonly thumbnail: string,
     readonly object3d?: Object3D,
-    readonly width: number,
+    width: number,
     readonly thickness: number,
-    readonly height: number,
-    readonly elevation: number,
+    height: number,
+    elevation: number,
+    mutableFields: ComponentPropsMutableFields,
 }
 
-export const DEFAULT_MUTABLE_WINDOW_PROPS = {
+export type ComponentPropsMutableFields = {
+    readonly width: boolean,
+    readonly height: boolean,
+    readonly elevation: boolean,
+}
+
+export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
     name: "Otwór",
     thumbnail: "hole_thumbnail.jpg",
     width: 6,
     thickness: 1,
     height: 10,
     elevation: 9,
-} as ComponentProps;
+    mutableFields: { width: true, height: true, elevation: true },
+};
 
-export const DEFAULT_MUTABLE_DOOR_PROPS = {
+export const DEFAULT_MUTABLE_DOOR_PROPS: ComponentProps = {
     name: "Otwór",
     thumbnail: "hole_thumbnail.jpg",
     width: 8,
     thickness: 1,
     height: 20,
     elevation: 0,
-} as ComponentProps;
+    mutableFields: { width: true, height: true, elevation: false },
+};
 
 type XZLengths = {
     readonly x: number,
@@ -93,11 +114,11 @@ type XZLengths = {
 export class WallComponent implements IMovingWallComponent, IPlacedWallComponent {
 
     public static createMovingDoor(props: ComponentProps): IMovingWallComponent {
-        return new WallComponent(props, DEFAULT_MATERIAL, DOOR_TYPE);
+        return new WallComponent(props, DEFAULT_MATERIAL, DOOR_SHAPE);
     }
 
     public static createMovingWindow(props: ComponentProps): IMovingWallComponent {
-        return new WallComponent(props, DEFAULT_MATERIAL, WINDOW_TYPE);
+        return new WallComponent(props, DEFAULT_MATERIAL, WINDOW_SHAPE);
     }
 
     private static readonly FRONT_ROTATION = new Quaternion();
@@ -118,9 +139,10 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     private orientation: Vector2D;
     private parentWall: undefined | PlacedWall; // not yet placed wall component can also have a parent wall
     private collided: boolean;
-    private readonly type: ComponentType;
+    private readonly shape: ComponentShape;
+    private readonly label: CSS2DObject;
 
-    public constructor(props: ComponentProps, material: LineBasicMaterial, type: ComponentType) {
+    public constructor(props: ComponentProps, material: LineBasicMaterial, shape: ComponentShape) {
         this.frameMaterial = DEFAULT_WALL_FRAME_MATERIAL.clone();
         this.postProcessedTextureRotation = { value: 0 };
         this.props = props;
@@ -128,15 +150,16 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         points.push(points[ObjectPoint.BOTTOM_LEFT]);
         const geometry = new BufferGeometry().setFromPoints(points).center();
         this.window = new Line(geometry, material ?? DEFAULT_MATERIAL);
-        if (type.placed) {
-            const typeShape = type.shape.clone();
+        if (shape.placed) {
+            const typeShape = shape.shape.clone();
             typeShape.material = material ?? DEFAULT_MATERIAL;
             this.window.add(typeShape);
         }
         this.window.matrixAutoUpdate = false; // will be updated on each position change
         this.orientation = Direction.DOWN;
         this.collided = false;
-        this.type = type;
+        this.shape = shape;
+        this.label = new CSS2DObject(createComponentPropsLabel(this.props, this.shape.hiddenLabelProps));
     }
 
     /**
@@ -195,17 +218,19 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     }
 
     public createPlacedComponent(parentWall: PlacedWall): IPlacedWallComponent {
-        const placed = new WallComponent(this.props, PLACED_MATERIAL, { ...this.type, placed: true });
+        const placed = new WallComponent(this.props, PLACED_MATERIAL, { ...this.shape, placed: true });
         placed.setParentWall(parentWall);
         placed.changePosition(this.window.position);
         return placed;
     }
 
     public addTo(scene: Scene): void {
+        this.addLabel(); // re-add label to window
         scene.add(this.window);
     }
 
     public removeFrom(scene: Scene): void {
+        this.removeLabel(); // removing window from scene doesn't remove label
         scene.remove(this.window);
         this.window.geometry.dispose();
         this.frameMaterial.dispose();
@@ -213,6 +238,14 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         if (![DEFAULT_MATERIAL, PLACED_MATERIAL, COLLIDING_MATERIAL].includes(material)) {
             material.dispose();
         }
+    }
+
+    public addLabel():void {
+        this.window.add(this.label);
+    }
+
+    public removeLabel(): void {
+        this.window.remove(this.label);
     }
 
     /**
@@ -379,7 +412,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     }
 
     public isDoor() {
-        return this.type === DOOR_TYPE;
+        return this.shape.type === ComponentType.DOOR;
     }
 
     public getModel() {

@@ -5,6 +5,7 @@ import {Scene, Vector3, WebGLRenderer,} from "three";
 import {MainInputHandler} from "./inputHandler/MainInputHandler";
 import {ICameraHandler} from "./ICameraHandler";
 import {ICanvasObserver} from "./ICanvasObserver";
+import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 
 type Pointer = {
     onCanvas: boolean,
@@ -15,6 +16,7 @@ type Pointer = {
 type Props = {
     scene: Scene,
     renderer: WebGLRenderer,
+    labelRenderer: CSS2DRenderer,
     cameraHandler: ICameraHandler,
     mainInputHandler: MainInputHandler,
     observers: Array<ICanvasObserver>,
@@ -53,6 +55,12 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 
             // render in given space on webpage
             mount?.current?.appendChild(props.renderer.domElement);
+            const offsetTop = mount?.current?.offsetTop ?? 0;
+            const offsetLeft = mount?.current?.offsetLeft ?? 0;
+            props.labelRenderer.domElement.style.position = "absolute";
+            props.labelRenderer.domElement.style.top = offsetTop.toString() + "px";
+            props.labelRenderer.domElement.style.left = offsetLeft.toString() + "px";
+            mount?.current?.appendChild(props.labelRenderer.domElement);
 
             // listeners
             window.addEventListener("resize", handleResize);
@@ -75,6 +83,7 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
 
             if (!pointer.onCanvas) {
                 props.renderer.render(props.scene, props.cameraHandler.getCamera());
+                props.labelRenderer.render(props.scene, props.cameraHandler.getCamera());
                 return; // if pointer not on canvas then skip
             }
 
@@ -99,6 +108,7 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             }
 
             props.renderer.render(props.scene, props.cameraHandler.getCamera());
+            props.labelRenderer.render(props.scene, props.cameraHandler.getCamera());
         }
 
         function handleResize() {
@@ -107,6 +117,7 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             const aspect = width / height;
             props.cameraHandler.setAspectRatio(aspect); // todo: two cameras need to be handled here, but first rerendering canvas will be tried
             props.renderer.setSize(width, height);
+            props.labelRenderer.setSize(width, height);
             render();
         }
 
