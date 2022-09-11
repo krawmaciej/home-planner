@@ -78,16 +78,18 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
     useEffect(() => {
         if (currentMenu === UISelection.FLOOR_PLAN) {
             canvasState.mainInputHandler.detachCurrentHandler();
+            floorPlanState.orbitControls.enabled = true;
             interiorArrangerState.orbitControls.enabled = false;
             interiorArrangerState.transformControls.enabled = false;
 
-            initializeWithFloorPlan(canvasState);
+            initializeWithFloorPlan(canvasState, floorPlanState);
 
             return;
         }
 
         if (currentMenu === UISelection.INTERIOR_ARRANGER) {
             canvasState.mainInputHandler.detachCurrentHandler();
+            floorPlanState.orbitControls.enabled = false;
             interiorArrangerState.orbitControls.enabled = true;
             interiorArrangerState.transformControls.enabled = true;
 
@@ -171,6 +173,7 @@ const SelectController: React.FC<SelectionProps> = ({
                                                     textures,
                                                     canvasState,
                                                     interiorArrangerState,
+                                                    floorPlanState,
 }) => {
     if (selection === UISelection.INTERIOR_ARRANGER) {
         return (
@@ -198,6 +201,7 @@ const SelectController: React.FC<SelectionProps> = ({
                     sceneObjects={sceneObjectsState}
                     doorDefinitions={doorDefinitions}
                     windowDefinitions={windowDefinitions}
+                    floorPlanState={floorPlanState}
                 />
             </>
         );

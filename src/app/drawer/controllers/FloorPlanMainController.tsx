@@ -62,7 +62,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
                                                              wallHeight,
                                                              doorDefinitions,
                                                              windowDefinitions,
-                                                         }) => {
+}) => {
     const setType = (type: MainControllerType) => {
         setControllerType(type);
     };

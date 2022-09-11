@@ -7,6 +7,8 @@ import {ICameraHandler} from "./ICameraHandler";
 import {ICanvasObserver} from "./ICanvasObserver";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 
+const PRIMARY_BUTTON = 0;
+
 type Pointer = {
     onCanvas: boolean,
     vectorToUnproject: Vector3,
@@ -139,12 +141,14 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
          * @param event down event
          */
         function handlePointerDown(event: PointerEvent) {
-            const {x, y} = getOffsetPosition(event, width, height);
-            pointer = {
-                onCanvas: pointer.onCanvas,
-                vectorToUnproject: new Vector3(x, y, 0),
-                clicked: true
-            };
+            if (event.button === PRIMARY_BUTTON) {
+                const {x, y} = getOffsetPosition(event, width, height);
+                pointer = {
+                    onCanvas: pointer.onCanvas,
+                    vectorToUnproject: new Vector3(x, y, 0),
+                    clicked: true
+                };
+            }
         }
 
         function handlePointerEnter(event: PointerEvent) {

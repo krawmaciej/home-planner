@@ -11,6 +11,9 @@ import {WallThickness} from "./objects/wall/WallThickness";
 import {WebGLRenderer} from "three";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import {addCurrentSceneObjects} from "./components/CurrentSceneObjectsAdder";
+import {FloorPlanState} from "../../App";
+import {CameraZoomToGridDivisionsObserver} from "./components/CameraZoomToGridDivisionsObserver";
+import {deregisterObserver, registerObserver} from "../common/canvas/ICanvasObserver";
 
 type Props = {
     className?: string,
@@ -20,9 +23,10 @@ type Props = {
     windowDefinitions: Array<ComponentProps>,
     canvasState: CanvasState,
     cameraHandler: ICameraHandler,
+    floorPlanState: FloorPlanState,
 }
 
-export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, windowDefinitions, canvasState, renderer, cameraHandler }) => {
+export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, windowDefinitions, canvasState, renderer, cameraHandler, floorPlanState }) => {
 
     const [wallThickness, setWallThickness] = useState(new WallThickness(1.0));
     const [zoom, setZoom] = useState<number>(0.6); // todo: retrieve zoom from state or from cam handler
@@ -45,6 +49,15 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
         cameraHandler.setZoom(zoom);
         addCurrentSceneObjects(sceneObjects, canvasState.scene);
     }, [sceneObjects, canvasState]);
+
+    const [cameraZoomObserver] = useState(new CameraZoomToGridDivisionsObserver(floorPlanState, canvasState.scene));
+
+    useEffect(() => {
+        registerObserver(canvasState.observers, cameraZoomObserver);
+        return () => {
+            deregisterObserver(canvasState.observers, cameraZoomObserver);
+        };
+    }, [cameraZoomObserver]);
 
     if (wallThickness === undefined) {
         return (<p>Wczytywanie...</p>);
