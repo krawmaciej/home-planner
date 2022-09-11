@@ -12,7 +12,6 @@ import {WebGLRenderer} from "three";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import {addCurrentSceneObjects} from "./components/CurrentSceneObjectsAdder";
 import {FloorPlanState} from "../../App";
-import {CameraZoomToGridDivisionsObserver} from "./components/CameraZoomToGridDivisionsObserver";
 
 type Props = {
     className?: string,
