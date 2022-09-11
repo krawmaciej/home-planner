@@ -2,7 +2,7 @@ import {Scene, Vector3} from "three";
 import {PlacedWall} from "../objects/wall/PlacedWall";
 import {IWallComponent} from "../objects/component/IWallComponent";
 import {WallComponent, ComponentProps} from "../objects/component/WallComponent";
-import {CollisionDetector} from "./CollisionDetector";
+import {ALL_SIDES, CollisionDetector} from "./CollisionDetector";
 import {NoMovingWallComponent} from "../objects/component/NoMovingWallComponent";
 import {IMovingWallComponent} from "../objects/component/IMovingWallComponent";
 import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
@@ -75,7 +75,7 @@ export class WallComponentAdder {
 
         // check whether component collides with other components
         const componentCollision = this.collisionDetector
-            .detectCollisions(this.movingComponent.getObjectPointsOnScene(), this.placedWallComponents);
+            .detectCollisions(this.movingComponent.getObjectPointsOnScene(), this.placedWallComponents, ALL_SIDES);
         if (componentCollision.isCollision) {
             this.movingComponent.setCollided();
             return this.movingComponent; // collides with another component, do nothing
@@ -83,7 +83,7 @@ export class WallComponentAdder {
 
         // check whether component collides with adjacent walls
         const adjacentCollisions =
-            this.collisionDetector.detectComponentAdjacentWallCollisions(this.movingComponent, this.placedWalls);
+            this.collisionDetector.detectComponentToWallCollisions(this.movingComponent, this.placedWalls);
         if (adjacentCollisions.adjacentObjects.length > 0 || adjacentCollisions.isCollision) {
             this.movingComponent.setCollided();
             return this.movingComponent;

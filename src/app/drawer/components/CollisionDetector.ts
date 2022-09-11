@@ -18,6 +18,17 @@ export type AdjacentObject <T extends ISceneObject> = {
     points: Array<Vector3>,
 }
 
+type CheckedSides = {
+    top: boolean,
+    right: boolean,
+    bottom: boolean,
+    left: boolean,
+}
+
+export const ALL_SIDES: CheckedSides = { top: true, right: true, bottom: true, left: true, };
+export const LEFT_AND_RIGHT: CheckedSides = { top: true, right: true, bottom: true, left: true, };
+export const TOP_AND_BOTTOM: CheckedSides = { top: true, right: true, bottom: true, left: true, };
+
 export class CollisionDetector {
 
     /**
@@ -62,9 +73,14 @@ export class CollisionDetector {
      * Finds collisions, each checked object is ordered horizontally or vertically.
      * @param points
      * @param otherSceneObjects
+     * @param checkedSides
      * @returns 
      */
-    public detectCollisions<T extends ISceneObject>(points: ObjectPoints, otherSceneObjects: Array<T>): Collision<T> {
+    public detectCollisions<T extends ISceneObject>(
+        points: ObjectPoints,
+        otherSceneObjects: Array<T>,
+        checkedSides: CheckedSides,
+    ): Collision<T> {
         const topLeft = points[ObjectPoint.BOTTOM_LEFT];
         const topRight = points[ObjectPoint.BOTTOM_RIGHT];
         const bottomRight = points[ObjectPoint.TOP_RIGHT];
@@ -78,50 +94,56 @@ export class CollisionDetector {
             let edgeCollisionsCount = 0;
             let wallSideType = ObjectSideOrientation.BOTTOM;
 
-            // top
-            let check = CollisionDetector.checkLineCollision(topLeft, topRight, checkedAgainstObjectPoints);
-            if ( check.type === CollisionType.NORMAL_EDGE ) {
-                edgeCollisionsCount++;
-                wallSideType = ObjectSideOrientation.BOTTOM;
-                collisionPoints.push(check.p0);
-                collisionPoints.push(check.p1);
-            } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjacentObjects: adjacentObjects };
+            let check;
+            if (checkedSides.top) {
+                check = CollisionDetector.checkLineCollision(topLeft, topRight, checkedAgainstObjectPoints);
+                if ( check.type === CollisionType.NORMAL_EDGE ) {
+                    edgeCollisionsCount++;
+                    wallSideType = ObjectSideOrientation.BOTTOM;
+                    collisionPoints.push(check.p0);
+                    collisionPoints.push(check.p1);
+                } else if ( check.type === CollisionType.NORMAL ) {
+                    return { isCollision: true, adjacentObjects: adjacentObjects };
+                }
             }
 
-            // right
-            check = CollisionDetector.checkLineCollision(bottomRight, topRight, checkedAgainstObjectPoints);
-            if ( check.type === CollisionType.NORMAL_EDGE ) {
-                edgeCollisionsCount++;
-                wallSideType = ObjectSideOrientation.RIGHT;
-                collisionPoints.push(check.p0);
-                collisionPoints.push(check.p1);
-            } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjacentObjects: adjacentObjects };
+            if (checkedSides.right) {
+                check = CollisionDetector.checkLineCollision(bottomRight, topRight, checkedAgainstObjectPoints);
+                if ( check.type === CollisionType.NORMAL_EDGE ) {
+                    edgeCollisionsCount++;
+                    wallSideType = ObjectSideOrientation.RIGHT;
+                    collisionPoints.push(check.p0);
+                    collisionPoints.push(check.p1);
+                } else if ( check.type === CollisionType.NORMAL ) {
+                    return { isCollision: true, adjacentObjects: adjacentObjects };
+                }
             }
 
-            // bottom
-            check = CollisionDetector.checkLineCollision(bottomLeft, bottomRight, checkedAgainstObjectPoints);
-            if ( check.type === CollisionType.NORMAL_EDGE ) {
-                edgeCollisionsCount++;
-                wallSideType = ObjectSideOrientation.TOP;
-                collisionPoints.push(check.p0);
-                collisionPoints.push(check.p1);
-            } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjacentObjects: adjacentObjects };
+            if (checkedSides.bottom) {
+                check = CollisionDetector.checkLineCollision(bottomLeft, bottomRight, checkedAgainstObjectPoints);
+                if ( check.type === CollisionType.NORMAL_EDGE ) {
+                    edgeCollisionsCount++;
+                    wallSideType = ObjectSideOrientation.TOP;
+                    collisionPoints.push(check.p0);
+                    collisionPoints.push(check.p1);
+                } else if ( check.type === CollisionType.NORMAL ) {
+                    return { isCollision: true, adjacentObjects: adjacentObjects };
+                }
             }
 
-            // left
-            check = CollisionDetector.checkLineCollision(bottomLeft, topLeft, checkedAgainstObjectPoints);
-            if ( check.type === CollisionType.NORMAL_EDGE ) {
-                edgeCollisionsCount++;
-                wallSideType = ObjectSideOrientation.LEFT;
-                collisionPoints.push(check.p0);
-                collisionPoints.push(check.p1);
-            } else if ( check.type === CollisionType.NORMAL ) {
-                return { isCollision: true, adjacentObjects: adjacentObjects };
+            if (checkedSides.left) {
+                check = CollisionDetector.checkLineCollision(bottomLeft, topLeft, checkedAgainstObjectPoints);
+                if ( check.type === CollisionType.NORMAL_EDGE ) {
+                    edgeCollisionsCount++;
+                    wallSideType = ObjectSideOrientation.LEFT;
+                    collisionPoints.push(check.p0);
+                    collisionPoints.push(check.p1);
+                } else if ( check.type === CollisionType.NORMAL ) {
+                    return { isCollision: true, adjacentObjects: adjacentObjects };
+                }
             }
 
+            console.log("ecc: ", edgeCollisionsCount);
             if (edgeCollisionsCount === 1) { // only one side collided, start and end must have been set
                 adjacentObjects.push({
                     toSide: wallSideType,
@@ -129,9 +151,12 @@ export class CollisionDetector {
                     points: collisionPoints
                 });
             } else if (edgeCollisionsCount > 1) {
+                console.log("ecc > 1: ", edgeCollisionsCount);
+                console.log("adj objects > 1: ", adjacentObjects);
                 return { isCollision: true, adjacentObjects: adjacentObjects };
             }
         }
+        console.log("false: ", adjacentObjects);
         return { isCollision: false, adjacentObjects: adjacentObjects };
     }
 
@@ -147,49 +172,30 @@ export class CollisionDetector {
      * @param walls 
      * @returns 
      */
-    public detectComponentAdjacentWallCollisions(component: IWallComponent, walls: Array<PlacedWall>
-    ): Collision<PlacedWall> {
+    public detectComponentToWallCollisions(component: IWallComponent, walls: Array<PlacedWall>): Collision<PlacedWall> {
         const parentWall = component.getParentWall();
         if (parentWall === undefined) {
             throw new Error("Cannot find adjacent wall collision for component without parent wall.");
         }
         const placedWallsWithoutParentWall = CollisionDetector.getPlacedWallsWithoutParentWall(parentWall, walls);
         const points = component.getObjectPointsOnScene();
-        const collision = this.detectCollisions(points, placedWallsWithoutParentWall);
-
-        // check only front and back component side adjacent collisions
-        return {
-            isCollision: collision.isCollision,
-            adjacentObjects: CollisionDetector.getOnlyFrontAndBackCollisions(collision, parentWall),
-        };
+        const sides = CollisionDetector.pickComponentFrontAndBackSides(parentWall.props.direction);
+        return this.detectCollisions(points, placedWallsWithoutParentWall, sides);
     }
 
-    public detectWallComponentCollisions(wallProps: WallConstruction, components: Array<IWallComponent>) {
-        return this.detectCollisions(wallProps.points, components); // todo: this might cause an error because of removing an optimization trick
-    }
-
-    private static getOnlyFrontAndBackCollisions(collision: Collision<PlacedWall>, parentWall: PlacedWall) {
-        const sideFilter = CollisionDetector.getSideFilterStrategy(parentWall);
-        return collision.adjacentObjects.filter(sideFilter);
-    }
-
-    private static getSideFilterStrategy(parentWall: PlacedWall) {
-        if (parentWall.props.direction === Direction.DOWN || parentWall.props.direction === Direction.UP) {
-            return CollisionDetector.isSideVertical; // find only non-horizontal
-        } else {
-            return CollisionDetector.isSideHorizontal; // find only non-vertical
-        }
-    }
-
-    private static isSideHorizontal(adjacentWall: AdjacentObject<PlacedWall>): boolean {
-        return adjacentWall.toSide === ObjectSideOrientation.BOTTOM || adjacentWall.toSide === ObjectSideOrientation.TOP;
-    }
-
-    private static isSideVertical(adjacentWall: AdjacentObject<PlacedWall>): boolean {
-        return adjacentWall.toSide === ObjectSideOrientation.LEFT || adjacentWall.toSide === ObjectSideOrientation.RIGHT;
+    public detectWallToComponentCollisions(wallProps: WallConstruction, components: Array<IWallComponent>) {
+        return this.detectCollisions(wallProps.points, components, ALL_SIDES); // todo: pick strategy for component's sides
     }
 
     private static getPlacedWallsWithoutParentWall(parentWall: PlacedWall, placedWalls: Array<PlacedWall>): Array<PlacedWall> {
         return placedWalls.filter(wall => wall !== parentWall);
+    }
+
+    private static pickComponentFrontAndBackSides(componentWallDirection: Direction): CheckedSides {
+        if (componentWallDirection === Direction.DOWN || componentWallDirection === Direction.UP) {
+            return LEFT_AND_RIGHT;
+        } else {
+            return TOP_AND_BOTTOM;
+        }
     }
 }
