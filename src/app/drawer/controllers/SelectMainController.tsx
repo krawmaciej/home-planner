@@ -1,10 +1,18 @@
-import React from "react";
+import React, {useContext, useEffect} from "react";
 import { MainFactoryComponentProps } from "./ControllerFactory";
-import { MainControllerType } from "./FloorPlanMainController";
+import {FloorPlanContext, MainControllerType} from "./FloorPlanMainController";
 import {Button} from "react-bootstrap";
 import {SECONDARY_VARIANT} from "../../arranger/constants/Types";
 
 export const SelectMainController: React.FC<MainFactoryComponentProps<MainControllerType>> = ({ setType }) => {
+    const context = useContext(FloorPlanContext);
+    if (context === undefined) {
+        throw new Error("Context in SelectMainController is undefined.");
+    }
+
+    useEffect(() => {
+        context.changeMenuName(MainControllerType.SELECT);
+    }, [context.changeMenuName]);
 
     const selectWalls = () => {
         setType(MainControllerType.WALLS);

@@ -1,5 +1,4 @@
 import React, {createContext, useRef, useState} from "react";
-import { WallComponentController } from "./WallComponentController";
 import { ControllerFactory, ComponentProvider } from "./ControllerFactory";
 import { SelectMainController } from "./SelectMainController";
 import { WallController } from "./WallController";
@@ -16,6 +15,7 @@ import {FloorsController} from "./FloorsController";
 import {WallComponentAdder} from "../components/WallComponentAdder";
 import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
 import {ComponentProps} from "../objects/component/WallComponent";
+import {WallComponentController} from "./WallComponentController";
 
 type Props = {
     className?: string,
@@ -34,7 +34,7 @@ export enum MainControllerType {
     WALLS = "Ściany",
     WINDOWS_AND_DOORS = "Okna i drzwi",
     FLOORS = "Podłogi i sufity",
-    SELECT = "",
+    SELECT = "Rysunek planu 2D",
 }
 
 type FloorPlanContextType = {
@@ -47,6 +47,7 @@ type FloorPlanContextType = {
     floorsDrawer: FloorsDrawer,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
+    changeMenuName: (value: string) => void,
 }
 
 export const FloorPlanContext = createContext<FloorPlanContextType | undefined>(undefined);
@@ -96,6 +97,9 @@ export const FloorPlanMainController: React.FC<Props> = ({
     const [wallComponentAdder] = useState(new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, 5 / 10));
     const [floorsDrawer] = useState(new FloorsDrawer(scene, collisionDetector, floors, placedWalls));
 
+    // dynamic menu name holder
+    const [currentControllerName, setControllerName] = useState("");
+
     // dependency container
     const context: FloorPlanContextType = {
         mainInputHandler,
@@ -107,13 +111,14 @@ export const FloorPlanMainController: React.FC<Props> = ({
         floorsDrawer,
         doorDefinitions,
         windowDefinitions,
+        changeMenuName: setControllerName,
     };
 
-    const controllerName = controllerType === "" ? null : <div>{controllerType}</div>;
+    const controllerNameDiv = currentControllerName === "" ? null : <div>{currentControllerName}</div>;
 
     return (
         <>
-            {controllerName}
+            {controllerNameDiv}
             <FloorPlanContext.Provider value={context}>
                 <ControllerFactory type={controllerType} providers={factoryProviders.current}/>
             </FloorPlanContext.Provider>

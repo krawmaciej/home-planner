@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import { FactorySubcomponentProps } from "./ControllerFactory";
-import { FloorPlanContext } from "./FloorPlanMainController";
+import {FloorPlanContext, MainControllerType} from "./FloorPlanMainController";
 import {FloorsDrawingIH} from "../IO/inputHandlers/floorsDrawing/FloorsDrawingIH";
 import {Button} from "react-bootstrap";
 import {PRIMARY_VARIANT, SECONDARY_VARIANT, SELECTED_VARIANT} from "../../arranger/constants/Types";
@@ -13,11 +13,14 @@ enum Menu {
 }
 
 export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
-
     const context = useContext(FloorPlanContext);
     if (context === undefined) {
         throw new Error("Context in FloorsController is undefined.");
     }
+
+    useEffect(() => {
+        context.changeMenuName(MainControllerType.FLOORS);
+    }, [context.changeMenuName]);
 
     const [menu, setMenu] = useState<Menu>();
     const [inputHandler, setInputHandler] = useState<IInputHandler>(new VoidIH());
@@ -41,12 +44,12 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
 
     useEffect(() => {
         context.mainInputHandler.changeHandlingStrategy(inputHandler);
-    }, [inputHandler]);
+    }, [inputHandler, context.mainInputHandler]);
 
     useEffect(() => () => {
         handleCancel();
         context.mainInputHandler.detachCurrentHandler();
-    }, [inputHandler]);
+    }, [inputHandler, context.mainInputHandler]);
 
     const cancelButton = menu !== Menu.ADD ? null :
         <Button onClick={handleCancel} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">

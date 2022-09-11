@@ -2,7 +2,7 @@ import {ObjectElevation} from "../../../constants/Types";
 import {ComponentProps} from "../../../objects/component/WallComponent";
 import {IInputHandler} from "../../../../common/canvas/inputHandler/IInputHandler";
 import {State, WallComponentPointer} from "./WallComponentPointer";
-import {Observer} from "../../../controllers/WallComponentController";
+import {Observer} from "../../../controllers/AddWallComponentController";
 import {WallComponentAdder} from "../../../components/WallComponentAdder";
 import {InputPoint} from "../../../../common/canvas/inputHandler/MainInputHandler";
 
@@ -78,6 +78,7 @@ export class WallComponentAddingIH implements IInputHandler {
             this.pointer.reset();
             this.wallComponentAdder.removeMovingComponent();
         } else if (this.pointer.getState() === State.ORIENTING) {
+            this.pointer.reset();
             this.wallComponentAdder.removeOrientingComponent();
         }
     }

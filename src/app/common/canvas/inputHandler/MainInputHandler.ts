@@ -34,8 +34,4 @@ export class MainInputHandler {
     public detachCurrentHandler() {
         this.delegate = new VoidIH();
     }
-
-    public handleCancel() {
-        this.delegate.handleCancel();
-    }
 }
