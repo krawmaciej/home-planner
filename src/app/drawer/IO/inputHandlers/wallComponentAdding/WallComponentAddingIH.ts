@@ -18,7 +18,6 @@ export class WallComponentAddingIH implements IInputHandler {
     private readonly pointer: WallComponentPointer;
 
     public constructor(wallComponentAdder: WallComponentAdder, observer: Observer) {
-        console.log("Reinitialized wall component adding input handler.");
         this.wallComponentAdder = wallComponentAdder;
         this.observer = observer;
         this.pointer = new WallComponentPointer();
@@ -73,7 +72,6 @@ export class WallComponentAddingIH implements IInputHandler {
     }
 
     public handleCancel(): void {
-        console.log("Pointer state is " + this.pointer.getState());
         if (this.pointer.getState() === State.MOVING) {
             this.pointer.reset();
             this.wallComponentAdder.removeMovingComponent();

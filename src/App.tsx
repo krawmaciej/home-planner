@@ -32,8 +32,8 @@ const createLabelRenderer = () => {
     return new CSS2DRenderer();
 };
 
-const DEFAULT_GRID_SIZE = 1000;
-const DEFAULT_GRID_DIVISIONS = 1000;
+const DEFAULT_GRID_SIZE = 100;
+const DEFAULT_GRID_DIVISIONS = 100;
 export const DEFAULT_GRID = new GridHelper(DEFAULT_GRID_SIZE, DEFAULT_GRID_DIVISIONS, 0xbbbbbb, 0xbbbbbb);
 DEFAULT_GRID.position.setY(ObjectElevation.GRID);
 

@@ -49,7 +49,6 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
     const [, updatePlacedObjectsToggle] = useState(false);
 
     useEffect(() => () => {
-        console.log("interior arranger state on dismount");
         disposeSceneObjects(canvasState.scene, renderer, [
             ...sceneObjects.floors,
             ...sceneObjects.wallComponents,
