@@ -2,6 +2,8 @@ import {ISceneObject} from "../ISceneObject";
 import {BufferGeometry, Line, LineBasicMaterial, Scene, Vector3} from "three";
 import {ObjectElevation, ObjectPoints} from "../../constants/Types";
 import {ObjectProps} from "../../../arranger/objects/ImportedObject";
+import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
+import {createConvertedArrangerObjectLabel} from "../../components/Labels";
 
 export class ConvertedArrangerObject implements ISceneObject {
 
@@ -11,15 +13,16 @@ export class ConvertedArrangerObject implements ISceneObject {
 
     private readonly props: ObjectProps;
     private readonly shape: Line<BufferGeometry, LineBasicMaterial>;
+    private readonly label: CSS2DObject;
 
     public constructor(props: ObjectProps) {
         this.props = props;
         const geometry = new BufferGeometry().setFromPoints(ConvertedArrangerObject.getOutlinePoints(props));
         const shape = new Line(geometry, ConvertedArrangerObject.MATERIAL);
-        shape.position.x = props.object3d.position.x;
-        shape.position.z = props.object3d.position.z;
+        shape.position.set(props.object3d.position.x, ObjectElevation.ARRANGER_OBJECT, props.object3d.position.z);
         shape.rotation.copy(props.object3d.rotation);
         this.shape = shape;
+        this.label = new CSS2DObject(createConvertedArrangerObjectLabel(props.name));
     }
 
     public getObjectPointsOnScene(): ObjectPoints {
@@ -38,9 +41,11 @@ export class ConvertedArrangerObject implements ISceneObject {
     }
 
     public addLabel(): void {
+        this.shape.add(this.label);
     }
 
     public removeLabel(): void {
+        this.shape.remove(this.label);
     }
 
     private static getOutlinePoints(props: ObjectProps) {

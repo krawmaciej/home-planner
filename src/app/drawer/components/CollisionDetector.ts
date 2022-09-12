@@ -1,20 +1,18 @@
 import {Vector3} from "three";
 import {ObjectPoint, ObjectPoints, ObjectSideOrientation} from "../constants/Types";
-import {ISceneObject} from "../objects/ISceneObject";
 import {PlacedWall} from "../objects/wall/PlacedWall";
 import {DrawerMath, WallConstruction} from "./DrawerMath";
 import {CollisionType, LiangBarsky, LiangBarskyResult} from "./LiangBarsky";
 import {IWallComponent} from "../objects/component/IWallComponent";
 import {Direction} from "../objects/wall/Direction";
+import {IObjectPointsOnScene} from "../objects/IObjectPointsOnScene";
 
-type ISceneObjectWithOnlyPoints = Pick<ISceneObject, "getObjectPointsOnScene">;
-
-export type Collision <T extends ISceneObjectWithOnlyPoints> = {
+export type Collision <T extends IObjectPointsOnScene> = {
     isCollision: boolean,
     adjacentObjects: Array<AdjacentObject<T>>,
 }
 
-export type AdjacentObject <T extends ISceneObjectWithOnlyPoints> = {
+export type AdjacentObject <T extends IObjectPointsOnScene> = {
     toSide: ObjectSideOrientation
     adjacent: T,
     points: Array<Vector3>,
@@ -38,7 +36,7 @@ export class CollisionDetector {
      * @param position
      * @param objects
      */
-    public pickRectangularObjectWithPointer<T extends ISceneObject>(position: Vector3, objects: Array<T>): T | undefined {
+    public pickRectangularObjectWithPointer<T extends IObjectPointsOnScene>(position: Vector3, objects: Array<T>): T | undefined {
         for (const obj of objects) {
             const min = obj.getObjectPointsOnScene()[ObjectPoint.TOP_LEFT];
             const max = obj.getObjectPointsOnScene()[ObjectPoint.BOTTOM_RIGHT];
@@ -49,11 +47,11 @@ export class CollisionDetector {
         return undefined;
     }
 
-    public detectAABBCollisions<T extends ISceneObject>(checked: T, objects: Array<T>): T | undefined {
+    public detectAABBCollisions<T extends IObjectPointsOnScene>(checked: T, objects: Array<T>): T | undefined {
         return this.detectAABBCollisionsForObjectPoints(checked.getObjectPointsOnScene(), objects);
     }
 
-    public detectAABBCollisionsForObjectPoints<T extends ISceneObject>(points: ObjectPoints, objects: Array<T>): T | undefined {
+    public detectAABBCollisionsForObjectPoints<T extends IObjectPointsOnScene>(points: ObjectPoints, objects: Array<T>): T | undefined {
         const topRight = points[ObjectPoint.BOTTOM_RIGHT];
         const bottomLeft = points[ObjectPoint.TOP_LEFT];
         for (const obj of objects) {
@@ -78,7 +76,7 @@ export class CollisionDetector {
      * @param checkedSides
      * @returns 
      */
-    public detectCollisions<T extends ISceneObjectWithOnlyPoints> (
+    public detectCollisions<T extends IObjectPointsOnScene> (
         points: ObjectPoints,
         otherSceneObjects: Array<T>,
         checkedSides: CheckedSides,
@@ -181,8 +179,8 @@ export class CollisionDetector {
         return this.detectCollisions(points, placedWallsWithoutParentWall, sides);
     }
 
-    public detectWallToComponentCollisions(wallProps: WallConstruction, components: Array<IWallComponent>): Collision<ISceneObjectWithOnlyPoints> {
-        const resultArray = new Array<Collision<ISceneObjectWithOnlyPoints>>();
+    public detectWallToComponentCollisions(wallProps: WallConstruction, components: Array<IWallComponent>): Collision<IObjectPointsOnScene> {
+        const resultArray = new Array<Collision<IObjectPointsOnScene>>();
         for (const component of components) {
             const parentWall = component.getParentWall();
             if (parentWall === undefined) {

@@ -19,8 +19,9 @@ import {IPlacedWallComponent} from "../component/IPlacedWallComponent";
 import {WallBuilder} from "./WallBuilder";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {createWallConstructionLabel} from "../../components/Labels";
+import {IObjectPointsOnScene} from "../IObjectPointsOnScene";
 
-export class PlacedWall implements ISceneObject {
+export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     
     private static readonly material = new LineBasicMaterial({
         color: 0x000000,
