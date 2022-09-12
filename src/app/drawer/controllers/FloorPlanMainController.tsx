@@ -1,5 +1,4 @@
 import React, {createContext, useRef, useState} from "react";
-import { WallComponentController } from "./WallComponentController";
 import { ControllerFactory, ComponentProvider } from "./ControllerFactory";
 import { SelectMainController } from "./SelectMainController";
 import { WallController } from "./WallController";
@@ -16,12 +15,13 @@ import {FloorsController} from "./FloorsController";
 import {WallComponentAdder} from "../components/WallComponentAdder";
 import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
 import {ComponentProps} from "../objects/component/WallComponent";
+import {WallComponentController} from "./WallComponentController";
 
 type Props = {
     className?: string,
     scene: Scene,
     mainInputHandler: MainInputHandler,
-    wallThickness: WallThickness, // todo: might be created in this component, cause it is only used by wall adder, see todo line 71
+    wallThickness: WallThickness,
     wallHeight: number,
     placedWalls: Array<PlacedWall>,
     floors: Array<FloorCeiling>,
@@ -31,7 +31,10 @@ type Props = {
 }
 
 export enum MainControllerType {
-    WALLS, WINDOWS_AND_DOORS, FLOORS, SELECT,
+    WALLS = "Ściany",
+    WINDOWS_AND_DOORS = "Okna i drzwi",
+    FLOORS = "Podłogi i sufity",
+    SELECT = "Rysunek planu 2D",
 }
 
 type FloorPlanContextType = {
@@ -44,6 +47,7 @@ type FloorPlanContextType = {
     floorsDrawer: FloorsDrawer,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
+    changeMenuName: (value: string) => void,
 }
 
 export const FloorPlanContext = createContext<FloorPlanContextType | undefined>(undefined);
@@ -58,7 +62,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
                                                              wallHeight,
                                                              doorDefinitions,
                                                              windowDefinitions,
-                                                         }) => {
+}) => {
     const setType = (type: MainControllerType) => {
         setControllerType(type);
     };
@@ -69,10 +73,10 @@ export const FloorPlanMainController: React.FC<Props> = ({
     };
 
     const initializeComponentProviders = () => {
-        const factoryProviders = new Array<ComponentProvider>(4); // todo: cache it
+        const factoryProviders = new Map<MainControllerType, ComponentProvider>();
 
         const mapProvider = (type: MainControllerType, provider: JSX.Element) => {
-            factoryProviders[type] = () => provider;
+            factoryProviders.set(type, () => provider);
         };
 
         mapProvider(MainControllerType.SELECT, <SelectMainController setType={setType}/>);
@@ -83,15 +87,18 @@ export const FloorPlanMainController: React.FC<Props> = ({
         return factoryProviders;
     };
 
-    const [controllerType, setControllerType] = useState<MainControllerType>(MainControllerType.SELECT); // initial state is select
-    const factoryProviders = useRef<Array<ComponentProvider>>(initializeComponentProviders());
+    const [controllerType, setControllerType] = useState<MainControllerType>(MainControllerType.SELECT);
+    const factoryProviders = useRef(initializeComponentProviders());
 
     const [, updateWallsToggle] = useState<boolean>(false);
 
     const { current: collisionDetector } = useRef(new CollisionDetector());
-    const [wallDrawer] = useState(new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallComponents, floors, wallThickness, wallHeight)); // todo: update only on wallThickness change, might move to WallController fully
-    const [wallComponentAdder] = useState(new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, 5 / 10)); // todo: same as above
+    const [wallDrawer] = useState(new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallComponents, floors, wallThickness, wallHeight));
+    const [wallComponentAdder] = useState(new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, 5 / 10));
     const [floorsDrawer] = useState(new FloorsDrawer(scene, collisionDetector, floors, placedWalls));
+
+    // dynamic menu name holder
+    const [currentControllerName, setControllerName] = useState("");
 
     // dependency container
     const context: FloorPlanContextType = {
@@ -104,11 +111,17 @@ export const FloorPlanMainController: React.FC<Props> = ({
         floorsDrawer,
         doorDefinitions,
         windowDefinitions,
+        changeMenuName: setControllerName,
     };
 
+    const controllerNameDiv = currentControllerName === "" ? null : <div>{currentControllerName}</div>;
+
     return (
-        <FloorPlanContext.Provider value={context}>
-            <ControllerFactory type={controllerType} providers={factoryProviders.current}/>
-        </FloorPlanContext.Provider>
+        <>
+            {controllerNameDiv}
+            <FloorPlanContext.Provider value={context}>
+                <ControllerFactory type={controllerType} providers={factoryProviders.current}/>
+            </FloorPlanContext.Provider>
+        </>
     );
 };

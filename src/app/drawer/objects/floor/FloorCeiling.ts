@@ -2,6 +2,11 @@ import {IFloorCeiling} from "./IFloorCeiling";
 import {BufferGeometry, Line, LineBasicMaterial, MeshStandardMaterial, Scene, Vector3} from "three";
 import {ObjectElevation, ObjectPoint, ObjectPoints, PostProcessedTextureRotation} from "../../constants/Types";
 import {AttributeName} from "../../../arranger/constants/Types";
+import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
+import {
+    createFloorCeilingEmptyLabel, createFloorCeilingSquareFootageText,
+
+} from "../../components/Labels";
 
 export class FloorCeiling implements IFloorCeiling {
 
@@ -19,6 +24,7 @@ export class FloorCeiling implements IFloorCeiling {
     private readonly outline: Line<BufferGeometry, LineBasicMaterial>;
     private readonly diagonal: Line<BufferGeometry, LineBasicMaterial>;
     private objectPoints: ObjectPoints;
+    private readonly label: CSS2DObject;
 
     public constructor(start: Vector3, end: Vector3, meshMaterial: MeshStandardMaterial) {
         this.floorMaterial = meshMaterial.clone();
@@ -30,6 +36,8 @@ export class FloorCeiling implements IFloorCeiling {
         this.outline = new Line(outlineGeo, FloorCeiling.STANDARD_MATERIAL);
         const diagonalGeo = new BufferGeometry().setFromPoints(this.getDiagonalPoints());
         this.diagonal = new Line(diagonalGeo, FloorCeiling.STANDARD_MATERIAL);
+        this.label = new CSS2DObject(createFloorCeilingEmptyLabel());
+        this.updateLabel();
     }
 
     private getOutlinePoints() {
@@ -56,11 +64,13 @@ export class FloorCeiling implements IFloorCeiling {
     }
 
     public addTo(scene: Scene): void {
+        this.addLabel(); // re-add label to object
         scene.add(this.outline);
         scene.add(this.diagonal);
     }
 
     public removeFrom(scene: Scene): void {
+        this.removeLabel(); // removing object doesn't remove label
         scene.remove(this.outline);
         scene.remove(this.diagonal);
         this.outline.geometry.dispose();
@@ -91,6 +101,25 @@ export class FloorCeiling implements IFloorCeiling {
         FloorCeiling.updateGeometry(this.outline.geometry, this.getOutlinePoints());
         // update diagonal
         FloorCeiling.updateGeometry(this.diagonal.geometry, this.getDiagonalPoints());
+        // update label
+        this.updateLabel();
+    }
+
+    public addLabel(): void {
+        this.outline.add(this.label);
+    }
+
+    public removeLabel(): void {
+        this.outline.remove(this.label);
+    }
+
+    private updateLabel() {
+        const first = this.objectPoints[ObjectPoint.BOTTOM_LEFT];
+        const last = this.objectPoints[ObjectPoint.TOP_RIGHT];
+        const middlePoint = first.clone().add(last).multiplyScalar(0.5);
+        this.label.position.x = middlePoint.x;
+        this.label.position.z = middlePoint.z;
+        this.label.element.textContent = createFloorCeilingSquareFootageText(first, last);
     }
 
     private static updateGeometry(geometry: BufferGeometry, newGeometryPoints: Array<Vector3>) {

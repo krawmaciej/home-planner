@@ -30,7 +30,7 @@ export class PlanToArrangerConverter {
         const sceneConvertedWalls = this.convertPlacedWalls(sceneObjects.placedWalls);
         const sceneWallComponents = this.convertWallComponents(sceneObjects.wallComponents);
         const sceneFloors = this.convertFloors(sceneObjects.floors);
-        const sceneCeilings = this.createCeilings(sceneObjects.floors, sceneObjects.wallsHeight);
+        const sceneCeilings = this.createCeilings(sceneObjects.floors, sceneObjects.wallHeight);
         return { ...sceneConvertedWalls, sceneWallComponents, sceneFloors, sceneCeilings };
     }
 
@@ -43,8 +43,7 @@ export class PlanToArrangerConverter {
                         .map(wf => PlanToArrangerConverter.wallFaceToWallFaceMesh(wf, idx, wall.props.height))
                         .map(wfm => PlanToArrangerConverter.wallFaceMeshToObjectWithEditableTexture(wfm))
                 )
-        ); // todo: use map instead of flat map and create wall aggregating all wallfaces,
-           // todo: draw diagram for also updating Connection material when wallface material is updated.
+        );
 
         const wallCoversCreator = new WallCoversCreator();
         const wallCoverMeshes = placedWalls.map(wall => wallCoversCreator.fromObjectPoints(wall.props));

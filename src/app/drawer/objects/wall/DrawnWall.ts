@@ -1,26 +1,22 @@
-import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3, MeshBasicMaterialParameters, Scene } from "three";
-import { WallConstruction, MiddlePoints} from "../../components/DrawerMath";
-import {ObjectElevation, ObjectPoint} from "../../constants/Types";
+import { LineBasicMaterial, Line, BufferGeometry, Mesh, CircleGeometry, MeshBasicMaterial, Vector3, Scene } from "three";
+import { WallConstruction} from "../../components/DrawerMath";
+import {ObjectPoint, ObjectPoints} from "../../constants/Types";
 import { IDrawnWall } from "./IDrawnWall";
+import { createWallConstructionLabel} from "../../components/Labels";
+import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
+import {WallBuilder} from "./WallBuilder";
 
 /**
  * Creates Meshes from properties provided by {@link WallBuilder}.
  */
 export class DrawnWall implements IDrawnWall {
 
-    private static readonly contactPointMesh = DrawnWall.createPointMesh({ color: 0xffff00 });
-    private static readonly middlePointMesh = DrawnWall.createPointMesh({ color: 0x000000 });
-
-    private static createPointMesh(material: MeshBasicMaterialParameters): Mesh<CircleGeometry, MeshBasicMaterial> {
-        const geometry = new CircleGeometry(0.17);
-        const meshMaterial = new MeshBasicMaterial(material);
-        const mesh = new Mesh(geometry, meshMaterial);
-        mesh.rotateX(-Math.PI/2.0);
-        return mesh;
-    }
-
     private static readonly material = new LineBasicMaterial({
         color: 0x222222,
+    });
+
+    private static readonly middleMaterial = new LineBasicMaterial({
+        color: 0x666666,
     });
 
     private static readonly collidedMaterial = new LineBasicMaterial({
@@ -34,6 +30,7 @@ export class DrawnWall implements IDrawnWall {
     public readonly anchorStart: Mesh<CircleGeometry, MeshBasicMaterial>;
     public readonly anchorEnd: Mesh<CircleGeometry, MeshBasicMaterial>;
     public readonly contactPoints: Array<Mesh<CircleGeometry, MeshBasicMaterial>>;
+    private readonly label: CSS2DObject;
 
     private constructor(
         props: WallConstruction,
@@ -51,6 +48,11 @@ export class DrawnWall implements IDrawnWall {
         this.anchorStart = anchorStart;
         this.anchorEnd = anchorEnd;
         this.contactPoints = contactPoints;
+        const css2DObject = new CSS2DObject(createWallConstructionLabel(this.props.width));
+        const middleVector = props.middlePoints.first.clone().add(props.middlePoints.last).multiplyScalar(0.5);
+        css2DObject.position.x = middleVector.x;
+        css2DObject.position.z = middleVector.z;
+        this.label = css2DObject;
         middle.add(anchorStart);
         middle.add(anchorEnd);
         wall.add(middle);
@@ -59,48 +61,49 @@ export class DrawnWall implements IDrawnWall {
 
     public static wallFromPoints(props: WallConstruction, isCollided: boolean, contactPoints: Vector3[]): DrawnWall {
         const material = isCollided ? DrawnWall.collidedMaterial : DrawnWall.material;
+        const middleMaterial = isCollided ? DrawnWall.collidedMaterial : DrawnWall.middleMaterial;
         let contactPointsMeshes = new Array<Mesh<CircleGeometry, MeshBasicMaterial>>();
         if (!isCollided) {
-            contactPointsMeshes = contactPoints.map(point => this.createContactPoint(point));
+            contactPointsMeshes = contactPoints.map(point => WallBuilder.createContactPoint(point));
         }
         
         const wallGeometry = new BufferGeometry().setFromPoints(this.getWallPoints(props));
         const wall = new Line(wallGeometry, material);
         
-        const middleGeometry = new BufferGeometry().setFromPoints(this.getMiddlePoints(props.middlePoints));
-        const middle = new Line(middleGeometry, material);
+        const middleGeometry = new BufferGeometry().setFromPoints([props.middlePoints.first, props.middlePoints.last]);
+        const middle = new Line(middleGeometry, middleMaterial);
 
-        const p1 = this.createMiddlePoint(props.middlePoints.last);
-        const p2 = this.createMiddlePoint(props.middlePoints.first);
+        const p1 = WallBuilder.createMiddlePoint(props.middlePoints.last);
+        const p2 = WallBuilder.createMiddlePoint(props.middlePoints.first);
 
         return new DrawnWall(props, isCollided, wall, middle, p1, p2, contactPointsMeshes);
-    }
-
-    private static createContactPoint(position: Vector3): Mesh<CircleGeometry, MeshBasicMaterial> {
-        const newMesh = DrawnWall.contactPointMesh.clone();
-        newMesh.position.copy(position);
-        newMesh.position.setY(ObjectElevation.UI);
-        return newMesh;
-    }
-
-    private static createMiddlePoint(position: Vector3): Mesh<CircleGeometry, MeshBasicMaterial> {
-        const newMesh = DrawnWall.middlePointMesh.clone();
-        newMesh.position.copy(position);
-        newMesh.position.setY(ObjectElevation.UI);
-        return newMesh;
     }
 
     private static getWallPoints({points}: WallConstruction): Vector3[] {
         return [...points, points[ObjectPoint.BOTTOM_LEFT]];
     }
 
-    private static getMiddlePoints({first: start, last: end}: MiddlePoints): Vector3[] {
-        return [start, end];
+    public addTo(scene: Scene): void {
+        this.addLabel(); // re-add label to wall
+        scene.add(this.wall);
     }
 
     public removeFrom(scene: Scene): void {
+        this.removeLabel(); // removing object from scene doesn't remove label
         scene.remove(this.wall);
         this.wall.geometry.dispose();
         this.middle.geometry.dispose();
+    }
+    
+    public addLabel(): void {
+        this.wall.add(this.label);
+    }
+    
+    public removeLabel(): void {
+        this.wall.remove(this.label);
+    }
+
+    public getObjectPointsOnScene(): ObjectPoints {
+        return this.props.points;
     }
 }

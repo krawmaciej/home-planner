@@ -1,5 +1,7 @@
-import { Scene } from "three";
+import {ISceneObject} from "../ISceneObject";
 
-export interface IDrawnWall {
-    removeFrom(scene: Scene): void;
+/**
+ * Marker interface for drawn wall.
+ */
+export interface IDrawnWall extends ISceneObject {
 }

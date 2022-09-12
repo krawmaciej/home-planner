@@ -18,7 +18,7 @@ export class OrthographicCameraHandler implements ICameraHandler {
         this.frustumSize = frustumSize;
     }
 
-    getCamera(): Camera {
+    getCamera(): OrthographicCamera {
         return this.camera;
     }
 

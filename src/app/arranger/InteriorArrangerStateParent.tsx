@@ -38,24 +38,23 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
                                                                  objectDefinitions,
                                                                  textures,
                                                                  renderer,
-                                                                 cameraHandler,
                                                                  interiorArrangerState,
 }) => {
     const [planObjectsConverter] = useState(new PlanToArrangerConverter());
-    const [zoom] = useState(0.6);
 
     const [convertedObjects, setConvertedObjects] = useState<ConvertedObjects>();
 
     const [, updatePlacedObjectsToggle] = useState(false);
 
     useEffect(() => () => {
-        console.log("interior arranger state on dismount");
-        disposeSceneObjects(canvasState.scene, renderer);
+        disposeSceneObjects(canvasState.scene, renderer, [
+            ...sceneObjects.floors,
+            ...sceneObjects.wallComponents,
+            ...sceneObjects.placedWalls,
+        ]);
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {
-        
-        cameraHandler.setZoom(zoom);
 
         const allConvertedObjects = planObjectsConverter.convertPlanObjects(sceneObjects);
 

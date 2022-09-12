@@ -24,13 +24,12 @@ export class SelectObjectIH implements IInputHandler {
     }
 
     public handleCancel(): void {
+        // no op
     }
 
     public handleClick({ canvasCoords }: InputPoint): void {
-        // console.log(`handled click with ${JSON.stringify(canvasCoords)}`);
         this.raycaster.setFromCamera(canvasCoords, this.camera);
         const intersections = this.raycaster.intersectObjects([...this.objectsMap.keys()], true);
-        // console.log("found intersections: ", intersections);
         if (intersections.length > 0) {
             let intersectedPrevParent = intersections[0].object;
             let intersectedParent = intersections[0].object.parent;
@@ -39,12 +38,8 @@ export class SelectObjectIH implements IInputHandler {
                 intersectedParent = intersectedParent.parent;
             }
 
-            // console.log("parent: ", intersectedParent);
-            // console.log("prevParent: ", intersectedPrevParent);
-
             if (intersectedPrevParent) {
                 const convertedPlanObject = this.objectsMap.get(intersectedPrevParent);
-                // console.log("Found converted plan object!!", convertedPlanObject);
                 const values = [...this.objectsMap.values()];
                 for (let i = 0; i < values.length; i++) {
                     if (values[i] === convertedPlanObject) {
@@ -55,7 +50,7 @@ export class SelectObjectIH implements IInputHandler {
         }
     }
 
-    public handleMovement({ canvasCoords }: InputPoint): void {
-        // todo: highlight object that has a pointer on it
+    public handleMovement(): void {
+        // no op
     }
 }

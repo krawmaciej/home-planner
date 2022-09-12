@@ -25,4 +25,10 @@ export class NoFloorCeiling implements IFloorCeiling {
     uncollide(): void {
         throw new Error("Called method on a not initialized floor.");
     }
+    addLabel(): void {
+        throw new Error("Called method on a not initialized floor.");
+    }
+    removeLabel(): void {
+        throw new Error("Called method on a not initialized floor.");
+    }
 }

@@ -5,4 +5,6 @@ export interface ISceneObject {
     addTo(scene: Scene): void;
     removeFrom(scene: Scene): void;
     getObjectPointsOnScene(): ObjectPoints;
+    addLabel(): void;
+    removeLabel(): void;
 }

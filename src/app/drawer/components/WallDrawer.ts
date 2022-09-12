@@ -14,7 +14,7 @@ export class WallDrawer {
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;
     private readonly placedWalls: Array<PlacedWall>;
-    private readonly updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>; // todo: refactor to placed walls domain object
+    private readonly updateWallsToggle: (value: (prev: boolean) => boolean) => void;
     private readonly components: Array<IPlacedWallComponent>;
     private readonly floors: Array<FloorCeiling>;
 
@@ -26,7 +26,7 @@ export class WallDrawer {
         scene: Scene,
         collisionDetector: CollisionDetector,
         walls: Array<PlacedWall>,
-        updateWallsToggle: React.Dispatch<React.SetStateAction<boolean>>,
+        updateWallsToggle: (value: (prev: boolean) => boolean) => void,
         components: Array<IPlacedWallComponent>,
         floors: Array<FloorCeiling>,
         wallThickness: WallThickness,
@@ -75,10 +75,15 @@ export class WallDrawer {
         const dWall = wallBuilder.createDrawnWall();
 
         this.drawnWall.removeFrom(this.scene);
-        this.scene.add(dWall.wall);
+        dWall.addTo(this.scene);
         this.drawnWall = dWall;
     }
 
+    /**
+     * Returns true if wall was successfully placed, otherwise returns false.
+     * @param start
+     * @param end
+     */
     public drawWall(start: Vector3, end: Vector3): boolean {
         start.y = ObjectElevation.WALL;
         end.y = ObjectElevation.WALL;

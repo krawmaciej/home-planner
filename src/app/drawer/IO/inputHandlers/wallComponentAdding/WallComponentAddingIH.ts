@@ -2,7 +2,7 @@ import {ObjectElevation} from "../../../constants/Types";
 import {ComponentProps} from "../../../objects/component/WallComponent";
 import {IInputHandler} from "../../../../common/canvas/inputHandler/IInputHandler";
 import {State, WallComponentPointer} from "./WallComponentPointer";
-import {Observer} from "../../../controllers/WallComponentController";
+import {Observer} from "../../../controllers/AddWallComponentController";
 import {WallComponentAdder} from "../../../components/WallComponentAdder";
 import {InputPoint} from "../../../../common/canvas/inputHandler/MainInputHandler";
 
@@ -18,7 +18,6 @@ export class WallComponentAddingIH implements IInputHandler {
     private readonly pointer: WallComponentPointer;
 
     public constructor(wallComponentAdder: WallComponentAdder, observer: Observer) {
-        console.log("Reinitialized wall component adding input handler.");
         this.wallComponentAdder = wallComponentAdder;
         this.observer = observer;
         this.pointer = new WallComponentPointer();
@@ -73,11 +72,11 @@ export class WallComponentAddingIH implements IInputHandler {
     }
 
     public handleCancel(): void {
-        console.log("Pointer state is " + this.pointer.getState());
         if (this.pointer.getState() === State.MOVING) {
             this.pointer.reset();
             this.wallComponentAdder.removeMovingComponent();
         } else if (this.pointer.getState() === State.ORIENTING) {
+            this.pointer.reset();
             this.wallComponentAdder.removeOrientingComponent();
         }
     }

@@ -1,4 +1,5 @@
 import {Object3D, Scene, Texture, WebGLRenderer} from "three";
+import {ISceneObject} from "../../drawer/objects/ISceneObject";
 
 type TraverseObject = {
     geometry?: {
@@ -29,7 +30,7 @@ export const disposeAllProperties = (o: Object3D) => {
     }
 };
 
-export const disposeSceneObjects = (scene: Scene, renderer: WebGLRenderer) => {
+export const disposeSceneObjects = (scene: Scene, renderer: WebGLRenderer, sceneObjects: Array<ISceneObject>) => {
     const objectsToRemove = new Array<Object3D<any>>();
     scene.traverse(o => {
         if (o === scene) {
@@ -39,5 +40,6 @@ export const disposeSceneObjects = (scene: Scene, renderer: WebGLRenderer) => {
         objectsToRemove.push(o);
     });
     scene.remove(...objectsToRemove);
+    sceneObjects.forEach(so => so.removeLabel());
     renderer.renderLists.dispose();
 };

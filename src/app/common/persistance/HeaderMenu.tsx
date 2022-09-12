@@ -22,7 +22,7 @@ export const HeaderMenu: React.FC<Props> = (props: Props) => {
             </DropdownButton>
             <DropdownButton title="Widok" className="persistence-button btn-sm small" variant="secondary" size="sm">
                 <Dropdown.Item onClick={props.choosePlanDrawer}>Rysunek planu 2D</Dropdown.Item>
-                <Dropdown.Item onClick={props.chooseInteriorArranger}>Render 3D</Dropdown.Item>
+                <Dropdown.Item onClick={props.chooseInteriorArranger}>Rzut 3D</Dropdown.Item>
             </DropdownButton>
         </div>
     );

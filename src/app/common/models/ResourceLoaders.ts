@@ -72,7 +72,7 @@ const getAxisScales = (dimensions: Dimensions, box3: Box3) => {
 
 export const loadDoors = async () => {
     return await loadModels(doorsPromise, DOORS_PATH, (modelDefinition, model, box3) => {
-        return {
+        const val: ComponentProps = {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
             object3d: model,
@@ -80,13 +80,15 @@ export const loadDoors = async () => {
             thickness: 1,
             height: box3.max.y - box3.min.y,
             elevation: 0,
-        } as ComponentProps;
+            mutableFields: { height: false, width: false, elevation: true, },
+        };
+        return val;
     });
 };
 
 export const loadWindows = async () => {
     return await loadModels(windowsPromise, WINDOWS_PATH, (modelDefinition, model, box3) => {
-        return {
+        const val: ComponentProps = {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
             object3d: model,
@@ -94,7 +96,9 @@ export const loadWindows = async () => {
             thickness: 1,
             height: box3.max.y - box3.min.y,
             elevation: (modelDefinition.elevation ?? 0) / 10,
-        } as ComponentProps;
+            mutableFields: { height: false, width: false, elevation: true, },
+        };
+        return val;
     });
 };
 
@@ -193,15 +197,3 @@ const loadModels = async<T>(
     }
     return result;
 };
-
-// loadHardwoodTxt().then(txt => {
-//     txt.repeat.set(0.1, 0.1);
-//     txt.rotation = txtRotation;
-//     wallFace.connection.material.setValues({
-//         map: txt,
-//         side: DoubleSide,
-//         color: 0x888888,
-//     } as MeshBasicMaterialParameters);
-//
-//     wallFace.connection.material.needsUpdate = true;
-// });

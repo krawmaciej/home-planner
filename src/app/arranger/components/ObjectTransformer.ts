@@ -12,10 +12,10 @@ export class ObjectTransformer {
     private readonly transformControls: TransformControls;
     private readonly collisionDetector: TransformCollisionDetector;
 
-    public constructor({ scene, observers }: CanvasState, { transformControls }: InteriorArrangerState, { wallsHeight }: SceneObjectsState) {
+    public constructor({ scene, observers }: CanvasState, { transformControls }: InteriorArrangerState, { wallHeight }: SceneObjectsState) {
         this.scene = scene;
         this.transformControls = transformControls;
-        this.collisionDetector = new TransformCollisionDetector(wallsHeight, observers);
+        this.collisionDetector = new TransformCollisionDetector(wallHeight, observers);
     }
 
     public startTransforming(placedObject: ObjectProps) {
