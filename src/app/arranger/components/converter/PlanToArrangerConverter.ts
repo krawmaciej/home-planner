@@ -2,11 +2,10 @@ import {SceneObjectsState} from "../../../common/context/SceneObjectsDefaults";
 import {PlacedWall} from "../../../drawer/objects/wall/PlacedWall";
 import {ConnectionType, WallFace} from "../../../drawer/objects/wall/WallSide";
 import {createWallFaceMesh, WallFaceMesh} from "../../objects/WallFaceMesh";
-import {Path, Quaternion, Shape, ShapeGeometry, Vector2, Vector3} from "three";
+import {Path, Shape, ShapeGeometry, Vector2} from "three";
 import {PathPropsBuilder} from "./PathPropsBuilder";
 import {FloatingPointsPathsFixer} from "./FloatingPointsPathsFixer";
-import {ObjectPoints, ObjectSideOrientation} from "../../../drawer/constants/Types";
-import {ArrangerMath} from "../ArrangerMath";
+import {DEFAULT_WALL_HEIGHT, ObjectSideOrientation} from "../../../drawer/constants/Types";
 import {WallCoversCreator} from "./WallCoversCreator";
 import {ComponentFrameCreator} from "./ComponentFrameCreator";
 import {FloorCeiling} from "../../../drawer/objects/floor/FloorCeiling";
@@ -30,7 +29,7 @@ export class PlanToArrangerConverter {
         const sceneConvertedWalls = this.convertPlacedWalls(sceneObjects.placedWalls);
         const sceneWallComponents = this.convertWallComponents(sceneObjects.wallComponents);
         const sceneFloors = this.convertFloors(sceneObjects.floors);
-        const sceneCeilings = this.createCeilings(sceneObjects.floors, sceneObjects.wallHeight);
+        const sceneCeilings = this.createCeilings(sceneObjects.floors, sceneObjects.wallHeight ?? DEFAULT_WALL_HEIGHT);
         return { ...sceneConvertedWalls, sceneWallComponents, sceneFloors, sceneCeilings };
     }
 
@@ -128,34 +127,12 @@ export class PlanToArrangerConverter {
         shape.holes.push(...holes);
         return shape;
     }
-
-    private static swapRenderedSide(shapeGeometry: ShapeGeometry, { firstPoint, secondPoint }: WallFace) {
-        const rotationPoint = firstPoint.clone().add(secondPoint).multiplyScalar(0.5); // middle
-        shapeGeometry.translate(rotationPoint.x, rotationPoint.y, rotationPoint.z);
-
-
-
-        const perpendicularToBase = ArrangerMath.perpendicularToVectorFrom(
-            new Vector2(secondPoint.x, secondPoint.z),
-            new Vector2(firstPoint.x, firstPoint.z),
-        ).normalize();
-        const quaternion = new Quaternion().setFromAxisAngle(
-            new Vector3(perpendicularToBase.x, 0, perpendicularToBase.y),
-            Math.PI
-        );
-        shapeGeometry.applyQuaternion(quaternion);
-        shapeGeometry.translate(rotationPoint.x, 0, rotationPoint.z);
-    }
-
+    
     private static getTxtRotation(orientation: ObjectSideOrientation) {
         if (orientation === ObjectSideOrientation.BOTTOM || orientation === ObjectSideOrientation.TOP) {
             return 0.0;
         } else {
             return Math.PI * 1.5;
         }
-    }
-
-    private static wallPointsToCoverMeshes(points: ObjectPoints) {
-
     }
 }
