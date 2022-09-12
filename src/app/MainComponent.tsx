@@ -107,6 +107,11 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
         setCurrentMenu(UISelection.FLOOR_PLAN);
     };
 
+    const resetCamera = () => {
+        floorPlanState.orbitControls.reset();
+        interiorArrangerState.orbitControls.reset();
+    };
+
     useEffect(() => {
         loadDoors().then(doors => setDoorDefinitions(doors));
         loadWindows().then(windows => setWindowDefinitions(windows));
@@ -121,6 +126,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
                 openFile={handleStateLoad}
                 chooseInteriorArranger={chooseInteriorArranger}
                 choosePlanDrawer={choosePlanDrawer}
+                resetCamera={resetCamera}
             />
             <Canvas
                 scene={canvasState.scene}
