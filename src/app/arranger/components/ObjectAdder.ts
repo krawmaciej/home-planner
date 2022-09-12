@@ -14,8 +14,8 @@ export class ObjectAdder {
     }
 
     /**
-     * Adds object3D to scene and updates placedObjects array.
-     * Returns index of newly added object3D in placedObjects array.
+     * Adds object3D to scene and updates converted array.
+     * Returns index of newly added object3D in converted array.
      * @param objectProps
      */
     public add(objectProps: ObjectProps): number {

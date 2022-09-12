@@ -12,6 +12,9 @@ import {WebGLRenderer} from "three";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import {addCurrentSceneObjects} from "./components/CurrentSceneObjectsAdder";
 import {FloorPlanState} from "../../App";
+import {ConvertedArrangerObject} from "./objects/converted/ConvertedArrangerObject";
+import spinner from "../../loading-spinner.gif";
+import {convertArrangerToPlan} from "./components/converter/ArrangerToPlanConverter";
 
 type Props = {
     className?: string,
@@ -32,17 +35,26 @@ export const FloorPlanStateParent: React.FC<Props> = ({
                                                           renderer,
 }) => {
     const [wallThickness, setWallThickness] = useState(new WallThickness(1.0));
+    const [convertedArrangerObjects, setConvertedArrangerObjects] = useState<Array<ConvertedArrangerObject>>();
 
     useEffect(() => () => {
-            disposeSceneObjects(canvasState.scene, renderer, [
-                ...sceneObjects.floors,
-                ...sceneObjects.wallComponents,
-                ...sceneObjects.placedWalls,
-            ]);
+        disposeSceneObjects(canvasState.scene, renderer, [
+            ...sceneObjects.floors,
+            ...sceneObjects.wallComponents,
+            ...sceneObjects.placedWalls,
+            ...convertedArrangerObjects ?? [],
+        ]);
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {
-        addCurrentSceneObjects(sceneObjects, canvasState.scene);
+        const converted = convertArrangerToPlan(sceneObjects);
+        setConvertedArrangerObjects(converted);
+        addCurrentSceneObjects([
+            ...sceneObjects.floors,
+            ...sceneObjects.placedWalls,
+            ...sceneObjects.wallComponents,
+            ...converted,
+        ], canvasState.scene);
     }, [sceneObjects, canvasState]);
 
     // const [cameraZoomObserver] = useState(new CameraZoomToGridDivisionsObserver(floorPlanState, canvasState.scene));
@@ -54,8 +66,8 @@ export const FloorPlanStateParent: React.FC<Props> = ({
     //     };
     // }, [cameraZoomObserver]);
     //
-    if (wallThickness === undefined) {
-        return (<p>Wczytywanie...</p>);
+    if (wallThickness === undefined || convertedArrangerObjects === undefined) {
+        return (<div><img src={spinner} alt="loading"/></div>);
     } else {
         return (
             <>

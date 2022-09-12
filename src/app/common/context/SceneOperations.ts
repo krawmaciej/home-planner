@@ -30,7 +30,7 @@ export const disposeAllProperties = (o: Object3D) => {
     }
 };
 
-export const disposeSceneObjects = (scene: Scene, renderer: WebGLRenderer, sceneObjects: Array<ISceneObject>) => {
+export const disposeSceneObjects = (scene: Scene, renderer: WebGLRenderer, sceneObjects = new Array<ISceneObject>()) => {
     const objectsToRemove = new Array<Object3D<any>>();
     scene.traverse(o => {
         if (o === scene) {
