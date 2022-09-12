@@ -2,9 +2,6 @@ import {Camera, Light, OrthographicCamera, PerspectiveCamera, Vector3} from "thr
 
 export interface ICameraHandler {
     getCamera(): Camera;
-    setZoom(zoom: number): ICameraHandler;
-    setPosition(position: Vector3): ICameraHandler;
-    setLookAt(position: Vector3): ICameraHandler;
     setAspectRatio(aspect: number): ICameraHandler;
 }
 
