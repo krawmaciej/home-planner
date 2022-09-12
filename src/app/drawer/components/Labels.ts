@@ -29,3 +29,10 @@ export const createComponentPropsLabel = (props: ComponentProps, hiddenProps: Ar
 
     return parentDiv;
 };
+
+export const createWallConstructionLabel = (width: number) => {
+    const div = document.createElement("div");
+    div.className = "planner-label";
+    div.textContent = "Długość: " + convertFromAppUnitsToCm(width);
+    return div;
+};

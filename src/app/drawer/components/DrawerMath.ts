@@ -9,6 +9,7 @@ export type WallConstruction = {
     middlePoints: MiddlePoints,
     direction: Vector2D,
     height: number,
+    width: number,
 }
 
 export type MiddlePoints = {
@@ -62,7 +63,8 @@ export class DrawerMath {
         const direction = DrawerMath.calculateDirection(start, end);
         const points = DrawerMath.calculateCornerPoints(start, end, direction);
         const middlePoints = DrawerMath.calculateMiddlePoints(points, direction, wallThickness);
-        return { points, direction, middlePoints, height };
+        const width = DrawerMath.calculateWidth(direction, points);
+        return { points, direction, middlePoints, height, width };
     }
 
     private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): ObjectPoints {
@@ -150,8 +152,7 @@ export class DrawerMath {
         return [topLeft, topRight, bottomRight, bottomLeft];
     }
 
-    private static calculateMiddlePoints(
-        points: ObjectPoints, direction: Direction, wallThickness: WallThickness
+    private static calculateMiddlePoints(points: ObjectPoints, direction: Direction, wallThickness: WallThickness
     ): MiddlePoints {
         const topLeft = points[ObjectPoint.BOTTOM_LEFT];
         const bottomRight = points[ObjectPoint.TOP_RIGHT];
@@ -170,6 +171,14 @@ export class DrawerMath {
             const middleLeft = new Vector3(leftX, ObjectElevation.UI, z);
             const middleRight = new Vector3(rightX, ObjectElevation.UI, z);
             return { first: middleLeft, last: middleRight };
+        }
+    }
+
+    private static calculateWidth(direction: Direction, points: ObjectPoints): number {
+        if (direction === Direction.DOWN || direction === Direction.UP) {
+            return Math.abs(points[ObjectPoint.BOTTOM_LEFT].z - points[ObjectPoint.TOP_LEFT].z);
+        } else {
+            return Math.abs(points[ObjectPoint.BOTTOM_LEFT].x - points[ObjectPoint.BOTTOM_RIGHT].x);
         }
     }
 }

@@ -230,7 +230,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     }
 
     public removeFrom(scene: Scene): void {
-        this.removeLabel(); // removing window from scene doesn't remove label
+        this.removeLabel(); // removing object from scene doesn't remove label
         scene.remove(this.window);
         this.window.geometry.dispose();
         this.frameMaterial.dispose();
