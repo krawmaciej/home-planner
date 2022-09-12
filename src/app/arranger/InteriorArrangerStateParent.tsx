@@ -47,11 +47,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
     const [, updatePlacedObjectsToggle] = useState(false);
 
     useEffect(() => () => {
-        disposeSceneObjects(canvasState.scene, renderer, [
-            ...sceneObjects.floors,
-            ...sceneObjects.wallComponents,
-            ...sceneObjects.placedWalls,
-        ]);
+        disposeSceneObjects(canvasState.scene, renderer);
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {

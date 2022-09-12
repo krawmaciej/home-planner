@@ -1,8 +1,6 @@
-import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 import {Scene} from "three";
+import {ISceneObject} from "../objects/ISceneObject";
 
-export const addCurrentSceneObjects = (currentSceneObjects: SceneObjectsState, scene: Scene) => {
-    currentSceneObjects.floors.forEach(f => f.addTo(scene));
-    currentSceneObjects.placedWalls.forEach(f => f.addTo(scene));
-    currentSceneObjects.wallComponents.forEach(f => f.addTo(scene));
+export const addCurrentSceneObjects = (sceneObjects: Array<ISceneObject>, scene: Scene) => {
+    sceneObjects.forEach(so => so.addTo(scene));
 };

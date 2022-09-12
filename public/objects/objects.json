@@ -3,7 +3,6 @@
         "name": "Białe drzwi",
         "file": "white-door/scene.gltf",
         "thumbnail": "white-door/thumbnail.jpg",
-        "doubleSided": true,
         "dimensions": {
             "width": 90,
             "height": 180,

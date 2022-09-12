@@ -70,17 +70,19 @@ const getAxisScales = (dimensions: Dimensions, box3: Box3) => {
     return scaling;
 };
 
+const DEFAULT_OBJECT_THICKNESS = 1;
+
 export const loadDoors = async () => {
     return await loadModels(doorsPromise, DOORS_PATH, (modelDefinition, model, box3) => {
         const val: ComponentProps = {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
             object3d: model,
-            width: modelDefinition.dimensions.width / 10,
-            thickness: 1,
+            width: box3.max.x - box3.min.x,
+            thickness: DEFAULT_OBJECT_THICKNESS,
             height: box3.max.y - box3.min.y,
             elevation: 0,
-            mutableFields: { height: false, width: false, elevation: true, },
+            mutableFields: { height: false, width: false, elevation: false, },
         };
         return val;
     });
@@ -92,8 +94,8 @@ export const loadWindows = async () => {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
             object3d: model,
-            width: modelDefinition.dimensions.width / 10,
-            thickness: 1,
+            width: box3.max.x - box3.min.x,
+            thickness: DEFAULT_OBJECT_THICKNESS,
             height: box3.max.y - box3.min.y,
             elevation: (modelDefinition.elevation ?? 0) / 10,
             mutableFields: { height: false, width: false, elevation: true, },
@@ -102,14 +104,17 @@ export const loadWindows = async () => {
     });
 };
 
-export const loadObjects = async (): Promise<ObjectProps[]> => {
+export const loadObjects = async () => {
     return await loadModels(objectsPromise, OBJECTS_PATH, (modelDefinition, model, box3) => {
-        return {
+        const val: ObjectProps = {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
             object3d: model,
-            colliding: false,
+            width: box3.max.x - box3.min.x,
+            thickness: box3.max.z - box3.min.z,
+            height: box3.max.y - box3.min.y,
         };
+        return val;
     });
 };
 

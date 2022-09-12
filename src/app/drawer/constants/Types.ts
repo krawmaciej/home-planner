@@ -28,7 +28,8 @@ export enum ObjectElevation {
     GRID = -2,
     FLOOR = -1,
     WALL = 0,
-    COMPONENT = 1,
+    ARRANGER_OBJECT = 1,
+    COMPONENT = 2,
     MOVING = 3,
     UI = 4,
 }

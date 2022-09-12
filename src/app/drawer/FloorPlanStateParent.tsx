@@ -12,6 +12,8 @@ import {WebGLRenderer} from "three";
 import {ICameraHandler} from "../common/canvas/ICameraHandler";
 import {addCurrentSceneObjects} from "./components/CurrentSceneObjectsAdder";
 import {FloorPlanState} from "../../App";
+import spinner from "../../loading-spinner.gif";
+import {convertArrangerToPlan} from "./components/converter/ArrangerToPlanConverter";
 
 type Props = {
     className?: string,
@@ -33,16 +35,23 @@ export const FloorPlanStateParent: React.FC<Props> = ({
 }) => {
     const [wallThickness, setWallThickness] = useState(new WallThickness(1.0));
 
-    useEffect(() => () => {
+    useEffect(() => {
+        const converted = convertArrangerToPlan(sceneObjects);
+        addCurrentSceneObjects([
+            ...sceneObjects.floors,
+            ...sceneObjects.placedWalls,
+            ...sceneObjects.wallComponents,
+            ...converted,
+        ], canvasState.scene);
+
+        return () => {
             disposeSceneObjects(canvasState.scene, renderer, [
                 ...sceneObjects.floors,
                 ...sceneObjects.wallComponents,
                 ...sceneObjects.placedWalls,
+                ...converted,
             ]);
-    }, [sceneObjects, canvasState]);
-
-    useEffect(() => {
-        addCurrentSceneObjects(sceneObjects, canvasState.scene);
+        };
     }, [sceneObjects, canvasState]);
 
     // const [cameraZoomObserver] = useState(new CameraZoomToGridDivisionsObserver(floorPlanState, canvasState.scene));
@@ -55,7 +64,7 @@ export const FloorPlanStateParent: React.FC<Props> = ({
     // }, [cameraZoomObserver]);
     //
     if (wallThickness === undefined) {
-        return (<p>Wczytywanie...</p>);
+        return (<div><img src={spinner} alt="loading"/></div>);
     } else {
         return (
             <>

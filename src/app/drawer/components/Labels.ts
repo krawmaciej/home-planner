@@ -50,3 +50,10 @@ export const createFloorCeilingEmptyLabel = () => {
     div.textContent = "";
     return div;
 };
+
+export const createConvertedArrangerObjectLabel = (name: string) => {
+    const div = document.createElement("div");
+    div.className = "planner-label";
+    div.textContent = name;
+    return div;
+};

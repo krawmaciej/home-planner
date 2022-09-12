@@ -1,9 +1,10 @@
 import {Quaternion, Vector3} from "three";
-import {ISceneObject} from "../ISceneObject";
 import {PlacedWall} from "../wall/PlacedWall";
 import {Vector2D} from "../../constants/Types";
+import {IObjectPointsOnScene} from "../IObjectPointsOnScene";
+import {ISceneObject} from "../ISceneObject";
 
-export interface IWallComponent extends ISceneObject {
+export interface IWallComponent extends ISceneObject, IObjectPointsOnScene {
     changePosition(point: Vector3): void;
     setParentWall(wall: PlacedWall): void;
     getParentWall(): PlacedWall | undefined;

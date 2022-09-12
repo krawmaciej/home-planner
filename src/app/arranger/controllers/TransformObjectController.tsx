@@ -30,12 +30,13 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     }, [context.changeMenuName]);
 
     useEffect(() => {
-        context.interiorArrangerState.transformControls.setMode("translate");
-        setObjectTransformer(new ObjectTransformer(
+        const transformer = new ObjectTransformer(
             context.canvasState,
             context.interiorArrangerState,
             context.sceneObjectsState,
-        ));
+        );
+        transformer.setToTranslateMode();
+        setObjectTransformer(transformer);
         return () => {
             objectTransformer.stopTransforming();
         };

@@ -38,10 +38,10 @@ const PLACED_MATERIAL = new LineBasicMaterial({
 
 const ARROW_GEOMETRY = new BufferGeometry().setFromPoints([
     new Vector3(0, ObjectElevation.COMPONENT, 0),
-    new Vector3(0, ObjectElevation.COMPONENT, 1.5),
-    new Vector3(-0.5, ObjectElevation.COMPONENT, 1),
-    new Vector3(0, ObjectElevation.COMPONENT, 1.5),
-    new Vector3(0.5, ObjectElevation.COMPONENT, 1),
+    new Vector3(0, ObjectElevation.COMPONENT, -1.5),
+    new Vector3(-0.5, ObjectElevation.COMPONENT, -1),
+    new Vector3(0, ObjectElevation.COMPONENT, -1.5),
+    new Vector3(0.5, ObjectElevation.COMPONENT, -1),
 ]);
 
 enum ComponentType {
@@ -123,11 +123,11 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     private static readonly FRONT_ROTATION = new Quaternion();
     private static readonly BACK_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI);
-    private static readonly LEFT_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0),  - Math.PI / 2.0);
-    private static readonly RIGHT_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2.0);
+    private static readonly RIGHT_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0),  - Math.PI / 2.0);
+    private static readonly LEFT_ROTATION = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), Math.PI / 2.0);
     private static readonly orientationQuaternionMap = new Map<Vector2D, Quaternion>([
-        [Direction.DOWN, WallComponent.FRONT_ROTATION],
-        [Direction.UP, WallComponent.BACK_ROTATION],
+        [Direction.DOWN, WallComponent.BACK_ROTATION],
+        [Direction.UP, WallComponent.FRONT_ROTATION],
         [Direction.LEFT, WallComponent.LEFT_ROTATION],
         [Direction.RIGHT, WallComponent.RIGHT_ROTATION],
     ]);
@@ -287,13 +287,13 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
         switch (this.orientation) {
             case Direction.DOWN:
-                return [first, second, third, fourth];
-            case Direction.LEFT:
-                return [second, third, fourth, first];
-            case Direction.UP:
                 return [third, fourth, first, second];
-            case Direction.RIGHT:
+            case Direction.LEFT:
                 return [fourth, first, second, third];
+            case Direction.UP:
+                return [first, second, third, fourth];
+            case Direction.RIGHT:
+                return [second, third, fourth, first];
             default:
                 throw new Error(`Component's ${JSON.stringify(this)} orientation: ${this.orientation} is invalid.`);
         }
