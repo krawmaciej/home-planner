@@ -24,6 +24,7 @@ export class SelectObjectIH implements IInputHandler {
     }
 
     public handleCancel(): void {
+        // no op
     }
 
     public handleClick({ canvasCoords }: InputPoint): void {
@@ -49,7 +50,7 @@ export class SelectObjectIH implements IInputHandler {
         }
     }
 
-    public handleMovement({ canvasCoords }: InputPoint): void {
-        // todo: highlight object that has a pointer on it
+    public handleMovement(): void {
+        // no op
     }
 }

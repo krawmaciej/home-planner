@@ -117,7 +117,7 @@ const CanvasBase: React.FC<Props> = (props: Props) => {
             width = mount?.current?.clientWidth ?? 0;
             height = mount?.current?.clientHeight ?? 0;
             const aspect = width / height;
-            props.cameraHandler.setAspectRatio(aspect); // todo: two cameras need to be handled here, but first rerendering canvas will be tried
+            props.cameraHandler.setAspectRatio(aspect);
             props.renderer.setSize(width, height);
             props.labelRenderer.setSize(width, height);
             render();

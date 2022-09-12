@@ -1,5 +1,6 @@
 import {ComponentProps} from "../objects/component/WallComponent";
-import {convertFromAppUnitsToCm} from "./DisplayPrecision";
+import {convertFromAppUnitsToCm, convertFromAppUnitsToM} from "./DisplayPrecision";
+import {Vector3} from "three";
 
 export const createComponentPropsLabel = (props: ComponentProps, hiddenProps: Array<keyof ComponentProps>) => {
     const parentDiv = document.createElement("div");
@@ -33,6 +34,19 @@ export const createComponentPropsLabel = (props: ComponentProps, hiddenProps: Ar
 export const createWallConstructionLabel = (width: number) => {
     const div = document.createElement("div");
     div.className = "planner-label";
-    div.textContent = "Długość: " + convertFromAppUnitsToCm(width);
+    div.textContent = "Długość: " + convertFromAppUnitsToM(width);
+    return div;
+};
+
+export const createFloorCeilingSquareFootageText = (first: Vector3, last: Vector3): string => {
+    const distance = first.clone().sub(last);
+    const squareFootage = Math.abs(distance.x * distance.z) / 10;
+    return "Powierzchnia: " + convertFromAppUnitsToM(squareFootage) + "2";
+};
+
+export const createFloorCeilingEmptyLabel = () => {
+    const div = document.createElement("div");
+    div.className = "planner-label";
+    div.textContent = "";
     return div;
 };

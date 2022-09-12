@@ -43,8 +43,7 @@ export class PlanToArrangerConverter {
                         .map(wf => PlanToArrangerConverter.wallFaceToWallFaceMesh(wf, idx, wall.props.height))
                         .map(wfm => PlanToArrangerConverter.wallFaceMeshToObjectWithEditableTexture(wfm))
                 )
-        ); // todo: use map instead of flat map and create wall aggregating all wallfaces,
-           // todo: draw diagram for also updating Connection material when wallface material is updated.
+        );
 
         const wallCoversCreator = new WallCoversCreator();
         const wallCoverMeshes = placedWalls.map(wall => wallCoversCreator.fromObjectPoints(wall.props));

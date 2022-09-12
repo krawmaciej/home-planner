@@ -38,11 +38,9 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
                                                                  objectDefinitions,
                                                                  textures,
                                                                  renderer,
-                                                                 cameraHandler,
                                                                  interiorArrangerState,
 }) => {
     const [planObjectsConverter] = useState(new PlanToArrangerConverter());
-    const [zoom] = useState(0.6);
 
     const [convertedObjects, setConvertedObjects] = useState<ConvertedObjects>();
 
@@ -57,8 +55,6 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {
-        
-        cameraHandler.setZoom(zoom);
 
         const allConvertedObjects = planObjectsConverter.convertPlanObjects(sceneObjects);
 

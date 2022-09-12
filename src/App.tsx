@@ -32,8 +32,10 @@ const createLabelRenderer = () => {
     return new CSS2DRenderer();
 };
 
-const DEFAULT_GRID_SIZE = 100;
-const DEFAULT_GRID_DIVISIONS = 100;
+const INITIAL_ZOOM = 0.6;
+
+const DEFAULT_GRID_SIZE = 500;
+const DEFAULT_GRID_DIVISIONS = 500;
 export const DEFAULT_GRID = new GridHelper(DEFAULT_GRID_SIZE, DEFAULT_GRID_DIVISIONS, 0xbbbbbb, 0xbbbbbb);
 DEFAULT_GRID.position.setY(ObjectElevation.GRID);
 
@@ -45,6 +47,8 @@ const initialFloorPlanState = (labelRenderer: CSS2DRenderer): FloorPlanState => 
     const cameraHandler = new OrthographicCameraHandler(new OrthographicCamera(0, 0, 0, 0, 0.1, 500), 18);
     cameraHandler.setPosition(new Vector3(0.0, 5.0, 0.0));
     cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
+    cameraHandler.setZoom(INITIAL_ZOOM);
+
     const orbitControls = new OrbitControls(cameraHandler.getCamera(), labelRenderer.domElement);
     orbitControls.enableRotate = false;
     return {
@@ -59,6 +63,7 @@ const initialInteriorArrangerState = (labelRenderer: CSS2DRenderer): InteriorArr
     const cameraHandler = new PerspectiveCameraHandler(new PerspectiveCamera(50), cameraLight, Math.PI);
     cameraHandler.setPosition(new Vector3(0, 50, 20));
     cameraHandler.setLookAt(new Vector3(0.0, 0.0, 0.0));
+    cameraHandler.setZoom(INITIAL_ZOOM);
 
     const orbitControls = new OrbitControls(cameraHandler.getCamera(), labelRenderer.domElement);
     const transformControls = new TransformControls(cameraHandler.getCamera(), labelRenderer.domElement);

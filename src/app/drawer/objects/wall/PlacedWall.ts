@@ -11,7 +11,7 @@ import {
 } from "three";
 import {AdjacentObject} from "../../components/CollisionDetector";
 import {WallConstruction} from "../../components/DrawerMath";
-import {ObjectPoint, ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
+import {ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
 import {ISceneObject} from "../ISceneObject";
 import {WallSides} from "./WallSides";
 import {Direction} from "./Direction";
@@ -148,11 +148,7 @@ export class PlacedWall implements ISceneObject {
      * Returns width of this wall.
      */
     public getWidth(): number {
-        if (this.props.direction === Direction.DOWN || this.props.direction === Direction.UP) {
-            return Math.abs(this.props.points[ObjectPoint.BOTTOM_LEFT].z - this.props.points[ObjectPoint.TOP_LEFT].z);
-        } else {
-            return Math.abs(this.props.points[ObjectPoint.BOTTOM_LEFT].x - this.props.points[ObjectPoint.BOTTOM_RIGHT].x);
-        }
+        return this.props.width;
     }
 
     public addLabel(): void {

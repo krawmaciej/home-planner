@@ -24,10 +24,13 @@ type Props = {
     floorPlanState: FloorPlanState,
 }
 
-const INITIAL_ZOOM = 0.6;
-
-export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefinitions, windowDefinitions, canvasState, renderer, cameraHandler, floorPlanState }) => {
-
+export const FloorPlanStateParent: React.FC<Props> = ({
+                                                          sceneObjects,
+                                                          doorDefinitions,
+                                                          windowDefinitions,
+                                                          canvasState,
+                                                          renderer,
+}) => {
     const [wallThickness, setWallThickness] = useState(new WallThickness(1.0));
 
     useEffect(() => () => {
@@ -39,7 +42,6 @@ export const FloorPlanStateParent: React.FC<Props> = ({ sceneObjects, doorDefini
     }, [sceneObjects, canvasState]);
 
     useEffect(() => {
-        cameraHandler.setZoom(INITIAL_ZOOM);
         addCurrentSceneObjects(sceneObjects, canvasState.scene);
     }, [sceneObjects, canvasState]);
 
