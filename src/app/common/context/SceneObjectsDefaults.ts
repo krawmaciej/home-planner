@@ -1,11 +1,10 @@
 import {PlacedWall} from "../../drawer/objects/wall/PlacedWall";
 import {FloorCeiling} from "../../drawer/objects/floor/FloorCeiling";
-import {DEFAULT_WALL_HEIGHT} from "../../drawer/constants/Types";
 import {IPlacedWallComponent} from "../../drawer/objects/component/IPlacedWallComponent";
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
 
 export type SceneObjectsState = {
-    wallHeight: number,
+    wallHeight: number | undefined,
     placedObjects: Array<ObjectProps>,
     placedWalls: Array<PlacedWall>,
     wallComponents: Array<IPlacedWallComponent>,
@@ -31,7 +30,7 @@ export const createFloors = () => {
 
 export const createSceneObjectsState = (): SceneObjectsState => {
     return {
-        wallHeight: DEFAULT_WALL_HEIGHT,
+        wallHeight: undefined, // initially not set
         placedObjects: createPlacedObjects(),
         placedWalls: createPlacedWalls(),
         wallComponents: createPlacedWallComponents(),
