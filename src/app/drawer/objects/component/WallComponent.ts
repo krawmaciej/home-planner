@@ -70,8 +70,8 @@ const WINDOW_SHAPE: ComponentShape = {
 };
 
 export type ComponentProps = {
-    readonly name: string,
     readonly thumbnail: string,
+    readonly name: string,
     readonly object3d?: Object3D,
     width: number,
     readonly thickness: number,

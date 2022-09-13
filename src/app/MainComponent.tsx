@@ -8,7 +8,7 @@ import {InteriorArrangerStateParent} from "./arranger/InteriorArrangerStateParen
 import {HeaderMenu} from "./common/persistance/HeaderMenu";
 import {createSceneObjectsState, SceneObjectsState} from "./common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./drawer/FloorPlanStateParent";
-import {ComponentProps} from "./drawer/objects/component/WallComponent";
+import {ComponentProps, WallComponent} from "./drawer/objects/component/WallComponent";
 import {loadDoors, loadObjects, loadTextures, loadWindows} from "./common/models/ResourceLoaders";
 import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";
@@ -20,6 +20,7 @@ import {FloorPlanState, InteriorArrangerState} from "../App";
 import {ICameraHandler} from "./common/canvas/ICameraHandler";
 import {LoadedTexture} from "./common/models/TextureDefinition";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
+import serializeJavascript from "serialize-javascript";
 
 type Props = {
     renderer: WebGLRenderer,
@@ -52,14 +53,14 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
     const [texturePromises, setTexturePromises] = useState(new Array<LoadedTexture>());
 
     // load file
-    const inputRef = useRef<HTMLInputElement>(null);
+    const openFileRef = useRef<HTMLInputElement>(null);
 
     const handleStateLoad = () => {
-        inputRef?.current?.click();
+        openFileRef?.current?.click();
     };
 
     const handleFile = () => {
-        const file = inputRef?.current?.files?.item(0);
+        const file = openFileRef?.current?.files?.item(0);
         if (file === null || file === undefined) {
             throw new Error("Expected loaded file but nothing found");
         }
@@ -70,6 +71,27 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
             setSceneObjectsState(createSceneObjectsState());
         };
         fileReader.readAsText(file);
+    };
+
+    const handleSave = () => {
+        for (const placedWall of sceneObjectsState.placedWalls) {
+            const wallComponents = [...placedWall.wallComponents];
+            for (const wallComponent of wallComponents) {
+                (wallComponent as WallComponent).unsetParentWall();
+                placedWall.removeComponent(wallComponent);
+            }
+        }
+
+
+
+        const serialized = serializeJavascript(sceneObjectsState);
+        const element = document.createElement("a");
+        const file = new Blob([serialized], {type: 'text/plain'});
+        document.body.appendChild(element);
+        element.href = URL.createObjectURL(file);
+        element.download = "savedProject";
+        element.click();
+        document.body.removeChild(element);
     };
 
     const [currentMenu, setCurrentMenu] = useState(UISelection.FLOOR_PLAN);
@@ -124,6 +146,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
             <HeaderMenu
                 className="app-top-menu"
                 openFile={handleStateLoad}
+                saveFile={handleSave}
                 chooseInteriorArranger={chooseInteriorArranger}
                 choosePlanDrawer={choosePlanDrawer}
                 resetCamera={resetCamera}
@@ -149,7 +172,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
                 interiorArrangerState={interiorArrangerState}
                 floorPlanState={floorPlanState}
             />
-            <input ref={inputRef} className="d-none" type="file" onChange={handleFile}/>
+            <input ref={openFileRef} className="d-none" type="file" onChange={handleFile}/>
         </div>
     );
 };

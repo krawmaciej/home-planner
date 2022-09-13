@@ -7,10 +7,8 @@ import {
     Mesh,
     MeshBasicMaterial,
     Scene,
-    Vector3
 } from "three";
-import {AdjacentObject} from "../../components/CollisionDetector";
-import {WallConstruction} from "../../components/DrawerMath";
+import {AdjacentWallProps, WallConstruction} from "../../components/DrawerMath";
 import {ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
 import {ISceneObject} from "../ISceneObject";
 import {WallSides} from "./WallSides";
@@ -31,7 +29,7 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
         color: 0x666666,
     });
 
-    public static create(props: WallConstruction, adjacentWalls: AdjacentObject<PlacedWall>[]): PlacedWall {
+    public static create(props: WallConstruction, adjacentWalls: Array<AdjacentWallProps>): PlacedWall {
         const wallSides = new WallSides(props);
         adjacentWalls.forEach(aw => wallSides.putHole(aw.toSide, aw.points));
         const wallParts = wallSides.createDrawableObjects(PlacedWall.material);
@@ -42,10 +40,12 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
         const middle = new Line(middleGeometry, PlacedWall.middleMaterial);
         const p1 = WallBuilder.createMiddlePoint(props.middlePoints.last);
         const p2 = WallBuilder.createMiddlePoint(props.middlePoints.first);
-        return new PlacedWall(props, wallSides, wallParts, wall, middle, p1, p2, new Array<IPlacedWallComponent>());
+        return new PlacedWall(props, adjacentWalls, wallSides, wallParts, wall, middle, p1, p2, new Array<IPlacedWallComponent>());
     }
 
     public readonly props: WallConstruction;
+    public readonly adjacentWallPropsList: Array<AdjacentWallProps>;
+
     public readonly wallSides: WallSides; // used in updating, adding new cut blocks and components
     public readonly wallComponents: Array<IPlacedWallComponent>; // used to quickly find all wall's components
     public readonly lines: Array<Line>;
@@ -57,6 +57,7 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
 
     private constructor(
         props: WallConstruction,
+        adjacentWallPropsList: Array<AdjacentWallProps>,
         wallSides: WallSides,
         lines: Array<Line>,
         wall: Group,
@@ -66,6 +67,7 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
         components: Array<IPlacedWallComponent>
     ) {
         this.props = props;
+        this.adjacentWallPropsList = adjacentWallPropsList;
         this.wallSides = wallSides;
         this.lines = lines;
         this.wall = wall;
@@ -85,19 +87,29 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
 
     /**
      * Returns new wall with collisions applied. Breaks old {@link this.wallSides}.
-     * @param toSide side of the wall that collided
-     * @param points points of collision
+     * @param adjacentWallProps
      */
-    public collidedWithWall(toSide: ObjectSideOrientation, points: Vector3[]): PlacedWall {
+    public collidedWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
         const copyOfWallComponents = [...this.wallComponents];
         copyOfWallComponents.forEach(component => this.removeComponent(component));
-        this.wallSides.putHole(toSide, points);
+        this.wallSides.putHole(adjacentWallProps.toSide, adjacentWallProps.points);
         copyOfWallComponents.forEach(component => this.addComponent(component));
 
+        const newAdjacentWallList = [...this.adjacentWallPropsList, adjacentWallProps];
         const wallParts = this.wallSides.createDrawableObjects(PlacedWall.material);
         const wall = new Group();
         wallParts.forEach(wp => wall.add(wp));
-        return new PlacedWall(this.props, this.wallSides, wallParts, wall, this.middle, this.anchorStart, this.anchorEnd, copyOfWallComponents);
+        return new PlacedWall(
+            this.props,
+            newAdjacentWallList,
+            this.wallSides,
+            wallParts,
+            wall,
+            this.middle,
+            this.anchorStart,
+            this.anchorEnd,
+            copyOfWallComponents,
+        );
     }
 
     public addTo(scene: Scene): void {
