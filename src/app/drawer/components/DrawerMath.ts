@@ -8,7 +8,6 @@ export type WallConstruction = {
     points: ObjectPoints,
     middlePoints: MiddlePoints,
     direction: Vector2D,
-    height: number,
     width: number,
 }
 
@@ -59,12 +58,12 @@ export class DrawerMath {
         }
     }
 
-    public static calculateWallPoints(start: Vector3, end: Vector3, wallThickness: WallThickness, height: number): WallConstruction {
+    public static calculateWallPoints(start: Vector3, end: Vector3, wallThickness: WallThickness): WallConstruction {
         const direction = DrawerMath.calculateDirection(start, end);
         const points = DrawerMath.calculateCornerPoints(start, end, direction);
         const middlePoints = DrawerMath.calculateMiddlePoints(points, direction, wallThickness);
         const width = DrawerMath.calculateWidth(direction, points);
-        return { points, direction, middlePoints, height, width };
+        return { points, direction, middlePoints, width };
     }
 
     private static calculateCornerPoints(start: Vector3, end: Vector3, direction: Vector2D): ObjectPoints {

@@ -4,19 +4,17 @@ import {ObjectProps} from "../objects/ImportedObject";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {TransformCollisionDetector} from "./TransformCollisionDetector";
 import {CanvasState} from "../../common/context/CanvasDefaults";
-import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
 import {disposeAllProperties} from "../../common/context/SceneOperations";
-import {DEFAULT_WALL_HEIGHT} from "../../drawer/constants/Types";
 
 export class ObjectTransformer {
     private readonly scene: Scene;
     private readonly transformControls: TransformControls;
     private readonly collisionDetector: TransformCollisionDetector;
 
-    public constructor({ scene, observers }: CanvasState, { transformControls }: InteriorArrangerState, { wallHeight }: SceneObjectsState) {
+    public constructor({ scene, observers }: CanvasState, { transformControls }: InteriorArrangerState, wallHeight: number) {
         this.scene = scene;
         this.transformControls = transformControls;
-        this.collisionDetector = new TransformCollisionDetector(wallHeight ?? DEFAULT_WALL_HEIGHT, observers);
+        this.collisionDetector = new TransformCollisionDetector(wallHeight, observers);
     }
 
     public startTransforming(placedObject: ObjectProps) {

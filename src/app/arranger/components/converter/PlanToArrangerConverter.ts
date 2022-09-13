@@ -5,7 +5,7 @@ import {createWallFaceMesh, WallFaceMesh} from "../../objects/WallFaceMesh";
 import {Path, Shape, ShapeGeometry, Vector2} from "three";
 import {PathPropsBuilder} from "./PathPropsBuilder";
 import {FloatingPointsPathsFixer} from "./FloatingPointsPathsFixer";
-import {DEFAULT_WALL_HEIGHT, ObjectSideOrientation} from "../../../drawer/constants/Types";
+import {ObjectSideOrientation} from "../../../drawer/constants/Types";
 import {WallCoversCreator} from "./WallCoversCreator";
 import {ComponentFrameCreator} from "./ComponentFrameCreator";
 import {FloorCeiling} from "../../../drawer/objects/floor/FloorCeiling";
@@ -25,27 +25,27 @@ import {HOLE_OFFSET_FIX} from "../../../common/components/CommonMathOperations";
  */
 export class PlanToArrangerConverter {
 
-    public convertPlanObjects(sceneObjects: SceneObjectsState) {
-        const sceneConvertedWalls = this.convertPlacedWalls(sceneObjects.placedWalls);
+    public convertPlanObjects(sceneObjects: SceneObjectsState, wallHeight: number) {
+        const sceneConvertedWalls = this.convertPlacedWalls(sceneObjects.placedWalls, wallHeight);
         const sceneWallComponents = this.convertWallComponents(sceneObjects.wallComponents);
         const sceneFloors = this.convertFloors(sceneObjects.floors);
-        const sceneCeilings = this.createCeilings(sceneObjects.floors, sceneObjects.wallHeight ?? DEFAULT_WALL_HEIGHT);
+        const sceneCeilings = this.createCeilings(sceneObjects.floors, wallHeight);
         return { ...sceneConvertedWalls, sceneWallComponents, sceneFloors, sceneCeilings };
     }
 
-    private convertPlacedWalls(placedWalls: Array<PlacedWall>) {
+    private convertPlacedWalls(placedWalls: Array<PlacedWall>, wallHeight: number) {
         const wallsWithEditableTexture = placedWalls.flatMap(wall =>
             wall.wallSides.getWallSides()
                 .flatMap((ws, idx) =>
                     ws.wallFaceArray()
                         .filter(wf => wf.connection.type === ConnectionType.SOLID)
-                        .map(wf => PlanToArrangerConverter.wallFaceToWallFaceMesh(wf, idx, wall.props.height))
+                        .map(wf => PlanToArrangerConverter.wallFaceToWallFaceMesh(wf, idx, wallHeight))
                         .map(wfm => PlanToArrangerConverter.wallFaceMeshToObjectWithEditableTexture(wfm))
                 )
         );
 
         const wallCoversCreator = new WallCoversCreator();
-        const wallCoverMeshes = placedWalls.map(wall => wallCoversCreator.fromObjectPoints(wall.props));
+        const wallCoverMeshes = placedWalls.map(wall => wallCoversCreator.fromObjectPoints(wall.props.points, wallHeight));
 
         return { wallsWithEditableTexture, wallCoverMeshes };
     }
@@ -79,7 +79,7 @@ export class PlanToArrangerConverter {
     }
 
     private static wallFaceToWallFaceMesh(wallFace: WallFace, orientation: ObjectSideOrientation, wallHeight: number): WallFaceMesh {
-        const shape = PlanToArrangerConverter.wallFaceToShape(wallFace, orientation, wallHeight);
+        const shape = PlanToArrangerConverter.wallFaceToShape(wallFace, wallHeight);
         const shapeGeometry = new ShapeGeometry(shape);
         shapeGeometry.rotateX(Math.PI/2.0);
         shapeGeometry.translate(-wallFace.firstPoint.x, 0, -wallFace.firstPoint.z); // make corner around which to rotate a center of geometry
@@ -96,10 +96,7 @@ export class PlanToArrangerConverter {
         };
     }
 
-    // todo: make wall height settable from main menu
-    // todo: make component height and elevation settable from main manu
-    // todo: make sure that component highest point (offset by height) is not outside wall's height
-    private static wallFaceToShape(wallFace: WallFace, orientation: ObjectSideOrientation, wallHeight: number): Shape {
+    private static wallFaceToShape(wallFace: WallFace, wallHeight: number): Shape {
         const first = new Vector2(wallFace.firstPoint.x, wallFace.firstPoint.z);
         const second = new Vector2(wallFace.secondPoint.x, wallFace.secondPoint.z);
 
