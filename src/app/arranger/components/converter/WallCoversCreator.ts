@@ -1,7 +1,6 @@
 import {BufferGeometry, FrontSide, Mesh, MeshStandardMaterial} from "three";
 import {DEFAULT_WALL_MATERIAL, ObjectPoint, ObjectPoints} from "../../../drawer/constants/Types";
 import {Attributes, Coordinate, Facing} from "../../constants/Types";
-import {WallConstruction} from "../../../drawer/components/DrawerMath";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 
 export class WallCoversCreator {
@@ -15,8 +14,8 @@ export class WallCoversCreator {
         return meshStandardMaterial;
     }
 
-    public fromObjectPoints({ points, height }: WallConstruction): Mesh<BufferGeometry, MeshStandardMaterial> {
-        const attributes = WallCoversCreator.createAttributes(points, height);
+    public fromObjectPoints(points: ObjectPoints, wallHeight: number): Mesh<BufferGeometry, MeshStandardMaterial> {
+        const attributes = WallCoversCreator.createAttributes(points, wallHeight);
         const geometry = AttributesToGeometry.process(attributes);
         return new Mesh(geometry, WallCoversCreator.MATERIAL);
     }

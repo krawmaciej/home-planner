@@ -21,7 +21,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     const [objectTransformer, setObjectTransformer] = useState(new ObjectTransformer(
         context.canvasState,
         context.interiorArrangerState,
-        context.sceneObjectsState,
+        context.wallHeight,
     ));
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
@@ -33,7 +33,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
         const transformer = new ObjectTransformer(
             context.canvasState,
             context.interiorArrangerState,
-            context.sceneObjectsState,
+            context.wallHeight,
         );
         transformer.setToTranslateMode();
         setObjectTransformer(transformer);

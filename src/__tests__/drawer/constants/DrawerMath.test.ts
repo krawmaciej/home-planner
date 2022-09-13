@@ -49,7 +49,7 @@ describe("test add function", () => {
     const expectedDirection = Direction.DOWN;
 
     // when
-    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT, 4.0);
+    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(direction).toBe(expectedDirection);
@@ -68,7 +68,7 @@ describe("test add function", () => {
     const expectedDirection = Direction.UP;
 
     // when
-    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT, 4.0);
+    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(direction).toBe(expectedDirection);
@@ -87,7 +87,7 @@ describe("test add function", () => {
     const expectedDirection = Direction.RIGHT;
 
     // when
-    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT, 4.0);
+    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(direction).toBe(expectedDirection);
@@ -106,7 +106,7 @@ describe("test add function", () => {
     const expectedDirection = Direction.LEFT;
 
     // when
-    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT, 4.0);
+    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(direction).toBe(expectedDirection);
@@ -127,7 +127,7 @@ describe("test add function", () => {
     const expectedBottomRight = new Vector3(1, 0, -1);
 
     // when
-    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT, 4.0);
+    const { points, direction } = DrawerMath.calculateWallPoints(start, end, wT);
 
     // then
     expect(direction).toBe(expectedDirection);

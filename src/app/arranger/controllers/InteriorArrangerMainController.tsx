@@ -6,13 +6,14 @@ import {ObjectsController} from "./ObjectsController";
 import {InteriorArrangerState} from "../../../App";
 import {SECONDARY_VARIANT} from "../constants/Types";
 import {SceneObjectsState} from "../../common/context/SceneObjectsDefaults";
-import {CanvasState} from "../../common/context/CanvasDefaults";
-import { ObjectsAppearanceController } from "./ObjectsAppearanceController";
+import {ObjectsAppearanceController } from "./ObjectsAppearanceController";
 import {ConvertedObjects} from "../InteriorArrangerStateParent";
 import {LoadedTexture} from "../../common/models/TextureDefinition";
+import {CanvasState} from "../../common/context/CanvasDefaults";
 
 type InteriorArrangerContextType = {
     canvasState: CanvasState,
+    wallHeight: number,
     sceneObjectsState: SceneObjectsState,
     interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
@@ -26,6 +27,7 @@ export const InteriorArrangerContext = createContext<InteriorArrangerContextType
 type Props = {
     className?: string
     canvasState: CanvasState,
+    wallHeight: number,
     sceneObjectsState: SceneObjectsState,
     interiorArrangerState: InteriorArrangerState,
     objectDefinitions: Array<ObjectProps>,
@@ -177,6 +179,7 @@ const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
 
 export const InteriorArrangerMainController: React.FC<Props> = ({
                                                                     canvasState,
+                                                                    wallHeight,
                                                                     sceneObjectsState,
                                                                     interiorArrangerState,
                                                                     objectDefinitions,
@@ -202,6 +205,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
     // dependency container
     const context: InteriorArrangerContextType = {
         canvasState,
+        wallHeight,
         sceneObjectsState,
         interiorArrangerState,
         objectDefinitions,

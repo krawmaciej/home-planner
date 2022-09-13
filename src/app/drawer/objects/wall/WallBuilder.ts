@@ -15,7 +15,7 @@ export class WallBuilder {
     private static readonly middlePointMesh = WallBuilder.createPointMesh({ color: 0x000000 });
     private static readonly contactPointMesh = WallBuilder.createPointMesh({ color: 0xffff00 });
 
-    private props: WallConstruction;
+    private readonly props: WallConstruction;
     private collision: Collision<PlacedWall>;
 
     public constructor(props: WallConstruction) {
@@ -23,8 +23,8 @@ export class WallBuilder {
         this.collision = { isCollision: false, adjacentObjects: new Array<AdjacentObject<PlacedWall>>() };
     }
     
-    public static createWall(start: Vector3, end: Vector3, wallThickness: WallThickness, height: number): WallBuilder {
-        const wallPoints = DrawerMath.calculateWallPoints(start, end, wallThickness, height);
+    public static createWall(start: Vector3, end: Vector3, wallThickness: WallThickness): WallBuilder {
+        const wallPoints = DrawerMath.calculateWallPoints(start, end, wallThickness);
         return new WallBuilder(wallPoints);
     }
 
@@ -48,11 +48,6 @@ export class WallBuilder {
         const mesh = new Mesh(geometry, meshMaterial);
         mesh.rotateX(-Math.PI/2.0);
         return mesh;
-    }
-
-    public changeProps(props: WallConstruction): WallBuilder {
-        this.props = props;
-        return this;
     }
 
     public setCollisionWithWall(collision: Collision<PlacedWall>): WallBuilder {

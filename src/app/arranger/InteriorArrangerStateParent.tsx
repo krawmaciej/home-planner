@@ -52,7 +52,11 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
 
     useEffect(() => {
 
-        const allConvertedObjects = planObjectsConverter.convertPlanObjects(sceneObjects);
+        if (sceneObjects.wallHeight === undefined) {
+            return; // skip
+        }
+
+        const allConvertedObjects = planObjectsConverter.convertPlanObjects(sceneObjects, sceneObjects.wallHeight);
 
         const allMeshes = [
             ...allConvertedObjects.wallsWithEditableTexture.map(wfm => wfm.object3d),
@@ -76,6 +80,10 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
         });
     }, [sceneObjects, canvasState]);
 
+    if (sceneObjects.wallHeight === undefined) {
+        return (<div>Ustaw wysokość ścian dla rysunku planu 2D.</div>);
+    }
+
     if (convertedObjects === undefined) {
         return (<div><img src={spinner} alt="loading"/></div>);
     }
@@ -85,6 +93,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
             <InteriorArrangerMainController
                 className={"app-bottom-menu"}
                 canvasState={canvasState}
+                wallHeight={sceneObjects.wallHeight}
                 sceneObjectsState={sceneObjects}
                 interiorArrangerState={interiorArrangerState}
                 objectDefinitions={objectDefinitions}

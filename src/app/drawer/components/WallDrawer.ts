@@ -51,7 +51,7 @@ export class WallDrawer {
         start.y = ObjectElevation.MOVING;
         end.y = ObjectElevation.MOVING;
 
-        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness, this.wallHeight);
+        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
         const wallToWallCollision =
             this.collisionDetector.detectCollisions(wallBuilder.getProps().points, this.placedWalls, ALL_SIDES);
@@ -87,7 +87,7 @@ export class WallDrawer {
     public drawWall(start: Vector3, end: Vector3): boolean {
         start.y = ObjectElevation.WALL;
         end.y = ObjectElevation.WALL;
-        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness, this.wallHeight);
+        const wallBuilder = WallBuilder.createWall(start, end, this.wallThickness);
 
         const collisionResult = this.collisionDetector
             .detectCollisions(wallBuilder.getProps().points, this.placedWalls, ALL_SIDES);
