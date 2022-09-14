@@ -24,6 +24,7 @@ import {PersistedWallComponent, persistWallComponent, toComponentProps} from "./
 import {toVector3} from "./CommonMappers";
 import {PersistedFloorCeiling, persistFloorCeiling, toFloorCeilingProps} from "./FloorCeilingMappers";
 import {FloorCeiling} from "../../drawer/objects/floor/FloorCeiling";
+import {PersistedObjectProps, persistObjectProps, toObjectProps} from "./ObjectMappers";
 
 type WallToComponents = {
     wall: PersistedPlacedWall,
@@ -34,7 +35,7 @@ type PersistedSceneObjectsState = {
     wallHeight: number | undefined,
     wallToComponentsList: Array<WallToComponents>,
     floorList: Array<PersistedFloorCeiling>,
-    // arranger's objects3d
+    objectList: Array<PersistedObjectProps>,
 }
 
 export const saveFile = (sceneObjectsState: SceneObjectsState): string => {
@@ -51,10 +52,13 @@ export const saveFile = (sceneObjectsState: SceneObjectsState): string => {
 
     const floorList = sceneObjectsState.floors.map(f => persistFloorCeiling(f));
 
+    const objectList = sceneObjectsState.placedObjects.map(po => persistObjectProps(po));
+
     const persistedSceneObjectsState: PersistedSceneObjectsState = {
         wallHeight: sceneObjectsState.wallHeight,
         wallToComponentsList,
         floorList,
+        objectList,
     };
     return JSON.stringify(persistedSceneObjectsState); //todo: might cause errors with thumbnail urls
 };
@@ -77,9 +81,11 @@ export const loadData = (
 
     const floorsState = deserializeFloorsAndCeilings(deserialized.floorList, texturePromises);
 
+    const placedObjectsState = deserialized.objectList.map(o => toObjectProps(o, objectDefinitions));
+
     return {
         floors: floorsState,
-        placedObjects: [],
+        placedObjects: placedObjectsState,
         placedWalls: placedWallsState,
         wallComponents: wallComponentsState,
         wallHeight: deserialized.wallHeight,

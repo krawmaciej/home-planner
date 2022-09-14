@@ -107,7 +107,7 @@ export const loadWindows = async () => {
 };
 
 export const loadObjects = async () => {
-    return await loadModels(objectsPromise, OBJECTS_PATH, (modelDefinition, model, box3) => {
+    return await loadModels(objectsPromise, OBJECTS_PATH, (modelDefinition, model, box3, index) => {
         const val: ObjectProps = {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
@@ -115,6 +115,7 @@ export const loadObjects = async () => {
             width: box3.max.x - box3.min.x,
             thickness: box3.max.z - box3.min.z,
             height: box3.max.y - box3.min.y,
+            fileIndex: index,
         };
         return val;
     });
