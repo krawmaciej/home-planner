@@ -8,23 +8,33 @@ import {PlacedWall} from "../../drawer/objects/wall/PlacedWall";
 import {IMovingWallComponent} from "../../drawer/objects/component/IMovingWallComponent";
 import {IPlacedWallComponent} from "../../drawer/objects/component/IPlacedWallComponent";
 import {
-    PersistedPlacedWall, PersistedWallComponent, persistPlacedWall, persistWallComponent,
-    toAdjacentWallPropsList, toComponentProps,
-    toVector3,
+    PersistedPlacedWall, persistPlacedWall,
+    toAdjacentWallPropsList,
     toWallConstruction
-} from "./Mappers";
+} from "./WallMappers";
 import {Direction} from "../../drawer/objects/wall/Direction";
 import {ObjectProps} from "../../arranger/objects/ImportedObject";
 import {LoadedTexture} from "../models/TextureDefinition";
 import {
-    COMPONENT_FRAME_INITIAL_TEXTURE_ROTATION,
+    COMPONENT_FRAME_INITIAL_TEXTURE_ROTATION, FLOOR_INITIAL_TEXTURE_ROTATION,
     getWallFaceTextureRotation,
     setTexture
 } from "../components/TextureOperations";
+import {PersistedWallComponent, persistWallComponent, toComponentProps} from "./WallComponentMappers";
+import {toVector3} from "./CommonMappers";
+import {PersistedFloorCeiling, persistFloorCeiling, toFloorCeilingProps} from "./FloorCeilingMappers";
+import {FloorCeiling} from "../../drawer/objects/floor/FloorCeiling";
 
 type WallToComponents = {
     wall: PersistedPlacedWall,
     componentList: Array<PersistedWallComponent>,
+}
+
+type PersistedSceneObjectsState = {
+    wallHeight: number | undefined,
+    wallToComponentsList: Array<WallToComponents>,
+    floorList: Array<PersistedFloorCeiling>,
+    // arranger's objects3d
 }
 
 export const saveFile = (sceneObjectsState: SceneObjectsState): string => {
@@ -39,31 +49,53 @@ export const saveFile = (sceneObjectsState: SceneObjectsState): string => {
         return wallToComponents;
     });
 
-    return JSON.stringify(wallToComponentsList); //todo: might cause errors with thumbnail urls
+    const floorList = sceneObjectsState.floors.map(f => persistFloorCeiling(f));
+
+    const persistedSceneObjectsState: PersistedSceneObjectsState = {
+        wallHeight: sceneObjectsState.wallHeight,
+        wallToComponentsList,
+        floorList,
+    };
+    return JSON.stringify(persistedSceneObjectsState); //todo: might cause errors with thumbnail urls
 };
-
-// eslint-disable-next-line unused-imports/no-unused-vars
-class IdProvider {
-    private id = 0;
-
-    public nextId(): number {
-        return this.id++;
-    }
-}
 
 export const loadData = (
     data: string,
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
     objectDefinitions: Array<ObjectProps>,
-    texturePromises: Array<LoadedTexture>
+    texturePromises: Array<LoadedTexture>,
 ): SceneObjectsState => {
-    const deserialized: Array<WallToComponents> = JSON.parse(data);
+    const deserialized: PersistedSceneObjectsState = JSON.parse(data);
 
+    const { placedWallsState, wallComponentsState } = deserializeWallsAndWallComponents(
+        deserialized.wallToComponentsList,
+        doorDefinitions,
+        windowDefinitions,
+        texturePromises
+    );
+
+    const floorsState = deserializeFloorsAndCeilings(deserialized.floorList, texturePromises);
+
+    return {
+        floors: floorsState,
+        placedObjects: [],
+        placedWalls: placedWallsState,
+        wallComponents: wallComponentsState,
+        wallHeight: deserialized.wallHeight,
+    };
+};
+
+const deserializeWallsAndWallComponents = (
+    wallToComponentsList: Array<WallToComponents>,
+    doorDefinitions: Array<ComponentProps>,
+    windowDefinitions: Array<ComponentProps>,
+    texturePromises: Array<LoadedTexture>,
+) => {
     const placedWallsState = new Array<PlacedWall>();
     const wallComponentsState = new Array<IPlacedWallComponent>();
 
-    for (const wallToComponent of deserialized) {
+    for (const wallToComponent of wallToComponentsList) {
         const placedWall = PlacedWall.create(toWallConstruction(wallToComponent.wall.props),
             toAdjacentWallPropsList(wallToComponent.wall.adjacentWallPropsList));
 
@@ -110,8 +142,7 @@ export const loadData = (
             if (persistedWallComponent.textureFileIndex !== undefined) {
                 const texture = texturePromises.at(persistedWallComponent.textureFileIndex);
                 if (texture === undefined) {
-                    throw new Error(`Selected texture index: ${persistedWallComponent.textureFileIndex} 
-                            not found in textures ${JSON.stringify(texturePromises)}`);
+                    throw new Error(`Selected texture index in: ${persistedWallComponent} not found in textures.`);
                 }
                 setTexture(
                     texture,
@@ -128,13 +159,47 @@ export const loadData = (
         placedWallsState.push(placedWall);
     }
 
-    return {
-        floors: [],
-        placedObjects: [],
-        placedWalls: placedWallsState,
-        wallComponents: wallComponentsState,
-        wallHeight: undefined,
-    };
+    return { placedWallsState, wallComponentsState };
+};
+
+const deserializeFloorsAndCeilings = (floorList: Array<PersistedFloorCeiling>, texturePromises: Array<LoadedTexture>) => {
+    return floorList.map(f => {
+        const floorCeiling = new FloorCeiling(toFloorCeilingProps(f.props));
+
+        floorCeiling.floorTextureProps.fileIndex = f.floorTextureFileIndex;
+        floorCeiling.floorTextureProps.rotation = f.floorTextureRotation;
+        floorCeiling.floorMaterial.color.set(f.floorColor);
+        if (f.floorTextureFileIndex !== undefined) {
+            const texture = texturePromises.at(f.floorTextureFileIndex);
+            if (texture === undefined) {
+                throw new Error(`Selected texture index in: ${f} not found in textures.`);
+            }
+            setTexture(
+                texture,
+                floorCeiling.floorMaterial,
+                FLOOR_INITIAL_TEXTURE_ROTATION,
+                f.floorTextureRotation,
+            );
+        }
+
+        floorCeiling.ceilingTextureProps.fileIndex = f.ceilingTextureFileIndex;
+        floorCeiling.ceilingTextureProps.rotation = f.ceilingTextureRotation;
+        floorCeiling.ceilingMaterial.color.set(f.ceilingColor);
+        if (f.ceilingTextureFileIndex !== undefined) {
+            const texture = texturePromises.at(f.ceilingTextureFileIndex);
+            if (texture === undefined) {
+                throw new Error(`Selected texture index in: ${f} not found in textures.`);
+            }
+            setTexture(
+                texture,
+                floorCeiling.ceilingMaterial,
+                FLOOR_INITIAL_TEXTURE_ROTATION,
+                f.ceilingTextureRotation,
+            );
+        }
+
+        return floorCeiling;
+    });
 };
 
 const createMovingWallComponent = (

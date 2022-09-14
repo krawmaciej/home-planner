@@ -6,7 +6,9 @@ export const DEFAULT_WALL_MATERIAL = new MeshStandardMaterial({
     side: DoubleSide,
 });
 
-export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({ color: 0xbbbbbb });
+export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({
+    color: 0xbbbbbb
+});
 
 export const DEFAULT_WALL_FRAME_MATERIAL = new MeshStandardMaterial({
     color: 0xbbbbbb,
