@@ -6,7 +6,9 @@ export const DEFAULT_WALL_MATERIAL = new MeshStandardMaterial({
     side: DoubleSide,
 });
 
-export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({ color: 0xbbbbbb });
+export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({
+    color: 0xbbbbbb
+});
 
 export const DEFAULT_WALL_FRAME_MATERIAL = new MeshStandardMaterial({
     color: 0xbbbbbb,
@@ -21,7 +23,7 @@ export enum Precision {
 
 export type Vector2D = {
     x: number,
-    z: number
+    z: number,
 }
 
 export enum ObjectElevation {
@@ -47,6 +49,7 @@ export enum ObjectSideOrientation {
     BOTTOM, RIGHT, TOP, LEFT,
 }
 
-export type PostProcessedTextureRotation = {
-    value: number,
+export type TextureProps = {
+    rotation: number,
+    fileIndex?: number,
 }

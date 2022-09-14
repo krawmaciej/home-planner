@@ -4,6 +4,7 @@ import {Attributes, Coordinate, Facing} from "../../constants/Types";
 import {ObjectPoint} from "../../../drawer/constants/Types";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
+import {FLOOR_INITIAL_TEXTURE_ROTATION} from "../../../common/components/TextureOperations";
 
 export class FloorCreator {
 
@@ -12,8 +13,8 @@ export class FloorCreator {
         const geometry = AttributesToGeometry.process(attributes);
         return {
             object3d: new Mesh(geometry, floor.floorMaterial),
-            postProcessedTextureRotation: floor.floorTextureRotation,
-            initialTextureRotation: 0,
+            textureProps: floor.floorTextureProps,
+            initialTextureRotation: FLOOR_INITIAL_TEXTURE_ROTATION,
         };
     }
 

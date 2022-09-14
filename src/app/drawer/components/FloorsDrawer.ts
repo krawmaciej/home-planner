@@ -3,7 +3,6 @@ import { CollisionDetector } from "./CollisionDetector";
 import {IFloorCeiling} from "../objects/floor/IFloorCeiling";
 import {FloorCeiling} from "../objects/floor/FloorCeiling";
 import {NoFloorCeiling} from "../objects/floor/NoFloorCeiling";
-import {DEFAULT_FLOOR_MATERIAL} from "../constants/Types";
 import {PlacedWall} from "../objects/wall/PlacedWall";
 import {IObjectPointsOnScene} from "../objects/IObjectPointsOnScene";
 
@@ -35,7 +34,7 @@ export class FloorsDrawer {
      */
     public changeDrawnFloor(start: Vector3, end: Vector3) {
         this.drawnFloor.uncollide(); // reset to default color
-        this.drawnFloor.change(start, end);
+        this.drawnFloor.change({ start, end });
         const checkedAgainst: Array<IObjectPointsOnScene> = [...this.placedFloors, ...this.placedWalls];
         const collision = this.collisionDetector.detectAABBCollisions(this.drawnFloor, checkedAgainst);
         if (collision !== undefined) {
@@ -48,7 +47,7 @@ export class FloorsDrawer {
      */
     public drawFloor(start: Vector3, end: Vector3): boolean {
         this.drawnFloor.uncollide(); // reset do default color
-        this.drawnFloor.change(start, end);
+        this.drawnFloor.change({ start, end });
         const checkedAgainst: Array<IObjectPointsOnScene> = [...this.placedFloors, ...this.placedWalls];
         const collision = this.collisionDetector.detectAABBCollisions(this.drawnFloor, checkedAgainst);
         if (collision !== undefined) {
@@ -65,7 +64,7 @@ export class FloorsDrawer {
      * Creates initial floor shape which can be changed, initially no shape is available to be changed.
      */
     public initializeFloor(start: Vector3, end: Vector3) {
-        this.drawnFloor = new FloorCeiling(start, end, DEFAULT_FLOOR_MATERIAL);
+        this.drawnFloor = new FloorCeiling({ start, end });
         this.drawnFloor.addTo(this.scene);
     }
 

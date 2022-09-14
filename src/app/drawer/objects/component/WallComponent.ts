@@ -14,7 +14,7 @@ import {
     DEFAULT_WALL_FRAME_MATERIAL,
     ObjectElevation,
     ObjectPoint,
-    ObjectPoints, PostProcessedTextureRotation,
+    ObjectPoints, TextureProps,
     Vector2D
 } from "../../constants/Types";
 import {IMovingWallComponent} from "./IMovingWallComponent";
@@ -44,7 +44,7 @@ const ARROW_GEOMETRY = new BufferGeometry().setFromPoints([
     new Vector3(0.5, ObjectElevation.COMPONENT, -1),
 ]);
 
-enum ComponentType {
+export enum ComponentType {
     DOOR, WINDOW,
 }
 
@@ -70,9 +70,10 @@ const WINDOW_SHAPE: ComponentShape = {
 };
 
 export type ComponentProps = {
-    readonly name: string,
     readonly thumbnail: string,
-    readonly object3d?: Object3D,
+    readonly name: string,
+    readonly fileIndex: number | undefined,
+    readonly object3d: Object3D | undefined,
     width: number,
     readonly thickness: number,
     height: number,
@@ -86,9 +87,14 @@ export type ComponentPropsMutableFields = {
     readonly elevation: boolean,
 }
 
+const NO_FILE_INDEX = undefined;
+const NO_OBJECT = undefined;
+
 export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
     name: "Otwór",
     thumbnail: "hole_thumbnail.jpg",
+    fileIndex: NO_FILE_INDEX,
+    object3d: NO_OBJECT,
     width: 6,
     thickness: 1,
     height: 10,
@@ -99,6 +105,8 @@ export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
 export const DEFAULT_MUTABLE_DOOR_PROPS: ComponentProps = {
     name: "Otwór",
     thumbnail: "hole_thumbnail.jpg",
+    fileIndex: NO_FILE_INDEX,
+    object3d: NO_OBJECT,
     width: 8,
     thickness: 1,
     height: 20,
@@ -133,8 +141,8 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     ]);
 
     private readonly frameMaterial: MeshStandardMaterial;
-    private readonly postProcessedTextureRotation: PostProcessedTextureRotation;
-    private readonly props: ComponentProps;
+    private readonly textureProps: TextureProps;
+    public readonly props: ComponentProps;
     private readonly window: Line<BufferGeometry, LineBasicMaterial>;
     private orientation: Vector2D;
     private parentWall: undefined | PlacedWall; // not yet placed wall component can also have a parent wall
@@ -144,7 +152,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     public constructor(props: ComponentProps, material: LineBasicMaterial, shape: ComponentShape) {
         this.frameMaterial = DEFAULT_WALL_FRAME_MATERIAL.clone();
-        this.postProcessedTextureRotation = { value: 0 };
+        this.textureProps = { rotation: 0 };
         this.props = props;
         const points = WallComponent.createPoints(props);
         points.push(points[ObjectPoint.BOTTOM_LEFT]);
@@ -411,8 +419,8 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         return this.props.width;
     }
 
-    public isDoor() {
-        return this.shape.type === ComponentType.DOOR;
+    public getType(): ComponentType {
+        return this.shape.type;
     }
 
     public getModel() {
@@ -427,7 +435,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         return this.frameMaterial;
     }
 
-    public getPostProcessedTextureRotation(): PostProcessedTextureRotation {
-        return this.postProcessedTextureRotation;
+    public getTextureProps(): TextureProps {
+        return this.textureProps;
     }
 }

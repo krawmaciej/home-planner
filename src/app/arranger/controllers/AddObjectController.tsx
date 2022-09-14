@@ -18,7 +18,7 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, addObje
     }
 
     const [objectAdder, setObjectAdder] = useState(new ObjectAdder(context.canvasState.scene, context.sceneObjectsState.placedObjects, context.updatePlacedObjectsToggle));
-    const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
+    const [indexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
         context.changeMenuName("Dodaj obiekt");

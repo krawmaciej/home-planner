@@ -3,6 +3,7 @@ import {Direction} from "../objects/wall/Direction";
 import {WallThickness} from "../objects/wall/WallThickness";
 import {ObjectElevation, ObjectPoints, Vector2D, ObjectPoint} from "../constants/Types";
 import {CommonMathOperations} from "../../common/components/CommonMathOperations";
+import {AdjacentObject} from "./CollisionDetector";
 
 export type WallConstruction = {
     points: ObjectPoints,
@@ -10,6 +11,8 @@ export type WallConstruction = {
     direction: Vector2D,
     width: number,
 }
+
+export type AdjacentWallProps = Omit<AdjacentObject<any>, "adjacent">
 
 export type MiddlePoints = {
     first: Vector3,

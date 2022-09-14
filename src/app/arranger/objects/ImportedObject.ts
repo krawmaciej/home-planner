@@ -6,4 +6,5 @@ export type ObjectProps = ArrangerObject & {
     readonly width: number,
     readonly thickness: number,
     readonly height: number,
+    readonly fileIndex: number,
 }

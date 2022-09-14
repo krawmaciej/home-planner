@@ -14,6 +14,7 @@ import {CeilingCreator} from "./CeilingCreator";
 import {IPlacedWallComponent} from "../../../drawer/objects/component/IPlacedWallComponent";
 import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
 import {HOLE_OFFSET_FIX} from "../../../common/components/CommonMathOperations";
+import {getWallFaceTextureRotation} from "../../../common/components/TextureOperations";
 
 /**
  * Expects walls and wall component points to be in the same order.
@@ -84,7 +85,7 @@ export class PlanToArrangerConverter {
         shapeGeometry.rotateX(Math.PI/2.0);
         shapeGeometry.translate(-wallFace.firstPoint.x, 0, -wallFace.firstPoint.z); // make corner around which to rotate a center of geometry
 
-        const txtRotation = PlanToArrangerConverter.getTxtRotation(orientation);
+        const txtRotation = getWallFaceTextureRotation(orientation);
         return createWallFaceMesh(shapeGeometry, wallFace, -Math.PI/2.0, txtRotation);
     }
 
@@ -92,7 +93,7 @@ export class PlanToArrangerConverter {
         return {
             object3d: wallFaceMesh.object3d,
             initialTextureRotation: wallFaceMesh.initialTextureRotation,
-            postProcessedTextureRotation: wallFaceMesh.wallFace.postProcessedTextureRotation,
+            textureProps: wallFaceMesh.wallFace.connection.textureProps,
         };
     }
 
@@ -123,13 +124,5 @@ export class PlanToArrangerConverter {
         const shape = new Shape().setFromPoints(wallFacePoints);
         shape.holes.push(...holes);
         return shape;
-    }
-    
-    private static getTxtRotation(orientation: ObjectSideOrientation) {
-        if (orientation === ObjectSideOrientation.BOTTOM || orientation === ObjectSideOrientation.TOP) {
-            return 0.0;
-        } else {
-            return Math.PI * 1.5;
-        }
     }
 }

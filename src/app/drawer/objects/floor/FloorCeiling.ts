@@ -1,12 +1,14 @@
 import {IFloorCeiling} from "./IFloorCeiling";
 import {BufferGeometry, Line, LineBasicMaterial, MeshStandardMaterial, Scene, Vector3} from "three";
-import {ObjectElevation, ObjectPoint, ObjectPoints, PostProcessedTextureRotation} from "../../constants/Types";
+import {DEFAULT_FLOOR_MATERIAL, ObjectElevation, ObjectPoint, ObjectPoints, TextureProps} from "../../constants/Types";
 import {AttributeName} from "../../../arranger/constants/Types";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
-import {
-    createFloorCeilingEmptyLabel, createFloorCeilingSquareFootageText,
+import {createFloorCeilingEmptyLabel, createFloorCeilingSquareFootageText} from "../../components/Labels";
 
-} from "../../components/Labels";
+export type FloorCeilingProps ={
+    start: Vector3,
+    end: Vector3,
+}
 
 export class FloorCeiling implements IFloorCeiling {
 
@@ -17,21 +19,23 @@ export class FloorCeiling implements IFloorCeiling {
         color: 0xaa4444,
     });
 
+    public readonly props: FloorCeilingProps;
     public readonly floorMaterial: MeshStandardMaterial;
     public readonly ceilingMaterial: MeshStandardMaterial;
-    public readonly floorTextureRotation: PostProcessedTextureRotation;
-    public readonly ceilingTextureRotation: PostProcessedTextureRotation;
+    public readonly floorTextureProps: TextureProps;
+    public readonly ceilingTextureProps: TextureProps;
     private readonly outline: Line<BufferGeometry, LineBasicMaterial>;
     private readonly diagonal: Line<BufferGeometry, LineBasicMaterial>;
     private objectPoints: ObjectPoints;
     private readonly label: CSS2DObject;
 
-    public constructor(start: Vector3, end: Vector3, meshMaterial: MeshStandardMaterial) {
-        this.floorMaterial = meshMaterial.clone();
-        this.ceilingMaterial = meshMaterial.clone();
-        this.floorTextureRotation = { value: 0 };
-        this.ceilingTextureRotation = { value: 0 };
-        this.objectPoints = FloorCeiling.calculateObjectPoints(start, end);
+    public constructor(props: FloorCeilingProps) {
+        this.props = props;
+        this.floorMaterial =  DEFAULT_FLOOR_MATERIAL.clone();
+        this.ceilingMaterial = DEFAULT_FLOOR_MATERIAL.clone();
+        this.floorTextureProps = { rotation: 0 };
+        this.ceilingTextureProps = { rotation: 0 };
+        this.objectPoints = FloorCeiling.calculateObjectPoints(props.start, props.end);
         const outlineGeo = new BufferGeometry().setFromPoints(this.getOutlinePoints());
         this.outline = new Line(outlineGeo, FloorCeiling.STANDARD_MATERIAL);
         const diagonalGeo = new BufferGeometry().setFromPoints(this.getDiagonalPoints());
@@ -95,7 +99,9 @@ export class FloorCeiling implements IFloorCeiling {
         this.diagonal.material = FloorCeiling.STANDARD_MATERIAL;
     }
 
-    public change(start: Vector3, end: Vector3): void {
+    public change({ start, end }: FloorCeilingProps): void {
+        this.props.start = start;
+        this.props.end = end;
         this.objectPoints = FloorCeiling.calculateObjectPoints(start, end);
         // update outline
         FloorCeiling.updateGeometry(this.outline.geometry, this.getOutlinePoints());

@@ -13,7 +13,7 @@ export type Collision <T extends IObjectPointsOnScene> = {
 }
 
 export type AdjacentObject <T extends IObjectPointsOnScene> = {
-    toSide: ObjectSideOrientation
+    toSide: ObjectSideOrientation,
     adjacent: T,
     points: Array<Vector3>,
 }

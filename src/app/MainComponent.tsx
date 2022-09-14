@@ -20,6 +20,8 @@ import {FloorPlanState, InteriorArrangerState} from "../App";
 import {ICameraHandler} from "./common/canvas/ICameraHandler";
 import {LoadedTexture} from "./common/models/TextureDefinition";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
+import {loadData, saveFile} from "./common/persistance/Persistance";
+import spinner from "../loading-spinner.gif";
 
 type Props = {
     renderer: WebGLRenderer,
@@ -46,30 +48,16 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
     const [canvasState] = useState<CanvasState>(createCanvasState);
 
     const [sceneObjectsState, setSceneObjectsState] = useState<SceneObjectsState>(createSceneObjectsState);
-    const [doorDefinitions, setDoorDefinitions] = useState(new Array<ComponentProps>());
-    const [windowDefinitions, setWindowDefinitions] = useState(new Array<ComponentProps>());
-    const [objectDefinitions, setObjectDefinitions] = useState(new Array<ObjectProps>());
-    const [texturePromises, setTexturePromises] = useState(new Array<LoadedTexture>());
+    const [doorDefinitions, setDoorDefinitions] = useState<Array<ComponentProps>>();
+    const [windowDefinitions, setWindowDefinitions] = useState<Array<ComponentProps>>();
+    const [objectDefinitions, setObjectDefinitions] = useState<Array<ObjectProps>>();
+    const [texturePromises, setTexturePromises] = useState<Array<LoadedTexture>>();
 
     // load file
-    const inputRef = useRef<HTMLInputElement>(null);
+    const openFileRef = useRef<HTMLInputElement>(null);
 
     const handleStateLoad = () => {
-        inputRef?.current?.click();
-    };
-
-    const handleFile = () => {
-        const file = inputRef?.current?.files?.item(0);
-        if (file === null || file === undefined) {
-            throw new Error("Expected loaded file but nothing found");
-        }
-
-        const fileReader = new FileReader();
-        fileReader.onload = (event) => {
-            console.log(event);
-            setSceneObjectsState(createSceneObjectsState());
-        };
-        fileReader.readAsText(file);
+        openFileRef?.current?.click();
     };
 
     const [currentMenu, setCurrentMenu] = useState(UISelection.FLOOR_PLAN);
@@ -97,7 +85,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
 
             return;
         }
-    }, [currentMenu]);
+    }, [currentMenu, sceneObjectsState]);
 
     const chooseInteriorArranger = () => {
         setCurrentMenu(UISelection.INTERIOR_ARRANGER);
@@ -119,11 +107,58 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
         loadTextures().then(txts => setTexturePromises(txts));
     }, []);
 
+    if (
+        doorDefinitions === undefined ||
+        windowDefinitions === undefined ||
+        objectDefinitions === undefined ||
+        texturePromises === undefined
+    ) {
+        return (<div className="h-100 d-flex justify-content-center align-items-center"><img src={spinner} alt="loading"/></div>);
+    }
+
+    const handleLoad = () => {
+        const file = openFileRef?.current?.files?.item(0);
+        if (file === null || file === undefined) {
+            throw new Error("Expected loaded file but nothing found");
+        }
+
+        const fileReader = new FileReader();
+        fileReader.onload = (event) => {
+            const result = event?.target?.result;
+            if (typeof result === 'string') {
+                const loadedState = loadData(
+                    result,
+                    doorDefinitions,
+                    windowDefinitions,
+                    objectDefinitions,
+                    texturePromises
+                );
+                setSceneObjectsState(loadedState);
+                choosePlanDrawer();
+            } else {
+                console.log("Couldn't load a file.");
+            }
+        };
+        fileReader.readAsText(file);
+    };
+
+    const handleSave = () => {
+        const serialized = saveFile(sceneObjectsState);
+        const element = document.createElement("a");
+        const file = new Blob([serialized], {type: 'text/plain'});
+        document.body.appendChild(element);
+        element.href = URL.createObjectURL(file);
+        element.download = "savedProject";
+        element.click();
+        document.body.removeChild(element);
+    };
+
     return (
         <div className="app-main-view">
             <HeaderMenu
                 className="app-top-menu"
                 openFile={handleStateLoad}
+                saveFile={handleSave}
                 chooseInteriorArranger={chooseInteriorArranger}
                 choosePlanDrawer={choosePlanDrawer}
                 resetCamera={resetCamera}
@@ -149,7 +184,13 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
                 interiorArrangerState={interiorArrangerState}
                 floorPlanState={floorPlanState}
             />
-            <input ref={inputRef} className="d-none" type="file" onChange={handleFile}/>
+            <input
+                ref={openFileRef}
+                className="d-none"
+                type="file"
+                onChange={handleLoad}
+                onClick={event => (event.target as HTMLInputElement).value = ""}
+            />
         </div>
     );
 };
