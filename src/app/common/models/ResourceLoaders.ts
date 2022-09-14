@@ -73,10 +73,11 @@ const getAxisScales = (dimensions: Dimensions, box3: Box3) => {
 const DEFAULT_OBJECT_THICKNESS = 1;
 
 export const loadDoors = async () => {
-    return await loadModels(doorsPromise, DOORS_PATH, (modelDefinition, model, box3) => {
+    return await loadModels(doorsPromise, DOORS_PATH, (modelDefinition, model, box3, index) => {
         const val: ComponentProps = {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
+            fileIndex: index,
             object3d: model,
             width: box3.max.x - box3.min.x,
             thickness: DEFAULT_OBJECT_THICKNESS,
@@ -89,10 +90,11 @@ export const loadDoors = async () => {
 };
 
 export const loadWindows = async () => {
-    return await loadModels(windowsPromise, WINDOWS_PATH, (modelDefinition, model, box3) => {
+    return await loadModels(windowsPromise, WINDOWS_PATH, (modelDefinition, model, box3, index) => {
         const val: ComponentProps = {
             name: modelDefinition.name,
             thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
+            fileIndex: index,
             object3d: model,
             width: box3.max.x - box3.min.x,
             thickness: DEFAULT_OBJECT_THICKNESS,
@@ -156,12 +158,13 @@ async function handleFileLoad(gltfLoader: GLTFLoader, path: string, doorDefiniti
 const loadModels = async<T>(
     modelsPromise: Promise<Array<ModelDefinition>>,
     path: string,
-    resultMapper: (md: ModelDefinition, obj: Object3D, box: Box3) => T
+    resultMapper: (md: ModelDefinition, obj: Object3D, box: Box3, index: number) => T
 ) => {
     const result = new Array<T>();
     const gltfLoader = new GLTFLoader();
     const modelDefinitions = await modelsPromise;
-    for (const modelDefinition of modelDefinitions) {
+    for (let i = 0; i < modelDefinitions.length; i++){
+        const modelDefinition = modelDefinitions[i];
         const model = new Group();
         const gltf = await handleFileLoad(gltfLoader, path, modelDefinition);
         if (gltf === undefined) {
@@ -198,7 +201,7 @@ const loadModels = async<T>(
             });
         }
         model.scale.multiplyScalar(0.999); // fix z-fighting with component frames
-        result.push(resultMapper(modelDefinition, model, box3));
+        result.push(resultMapper(modelDefinition, model, box3, i));
     }
     return result;
 };

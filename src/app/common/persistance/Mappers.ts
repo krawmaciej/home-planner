@@ -1,5 +1,5 @@
 import {AdjacentWallProps, WallConstruction} from "../../drawer/components/DrawerMath";
-import {MeshStandardMaterial, Vector3} from "three";
+import {MeshStandardMaterial, Object3D, Vector3} from "three";
 import {Direction} from "../../drawer/objects/wall/Direction";
 import {ObjectSideOrientation, Vector2D} from "../../drawer/constants/Types";
 import {ComponentProps, ComponentType, WallComponent} from "../../drawer/objects/component/WallComponent";
@@ -21,6 +21,7 @@ export type PersistedVector2D = {
 export type PersistedComponentProps = {
     thumbnail: string,
     name: string,
+    modelFileIndex: number | undefined,
     width: number,
     thickness: number,
     height: number,
@@ -89,6 +90,29 @@ export const toAdjacentWallPropsList = (persisted: Array<PersistedAdjacentWallPr
     });
 };
 
+export const toComponentProps = (persisted: PersistedComponentProps, modelDefinitions: Array<ComponentProps>): ComponentProps => {
+    let object3d: Object3D | undefined = undefined;
+    if (persisted.modelFileIndex !== undefined) {
+        const loadedObject = modelDefinitions.at(persisted.modelFileIndex)?.object3d;
+        if (loadedObject === undefined) {
+            throw new Error(`Model for ${persisted} does not exist in model definitions.`);
+        }
+        object3d = loadedObject;
+    }
+
+    return {
+        elevation: persisted.elevation,
+        height: persisted.height,
+        mutableFields: persisted.mutableFields,
+        name: persisted.name,
+        thickness: persisted.thickness,
+        thumbnail: persisted.thumbnail,
+        fileIndex: persisted.modelFileIndex,
+        object3d: object3d,
+        width: persisted.width,
+    };
+};
+
 export const toVector3 = (persisted: PersistedVector3): Vector3 => {
     return new Vector3(persisted.x, persisted.y, persisted.z);
 };
@@ -121,6 +145,7 @@ export const persistComponentProps = (cp: ComponentProps): PersistedComponentPro
         name: cp.name,
         thickness: cp.thickness,
         thumbnail: cp.thumbnail,
+        modelFileIndex: cp.fileIndex,
         width: cp.width,
     };
 };

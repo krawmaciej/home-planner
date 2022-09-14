@@ -9,7 +9,7 @@ import {IMovingWallComponent} from "../../drawer/objects/component/IMovingWallCo
 import {IPlacedWallComponent} from "../../drawer/objects/component/IPlacedWallComponent";
 import {
     PersistedPlacedWall, PersistedWallComponent, persistPlacedWall, persistWallComponent,
-    toAdjacentWallPropsList,
+    toAdjacentWallPropsList, toComponentProps,
     toVector3,
     toWallConstruction
 } from "./Mappers";
@@ -100,7 +100,7 @@ export const loadData = (
         }
 
         for (const persistedWallComponent of wallToComponent.componentList) {
-            const placedWallComponent = createMovingWallComponent(persistedWallComponent)
+            const placedWallComponent = createMovingWallComponent(persistedWallComponent, doorDefinitions, windowDefinitions)
                 .createPlacedComponent(placedWall);
             placedWallComponent.changePosition(toVector3(persistedWallComponent.position));
             placedWallComponent.changeOrientation(Direction.ofStrings(persistedWallComponent.orientation));
@@ -117,7 +117,7 @@ export const loadData = (
                     texture,
                     placedWallComponent.getFrameMaterial(),
                     COMPONENT_FRAME_INITIAL_TEXTURE_ROTATION,
-                    persistedWallComponent.textureRotation
+                    persistedWallComponent.textureRotation,
                 );
             }
 
@@ -137,11 +137,15 @@ export const loadData = (
     };
 };
 
-const createMovingWallComponent = (persistedWallComponent: PersistedWallComponent): IMovingWallComponent => {
+const createMovingWallComponent = (
+    persistedWallComponent: PersistedWallComponent,
+    doorDefinitions: Array<ComponentProps>,
+    windowDefinitions: Array<ComponentProps>,
+): IMovingWallComponent => {
     switch (persistedWallComponent.type) {
         case ComponentType.DOOR:
-            return WallComponent.createMovingDoor(persistedWallComponent.props);
+            return WallComponent.createMovingDoor(toComponentProps(persistedWallComponent.props, doorDefinitions));
         case ComponentType.WINDOW:
-            return WallComponent.createMovingWindow(persistedWallComponent.props);
+            return WallComponent.createMovingWindow(toComponentProps(persistedWallComponent.props, windowDefinitions));
     }
 };

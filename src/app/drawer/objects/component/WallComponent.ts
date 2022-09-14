@@ -72,8 +72,8 @@ const WINDOW_SHAPE: ComponentShape = {
 export type ComponentProps = {
     readonly thumbnail: string,
     readonly name: string,
-    // todo: add object index from objects array
-    readonly object3d?: Object3D,
+    readonly fileIndex: number | undefined,
+    readonly object3d: Object3D | undefined,
     width: number,
     readonly thickness: number,
     height: number,
@@ -87,9 +87,14 @@ export type ComponentPropsMutableFields = {
     readonly elevation: boolean,
 }
 
+const NO_FILE_INDEX = undefined;
+const NO_OBJECT = undefined;
+
 export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
     name: "Otwór",
     thumbnail: "hole_thumbnail.jpg",
+    fileIndex: NO_FILE_INDEX,
+    object3d: NO_OBJECT,
     width: 6,
     thickness: 1,
     height: 10,
@@ -100,6 +105,8 @@ export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
 export const DEFAULT_MUTABLE_DOOR_PROPS: ComponentProps = {
     name: "Otwór",
     thumbnail: "hole_thumbnail.jpg",
+    fileIndex: NO_FILE_INDEX,
+    object3d: NO_OBJECT,
     width: 8,
     thickness: 1,
     height: 20,
