@@ -1,59 +1,18 @@
 import {SceneObjectsState} from "../context/SceneObjectsDefaults";
-import {AdjacentWallProps} from "../../drawer/components/DrawerMath";
 import {
-    ComponentProps,
     ComponentType,
     WallComponent
 } from "../../drawer/objects/component/WallComponent";
-import {ObjectSideOrientation} from "../../drawer/constants/Types";
 import {PlacedWall} from "../../drawer/objects/wall/PlacedWall";
 import {IMovingWallComponent} from "../../drawer/objects/component/IMovingWallComponent";
 import {IPlacedWallComponent} from "../../drawer/objects/component/IPlacedWallComponent";
 import {
-    PersistedVector2D,
-    PersistedVector3,
-    PersistedWallConstruction, persistVector2D, persistWallConstruction,
+    PersistedPlacedWall, PersistedWallComponent, persistPlacedWall, persistWallComponent,
     toAdjacentWallPropsList,
     toVector3,
     toWallConstruction
 } from "./Mappers";
 import {Direction} from "../../drawer/objects/wall/Direction";
-
-type PersistedComponentProps = {
-    thumbnail: string,
-    name: string,
-    width: number,
-    thickness: number,
-    height: number,
-    elevation: number,
-    mutableFields: PersistedComponentPropsMutableFields,
-}
-
-type PersistedComponentPropsMutableFields = {
-    width: boolean,
-    height: boolean,
-    elevation: boolean,
-}
-
-export type PersistedAdjacentWallProps = {
-    toSide: ObjectSideOrientation,
-    points: Array<PersistedVector3>,
-}
-
-type PersistedPlacedWall = {
-    props: PersistedWallConstruction,
-    adjacentWallPropsList: Array<PersistedAdjacentWallProps>,
-    // todo: wall side colors will be kept in another structure and applied to wall's direction in order
-}
-
-type PersistedWallComponent = {
-    props: PersistedComponentProps,
-    position: PersistedVector3,
-    orientation: PersistedVector2D,
-    type: ComponentType,
-    postProcessedTextureRotation: number,
-    frameColor: string,
-}
 
 type WallToComponents = {
     wall: PersistedPlacedWall,
@@ -63,28 +22,12 @@ type WallToComponents = {
 export const saveFile = (sceneObjectsState: SceneObjectsState): string => {
 
     const wallToComponentsList = sceneObjectsState.placedWalls.map(pw => {
-        const wall: PersistedPlacedWall = {
-            props: persistWallConstruction(pw.props),
-            adjacentWallPropsList: pw.adjacentWallPropsList.map(awp => mapAdjacentWallProps(awp)),
-        };
-
-        const componentList = pw.wallComponents.map(wc => {
-            const persistedComponent: PersistedWallComponent = {
-                frameColor: "#" + wc.getFrameMaterial().color.getHexString(),
-                orientation: persistVector2D(wc.getOrientation()),
-                position: wc.getPosition(),
-                postProcessedTextureRotation: wc.getPostProcessedTextureRotation().value,
-                props: mapComponentProps((wc as WallComponent).props),
-                type: wc.getType(),
-            };
-            return persistedComponent;
-        });
-
+        const wall: PersistedPlacedWall = persistPlacedWall(pw);
+        const componentList = pw.wallComponents.map(wc => persistWallComponent(wc));
         const wallToComponents: WallToComponents = {
             wall,
             componentList,
         };
-
         return wallToComponents;
     });
 
@@ -100,25 +43,6 @@ class IdProvider {
     }
 }
 
-const mapAdjacentWallProps = (awp: AdjacentWallProps): PersistedAdjacentWallProps => {
-    return { toSide: awp.toSide, points: awp.points };
-};
-
-const mapComponentProps = (cp: ComponentProps): PersistedComponentProps => {
-    return {
-        elevation: cp.elevation,
-        height: cp.height,
-        mutableFields: cp.mutableFields,
-        name: cp.name,
-        thickness: cp.thickness,
-        thumbnail: cp.thumbnail,
-        width: cp.width,
-    };
-};
-
-
-
-
 export const loadData = (data: string): SceneObjectsState => {
     const deserialized: Array<WallToComponents> = JSON.parse(data);
 
@@ -128,6 +52,25 @@ export const loadData = (data: string): SceneObjectsState => {
     for (const wallToComponent of deserialized) {
         const placedWall = PlacedWall.create(toWallConstruction(wallToComponent.wall.props),
             toAdjacentWallPropsList(wallToComponent.wall.adjacentWallPropsList));
+
+        const wallSides = placedWall.wallSides.getWallSides();
+        if (wallSides.length !== wallToComponent.wall.wallSides.length) {
+            throw new Error("Cannot load wall sides - malformed file.");
+        }
+        for (let i = 0; i < wallSides.length; i++) {
+            const wallFaces = wallSides[i].wallFaceArray();
+            if (wallFaces.length !== wallToComponent.wall.wallSides[i].length) {
+                throw new Error("Cannot load wall faces - malformed file.");
+            }
+
+            for (let j = 0; j < wallFaces.length; j++) {
+                const restoredValue = wallToComponent.wall.wallSides[i][j].postProcessedTextureRotation;
+                wallFaces[j].connection.postProcessedTextureRotation.value = restoredValue;
+
+                const restoredColor = wallToComponent.wall.wallSides[i][j].color;
+                wallFaces[j].connection.material.color.set(restoredColor);
+            }
+        }
 
         for (const persistedWallComponent of wallToComponent.componentList) {
             const placedWallComponent = createMovingWallComponent(persistedWallComponent)

@@ -35,9 +35,9 @@ export class WallSide {
     // used to quickly remove component from wallSide's node
     private readonly componentToSideNode = new Map<IPlacedWallComponent, SideNode>();
 
+    public readonly side: ObjectSideOrientation;
     private readonly head: SideNode;
     private readonly tail: SideNode;
-    private readonly side: ObjectSideOrientation;
     private readonly strategyKey: "x" | "z"; // "strategy" used for finding where to put point
     
     public constructor(start: Vector3, end: Vector3, side: ObjectSideOrientation) {
@@ -184,7 +184,7 @@ class Connection {
     public type: ConnectionType;
     public readonly material: MeshStandardMaterial;
     public readonly components: Array<IPlacedWallComponent>; // holds wall's connection doors/windows
-    public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices wih components array
+    public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices with components array
     public readonly postProcessedTextureRotation: PostProcessedTextureRotation;
     public constructor(next: SideNode | undefined, type: ConnectionType, material?: MeshStandardMaterial) {
         this.next = next;

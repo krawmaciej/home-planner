@@ -49,5 +49,4 @@ export class WallSides {
     private putWallSide(p0: Vector3, p1: Vector3, type: ObjectSideOrientation) {
         this.wallSides[type] = new WallSide(p0, p1, type);
     }
-
 }
