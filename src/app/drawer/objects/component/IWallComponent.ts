@@ -3,6 +3,7 @@ import {PlacedWall} from "../wall/PlacedWall";
 import {Vector2D} from "../../constants/Types";
 import {IObjectPointsOnScene} from "../IObjectPointsOnScene";
 import {ISceneObject} from "../ISceneObject";
+import {ComponentType} from "./WallComponent";
 
 export interface IWallComponent extends ISceneObject, IObjectPointsOnScene {
     changePosition(point: Vector3): void;
@@ -26,5 +27,5 @@ export interface IWallComponent extends ISceneObject, IObjectPointsOnScene {
     collides(): boolean;
     getOrientation(): Vector2D;
     getRotation(): Quaternion;
-    isDoor(): boolean;
+    getType(): ComponentType;
 }

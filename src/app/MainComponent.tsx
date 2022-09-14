@@ -8,7 +8,7 @@ import {InteriorArrangerStateParent} from "./arranger/InteriorArrangerStateParen
 import {HeaderMenu} from "./common/persistance/HeaderMenu";
 import {createSceneObjectsState, SceneObjectsState} from "./common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./drawer/FloorPlanStateParent";
-import {ComponentProps, WallComponent} from "./drawer/objects/component/WallComponent";
+import {ComponentProps} from "./drawer/objects/component/WallComponent";
 import {loadDoors, loadObjects, loadTextures, loadWindows} from "./common/models/ResourceLoaders";
 import {ObjectProps} from "./arranger/objects/ImportedObject";
 import {Canvas} from "./common/canvas/Canvas";
@@ -20,7 +20,7 @@ import {FloorPlanState, InteriorArrangerState} from "../App";
 import {ICameraHandler} from "./common/canvas/ICameraHandler";
 import {LoadedTexture} from "./common/models/TextureDefinition";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
-import serializeJavascript from "serialize-javascript";
+import {loadData, saveFile} from "./common/persistance/Persistance";
 
 type Props = {
     renderer: WebGLRenderer,
@@ -67,24 +67,19 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
 
         const fileReader = new FileReader();
         fileReader.onload = (event) => {
-            console.log(event);
-            setSceneObjectsState(createSceneObjectsState());
+            const result = event?.target?.result;
+            if (typeof result === 'string') {
+                const loadedState = loadData(result);
+                setSceneObjectsState(loadedState);
+            } else {
+                console.log("Couldn't load a file.");
+            }
         };
         fileReader.readAsText(file);
     };
 
     const handleSave = () => {
-        for (const placedWall of sceneObjectsState.placedWalls) {
-            const wallComponents = [...placedWall.wallComponents];
-            for (const wallComponent of wallComponents) {
-                (wallComponent as WallComponent).unsetParentWall();
-                placedWall.removeComponent(wallComponent);
-            }
-        }
-
-
-
-        const serialized = serializeJavascript(sceneObjectsState);
+        const serialized = saveFile(sceneObjectsState);
         const element = document.createElement("a");
         const file = new Blob([serialized], {type: 'text/plain'});
         document.body.appendChild(element);

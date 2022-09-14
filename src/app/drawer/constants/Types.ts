@@ -21,7 +21,7 @@ export enum Precision {
 
 export type Vector2D = {
     x: number,
-    z: number
+    z: number,
 }
 
 export enum ObjectElevation {

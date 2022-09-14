@@ -44,7 +44,7 @@ const ARROW_GEOMETRY = new BufferGeometry().setFromPoints([
     new Vector3(0.5, ObjectElevation.COMPONENT, -1),
 ]);
 
-enum ComponentType {
+export enum ComponentType {
     DOOR, WINDOW,
 }
 
@@ -72,6 +72,7 @@ const WINDOW_SHAPE: ComponentShape = {
 export type ComponentProps = {
     readonly thumbnail: string,
     readonly name: string,
+    // todo: add object index from objects array
     readonly object3d?: Object3D,
     width: number,
     readonly thickness: number,
@@ -134,7 +135,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     private readonly frameMaterial: MeshStandardMaterial;
     private readonly postProcessedTextureRotation: PostProcessedTextureRotation;
-    private readonly props: ComponentProps;
+    public readonly props: ComponentProps;
     private readonly window: Line<BufferGeometry, LineBasicMaterial>;
     private orientation: Vector2D;
     private parentWall: undefined | PlacedWall; // not yet placed wall component can also have a parent wall
@@ -411,8 +412,8 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         return this.props.width;
     }
 
-    public isDoor() {
-        return this.shape.type === ComponentType.DOOR;
+    public getType(): ComponentType {
+        return this.shape.type;
     }
 
     public getModel() {
