@@ -12,7 +12,7 @@ export class FloorCreator {
         const geometry = AttributesToGeometry.process(attributes);
         return {
             object3d: new Mesh(geometry, floor.floorMaterial),
-            postProcessedTextureRotation: floor.floorTextureRotation,
+            textureProps: floor.floorTextureRotation,
             initialTextureRotation: 0,
         };
     }

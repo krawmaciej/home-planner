@@ -14,7 +14,7 @@ import {
     DEFAULT_WALL_FRAME_MATERIAL,
     ObjectElevation,
     ObjectPoint,
-    ObjectPoints, PostProcessedTextureRotation,
+    ObjectPoints, TextureProps,
     Vector2D
 } from "../../constants/Types";
 import {IMovingWallComponent} from "./IMovingWallComponent";
@@ -134,7 +134,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
     ]);
 
     private readonly frameMaterial: MeshStandardMaterial;
-    private readonly postProcessedTextureRotation: PostProcessedTextureRotation;
+    private readonly textureProps: TextureProps;
     public readonly props: ComponentProps;
     private readonly window: Line<BufferGeometry, LineBasicMaterial>;
     private orientation: Vector2D;
@@ -145,7 +145,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
 
     public constructor(props: ComponentProps, material: LineBasicMaterial, shape: ComponentShape) {
         this.frameMaterial = DEFAULT_WALL_FRAME_MATERIAL.clone();
-        this.postProcessedTextureRotation = { value: 0 };
+        this.textureProps = { rotation: 0 };
         this.props = props;
         const points = WallComponent.createPoints(props);
         points.push(points[ObjectPoint.BOTTOM_LEFT]);
@@ -428,7 +428,7 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         return this.frameMaterial;
     }
 
-    public getPostProcessedTextureRotation(): PostProcessedTextureRotation {
-        return this.postProcessedTextureRotation;
+    public getTextureProps(): TextureProps {
+        return this.textureProps;
     }
 }

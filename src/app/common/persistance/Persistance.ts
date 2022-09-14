@@ -64,8 +64,11 @@ export const loadData = (data: string): SceneObjectsState => {
             }
 
             for (let j = 0; j < wallFaces.length; j++) {
-                const restoredValue = wallToComponent.wall.wallSides[i][j].postProcessedTextureRotation;
-                wallFaces[j].connection.postProcessedTextureRotation.value = restoredValue;
+                const restoredValue = wallToComponent.wall.wallSides[i][j].textureRotation;
+                wallFaces[j].connection.textureProps.rotation = restoredValue;
+
+                const restoredTexture = wallToComponent.wall.wallSides[i][j].textureFileIndex;
+                wallFaces[j].connection.textureProps.fileIndex = restoredTexture;
 
                 const restoredColor = wallToComponent.wall.wallSides[i][j].color;
                 wallFaces[j].connection.material.color.set(restoredColor);
@@ -77,7 +80,8 @@ export const loadData = (data: string): SceneObjectsState => {
                 .createPlacedComponent(placedWall);
             placedWallComponent.changePosition(toVector3(persistedWallComponent.position));
             placedWallComponent.changeOrientation(Direction.ofStrings(persistedWallComponent.orientation));
-            placedWallComponent.getPostProcessedTextureRotation().value = persistedWallComponent.postProcessedTextureRotation;
+            placedWallComponent.getTextureProps().rotation = persistedWallComponent.textureRotation;
+            placedWallComponent.getTextureProps().fileIndex = persistedWallComponent.textureFileIndex;
             placedWallComponent.getFrameMaterial().color.set(persistedWallComponent.frameColor);
 
             placedWall.addComponent(placedWallComponent);

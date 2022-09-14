@@ -18,7 +18,7 @@ export class CeilingCreator {
         const geometry = AttributesToGeometry.process(attributes);
         return {
             object3d: new Mesh(geometry, floor.ceilingMaterial),
-            postProcessedTextureRotation: floor.ceilingTextureRotation,
+            textureProps: floor.ceilingTextureRotation,
             initialTextureRotation: 0,
         };
     }

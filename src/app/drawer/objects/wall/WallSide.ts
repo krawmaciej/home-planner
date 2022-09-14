@@ -3,7 +3,7 @@ import {
     DEFAULT_WALL_MATERIAL,
     ObjectPoint,
     ObjectSideOrientation,
-    PostProcessedTextureRotation
+    TextureProps
 } from "../../constants/Types";
 import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 import {IPlacedWallComponent} from "../component/IPlacedWallComponent";
@@ -161,7 +161,6 @@ export class WallSide {
                 firstPoint: iterator.point,
                 secondPoint: iterator.connection.next.point,
                 connection: iterator.connection,
-                postProcessedTextureRotation: iterator.connection.postProcessedTextureRotation,
             });
             iterator = iterator.connection.next;
         }
@@ -185,14 +184,14 @@ class Connection {
     public readonly material: MeshStandardMaterial;
     public readonly components: Array<IPlacedWallComponent>; // holds wall's connection doors/windows
     public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices with components array
-    public readonly postProcessedTextureRotation: PostProcessedTextureRotation;
+    public readonly textureProps: TextureProps;
     public constructor(next: SideNode | undefined, type: ConnectionType, material?: MeshStandardMaterial) {
         this.next = next;
         this.type = type;
         this.material = material?.clone() ?? DEFAULT_WALL_MATERIAL.clone();
         this.components = new Array<IPlacedWallComponent>();
         this.componentsAttributes = new Array<ComponentAttributes>();
-        this.postProcessedTextureRotation = { value: 0 }; // to pass as a reference and not as a value
+        this.textureProps = { rotation: 0 }; // to pass as a reference and not as a value
     }
     public addComponent(component: IPlacedWallComponent, attributes: ComponentAttributes): Array<IPlacedWallComponent> {
         this.components.push(component);
@@ -224,5 +223,4 @@ export type WallFace = {
     firstPoint: Vector3,
     secondPoint: Vector3,
     connection: Connection,
-    postProcessedTextureRotation: PostProcessedTextureRotation,
 }

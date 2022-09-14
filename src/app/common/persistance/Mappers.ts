@@ -50,7 +50,8 @@ export type PersistedWallComponent = {
     position: PersistedVector3,
     orientation: PersistedVector2D,
     type: ComponentType,
-    postProcessedTextureRotation: number,
+    textureRotation: number,
+    textureFileIndex: number | undefined,
     frameColor: string,
 }
 
@@ -125,7 +126,8 @@ export const persistComponentProps = (cp: ComponentProps): PersistedComponentPro
 };
 
 type PersistedWallFace = {
-    postProcessedTextureRotation: number,
+    textureRotation: number,
+    textureFileIndex: number | undefined,
     color: string,
 }
 
@@ -150,7 +152,8 @@ export const persistPlacedWall = (pw: PlacedWall): PersistedPlacedWall => {
 const persistWallFace = (wallFace: WallFace): PersistedWallFace => {
     return {
         color: persistMaterialColor(wallFace.connection.material),
-        postProcessedTextureRotation: wallFace.connection.postProcessedTextureRotation.value,
+        textureRotation: wallFace.connection.textureProps.rotation,
+        textureFileIndex: wallFace.connection.textureProps.fileIndex,
     };
 };
 
@@ -159,7 +162,8 @@ export const persistWallComponent = (wc: IPlacedWallComponent): PersistedWallCom
         frameColor: persistMaterialColor(wc.getFrameMaterial()),
         orientation: persistVector2D(wc.getOrientation()),
         position: wc.getPosition(),
-        postProcessedTextureRotation: wc.getPostProcessedTextureRotation().value,
+        textureRotation: wc.getTextureProps().rotation,
+        textureFileIndex: wc.getTextureProps().fileIndex,
         props: persistComponentProps((wc as WallComponent).props),
         type: wc.getType(),
     };

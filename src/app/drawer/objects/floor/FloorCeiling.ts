@@ -1,6 +1,6 @@
 import {IFloorCeiling} from "./IFloorCeiling";
 import {BufferGeometry, Line, LineBasicMaterial, MeshStandardMaterial, Scene, Vector3} from "three";
-import {ObjectElevation, ObjectPoint, ObjectPoints, PostProcessedTextureRotation} from "../../constants/Types";
+import {ObjectElevation, ObjectPoint, ObjectPoints, TextureProps} from "../../constants/Types";
 import {AttributeName} from "../../../arranger/constants/Types";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {
@@ -19,8 +19,8 @@ export class FloorCeiling implements IFloorCeiling {
 
     public readonly floorMaterial: MeshStandardMaterial;
     public readonly ceilingMaterial: MeshStandardMaterial;
-    public readonly floorTextureRotation: PostProcessedTextureRotation;
-    public readonly ceilingTextureRotation: PostProcessedTextureRotation;
+    public readonly floorTextureRotation: TextureProps;
+    public readonly ceilingTextureRotation: TextureProps;
     private readonly outline: Line<BufferGeometry, LineBasicMaterial>;
     private readonly diagonal: Line<BufferGeometry, LineBasicMaterial>;
     private objectPoints: ObjectPoints;
@@ -29,8 +29,8 @@ export class FloorCeiling implements IFloorCeiling {
     public constructor(start: Vector3, end: Vector3, meshMaterial: MeshStandardMaterial) {
         this.floorMaterial = meshMaterial.clone();
         this.ceilingMaterial = meshMaterial.clone();
-        this.floorTextureRotation = { value: 0 };
-        this.ceilingTextureRotation = { value: 0 };
+        this.floorTextureRotation = { rotation: 0 };
+        this.ceilingTextureRotation = { rotation: 0 };
         this.objectPoints = FloorCeiling.calculateObjectPoints(start, end);
         const outlineGeo = new BufferGeometry().setFromPoints(this.getOutlinePoints());
         this.outline = new Line(outlineGeo, FloorCeiling.STANDARD_MATERIAL);

@@ -92,7 +92,7 @@ export class PlanToArrangerConverter {
         return {
             object3d: wallFaceMesh.object3d,
             initialTextureRotation: wallFaceMesh.initialTextureRotation,
-            postProcessedTextureRotation: wallFaceMesh.wallFace.postProcessedTextureRotation,
+            textureProps: wallFaceMesh.wallFace.connection.textureProps,
         };
     }
 

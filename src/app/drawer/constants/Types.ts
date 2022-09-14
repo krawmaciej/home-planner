@@ -47,6 +47,7 @@ export enum ObjectSideOrientation {
     BOTTOM, RIGHT, TOP, LEFT,
 }
 
-export type PostProcessedTextureRotation = {
-    value: number,
+export type TextureProps = {
+    rotation: number,
+    fileIndex?: number,
 }

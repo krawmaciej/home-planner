@@ -18,7 +18,7 @@ export class ComponentFrameCreator {
 
         return {
             object3d: new Mesh(geometry, wallComponent.getFrameMaterial()),
-            postProcessedTextureRotation: wallComponent.getPostProcessedTextureRotation(),
+            textureProps: wallComponent.getTextureProps(),
             initialTextureRotation: 0,
         };
     }

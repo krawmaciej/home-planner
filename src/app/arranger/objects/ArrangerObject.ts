@@ -1,5 +1,5 @@
 import {Mesh, MeshStandardMaterial, Object3D} from "three";
-import {PostProcessedTextureRotation} from "../../drawer/constants/Types";
+import {TextureProps} from "../../drawer/constants/Types";
 
 export type ArrangerObject = {
     readonly object3d: Object3D,
@@ -10,6 +10,6 @@ export type ArrangerObject = {
  */
 export type ObjectWithEditableTexture = ArrangerObject & {
     readonly object3d: Mesh<any, MeshStandardMaterial>,
-    readonly postProcessedTextureRotation: PostProcessedTextureRotation,
+    readonly textureProps: TextureProps,
     readonly initialTextureRotation: number,
 }

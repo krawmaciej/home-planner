@@ -5,6 +5,7 @@ import {ChromePicker} from "react-color";
 import {LoadedTexture} from "../../common/models/TextureDefinition";
 import {RADIAN_MULTIPLIER} from "../../common/components/CommonMathOperations";
 import {ObjectWithEditableTexture} from "../objects/ArrangerObject";
+import {disposeTexture, setTexture} from "../../common/components/TextureOperations";
 
 type Props = {
     editableObject: ObjectWithEditableTexture,
@@ -23,19 +24,13 @@ export const AppearanceEditController: React.FC<Props> = ({ editableObject, text
     });
     const [color, setColor] = useState("#" + editableObject.object3d.material.color.getHexString());
     const [textureIndex, setTextureIndex] = useState<number>();
-    const [postProcessedRotation, setPostProcessedRotation] = useState(editableObject.postProcessedTextureRotation.value);
+    const [textureRotation, setTextureRotation] = useState(editableObject.textureProps.rotation);
 
     const toggleHighlighted = () => {
         setHighlightToggle(prev => ({
                 ...prev,
                 highlighted: !prev.highlighted,
         }));
-    };
-
-    const disposeLastTexture = () => {
-        if (editableObject.object3d.material.map !== null) {
-            editableObject.object3d.material.map.dispose();
-        }
     };
 
     useEffect(() => {
@@ -57,35 +52,30 @@ export const AppearanceEditController: React.FC<Props> = ({ editableObject, text
     }, [color]);
 
     useEffect(() => {
-        editableObject.postProcessedTextureRotation.value = postProcessedRotation;
+        editableObject.textureProps.rotation = textureRotation;
         const objectTexture = editableObject.object3d.material.map;
         if (objectTexture !== null) {
-            objectTexture.rotation = editableObject.initialTextureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
+            objectTexture.rotation = editableObject.initialTextureRotation + (textureRotation * RADIAN_MULTIPLIER);
         }
-    }, [postProcessedRotation]);
+    }, [textureRotation]);
 
     useEffect(() => {
         if (textureIndex !== undefined) {
+            editableObject.textureProps.fileIndex = textureIndex;
             const texture = texturePromises.at(textureIndex);
             if (texture === undefined) {
-                throw new Error(`Selected texture index: ${textureIndex} from textures ${JSON.stringify(texturePromises)}`);
+                throw new Error(`Selected texture index in AppearanceEditController: ${textureIndex}
+                    from textures ${JSON.stringify(texturePromises)}`);
             }
-
-            disposeLastTexture();
-
-            texture.texture.then(txt => {
-                const clonedTexture = txt.clone();
-                clonedTexture.needsUpdate = true;
-                clonedTexture.rotation = editableObject.initialTextureRotation + (postProcessedRotation * RADIAN_MULTIPLIER);
-                editableObject.object3d.material.map = clonedTexture;
-                editableObject.object3d.material.needsUpdate = true;
-            });
+            setTexture(texture, editableObject.object3d.material, editableObject.initialTextureRotation, textureRotation);
         }
-    }, [textureIndex]);
+
+        }, [textureIndex]);
 
 
     const unsetTexture = () => {
-        disposeLastTexture();
+        editableObject.textureProps.fileIndex = undefined;
+        disposeTexture(editableObject.object3d.material);
         editableObject.object3d.material.map = null;
         editableObject.object3d.material.needsUpdate = true;
         setTextureIndex(undefined);
@@ -114,7 +104,7 @@ export const AppearanceEditController: React.FC<Props> = ({ editableObject, text
                     />
                 </Dropdown.Menu>
             </Dropdown>
-            <TextureRotation currentRotation={postProcessedRotation} setRotation={setPostProcessedRotation}/>
+            <TextureRotation currentRotation={textureRotation} setRotation={setTextureRotation}/>
         </div>
     );
 };

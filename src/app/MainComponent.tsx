@@ -21,6 +21,7 @@ import {ICameraHandler} from "./common/canvas/ICameraHandler";
 import {LoadedTexture} from "./common/models/TextureDefinition";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {loadData, saveFile} from "./common/persistance/Persistance";
+import spinner from "../loading-spinner.gif";
 
 type Props = {
     renderer: WebGLRenderer,
@@ -135,6 +136,15 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
         loadObjects().then(objects => setObjectDefinitions(objects));
         loadTextures().then(txts => setTexturePromises(txts));
     }, []);
+
+    if (
+        doorDefinitions === undefined ||
+        windowDefinitions === undefined ||
+        objectDefinitions === undefined ||
+        texturePromises === undefined
+    ) {
+        return (<div><img src={spinner} alt="loading"/></div>);
+    }
 
     return (
         <div className="app-main-view">
