@@ -182,7 +182,7 @@ const SelectComponents = ({
     }
 
     if (components.length === 1) {
-        return (<div><img src={spinner} alt="loading"/></div>);
+        return (<div className="h-100 d-flex justify-content-center align-items-center"><img src={spinner} alt="loading"/></div>);
     }
 
     return (

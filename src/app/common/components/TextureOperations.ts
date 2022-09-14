@@ -1,6 +1,11 @@
 import {RADIAN_MULTIPLIER} from "./CommonMathOperations";
 import {MeshStandardMaterial} from "three";
 import {LoadedTexture} from "../models/TextureDefinition";
+import {ObjectSideOrientation} from "../../drawer/constants/Types";
+
+export const COMPONENT_FRAME_INITIAL_TEXTURE_ROTATION = 0;
+export const CEILING_INITIAL_TEXTURE_ROTATION = 0;
+export const FLOOR_INITIAL_TEXTURE_ROTATION = 0;
 
 export const setTexture = (
     texturePromise: LoadedTexture,
@@ -21,5 +26,14 @@ export const setTexture = (
 export const disposeTexture = (material: MeshStandardMaterial) => {
     if (material.map !== null) {
         material.map.dispose();
+    }
+};
+
+
+export const getWallFaceTextureRotation = (orientation: ObjectSideOrientation): number => {
+    if (orientation === ObjectSideOrientation.BOTTOM || orientation === ObjectSideOrientation.TOP) {
+        return 0.0;
+    } else {
+        return Math.PI * 1.5;
     }
 };

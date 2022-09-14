@@ -81,11 +81,11 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
     }, [sceneObjects, canvasState]);
 
     if (sceneObjects.wallHeight === undefined) {
-        return (<div>Ustaw wysokość ścian dla rysunku planu 2D.</div>);
+        return (<div className="h-100 d-flex justify-content-center align-items-center">Ustaw wysokość ścian dla rysunku planu 2D.</div>);
     }
 
     if (convertedObjects === undefined) {
-        return (<div><img src={spinner} alt="loading"/></div>);
+        return (<div className="h-100 d-flex justify-content-center align-items-center"><img src={spinner} alt="loading"/></div>);
     }
 
     return (

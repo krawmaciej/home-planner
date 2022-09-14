@@ -1,5 +1,6 @@
 import {SceneObjectsState} from "../context/SceneObjectsDefaults";
 import {
+    ComponentProps,
     ComponentType,
     WallComponent
 } from "../../drawer/objects/component/WallComponent";
@@ -13,6 +14,13 @@ import {
     toWallConstruction
 } from "./Mappers";
 import {Direction} from "../../drawer/objects/wall/Direction";
+import {ObjectProps} from "../../arranger/objects/ImportedObject";
+import {LoadedTexture} from "../models/TextureDefinition";
+import {
+    COMPONENT_FRAME_INITIAL_TEXTURE_ROTATION,
+    getWallFaceTextureRotation,
+    setTexture
+} from "../components/TextureOperations";
 
 type WallToComponents = {
     wall: PersistedPlacedWall,
@@ -43,7 +51,13 @@ class IdProvider {
     }
 }
 
-export const loadData = (data: string): SceneObjectsState => {
+export const loadData = (
+    data: string,
+    doorDefinitions: Array<ComponentProps>,
+    windowDefinitions: Array<ComponentProps>,
+    objectDefinitions: Array<ObjectProps>,
+    texturePromises: Array<LoadedTexture>
+): SceneObjectsState => {
     const deserialized: Array<WallToComponents> = JSON.parse(data);
 
     const placedWallsState = new Array<PlacedWall>();
@@ -64,14 +78,24 @@ export const loadData = (data: string): SceneObjectsState => {
             }
 
             for (let j = 0; j < wallFaces.length; j++) {
-                const restoredValue = wallToComponent.wall.wallSides[i][j].textureRotation;
-                wallFaces[j].connection.textureProps.rotation = restoredValue;
+                const restoredRotation = wallToComponent.wall.wallSides[i][j].textureRotation;
+                wallFaces[j].connection.textureProps.rotation = restoredRotation;
 
                 const restoredTexture = wallToComponent.wall.wallSides[i][j].textureFileIndex;
                 wallFaces[j].connection.textureProps.fileIndex = restoredTexture;
 
                 const restoredColor = wallToComponent.wall.wallSides[i][j].color;
                 wallFaces[j].connection.material.color.set(restoredColor);
+
+                if (restoredTexture !== undefined) {
+                    const texture = texturePromises.at(restoredTexture);
+                    if (texture === undefined) {
+                        throw new Error(`Selected texture index: ${restoredTexture} 
+                            not found in textures ${JSON.stringify(texturePromises)}`);
+                    }
+                    const initialRotation = getWallFaceTextureRotation(i);
+                    setTexture(texture, wallFaces[j].connection.material, initialRotation, restoredRotation);
+                }
             }
         }
 
@@ -83,6 +107,19 @@ export const loadData = (data: string): SceneObjectsState => {
             placedWallComponent.getTextureProps().rotation = persistedWallComponent.textureRotation;
             placedWallComponent.getTextureProps().fileIndex = persistedWallComponent.textureFileIndex;
             placedWallComponent.getFrameMaterial().color.set(persistedWallComponent.frameColor);
+            if (persistedWallComponent.textureFileIndex !== undefined) {
+                const texture = texturePromises.at(persistedWallComponent.textureFileIndex);
+                if (texture === undefined) {
+                    throw new Error(`Selected texture index: ${persistedWallComponent.textureFileIndex} 
+                            not found in textures ${JSON.stringify(texturePromises)}`);
+                }
+                setTexture(
+                    texture,
+                    placedWallComponent.getFrameMaterial(),
+                    COMPONENT_FRAME_INITIAL_TEXTURE_ROTATION,
+                    persistedWallComponent.textureRotation
+                );
+            }
 
             placedWall.addComponent(placedWallComponent);
             wallComponentsState.push(placedWallComponent);

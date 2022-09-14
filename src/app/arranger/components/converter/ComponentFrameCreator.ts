@@ -9,6 +9,7 @@ import {AttributesToGeometry} from "./AttributesToGeometry";
 import {IPlacedWallComponent} from "../../../drawer/objects/component/IPlacedWallComponent";
 import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
+import {COMPONENT_FRAME_INITIAL_TEXTURE_ROTATION} from "../../../common/components/TextureOperations";
 
 export class ComponentFrameCreator {
 
@@ -19,7 +20,7 @@ export class ComponentFrameCreator {
         return {
             object3d: new Mesh(geometry, wallComponent.getFrameMaterial()),
             textureProps: wallComponent.getTextureProps(),
-            initialTextureRotation: 0,
+            initialTextureRotation: COMPONENT_FRAME_INITIAL_TEXTURE_ROTATION,
         };
     }
 

@@ -4,6 +4,7 @@ import {Attributes, Coordinate, Facing} from "../../constants/Types";
 import {ObjectPoint} from "../../../drawer/constants/Types";
 import {AttributesToGeometry} from "./AttributesToGeometry";
 import {ObjectWithEditableTexture} from "../../objects/ArrangerObject";
+import {CEILING_INITIAL_TEXTURE_ROTATION} from "../../../common/components/TextureOperations";
 
 export class CeilingCreator {
 
@@ -19,7 +20,7 @@ export class CeilingCreator {
         return {
             object3d: new Mesh(geometry, floor.ceilingMaterial),
             textureProps: floor.ceilingTextureRotation,
-            initialTextureRotation: 0,
+            initialTextureRotation: CEILING_INITIAL_TEXTURE_ROTATION,
         };
     }
 
