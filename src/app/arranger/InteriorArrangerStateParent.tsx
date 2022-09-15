@@ -85,7 +85,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
     }
 
     if (convertedObjects === undefined) {
-        return (<div className="h-100 d-flex justify-content-center align-items-center"><img src={spinner} alt="loading"/></div>);
+        return (<div className="center-div-horizontally-and-vertically"><img src={spinner} alt="loading"/></div>);
     }
 
     return (

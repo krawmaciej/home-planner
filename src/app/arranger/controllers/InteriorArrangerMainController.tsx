@@ -216,7 +216,7 @@ export const InteriorArrangerMainController: React.FC<Props> = ({
 
     return (
         <>
-            {menuName}
+            <div className="center-div-horizontally">{menuName}</div>
             <InteriorArrangerContext.Provider value={context}>
                 <DisplayMenu
                     currentSelection={menuSelection}
