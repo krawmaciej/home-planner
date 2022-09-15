@@ -5,7 +5,7 @@ import "./css/SideBySide.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import {InteriorArrangerStateParent} from "./arranger/InteriorArrangerStateParent";
-import {HeaderMenu} from "./common/persistance/HeaderMenu";
+import {HeaderMenuController} from "./common/persistance/controllers/HeaderMenuController";
 import {createSceneObjectsState, SceneObjectsState} from "./common/context/SceneObjectsDefaults";
 import {FloorPlanStateParent} from "./drawer/FloorPlanStateParent";
 import {ComponentProps} from "./drawer/objects/component/WallComponent";
@@ -34,9 +34,15 @@ enum UISelection {
     FLOOR_PLAN, INTERIOR_ARRANGER,
 }
 
+const SAVED_PROJECT_FILE_NAME = "zapisProjektu.json";
+const RENDERED_CANVAS_FILE_NAME = "zrzutEkranu.jpg";
+const JSON_MIME = 'application/json';
+const PNG_MIME = "image/jpeg";
+const OCTET_STREAM_MIME = "image/octet-stream";
+
 export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorPlanState, interiorArrangerState }) => {
 
-    const getCurrentCameraHandler = (selection: UISelection): ICameraHandler => {
+    const getSelectionCameraHandler = (selection: UISelection): ICameraHandler => {
         switch (selection) {
             case UISelection.FLOOR_PLAN:
                 return floorPlanState.cameraHandler;
@@ -144,21 +150,38 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
 
     const handleSave = () => {
         const serialized = saveFile(sceneObjectsState);
+        const file = new Blob([serialized], {type: JSON_MIME});
         const element = document.createElement("a");
-        const file = new Blob([serialized], {type: 'text/plain'});
         document.body.appendChild(element);
         element.href = URL.createObjectURL(file);
-        element.download = "savedProject";
+        element.download = SAVED_PROJECT_FILE_NAME;
+        element.click();
+        document.body.removeChild(element);
+    };
+
+    const handleSaveRender = () => {
+        const cameraHandler = getSelectionCameraHandler(currentMenu);
+        // re-render to avoid black image
+        renderer.render(canvasState.scene, cameraHandler.getCamera());
+        labelRenderer.render(canvasState.scene, cameraHandler.getCamera());
+
+        const dataURL = renderer.domElement.toDataURL(PNG_MIME, 1.0);
+
+        const element = document.createElement("a");
+        document.body.appendChild(element);
+        element.href = dataURL.replace(PNG_MIME, OCTET_STREAM_MIME);
+        element.download = RENDERED_CANVAS_FILE_NAME;
         element.click();
         document.body.removeChild(element);
     };
 
     return (
         <div className="app-main-view">
-            <HeaderMenu
+            <HeaderMenuController
                 className="app-top-menu"
                 openFile={handleStateLoad}
                 saveFile={handleSave}
+                saveRender={handleSaveRender}
                 chooseInteriorArranger={chooseInteriorArranger}
                 choosePlanDrawer={choosePlanDrawer}
                 resetCamera={resetCamera}
@@ -167,14 +190,14 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
                 scene={canvasState.scene}
                 renderer={renderer}
                 labelRenderer={labelRenderer}
-                cameraHandler={getCurrentCameraHandler(currentMenu)}
+                cameraHandler={getSelectionCameraHandler(currentMenu)}
                 mainInputHandler={canvasState.mainInputHandler}
                 observers={canvasState.observers}
             />
             <SelectController
                 selection={currentMenu}
                 renderer={renderer}
-                cameraHandler={getCurrentCameraHandler(currentMenu)}
+                cameraHandler={getSelectionCameraHandler(currentMenu)}
                 sceneObjectsState={sceneObjectsState}
                 doorDefinitions={doorDefinitions}
                 windowDefinitions={windowDefinitions}

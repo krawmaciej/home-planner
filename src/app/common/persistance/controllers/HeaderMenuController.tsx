@@ -5,12 +5,13 @@ type Props = {
     className?: string,
     openFile: () => void,
     saveFile: () => void,
+    saveRender: () => void,
     chooseInteriorArranger: () => void,
     choosePlanDrawer: () => void,
     resetCamera: () => void,
 }
 
-export const HeaderMenu: React.FC<Props> = (props: Props) => {
+export const HeaderMenuController: React.FC<Props> = (props: Props) => {
 
     return (
         <div className={props.className}>
@@ -18,9 +19,7 @@ export const HeaderMenu: React.FC<Props> = (props: Props) => {
                 <Dropdown.Item onClick={props.openFile}>Otwórz projekt</Dropdown.Item>
                 <Dropdown.Item onClick={props.saveFile}>Zapisz projekt</Dropdown.Item>
                 <Dropdown.Divider/>
-                <Dropdown.Item onClick={() => console.log("3")}>Zapisz projekt jako</Dropdown.Item>
-                <Dropdown.Divider/>
-                <Dropdown.Item onClick={() => console.log("3")}>Eksportuj widok do pliku</Dropdown.Item>
+                <Dropdown.Item onClick={props.saveRender}>Eksportuj widok do pliku</Dropdown.Item>
             </DropdownButton>
             <DropdownButton title="Widok" className="persistence-button btn-sm small" variant="secondary" size="sm">
                 <Dropdown.Item onClick={props.choosePlanDrawer}>Rysunek planu 2D</Dropdown.Item>
