@@ -1,8 +1,9 @@
 import {Scene, Vector3} from "three";
 import {CollisionDetector} from "../CollisionDetector";
 import {FloorCeiling} from "../../objects/floor/FloorCeiling";
+import {IObjectRemover} from "../IObjectRemover";
 
-export class FloorsRemover {
+export class FloorsRemover implements IObjectRemover{
 
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;
@@ -16,20 +17,21 @@ export class FloorsRemover {
         this.floors = floors;
     }
 
-    public removeObjectAt(position: Vector3) {
+    public removeAt(position: Vector3) {
         const selected = this.collisionDetector.pickRectangularObjectWithPointer(position, this.floors);
         if (selected === undefined) {
             return;
         }
 
         const indexOf = this.floors.indexOf(selected);
-        if (indexOf !== -1) {
-            this.floors.splice(indexOf, 1);
+        if (indexOf === -1) {
+            throw new Error(`Removing floor from list that doesn't contain that floor.`);
         }
+        this.floors.splice(indexOf, 1);
         selected.removeFrom(this.scene);
     }
 
-    public selectObjectAt(position: Vector3) {
+    public selectAt(position: Vector3) {
         this.currentlySelected?.unHighlight();
         const selected = this.collisionDetector.pickRectangularObjectWithPointer(position, this.floors);
         selected?.highlight();

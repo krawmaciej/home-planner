@@ -31,6 +31,8 @@ export enum ObjectElevation {
     UI = 4,
 }
 
+export const WALL_COMPONENT_SNAP_STEP = 5 / 10;
+
 export type ObjectPoints = [ Vector3, Vector3, Vector3, Vector3, ];
 
 /**

@@ -171,4 +171,10 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     public removeLabel(): void {
         this.wall.remove(this.label);
     }
+
+    public highlight(): void {
+    }
+
+    public unHighlight(): void {
+    }
 }

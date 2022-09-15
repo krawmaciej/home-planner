@@ -77,4 +77,10 @@ export class NoMovingWallComponent implements IMovingWallComponent {
     removeLabel(): void {
         throw new Error("Called method on a not initialized component.");
     }
+    highlight(): void {
+        throw new Error("Called method on a not initialized component.");
+    }
+    unHighlight(): void {
+        throw new Error("Called method on a not initialized component.");
+    }
 }

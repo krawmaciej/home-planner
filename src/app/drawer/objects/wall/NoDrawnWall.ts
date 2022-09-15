@@ -26,4 +26,10 @@ export class NoDrawnWall implements IDrawnWall {
     removeLabel(): void {
         // no op
     }
+    highlight(): void {
+        // no op
+    }
+    unHighlight(): void {
+        // no op
+    }
 }

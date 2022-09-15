@@ -1,12 +1,12 @@
 import {IInputHandler} from "../../../common/canvas/inputHandler/IInputHandler";
 import {InputPoint} from "../../../common/canvas/inputHandler/MainInputHandler";
-import {FloorsRemover} from "../../components/floor/FloorsRemover";
+import {IObjectRemover} from "../../components/IObjectRemover";
 
 export class RemoveObjectIH implements IInputHandler {
 
-    private readonly floorsRemover: FloorsRemover;
+    private readonly floorsRemover: IObjectRemover;
 
-    public constructor(floorsRemover: FloorsRemover) {
+    public constructor(floorsRemover: IObjectRemover) {
         this.floorsRemover = floorsRemover;
 
     }
@@ -16,10 +16,10 @@ export class RemoveObjectIH implements IInputHandler {
     }
 
     public handleClick({ unprojected }: InputPoint): void {
-        this.floorsRemover.removeObjectAt(unprojected);
+        this.floorsRemover.removeAt(unprojected);
     }
 
     public handleMovement({ unprojected }: InputPoint): void {
-        this.floorsRemover.selectObjectAt(unprojected);
+        this.floorsRemover.selectAt(unprojected);
     }
 }

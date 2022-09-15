@@ -11,7 +11,7 @@ import {
 } from "three";
 import {DrawerMath} from "../../components/DrawerMath";
 import {
-    DEFAULT_WALL_FRAME_MATERIAL,
+    DEFAULT_WALL_FRAME_MATERIAL, HIGHLIGHTED_COLOR,
     ObjectElevation,
     ObjectPoint,
     ObjectPoints, TextureProps,
@@ -34,6 +34,10 @@ const COLLIDING_MATERIAL = new LineBasicMaterial({
 
 const PLACED_MATERIAL = new LineBasicMaterial({
     color: 0x000000,
+});
+
+const HIGHLIGHTED_MATERIAL = new LineBasicMaterial({
+    color: HIGHLIGHTED_COLOR,
 });
 
 const ARROW_GEOMETRY = new BufferGeometry().setFromPoints([
@@ -387,6 +391,22 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         this.window.traverse(it => {
             if (it instanceof Line) {
                 it.material = COLLIDING_MATERIAL;
+            }
+        });
+    }
+
+    public highlight(): void {
+        this.window.traverse(it => {
+            if (it instanceof Line) {
+                it.material = HIGHLIGHTED_MATERIAL;
+            }
+        });
+    }
+
+    public unHighlight(): void {
+        this.window.traverse(it => {
+            if (it instanceof Line) {
+                it.material = PLACED_MATERIAL;
             }
         });
     }

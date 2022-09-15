@@ -106,4 +106,12 @@ export class DrawnWall implements IDrawnWall {
     public getObjectPointsOnScene(): ObjectPoints {
         return this.props.points;
     }
+
+    public highlight(): void {
+        // no op for now
+    }
+
+    public unHighlight(): void {
+        // no op for now
+    }
 }

@@ -31,4 +31,10 @@ export class NoFloorCeiling implements IFloorCeiling {
     removeLabel(): void {
         throw new Error("Called method on a not initialized floor.");
     }
+    highlight(): void {
+        throw new Error("Called method on a not initialized floor.");
+    }
+    unHighlight(): void {
+        throw new Error("Called method on a not initialized floor.");
+    }
 }

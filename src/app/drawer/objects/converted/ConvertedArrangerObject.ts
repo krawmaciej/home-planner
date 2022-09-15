@@ -48,6 +48,14 @@ export class ConvertedArrangerObject implements ISceneObject {
         this.shape.remove(this.label);
     }
 
+    public highlight(): void {
+        // no op
+    }
+
+    public unHighlight(): void {
+        // no op
+    }
+
     private static getOutlinePoints(props: ObjectProps) {
         const x = props.width / 2.0;
         const z = props.thickness / 2.0;
