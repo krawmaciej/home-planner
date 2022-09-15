@@ -1,12 +1,12 @@
 import {Vector3} from "three";
 import {DrawingState, FloorsPointer} from "./FloorsPointer";
 import {IInputHandler} from "../../../../common/canvas/inputHandler/IInputHandler";
-import {FloorsDrawer} from "../../../components/FloorsDrawer";
+import {FloorsDrawer} from "../../../components/floor/FloorsDrawer";
 import {ObjectElevation} from "../../../constants/Types";
 import {InputPoint} from "../../../../common/canvas/inputHandler/MainInputHandler";
 
 /**
- * Stateful input handler for drawing new floors.
+ * Stateful input handler for drawing new floor.
  * Start state is NONE, start point set to 0,0,0.
  */
 export class FloorsDrawingIH implements IInputHandler {

@@ -3,7 +3,7 @@ import {ComponentProps} from "../../../objects/component/WallComponent";
 import {IInputHandler} from "../../../../common/canvas/inputHandler/IInputHandler";
 import {State, WallComponentPointer} from "./WallComponentPointer";
 import {Observer} from "../../../controllers/AddWallComponentController";
-import {WallComponentAdder} from "../../../components/WallComponentAdder";
+import {WallComponentAdder} from "../../../components/component/WallComponentAdder";
 import {InputPoint} from "../../../../common/canvas/inputHandler/MainInputHandler";
 
 export class WallComponentAddingIH implements IInputHandler {

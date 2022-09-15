@@ -163,7 +163,7 @@ export class CollisionDetector {
     }
 
     /**
-     * Finds walls that collide with front and back of the component. Other sides are allowed to collide.
+     * Finds wall that collide with front and back of the component. Other sides are allowed to collide.
      * @param component
      * @param walls 
      * @returns 

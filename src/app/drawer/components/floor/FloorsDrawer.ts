@@ -1,10 +1,10 @@
 import { Scene, Vector3 } from "three";
-import { CollisionDetector } from "./CollisionDetector";
-import {IFloorCeiling} from "../objects/floor/IFloorCeiling";
-import {FloorCeiling} from "../objects/floor/FloorCeiling";
-import {NoFloorCeiling} from "../objects/floor/NoFloorCeiling";
-import {PlacedWall} from "../objects/wall/PlacedWall";
-import {IObjectPointsOnScene} from "../objects/IObjectPointsOnScene";
+import { CollisionDetector } from "../CollisionDetector";
+import {IFloorCeiling} from "../../objects/floor/IFloorCeiling";
+import {FloorCeiling} from "../../objects/floor/FloorCeiling";
+import {NoFloorCeiling} from "../../objects/floor/NoFloorCeiling";
+import {PlacedWall} from "../../objects/wall/PlacedWall";
+import {IObjectPointsOnScene} from "../../objects/IObjectPointsOnScene";
 
 export class FloorsDrawer {
 

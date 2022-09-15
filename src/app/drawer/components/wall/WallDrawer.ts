@@ -1,13 +1,13 @@
 import { Scene, Vector3 } from "three";
-import { ObjectElevation } from "../constants/Types";
-import { WallBuilder } from "../objects/wall/WallBuilder";
-import { IDrawnWall } from "../objects/wall/IDrawnWall";
-import { NoDrawnWall } from "../objects/wall/NoDrawnWall";
-import { WallThickness } from "../objects/wall/WallThickness";
-import {ALL_SIDES, CollisionDetector} from "./CollisionDetector";
-import { PlacedWall } from "../objects/wall/PlacedWall";
-import {FloorCeiling} from "../objects/floor/FloorCeiling";
-import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
+import { ObjectElevation } from "../../constants/Types";
+import { WallBuilder } from "../../objects/wall/WallBuilder";
+import { IDrawnWall } from "../../objects/wall/IDrawnWall";
+import { NoDrawnWall } from "../../objects/wall/NoDrawnWall";
+import { WallThickness } from "../../objects/wall/WallThickness";
+import {ALL_SIDES, CollisionDetector} from "../CollisionDetector";
+import { PlacedWall } from "../../objects/wall/PlacedWall";
+import {FloorCeiling} from "../../objects/floor/FloorCeiling";
+import {IPlacedWallComponent} from "../../objects/component/IPlacedWallComponent";
 
 export class WallDrawer {
 
