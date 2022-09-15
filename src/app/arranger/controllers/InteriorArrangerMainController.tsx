@@ -40,10 +40,10 @@ enum Selection {
     DEFAULT= "",
     OBJECTS = "Dodaj lub edytuj obiekty",
     WALLS = "Edytuj wygląd ścian",
-    FRAMES = "Edytuj wygląd framug",
+    FRAMES = "Edytuj wygląd ościeży",
     FLOORS = "Edytuj wygląd podłóg",
     CEILINGS = "Edytuj wygląd sufitów",
-    ALL_PLANNER_OBJECTS = "Edytuj wygląd ścian, framug, podłóg i sufitów"
+    ALL_PLANNER_OBJECTS = "Edytuj wygląd ścian, ościeży, podłóg i sufitów"
 }
 
 type DisplayMenuProps = {
@@ -79,7 +79,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             return (
                 <ObjectsAppearanceController
                     selectDefaultMenu={selectDefaultMenu}
-                    texts={{ controllerName: Selection.FRAMES, unselectText: "Edytuj inną framugę" }}
+                    texts={{ controllerName: Selection.FRAMES, unselectText: "Edytuj inne ościeże" }}
                     editableObjects={convertedObjects.wallFrames}
                 />
             );
@@ -103,7 +103,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             return (
                 <ObjectsAppearanceController
                     selectDefaultMenu={selectDefaultMenu}
-                    texts={{ controllerName: Selection.ALL_PLANNER_OBJECTS, unselectText: "Edytuj inną ścianę, framugę, sufit lub podłogę" }}
+                    texts={{ controllerName: Selection.ALL_PLANNER_OBJECTS, unselectText: "Edytuj inną ścianę, ościeże, sufit lub podłogę" }}
                     editableObjects={[
                         ...convertedObjects.wallFaces,
                         ...convertedObjects.wallFrames,
