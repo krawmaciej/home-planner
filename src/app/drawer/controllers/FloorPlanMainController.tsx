@@ -114,7 +114,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
         changeMenuName: setControllerName,
     };
 
-    const controllerNameDiv = currentControllerName === "" ? null : <div>{currentControllerName}</div>;
+    const controllerNameDiv = currentControllerName === "" ? null : <div className="center-div-horizontally">{currentControllerName}</div>;
 
     return (
         <>

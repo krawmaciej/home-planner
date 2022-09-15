@@ -2,13 +2,16 @@
   display: flex;
   flex-flow: column;
 }
+
 .app-top-menu {
   height: 6vh;
 }
+
 .app-bottom-menu {
   height: 19vh;
   background-color: grey;
 }
+
 .app-canvas {
   height: 75vh;
   background-color: #DDDDDD;

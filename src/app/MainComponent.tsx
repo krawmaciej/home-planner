@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import "../App.css";
+import "./css/Center.css";
 import "./css/HeaderMenu.css";
 import "./css/SideBySide.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -119,7 +120,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
         objectDefinitions === undefined ||
         texturePromises === undefined
     ) {
-        return (<div className="h-100 d-flex justify-content-center align-items-center"><img src={spinner} alt="loading"/></div>);
+        return (<div className="app-main-view center-div-horizontally-and-vertically"><img src={spinner} alt="loading"/></div>);
     }
 
     const handleLoad = () => {
