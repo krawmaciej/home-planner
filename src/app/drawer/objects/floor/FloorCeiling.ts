@@ -161,7 +161,7 @@ export class FloorCeiling implements IFloorCeiling {
     private static validatePositionsAndPoints(positions: Array<number>, points: Array<number>) {
         if (positions.length !== points.length) {
             throw new Error(
-                `Floor geometry positions: ${positions} should have same number of elements as points: ${points}`
+                `Floor geometry positions: ${JSON.stringify(positions)} should have same number of elements as points: ${points}`
             );
         }
     }

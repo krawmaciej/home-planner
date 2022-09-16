@@ -148,7 +148,7 @@ const deserializeWallsAndWallComponents = (
             if (persistedWallComponent.textureFileIndex !== undefined) {
                 const texture = texturePromises.at(persistedWallComponent.textureFileIndex);
                 if (texture === undefined) {
-                    throw new Error(`Selected texture index in: ${persistedWallComponent} not found in textures.`);
+                    throw new Error(`Selected texture index in: ${JSON.stringify(persistedWallComponent)} not found in textures.`);
                 }
                 setTexture(
                     texture,
@@ -178,7 +178,7 @@ const deserializeFloorsAndCeilings = (floorList: Array<PersistedFloorCeiling>, t
         if (f.floorTextureFileIndex !== undefined) {
             const texture = texturePromises.at(f.floorTextureFileIndex);
             if (texture === undefined) {
-                throw new Error(`Selected texture index in: ${f} not found in textures.`);
+                throw new Error(`Selected texture index in: ${JSON.stringify(f)} not found in textures.`);
             }
             setTexture(
                 texture,
@@ -194,7 +194,7 @@ const deserializeFloorsAndCeilings = (floorList: Array<PersistedFloorCeiling>, t
         if (f.ceilingTextureFileIndex !== undefined) {
             const texture = texturePromises.at(f.ceilingTextureFileIndex);
             if (texture === undefined) {
-                throw new Error(`Selected texture index in: ${f} not found in textures.`);
+                throw new Error(`Selected texture index in: ${JSON.stringify(f)} not found in textures.`);
             }
             setTexture(
                 texture,

@@ -24,21 +24,38 @@ export class WallRemover implements IObjectRemover {
     }
 
     public removeAt(position: Vector3): void {
-        const selected = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
-        if (selected === undefined) {
+        const toRemove = this.collisionDetector.pickRectangularObjectWithPointer(position, this.placedWalls);
+        if (toRemove === undefined) {
             return;
         }
 
-        const wallComponentsToRemove = [...selected.wallComponents];
-        wallComponentsToRemove.forEach(wc => this.removeWallComponents(wc, selected));
+        const wallComponentsToRemove = [...toRemove.wallComponents];
+        wallComponentsToRemove.forEach(wc => this.removeWallComponents(wc, toRemove));
 
-        const collisionResult = this.collisionDetector
-            .detectCollisions(selected.getObjectPointsOnScene(), this.placedWalls, ALL_SIDES);
+        const collisionResult = this.collisionDetector.detectCollisions(
+            toRemove.getObjectPointsOnScene(),
+            CollisionDetector.getPlacedWallsWithoutProvidedWall(toRemove, this.placedWalls),
+            ALL_SIDES
+        );
+        console.log("cr", collisionResult);
 
-        collisionResult.adjacentObjects.forEach(ao => ao.)
+        collisionResult.adjacentObjects.forEach(aw => {
+            const collisionWithToRemove = this.collisionDetector
+                .detectCollisions(aw.adjacent.getObjectPointsOnScene(), [ toRemove ], ALL_SIDES);
+            if (collisionWithToRemove.adjacentObjects.length !== 1) {
+                throw new Error("Wall to remove collisions from should also collide with removed wall.");
+            }
+            const replaced = aw.adjacent.unCollideWithWall(collisionWithToRemove.adjacentObjects[0]);
 
-        selected.removeFrom(this.scene);
-        const index = this.placedWalls.indexOf(selected);
+            aw.adjacent.removeFrom(this.scene);
+            replaced.addTo(this.scene);
+
+            const index = this.placedWalls.indexOf(aw.adjacent); // replace in array
+            this.placedWalls[index] = replaced;
+        });
+
+        toRemove.removeFrom(this.scene);
+        const index = this.placedWalls.indexOf(toRemove);
         if (index === -1) {
             throw new Error(`Wall to remove was not found in placed walls list.`);
         }

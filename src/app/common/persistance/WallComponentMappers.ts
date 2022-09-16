@@ -35,7 +35,7 @@ export const toComponentProps = (persisted: PersistedComponentProps, modelDefini
     if (persisted.modelFileIndex !== undefined) {
         const loadedObject = modelDefinitions.at(persisted.modelFileIndex)?.object3d;
         if (loadedObject === undefined) {
-            throw new Error(`Model for ${persisted} does not exist in model definitions.`);
+            throw new Error(`Model for ${JSON.stringify(persisted)} does not exist in model definitions.`);
         }
         object3d = loadedObject;
     }

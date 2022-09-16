@@ -18,6 +18,7 @@ import {WallBuilder} from "./WallBuilder";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {createWallConstructionLabel} from "../../components/Labels";
 import {IObjectPointsOnScene} from "../IObjectPointsOnScene";
+import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 
 export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     
@@ -94,10 +95,10 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
      * @param adjacentWallProps
      */
     public collidedWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
-        const copyOfWallComponents = [...this.wallComponents];
-        copyOfWallComponents.forEach(component => this.removeComponent(component));
+        const wallComponentsToReAdd = [...this.wallComponents];
+        wallComponentsToReAdd.forEach(component => this.removeComponent(component));
         this.wallSides.putHole(adjacentWallProps.toSide, adjacentWallProps.points);
-        copyOfWallComponents.forEach(component => this.addComponent(component));
+        wallComponentsToReAdd.forEach(component => this.addComponent(component));
 
         const newAdjacentWallList = [...this.adjacentWallPropsList, adjacentWallProps];
         const wallParts = this.wallSides.createDrawableObjects(PlacedWall.MATERIAL);
@@ -112,7 +113,36 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
             this.middle,
             this.anchorStart,
             this.anchorEnd,
-            copyOfWallComponents,
+            wallComponentsToReAdd,
+        );
+    }
+
+    public unCollideWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
+        const wallComponentsToReAdd = [...this.wallComponents];
+        wallComponentsToReAdd.forEach(component => this.removeComponent(component));
+        this.wallSides.fillHole(adjacentWallProps.toSide, adjacentWallProps.points);
+        wallComponentsToReAdd.forEach(component => this.addComponent(component));
+
+        const previousSize = this.adjacentWallPropsList.length;
+        const newAdjacentWallList = this.skipAdjacentWallProps(adjacentWallProps);
+        if (newAdjacentWallList.length !== (previousSize - 1)) {
+            throw new Error(`Didn't skip ${JSON.stringify(adjacentWallProps)}
+                from list: ${JSON.stringify(this.adjacentWallPropsList)}`);
+        }
+
+        const wallParts = this.wallSides.createDrawableObjects(PlacedWall.MATERIAL);
+        const wall = new Group();
+        wallParts.forEach(wp => wall.add(wp));
+        return new PlacedWall(
+            this.props,
+            newAdjacentWallList,
+            this.wallSides,
+            wallParts,
+            wall,
+            this.middle,
+            this.anchorStart,
+            this.anchorEnd,
+            wallComponentsToReAdd,
         );
     }
 
@@ -180,5 +210,22 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     }
 
     public unHighlight(): void {
+    }
+
+    private skipAdjacentWallProps(toSkip: AdjacentWallProps): Array<AdjacentWallProps> {
+        return this.adjacentWallPropsList.filter(awp => {
+            if (awp.toSide !== toSkip.toSide) {
+                return true; // don't skip
+            }
+            if (awp.points.length !== toSkip.points.length) {
+                return true; // don't skip
+            }
+            for (let i = 0; i < awp.points.length; i++) {
+                if (!CommonMathOperations.areVectors3Equal(awp.points[i], toSkip.points[i])) {
+                    return true; // don't skip
+                }
+            }
+            return false;
+        });
     }
 }

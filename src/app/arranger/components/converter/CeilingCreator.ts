@@ -50,7 +50,7 @@ export class CeilingCreator {
 
     private static toUv(coordinates: Array<number>) {
         if (coordinates.length !== 3) {
-            throw new Error(`Malformed Vector3 with coordinates: ${coordinates} while creating ceilings.`);
+            throw new Error(`Malformed Vector3 with coordinates: ${JSON.stringify(coordinates)} while creating ceilings.`);
         }
         return [coordinates[Coordinate.X], coordinates[Coordinate.Z]];
     }

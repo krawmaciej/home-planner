@@ -34,6 +34,6 @@ export class Direction {
             return Direction.LEFT;
         }
 
-        throw new Error(`No matching Vector2D for ${strings}.`);
+        throw new Error(`No matching Vector2D for ${JSON.stringify(strings)}.`);
     }
 }

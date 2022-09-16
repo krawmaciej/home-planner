@@ -23,6 +23,13 @@ export class WallSides {
         this.wallSides[side].cutBlock(points[0], points[1]);
     }
 
+    public fillHole(side: ObjectSideOrientation, points: Array<Vector3>) {
+        if (points.length !== 2) {
+            console.warn("More than 2 points of adjacency from liang barsky!");
+        }
+        this.wallSides[side].fillBlock(points[0], points[1]);
+    }
+
     public addComponent(side: ObjectSideOrientation, component: IPlacedWallComponent) {
         this.wallSides[side].putComponent(component);
     }

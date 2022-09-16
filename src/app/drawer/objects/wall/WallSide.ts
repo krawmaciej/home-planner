@@ -65,11 +65,50 @@ export class WallSide {
     }
 
     /**
-     * 
      * @param firstPoint has to be smaller than {@link this.tail.point}
      * @param secondPoint has to be smaller or equal to {@link this.tail.point}
      */
     public cutBlock(firstPoint: Vector3, secondPoint: Vector3) {
+        const firstNode = new SideNode(firstPoint);
+        const secondNode = new SideNode(secondPoint);
+
+        const strategyKey = this.strategyKey; // "alias"
+
+        // check first pair
+        let beforeIterator: SideNode = this.head;
+        let iterator: SideNode | undefined = this.head.connection.next;
+
+        while (iterator !== undefined) {
+            if (secondPoint[strategyKey] < iterator.point[strategyKey]) { // found higher
+                // cut between iterator and beforeIterator
+                if (CommonMathOperations.areNumbersEqual(firstPoint[strategyKey],beforeIterator.point[strategyKey])) {
+                    beforeIterator.connection = new Connection(secondNode, ConnectionType.HOLE);
+                    secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
+                } else {
+                    beforeIterator.connection.next = firstNode;
+                    firstNode.connection = new Connection(secondNode, ConnectionType.HOLE);
+                    secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
+                }
+                break;
+            } else if (CommonMathOperations.areNumbersEqual(secondPoint[strategyKey], iterator.point[strategyKey])) { // second point is same as existing
+                if (CommonMathOperations.areNumbersEqual(firstPoint[strategyKey], beforeIterator.point[strategyKey])) { // swap current solid line for hole
+                    beforeIterator.connection.type = ConnectionType.HOLE;
+                } else {
+                    beforeIterator.connection.next = firstNode;
+                    firstNode.connection = new Connection(iterator, ConnectionType.HOLE);
+                }
+                break;
+            }
+            beforeIterator = iterator;
+            iterator = iterator.connection.next; // go to next node
+        }
+    }
+
+    /**
+     * @param firstPoint has to be smaller than {@link this.tail.point}
+     * @param secondPoint has to be smaller or equal to {@link this.tail.point}
+     */
+    public fillBlock(firstPoint: Vector3, secondPoint: Vector3) {
         const firstNode = new SideNode(firstPoint);
         const secondNode = new SideNode(secondPoint);
 
