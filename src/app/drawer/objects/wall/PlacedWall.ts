@@ -118,18 +118,37 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     }
 
     public unCollideWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
+        const fromCurrentList = this.findAdjacentWallProps(adjacentWallProps);
+        if (fromCurrentList === undefined) {
+            throw new Error(`WallProps ${JSON.stringify(adjacentWallProps)} aren't present in placed wall.`);
+        }
+
         const wallComponentsToReAdd = [...this.wallComponents];
+        wallComponentsToReAdd.forEach(component => this.removeComponent(component));
+        this.wallSides.fillHole(fromCurrentList.toSide, fromCurrentList.points);
+        wallComponentsToReAdd.forEach(component => this.addComponent(component));
 
         const previousSize = this.adjacentWallPropsList.length;
-        const newAdjacentWallList = this.skipAdjacentWallProps(adjacentWallProps);
+        const newAdjacentWallList = this.skipAdjacentWallProps(fromCurrentList);
         if (newAdjacentWallList.length !== (previousSize - 1)) {
-            throw new Error(`Didn't skip ${JSON.stringify(adjacentWallProps)}
+            throw new Error(`Didn't skip ${JSON.stringify(fromCurrentList)}
                 from list: ${JSON.stringify(this.adjacentWallPropsList)}`);
         }
 
-        const newWall = PlacedWall.create(this.props, newAdjacentWallList);
-        wallComponentsToReAdd.forEach(component => newWall.addComponent(component));
-        return newWall;
+        const wallParts = this.wallSides.createDrawableObjects(PlacedWall.MATERIAL);
+        const wall = new Group();
+        wallParts.forEach(wp => wall.add(wp));
+        return new PlacedWall(
+            this.props,
+            newAdjacentWallList,
+            this.wallSides,
+            wallParts,
+            wall,
+            this.middle,
+            this.anchorStart,
+            this.anchorEnd,
+            wallComponentsToReAdd,
+        );
     }
 
     public addTo(scene: Scene): void {
@@ -193,25 +212,33 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     }
 
     public highlight(): void {
+        // todo: implement
     }
 
     public unHighlight(): void {
+        // todo: implement
+    }
+
+    private findAdjacentWallProps(toFind: AdjacentWallProps): AdjacentWallProps | undefined {
+        return this.adjacentWallPropsList.find(awp => PlacedWall.areAdjacentWallPropsEqual(awp, toFind));
     }
 
     private skipAdjacentWallProps(toSkip: AdjacentWallProps): Array<AdjacentWallProps> {
-        return this.adjacentWallPropsList.filter(awp => {
-            if (awp.toSide !== toSkip.toSide) {
-                return true; // don't skip
-            }
-            if (awp.points.length !== toSkip.points.length) {
-                return true; // don't skip
-            }
-            for (let i = 0; i < awp.points.length; i++) {
-                if (!CommonMathOperations.areVectors3Equal(awp.points[i], toSkip.points[i])) {
-                    return true; // don't skip
-                }
-            }
+        return this.adjacentWallPropsList.filter(awp => !PlacedWall.areAdjacentWallPropsEqual(awp, toSkip));
+    }
+
+    private static areAdjacentWallPropsEqual(left: AdjacentWallProps, right: AdjacentWallProps): boolean {
+        if (left.toSide !== right.toSide) {
             return false;
-        });
+        }
+        if (left.points.length !== right.points.length) {
+            return false;
+        }
+        for (let i = 0; i < left.points.length; i++) {
+            if (!CommonMathOperations.areVectors3Equal(left.points[i], right.points[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 }

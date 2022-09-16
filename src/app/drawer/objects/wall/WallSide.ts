@@ -105,6 +105,14 @@ export class WallSide {
     }
 
     /**
+     * @param firstPoint has to be smaller than {@link this.tail.point}
+     * @param secondPoint has to be smaller or equal to {@link this.tail.point}
+     */
+    public fillBlock(firstPoint: Vector3, secondPoint: Vector3) {
+
+    }
+
+    /**
      *
      * @param component to be added to wall side
      */
