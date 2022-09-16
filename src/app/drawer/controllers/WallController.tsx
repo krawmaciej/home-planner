@@ -6,6 +6,7 @@ import {Button} from "react-bootstrap";
 import {PRIMARY_VARIANT, SECONDARY_VARIANT, SELECTED_VARIANT} from "../../arranger/constants/Types";
 import {VoidIH} from "../../common/canvas/inputHandler/VoidIH";
 import {IInputHandler} from "../../common/canvas/inputHandler/IInputHandler";
+import {RemoveObjectIH} from "../IO/inputHandlers/RemoveObjectIH";
 
 enum Menu {
     ADD = "Dodaj ścianę",
@@ -35,7 +36,7 @@ export const WallController: React.FC<FactorySubcomponentProps> = ({ goBack }) =
                 setInputHandler(new WallDrawingIH(context.wallDrawer));
                 break;
             case Menu.DELETE:
-                setInputHandler(new VoidIH());
+                setInputHandler(new RemoveObjectIH(context.wallRemover));
                 break;
             default:
                 setInputHandler(new VoidIH());

@@ -19,6 +19,7 @@ import {WallComponentController} from "./WallComponentController";
 import {FloorsRemover} from "../components/floor/FloorsRemover";
 import {WALL_COMPONENT_SNAP_STEP} from "../constants/Types";
 import {WallComponentRemover} from "../components/component/WallComponentRemover";
+import {WallRemover} from "../components/wall/WallRemover";
 
 type Props = {
     className?: string,
@@ -51,7 +52,7 @@ type FloorPlanContextType = {
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
     changeMenuName: (value: string) => void,
-
+    wallRemover: WallRemover,
     wallComponentRemover: WallComponentRemover,
     floorsRemover: FloorsRemover,
 }
@@ -103,8 +104,9 @@ export const FloorPlanMainController: React.FC<Props> = ({
     const [wallComponentAdder] = useState(new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, WALL_COMPONENT_SNAP_STEP));
     const [floorsDrawer] = useState(new FloorsDrawer(scene, collisionDetector, floors, placedWalls));
 
-    const [floorsRemover] = useState(new FloorsRemover(scene, collisionDetector, floors));
+    const [wallRemover] = useState(new WallRemover(scene, collisionDetector, placedWalls, wallComponents));
     const [wallComponentRemover] = useState(new WallComponentRemover(scene, collisionDetector, wallComponents));
+    const [floorsRemover] = useState(new FloorsRemover(scene, collisionDetector, floors));
 
     // dynamic menu name holder
     const [currentControllerName, setControllerName] = useState("");
@@ -121,7 +123,7 @@ export const FloorPlanMainController: React.FC<Props> = ({
         doorDefinitions,
         windowDefinitions,
         changeMenuName: setControllerName,
-
+        wallRemover,
         wallComponentRemover,
         floorsRemover,
     };

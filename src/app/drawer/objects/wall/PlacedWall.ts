@@ -9,7 +9,7 @@ import {
     Scene,
 } from "three";
 import {AdjacentWallProps, WallConstruction} from "../../components/DrawerMath";
-import {ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
+import {HIGHLIGHTED_COLOR, ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
 import {ISceneObject} from "../ISceneObject";
 import {WallSides} from "./WallSides";
 import {Direction} from "./Direction";
@@ -21,23 +21,27 @@ import {IObjectPointsOnScene} from "../IObjectPointsOnScene";
 
 export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     
-    private static readonly material = new LineBasicMaterial({
+    private static readonly MATERIAL = new LineBasicMaterial({
         color: 0x000000,
     });
 
-    private static readonly middleMaterial = new LineBasicMaterial({
+    private static readonly MIDDLE_MATERIAL = new LineBasicMaterial({
         color: 0x666666,
+    });
+
+    private static readonly HIGHLIGHTED_MATERIAL = new LineBasicMaterial({
+        color: HIGHLIGHTED_COLOR,
     });
 
     public static create(props: WallConstruction, adjacentWalls: Array<AdjacentWallProps>): PlacedWall {
         const wallSides = new WallSides(props);
         adjacentWalls.forEach(aw => wallSides.putHole(aw.toSide, aw.points));
-        const wallParts = wallSides.createDrawableObjects(PlacedWall.material);
+        const wallParts = wallSides.createDrawableObjects(PlacedWall.MATERIAL);
         const wall = new Group();
         wallParts.forEach(wp => wall.add(wp));
 
         const middleGeometry = new BufferGeometry().setFromPoints([props.middlePoints.first, props.middlePoints.last]);
-        const middle = new Line(middleGeometry, PlacedWall.middleMaterial);
+        const middle = new Line(middleGeometry, PlacedWall.MIDDLE_MATERIAL);
         const p1 = WallBuilder.createMiddlePoint(props.middlePoints.last);
         const p2 = WallBuilder.createMiddlePoint(props.middlePoints.first);
         return new PlacedWall(props, adjacentWalls, wallSides, wallParts, wall, middle, p1, p2, new Array<IPlacedWallComponent>());
@@ -96,7 +100,7 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
         copyOfWallComponents.forEach(component => this.addComponent(component));
 
         const newAdjacentWallList = [...this.adjacentWallPropsList, adjacentWallProps];
-        const wallParts = this.wallSides.createDrawableObjects(PlacedWall.material);
+        const wallParts = this.wallSides.createDrawableObjects(PlacedWall.MATERIAL);
         const wall = new Group();
         wallParts.forEach(wp => wall.add(wp));
         return new PlacedWall(
