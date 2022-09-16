@@ -119,9 +119,6 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
 
     public unCollideWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
         const wallComponentsToReAdd = [...this.wallComponents];
-        wallComponentsToReAdd.forEach(component => this.removeComponent(component));
-        this.wallSides.fillHole(adjacentWallProps.toSide, adjacentWallProps.points);
-        wallComponentsToReAdd.forEach(component => this.addComponent(component));
 
         const previousSize = this.adjacentWallPropsList.length;
         const newAdjacentWallList = this.skipAdjacentWallProps(adjacentWallProps);
@@ -130,20 +127,9 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
                 from list: ${JSON.stringify(this.adjacentWallPropsList)}`);
         }
 
-        const wallParts = this.wallSides.createDrawableObjects(PlacedWall.MATERIAL);
-        const wall = new Group();
-        wallParts.forEach(wp => wall.add(wp));
-        return new PlacedWall(
-            this.props,
-            newAdjacentWallList,
-            this.wallSides,
-            wallParts,
-            wall,
-            this.middle,
-            this.anchorStart,
-            this.anchorEnd,
-            wallComponentsToReAdd,
-        );
+        const newWall = PlacedWall.create(this.props, newAdjacentWallList);
+        wallComponentsToReAdd.forEach(component => newWall.addComponent(component));
+        return newWall;
     }
 
     public addTo(scene: Scene): void {

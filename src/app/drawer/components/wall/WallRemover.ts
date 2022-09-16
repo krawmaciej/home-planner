@@ -37,7 +37,6 @@ export class WallRemover implements IObjectRemover {
             CollisionDetector.getPlacedWallsWithoutProvidedWall(toRemove, this.placedWalls),
             ALL_SIDES
         );
-        console.log("cr", collisionResult);
 
         collisionResult.adjacentObjects.forEach(aw => {
             const collisionWithToRemove = this.collisionDetector
