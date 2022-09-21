@@ -213,11 +213,13 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
 
     public highlight(): void {
         this.lines.forEach(line => line.material = PlacedWall.HIGHLIGHTED_MATERIAL);
+        this.wallComponents.forEach(wc => wc.highlight());
         this.middle.material = PlacedWall.HIGHLIGHTED_MATERIAL;
     }
 
     public unHighlight(): void {
         this.lines.forEach(line => line.material = PlacedWall.MATERIAL);
+        this.wallComponents.forEach(wc => wc.unHighlight());
         this.middle.material = PlacedWall.MIDDLE_MATERIAL;
     }
 
