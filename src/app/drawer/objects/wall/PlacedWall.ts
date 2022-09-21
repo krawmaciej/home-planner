@@ -212,11 +212,13 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     }
 
     public highlight(): void {
-        // todo: implement
+        this.lines.forEach(line => line.material = PlacedWall.HIGHLIGHTED_MATERIAL);
+        this.middle.material = PlacedWall.HIGHLIGHTED_MATERIAL;
     }
 
     public unHighlight(): void {
-        // todo: implement
+        this.lines.forEach(line => line.material = PlacedWall.MATERIAL);
+        this.middle.material = PlacedWall.MIDDLE_MATERIAL;
     }
 
     private findAdjacentWallProps(toFind: AdjacentWallProps): AdjacentWallProps | undefined {

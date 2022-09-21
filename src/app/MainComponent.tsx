@@ -150,7 +150,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
                 setSceneObjectsState(loadedState);
                 resetToPlanDrawer();
             } else {
-                console.log("Couldn't load a file.");
+                console.log("Couldn't load the file.");
             }
         };
         fileReader.readAsText(file);
