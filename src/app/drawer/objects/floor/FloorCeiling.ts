@@ -1,6 +1,13 @@
 import {IFloorCeiling} from "./IFloorCeiling";
 import {BufferGeometry, Line, LineBasicMaterial, MeshStandardMaterial, Scene, Vector3} from "three";
-import {DEFAULT_FLOOR_MATERIAL, ObjectElevation, ObjectPoint, ObjectPoints, TextureProps} from "../../constants/Types";
+import {
+    DEFAULT_FLOOR_MATERIAL,
+    HIGHLIGHTED_COLOR,
+    ObjectElevation,
+    ObjectPoint,
+    ObjectPoints,
+    TextureProps
+} from "../../constants/Types";
 import {AttributeName} from "../../../arranger/constants/Types";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {createFloorCeilingEmptyLabel, createFloorCeilingSquareFootageText} from "../../components/Labels";
@@ -17,6 +24,9 @@ export class FloorCeiling implements IFloorCeiling {
     });
     private static readonly COLLIDED_MATERIAL = new LineBasicMaterial({
         color: 0xaa4444,
+    });
+    private static readonly HIGHLIGHTED_MATERIAL = new LineBasicMaterial({
+        color: HIGHLIGHTED_COLOR,
     });
 
     public readonly props: FloorCeilingProps;
@@ -119,6 +129,16 @@ export class FloorCeiling implements IFloorCeiling {
         this.outline.remove(this.label);
     }
 
+    public highlight(): void {
+        this.outline.material = FloorCeiling.HIGHLIGHTED_MATERIAL;
+        this.diagonal.material = FloorCeiling.HIGHLIGHTED_MATERIAL;
+    }
+
+    public unHighlight(): void {
+        this.outline.material = FloorCeiling.STANDARD_MATERIAL;
+        this.diagonal.material = FloorCeiling.STANDARD_MATERIAL;
+    }
+
     private updateLabel() {
         const first = this.objectPoints[ObjectPoint.BOTTOM_LEFT];
         const last = this.objectPoints[ObjectPoint.TOP_RIGHT];
@@ -141,7 +161,7 @@ export class FloorCeiling implements IFloorCeiling {
     private static validatePositionsAndPoints(positions: Array<number>, points: Array<number>) {
         if (positions.length !== points.length) {
             throw new Error(
-                `Floor geometry positions: ${positions} should have same number of elements as points: ${points}`
+                `Floor geometry positions: ${JSON.stringify(positions)} should have same number of elements as points: ${points}`
             );
         }
     }

@@ -9,7 +9,7 @@ export type SceneObjectsState = {
     placedWalls: Array<PlacedWall>,
     wallComponents: Array<IPlacedWallComponent>,
     floors: Array<FloorCeiling>,
-    // no ceilings here because they are copies of floors
+    // no ceilings here because they are copies of floor
 }
 
 export const createPlacedObjects = () => {

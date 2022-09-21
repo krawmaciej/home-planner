@@ -12,7 +12,7 @@ export type WallConstruction = {
     width: number,
 }
 
-export type AdjacentWallProps = Omit<AdjacentObject<any>, "adjacent">
+export type AdjacentWallProps = Omit<AdjacentObject<any>, "adjacent"> // skip adjacent to avoid circular object references
 
 export type MiddlePoints = {
     first: Vector3,

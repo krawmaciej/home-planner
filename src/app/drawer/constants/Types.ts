@@ -1,5 +1,7 @@
 import {DoubleSide, MeshStandardMaterial, Vector3} from "three";
 
+export const HIGHLIGHTED_COLOR = 0xfbfb22;
+
 export const DEFAULT_WALL_HEIGHT = 25;
 export const DEFAULT_WALL_MATERIAL = new MeshStandardMaterial({
     color: 0xbbbbbb,
@@ -13,13 +15,6 @@ export const DEFAULT_FLOOR_MATERIAL = new MeshStandardMaterial({
 export const DEFAULT_WALL_FRAME_MATERIAL = new MeshStandardMaterial({
     color: 0xbbbbbb,
 });
-
-export enum Precision {
-    CM_100 = -1,
-    CM_10 = 0,
-    CM_1 = 1,
-    MM_1 = 2,
-}
 
 export type Vector2D = {
     x: number,
@@ -35,6 +30,8 @@ export enum ObjectElevation {
     MOVING = 3,
     UI = 4,
 }
+
+export const WALL_COMPONENT_SNAP_STEP = 5 / 10;
 
 export type ObjectPoints = [ Vector3, Vector3, Vector3, Vector3, ];
 

@@ -163,7 +163,7 @@ export class CollisionDetector {
     }
 
     /**
-     * Finds walls that collide with front and back of the component. Other sides are allowed to collide.
+     * Finds wall that collide with front and back of the component. Other sides are allowed to collide.
      * @param component
      * @param walls 
      * @returns 
@@ -173,7 +173,7 @@ export class CollisionDetector {
         if (parentWall === undefined) {
             throw new Error("Cannot find adjacent wall collision for component without parent wall.");
         }
-        const placedWallsWithoutParentWall = CollisionDetector.getPlacedWallsWithoutParentWall(parentWall, walls);
+        const placedWallsWithoutParentWall = CollisionDetector.getPlacedWallsWithoutProvidedWall(parentWall, walls);
         const points = component.getObjectPointsOnScene();
         const sides = CollisionDetector.pickComponentFrontAndBackSides(parentWall.props.direction);
         return this.detectCollisions(points, placedWallsWithoutParentWall, sides);
@@ -199,8 +199,8 @@ export class CollisionDetector {
         };
     }
 
-    private static getPlacedWallsWithoutParentWall(parentWall: PlacedWall, placedWalls: Array<PlacedWall>): Array<PlacedWall> {
-        return placedWalls.filter(wall => wall !== parentWall);
+    public static getPlacedWallsWithoutProvidedWall(providedWall: PlacedWall, placedWalls: Array<PlacedWall>): Array<PlacedWall> {
+        return placedWalls.filter(wall => wall !== providedWall);
     }
 
     private static pickComponentFrontAndBackSides(componentWallDirection: Direction): CheckedSides {

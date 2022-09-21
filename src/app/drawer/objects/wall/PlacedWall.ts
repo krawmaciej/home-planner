@@ -9,7 +9,7 @@ import {
     Scene,
 } from "three";
 import {AdjacentWallProps, WallConstruction} from "../../components/DrawerMath";
-import {ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
+import {HIGHLIGHTED_COLOR, ObjectPoints, ObjectSideOrientation} from "../../constants/Types";
 import {ISceneObject} from "../ISceneObject";
 import {WallSides} from "./WallSides";
 import {Direction} from "./Direction";
@@ -18,26 +18,31 @@ import {WallBuilder} from "./WallBuilder";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {createWallConstructionLabel} from "../../components/Labels";
 import {IObjectPointsOnScene} from "../IObjectPointsOnScene";
+import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 
 export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     
-    private static readonly material = new LineBasicMaterial({
+    private static readonly MATERIAL = new LineBasicMaterial({
         color: 0x000000,
     });
 
-    private static readonly middleMaterial = new LineBasicMaterial({
+    private static readonly MIDDLE_MATERIAL = new LineBasicMaterial({
         color: 0x666666,
+    });
+
+    private static readonly HIGHLIGHTED_MATERIAL = new LineBasicMaterial({
+        color: HIGHLIGHTED_COLOR,
     });
 
     public static create(props: WallConstruction, adjacentWalls: Array<AdjacentWallProps>): PlacedWall {
         const wallSides = new WallSides(props);
         adjacentWalls.forEach(aw => wallSides.putHole(aw.toSide, aw.points));
-        const wallParts = wallSides.createDrawableObjects(PlacedWall.material);
+        const wallParts = wallSides.createDrawableObjects(PlacedWall.MATERIAL);
         const wall = new Group();
         wallParts.forEach(wp => wall.add(wp));
 
         const middleGeometry = new BufferGeometry().setFromPoints([props.middlePoints.first, props.middlePoints.last]);
-        const middle = new Line(middleGeometry, PlacedWall.middleMaterial);
+        const middle = new Line(middleGeometry, PlacedWall.MIDDLE_MATERIAL);
         const p1 = WallBuilder.createMiddlePoint(props.middlePoints.last);
         const p2 = WallBuilder.createMiddlePoint(props.middlePoints.first);
         return new PlacedWall(props, adjacentWalls, wallSides, wallParts, wall, middle, p1, p2, new Array<IPlacedWallComponent>());
@@ -90,13 +95,13 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
      * @param adjacentWallProps
      */
     public collidedWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
-        const copyOfWallComponents = [...this.wallComponents];
-        copyOfWallComponents.forEach(component => this.removeComponent(component));
+        const wallComponentsToReAdd = [...this.wallComponents];
+        wallComponentsToReAdd.forEach(component => this.removeComponent(component));
         this.wallSides.putHole(adjacentWallProps.toSide, adjacentWallProps.points);
-        copyOfWallComponents.forEach(component => this.addComponent(component));
+        wallComponentsToReAdd.forEach(component => this.addComponent(component));
 
         const newAdjacentWallList = [...this.adjacentWallPropsList, adjacentWallProps];
-        const wallParts = this.wallSides.createDrawableObjects(PlacedWall.material);
+        const wallParts = this.wallSides.createDrawableObjects(PlacedWall.MATERIAL);
         const wall = new Group();
         wallParts.forEach(wp => wall.add(wp));
         return new PlacedWall(
@@ -108,7 +113,41 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
             this.middle,
             this.anchorStart,
             this.anchorEnd,
-            copyOfWallComponents,
+            wallComponentsToReAdd,
+        );
+    }
+
+    public unCollideWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
+        const fromCurrentList = this.findAdjacentWallProps(adjacentWallProps);
+        if (fromCurrentList === undefined) {
+            throw new Error(`WallProps ${JSON.stringify(adjacentWallProps)} aren't present in placed wall.`);
+        }
+
+        const wallComponentsToReAdd = [...this.wallComponents];
+        wallComponentsToReAdd.forEach(component => this.removeComponent(component));
+        this.wallSides.fillHole(fromCurrentList.toSide, fromCurrentList.points);
+        wallComponentsToReAdd.forEach(component => this.addComponent(component));
+
+        const previousSize = this.adjacentWallPropsList.length;
+        const newAdjacentWallList = this.skipAdjacentWallProps(fromCurrentList);
+        if (newAdjacentWallList.length !== (previousSize - 1)) {
+            throw new Error(`Didn't skip ${JSON.stringify(fromCurrentList)}
+                from list: ${JSON.stringify(this.adjacentWallPropsList)}`);
+        }
+
+        const wallParts = this.wallSides.createDrawableObjects(PlacedWall.MATERIAL);
+        const wall = new Group();
+        wallParts.forEach(wp => wall.add(wp));
+        return new PlacedWall(
+            this.props,
+            newAdjacentWallList,
+            this.wallSides,
+            wallParts,
+            wall,
+            this.middle,
+            this.anchorStart,
+            this.anchorEnd,
+            wallComponentsToReAdd,
         );
     }
 
@@ -170,5 +209,38 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
 
     public removeLabel(): void {
         this.wall.remove(this.label);
+    }
+
+    public highlight(): void {
+        this.lines.forEach(line => line.material = PlacedWall.HIGHLIGHTED_MATERIAL);
+        this.middle.material = PlacedWall.HIGHLIGHTED_MATERIAL;
+    }
+
+    public unHighlight(): void {
+        this.lines.forEach(line => line.material = PlacedWall.MATERIAL);
+        this.middle.material = PlacedWall.MIDDLE_MATERIAL;
+    }
+
+    private findAdjacentWallProps(toFind: AdjacentWallProps): AdjacentWallProps | undefined {
+        return this.adjacentWallPropsList.find(awp => PlacedWall.areAdjacentWallPropsEqual(awp, toFind));
+    }
+
+    private skipAdjacentWallProps(toSkip: AdjacentWallProps): Array<AdjacentWallProps> {
+        return this.adjacentWallPropsList.filter(awp => !PlacedWall.areAdjacentWallPropsEqual(awp, toSkip));
+    }
+
+    private static areAdjacentWallPropsEqual(left: AdjacentWallProps, right: AdjacentWallProps): boolean {
+        if (left.toSide !== right.toSide) {
+            return false;
+        }
+        if (left.points.length !== right.points.length) {
+            return false;
+        }
+        for (let i = 0; i < left.points.length; i++) {
+            if (!CommonMathOperations.areVectors3Equal(left.points[i], right.points[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 }

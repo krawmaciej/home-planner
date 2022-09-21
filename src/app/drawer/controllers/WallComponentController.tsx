@@ -4,6 +4,7 @@ import {FloorPlanContext} from "./FloorPlanMainController";
 import {Button} from "react-bootstrap";
 import {PRIMARY_VARIANT, SECONDARY_VARIANT} from "../../arranger/constants/Types";
 import {AddWallComponentController} from "./AddWallComponentController";
+import {RemoveWallComponentController} from "./RemoveWallComponentController";
 
 export enum WallComponentMenu {
     DEFAULT = "Okna i drzwi",
@@ -71,7 +72,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             );
         case WallComponentMenu.DELETE:
             return (
-                <Default changeMenu={changeMenu} upperSelectDefaultMenu={upperSelectDefaultMenu}/>
+                <RemoveWallComponentController goBack={selectDefaultMenu}/>
             );
     }
 };

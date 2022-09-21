@@ -3,19 +3,23 @@ import { ControllerFactory, ComponentProvider } from "./ControllerFactory";
 import { SelectMainController } from "./SelectMainController";
 import { WallController } from "./WallController";
 import { CollisionDetector } from "../components/CollisionDetector";
-import { WallDrawer } from "../components/WallDrawer";
+import { WallDrawer } from "../components/wall/WallDrawer";
 import { PlacedWall } from "../objects/wall/PlacedWall";
 import { WallThickness } from "../objects/wall/WallThickness";
 import { Scene } from "three";
 import { MainInputHandler } from "../../common/canvas/inputHandler/MainInputHandler";
 import { VoidIH } from "../../common/canvas/inputHandler/VoidIH";
-import {FloorsDrawer} from "../components/FloorsDrawer";
+import {FloorsDrawer} from "../components/floor/FloorsDrawer";
 import {FloorCeiling} from "../objects/floor/FloorCeiling";
 import {FloorsController} from "./FloorsController";
-import {WallComponentAdder} from "../components/WallComponentAdder";
+import {WallComponentAdder} from "../components/component/WallComponentAdder";
 import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
 import {ComponentProps} from "../objects/component/WallComponent";
 import {WallComponentController} from "./WallComponentController";
+import {FloorsRemover} from "../components/floor/FloorsRemover";
+import {WALL_COMPONENT_SNAP_STEP} from "../constants/Types";
+import {WallComponentRemover} from "../components/component/WallComponentRemover";
+import {WallRemover} from "../components/wall/WallRemover";
 
 type Props = {
     className?: string,
@@ -48,6 +52,9 @@ type FloorPlanContextType = {
     doorDefinitions: Array<ComponentProps>,
     windowDefinitions: Array<ComponentProps>,
     changeMenuName: (value: string) => void,
+    wallRemover: WallRemover,
+    wallComponentRemover: WallComponentRemover,
+    floorsRemover: FloorsRemover,
 }
 
 export const FloorPlanContext = createContext<FloorPlanContextType | undefined>(undefined);
@@ -94,8 +101,12 @@ export const FloorPlanMainController: React.FC<Props> = ({
 
     const { current: collisionDetector } = useRef(new CollisionDetector());
     const [wallDrawer] = useState(new WallDrawer(scene, collisionDetector, placedWalls, updateWallsToggle, wallComponents, floors, wallThickness, wallHeight));
-    const [wallComponentAdder] = useState(new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, 5 / 10));
+    const [wallComponentAdder] = useState(new WallComponentAdder(scene, collisionDetector, placedWalls, wallComponents, WALL_COMPONENT_SNAP_STEP));
     const [floorsDrawer] = useState(new FloorsDrawer(scene, collisionDetector, floors, placedWalls));
+
+    const [wallRemover] = useState(new WallRemover(scene, collisionDetector, placedWalls, wallComponents));
+    const [wallComponentRemover] = useState(new WallComponentRemover(scene, collisionDetector, wallComponents));
+    const [floorsRemover] = useState(new FloorsRemover(scene, collisionDetector, floors));
 
     // dynamic menu name holder
     const [currentControllerName, setControllerName] = useState("");
@@ -112,6 +123,9 @@ export const FloorPlanMainController: React.FC<Props> = ({
         doorDefinitions,
         windowDefinitions,
         changeMenuName: setControllerName,
+        wallRemover,
+        wallComponentRemover,
+        floorsRemover,
     };
 
     const controllerNameDiv = currentControllerName === "" ? null : <div className="center-div-horizontally">{currentControllerName}</div>;

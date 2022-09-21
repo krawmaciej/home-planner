@@ -6,6 +6,7 @@ import {Button} from "react-bootstrap";
 import {PRIMARY_VARIANT, SECONDARY_VARIANT, SELECTED_VARIANT} from "../../arranger/constants/Types";
 import {IInputHandler} from "../../common/canvas/inputHandler/IInputHandler";
 import {VoidIH} from "../../common/canvas/inputHandler/VoidIH";
+import {RemoveObjectIH} from "../IO/inputHandlers/RemoveObjectIH";
 
 enum Menu {
     ADD = "Dodaj podłogę wraz z sufitem",
@@ -35,7 +36,7 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
                 setInputHandler(new FloorsDrawingIH(context.floorsDrawer));
                 break;
             case Menu.DELETE:
-                setInputHandler(new VoidIH());
+                setInputHandler(new RemoveObjectIH(context.floorsRemover));
                 break;
             default:
                 setInputHandler(new VoidIH());

@@ -32,7 +32,7 @@ export class ComponentFrameCreator {
 
     private static withHeight(coordinates: number[], height: number) {
         if (coordinates.length !== 3) {
-            throw new Error(`Invalid Vector3 coordinates: ${coordinates} when creating component frame.`);
+            throw new Error(`Invalid Vector3 coordinates: ${JSON.stringify(coordinates)} when creating component frame.`);
         }
         const result = [...coordinates];
         result[Coordinate.Y] += height;

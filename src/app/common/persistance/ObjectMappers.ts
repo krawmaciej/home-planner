@@ -43,7 +43,7 @@ export const toObjectProps = (persisted: PersistedObjectProps, objectDefinitions
 const loadObject3D = (persisted: PersistedObjectProps, objectDefinitions: Array<ObjectProps>): Object3D => {
     const loadedObject = objectDefinitions.at(persisted.fileIndex)?.object3d?.clone();
     if (loadedObject === undefined) {
-        throw new Error(`Model for ${persisted} does not exist in model definitions.`);
+        throw new Error(`Model for ${JSON.stringify(persisted)} does not exist in model definitions.`);
     }
     loadedObject.position.copy(toVector3(persisted.position));
     loadedObject.rotation.setFromVector3(toVector3(persisted.rotation));

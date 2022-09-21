@@ -44,7 +44,7 @@ export class FloorCreator {
 
     private static toUv(coordinates: Array<number>) {
         if (coordinates.length !== 3) {
-            throw new Error(`Malformed Vector3 with coordinates: ${coordinates} while creating floors.`);
+            throw new Error(`Malformed Vector3 with coordinates: ${JSON.stringify(coordinates)} while creating floors.`);
         }
         return [coordinates[Coordinate.X], coordinates[Coordinate.Z]];
     }

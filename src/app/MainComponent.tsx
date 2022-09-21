@@ -102,6 +102,13 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
         setCurrentMenu(UISelection.FLOOR_PLAN);
     };
 
+    const resetToPlanDrawer = () => {
+        if (currentMenu === UISelection.FLOOR_PLAN) {
+            chooseInteriorArranger();
+        }
+        choosePlanDrawer();
+    };
+
     const resetCamera = () => {
         floorPlanState.orbitControls.reset();
         interiorArrangerState.orbitControls.reset();
@@ -141,9 +148,9 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
                     texturePromises
                 );
                 setSceneObjectsState(loadedState);
-                choosePlanDrawer();
+                resetToPlanDrawer();
             } else {
-                console.log("Couldn't load a file.");
+                console.log("Couldn't load the file.");
             }
         };
         fileReader.readAsText(file);

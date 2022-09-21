@@ -5,7 +5,7 @@ import {AttributesToGeometry} from "./AttributesToGeometry";
 
 export class WallCoversCreator {
 
-    private static readonly ERROR_MESSAGE = (coordinates: number[]) => `Malformed Vector3 with coordinates: ${coordinates} while creating wall covers.`;
+    private static readonly ERROR_MESSAGE = (coordinates: number[]) => `Malformed Vector3 with coordinates: ${JSON.stringify(coordinates)} while creating wall covers.`;
     private static readonly MATERIAL = WallCoversCreator.createMaterial();
 
     private static createMaterial() {

@@ -1,19 +1,19 @@
 import {Scene, Vector3} from "three";
-import {PlacedWall} from "../objects/wall/PlacedWall";
-import {IWallComponent} from "../objects/component/IWallComponent";
-import {WallComponent, ComponentProps} from "../objects/component/WallComponent";
-import {ALL_SIDES, CollisionDetector} from "./CollisionDetector";
-import {NoMovingWallComponent} from "../objects/component/NoMovingWallComponent";
-import {IMovingWallComponent} from "../objects/component/IMovingWallComponent";
-import {IPlacedWallComponent} from "../objects/component/IPlacedWallComponent";
-import {Direction} from "../objects/wall/Direction";
-import {CommonMathOperations} from "../../common/components/CommonMathOperations";
+import {PlacedWall} from "../../objects/wall/PlacedWall";
+import {IWallComponent} from "../../objects/component/IWallComponent";
+import {WallComponent, ComponentProps} from "../../objects/component/WallComponent";
+import {ALL_SIDES, CollisionDetector} from "../CollisionDetector";
+import {NoMovingWallComponent} from "../../objects/component/NoMovingWallComponent";
+import {IMovingWallComponent} from "../../objects/component/IMovingWallComponent";
+import {IPlacedWallComponent} from "../../objects/component/IPlacedWallComponent";
+import {Direction} from "../../objects/wall/Direction";
+import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 
 export class WallComponentAdder {
 
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;
-    private readonly placedWalls: Array<PlacedWall>; // used to detect collisions with walls
+    private readonly placedWalls: Array<PlacedWall>; // used to detect collisions with wall
     private readonly placedWallComponents: Array<IPlacedWallComponent>; // used to detect collisions with other components
 
     private movingComponent: IMovingWallComponent = NoMovingWallComponent.getInstance();
@@ -81,7 +81,7 @@ export class WallComponentAdder {
             return this.movingComponent; // collides with another component, do nothing
         }
 
-        // check whether component collides with adjacent walls
+        // check whether component collides with adjacent wall
         const adjacentCollisions =
             this.collisionDetector.detectComponentToWallCollisions(this.movingComponent, this.placedWalls);
         if (adjacentCollisions.adjacentObjects.length > 0 || adjacentCollisions.isCollision) {

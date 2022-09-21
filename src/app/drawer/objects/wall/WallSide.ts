@@ -65,7 +65,6 @@ export class WallSide {
     }
 
     /**
-     * 
      * @param firstPoint has to be smaller than {@link this.tail.point}
      * @param secondPoint has to be smaller or equal to {@link this.tail.point}
      */
@@ -75,14 +74,13 @@ export class WallSide {
 
         const strategyKey = this.strategyKey; // "alias"
 
-        // check first pair
         let beforeIterator: SideNode = this.head;
         let iterator: SideNode | undefined = this.head.connection.next;
 
         while (iterator !== undefined) {
             if (secondPoint[strategyKey] < iterator.point[strategyKey]) { // found higher
                 // cut between iterator and beforeIterator
-                if (CommonMathOperations.areNumbersEqual(firstPoint[strategyKey],beforeIterator.point[strategyKey])) {
+                if (CommonMathOperations.areNumbersEqual(firstPoint[strategyKey], beforeIterator.point[strategyKey])) {
                     beforeIterator.connection = new Connection(secondNode, ConnectionType.HOLE);
                     secondNode.connection = new Connection(iterator, ConnectionType.SOLID);
                 } else {
@@ -101,8 +99,80 @@ export class WallSide {
                 break;
             }
             beforeIterator = iterator;
-            iterator = iterator.connection.next; // go to next node
+            iterator = iterator.connection.next;
         }
+    }
+
+    /**
+     * @param firstPoint has to be smaller than {@link this.tail.point}
+     * @param secondPoint has to be smaller or equal to {@link this.tail.point}
+     */
+    public fillBlock(firstPoint: Vector3, secondPoint: Vector3) {
+        const strategyKey = this.strategyKey; // "alias"
+
+        let first: SideNode | undefined;
+        let second: SideNode = this.head;
+        let third: SideNode | undefined = second.connection.next;
+
+        while (third !== undefined) {
+            if (CommonMathOperations.areNumbersEqual(secondPoint[strategyKey], third.point[strategyKey])) {
+                const firstType = first?.connection.type;
+                const thirdType = third.connection.type;
+
+                // handle four different cases
+                if (firstType !== ConnectionType.SOLID && thirdType !== ConnectionType.SOLID) { // I
+                    WallSide.fillSecond(second);
+                } else if (firstType === ConnectionType.SOLID && thirdType === ConnectionType.SOLID) { // II
+                    WallSide.connectFirstWithFourth(first, third.connection.next);
+                } else if (firstType === ConnectionType.SOLID && thirdType !== ConnectionType.SOLID) { // III
+                    WallSide.connectFirstWithThird(first, third);
+                } else if (firstType !== ConnectionType.SOLID && thirdType === ConnectionType.SOLID) { // IV
+                    WallSide.connectSecondWithFourth(second, third.connection.next, third.connection);
+                }
+
+                break;
+            }
+
+            first = second;
+            second = third;
+            third = third.connection.next;
+        }
+    }
+
+    private static fillSecond(second: SideNode) {
+        // reset color to default
+        second.connection.type = ConnectionType.SOLID;
+        second.connection.textureProps = Connection.defaultConnectionTextureProps();
+        second.connection.material = Connection.defaultConnectionMaterial();
+    }
+
+    private static connectFirstWithFourth(first: SideNode | undefined, fourth: SideNode | undefined) {
+        if (first === undefined || fourth === undefined) {
+            throw new Error("II filling type, first or fourth nodes are undefined."); // should not happen
+        }
+        // keep color from first
+        first.connection.next = fourth;
+        first.connection.type = ConnectionType.SOLID;
+    }
+
+    private static connectFirstWithThird(first: SideNode | undefined, third: SideNode) {
+        if (first === undefined) {
+            throw new Error("III filling type, first node is undefined."); // should not happen
+        }
+        // keep color from first
+        first.connection.next = third;
+        first.connection.type = ConnectionType.SOLID;
+    }
+
+    private static connectSecondWithFourth(second: SideNode, fourth: SideNode | undefined, props: Connection) {
+        if (fourth === undefined) {
+            throw new Error("IV filling type, fourth node is undefined."); // should not happen
+        }
+        // copy appearance props from third to second
+        second.connection.next = fourth;
+        second.connection.textureProps = props.textureProps;
+        second.connection.material = props.material;
+        second.connection.type = ConnectionType.SOLID;
     }
 
     /**
@@ -181,17 +251,17 @@ class SideNode {
 class Connection {
     public next: SideNode | undefined;
     public type: ConnectionType;
-    public readonly material: MeshStandardMaterial;
+    public material: MeshStandardMaterial;
     public readonly components: Array<IPlacedWallComponent>; // holds wall's connection doors/windows
     public readonly componentsAttributes: Array<ComponentAttributes>; // data driven array connected by indices with components array
-    public readonly textureProps: TextureProps;
+    public textureProps: TextureProps;
     public constructor(next: SideNode | undefined, type: ConnectionType, material?: MeshStandardMaterial) {
         this.next = next;
         this.type = type;
-        this.material = material?.clone() ?? DEFAULT_WALL_MATERIAL.clone();
+        this.material = material?.clone() ?? Connection.defaultConnectionMaterial();
         this.components = new Array<IPlacedWallComponent>();
         this.componentsAttributes = new Array<ComponentAttributes>();
-        this.textureProps = { rotation: 0 }; // to pass as a reference and not as a value
+        this.textureProps = Connection.defaultConnectionTextureProps(); // to pass as a reference and not as a value
     }
     public addComponent(component: IPlacedWallComponent, attributes: ComponentAttributes): Array<IPlacedWallComponent> {
         this.components.push(component);
@@ -205,6 +275,14 @@ class Connection {
         }
         this.components.splice(index, 1);
         this.componentsAttributes.splice(index, 1);
+    }
+    public static defaultConnectionTextureProps() {
+        return {
+            rotation: 0,
+        };
+    }
+    public static defaultConnectionMaterial() {
+        return DEFAULT_WALL_MATERIAL.clone();
     }
 }
 

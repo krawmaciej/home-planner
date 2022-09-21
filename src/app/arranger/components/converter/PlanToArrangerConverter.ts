@@ -17,7 +17,7 @@ import {HOLE_OFFSET_FIX} from "../../../common/components/CommonMathOperations";
 import {getWallFaceTextureRotation} from "../../../common/components/TextureOperations";
 
 /**
- * Expects walls and wall component points to be in the same order.
+ * Expects wall and wall component points to be in the same order.
  * E.g.
  * Wall: [{0, 0}, {5, 0}], then
  * Component: [{1, 0}, {2, 0}], or
