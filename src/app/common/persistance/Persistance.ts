@@ -60,7 +60,7 @@ export const saveFile = (sceneObjectsState: SceneObjectsState): string => {
         floorList,
         objectList,
     };
-    return JSON.stringify(persistedSceneObjectsState); //todo: might cause errors with thumbnail urls
+    return JSON.stringify(persistedSceneObjectsState);
 };
 
 export const loadData = (

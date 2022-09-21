@@ -76,7 +76,7 @@ export const loadDoors = async () => {
     return await loadModels(doorsPromise, DOORS_PATH, (modelDefinition, model, box3, index) => {
         const val: ComponentProps = {
             name: modelDefinition.name,
-            thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
+            thumbnail: `${DOORS_PATH}/${modelDefinition.thumbnail}`,
             fileIndex: index,
             object3d: model,
             width: box3.max.x - box3.min.x,
@@ -93,7 +93,7 @@ export const loadWindows = async () => {
     return await loadModels(windowsPromise, WINDOWS_PATH, (modelDefinition, model, box3, index) => {
         const val: ComponentProps = {
             name: modelDefinition.name,
-            thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
+            thumbnail: `${WINDOWS_PATH}/${modelDefinition.thumbnail}`,
             fileIndex: index,
             object3d: model,
             width: box3.max.x - box3.min.x,
@@ -110,7 +110,7 @@ export const loadObjects = async () => {
     return await loadModels(objectsPromise, OBJECTS_PATH, (modelDefinition, model, box3, index) => {
         const val: ObjectProps = {
             name: modelDefinition.name,
-            thumbnail: modelDefinition.thumbnail, // todo: then load is as ahref or something
+            thumbnail: `${OBJECTS_PATH}/${modelDefinition.thumbnail}`,
             object3d: model,
             width: box3.max.x - box3.min.x,
             thickness: box3.max.z - box3.min.z,

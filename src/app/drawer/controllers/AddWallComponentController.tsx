@@ -139,6 +139,7 @@ export const AddWallComponentController: React.FC<AddWallComponentProps> = ({ go
                         </div>
                         <SelectComponents
                             components={components}
+                            type={componentSelection}
                             componentIndex={indexSelection}
                             handleIndexSelection={handleIndexSelection}
                         />
@@ -168,12 +169,14 @@ export const AddWallComponentController: React.FC<AddWallComponentProps> = ({ go
 
 type SelectComponentsProps = {
     components: Array<ComponentProps>,
+    type: ComponentSelection,
     componentIndex: number | undefined,
     handleIndexSelection: (index: number) => void,
 }
 
 const SelectComponents = ({
                               components,
+                              type,
                               componentIndex,
                               handleIndexSelection,
                           }: SelectComponentsProps) => {
@@ -192,14 +195,28 @@ const SelectComponents = ({
                     if (componentIndex === index) {
                         buttonVariant = SELECTED_VARIANT;
                     }
-                    return (
+
+                    const elevationDiv = type === ComponentSelection.DOORS ? null :
+                        <div>Wys. od podł.: {convertFromAppUnitsToCm(component.elevation)}</div>;
+
+                return (
                         <Button
                             key={index}
                             onClick={() => handleIndexSelection(index)}
                             variant={buttonVariant}
                             className="btn-sm small"
                         >
-                            {component.name}
+                            <div className="side-by-side-parent">
+                                <div className="side-by-side-child">
+                                    <div>{component.name}</div>
+                                    <div>Szer.: {convertFromAppUnitsToCm(component.width)}</div>
+                                    <div>Wys.: {convertFromAppUnitsToCm(component.height)}</div>
+                                    {elevationDiv}
+                                </div>
+                                <div className="side-by-side-child">
+                                    <img src={component.thumbnail} alt={component.name} height="100px"/>
+                                </div>
+                            </div>
                         </Button>
                     );
                 }

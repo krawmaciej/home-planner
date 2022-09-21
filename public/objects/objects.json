@@ -2,7 +2,7 @@
     {
         "name": "Białe drzwi",
         "file": "white-door/scene.gltf",
-        "thumbnail": "white-door/thumbnail.jpg",
+        "thumbnail": "white-door/thumbnail.png",
         "dimensions": {
             "width": 90,
             "height": 180,
@@ -22,7 +22,7 @@
     {
         "name": "Zwykłe drzwi",
         "file": "simple_door/scene.gltf",
-        "thumbnail": "simple_door/thumbnail.jpg",
+        "thumbnail": "simple_door/thumbnail.png",
         "dimensions": {
             "width": 100,
             "height": 180,
