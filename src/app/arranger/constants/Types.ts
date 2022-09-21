@@ -46,3 +46,4 @@ export class Facing {
 export const PRIMARY_VARIANT = "dark";
 export const SECONDARY_VARIANT = "secondary";
 export const SELECTED_VARIANT = "light";
+export const DISABLED_VARIANT = "outline-danger";

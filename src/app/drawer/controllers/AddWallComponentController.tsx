@@ -1,15 +1,15 @@
 import spinner from "../../../loading-spinner.gif";
 
-import React, { useContext, useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import React, {useContext, useEffect, useState} from "react";
+import {Button} from "react-bootstrap";
 import {
     ComponentProps,
     DEFAULT_MUTABLE_DOOR_PROPS,
     DEFAULT_MUTABLE_WINDOW_PROPS
 } from "../objects/component/WallComponent";
-import { WallComponentAddingIH } from "../IO/inputHandlers/wallComponentAdding/WallComponentAddingIH";
+import {WallComponentAddingIH} from "../IO/inputHandlers/wallComponentAdding/WallComponentAddingIH";
 import {FloorPlanContext} from "./FloorPlanMainController";
-import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../../arranger/constants/Types";
+import {DISABLED_VARIANT, PRIMARY_VARIANT, SECONDARY_VARIANT, SELECTED_VARIANT} from "../../arranger/constants/Types";
 import {WallComponentMenu} from "./WallComponentController";
 import {convertFromAppUnitsToCm} from "../components/DisplayPrecision";
 
@@ -86,12 +86,24 @@ export const AddWallComponentController: React.FC<AddWallComponentProps> = ({ go
         context.mainInputHandler.detachCurrentHandler();
     }, [componentSelection, context.mainInputHandler]);
 
+    const fixComponents = (componentProps: Array<ComponentProps>) => {
+        componentProps.forEach(prop => {
+            if ((prop.elevation + prop.height) > context.wallHeight) {
+                prop.elevation = context.wallHeight - prop.height;
+            }
+        });
+    };
+
     useEffect(() => {
-        setDoorsToSelect([DEFAULT_MUTABLE_DOOR_PROPS, ...context.doorDefinitions]);
+        const componentProps = [DEFAULT_MUTABLE_DOOR_PROPS, ...context.doorDefinitions];
+        fixComponents(componentProps);
+        setDoorsToSelect(componentProps);
     }, [context.doorDefinitions]);
 
     useEffect(() => {
-        setWindowsToSelect([DEFAULT_MUTABLE_WINDOW_PROPS, ...context.windowDefinitions]);
+        const componentProps = [DEFAULT_MUTABLE_WINDOW_PROPS, ...context.windowDefinitions];
+        fixComponents(componentProps);
+        setWindowsToSelect(componentProps);
     }, [context.windowDefinitions]);
 
     useEffect(() => cancelAddingComponent, [inputHandler]);
@@ -191,36 +203,42 @@ const SelectComponents = ({
     return (
         <div>
             {components.map((component, index) => {
-                    let buttonVariant = SECONDARY_VARIANT;
-                    if (componentIndex === index) {
-                        buttonVariant = SELECTED_VARIANT;
-                    }
+                let buttonVariant = SECONDARY_VARIANT;
+                const wallsTooSmall = component.elevation < 0;
+                if (wallsTooSmall) {
+                    buttonVariant = DISABLED_VARIANT;
+                } else if (componentIndex === index) {
+                    buttonVariant = SELECTED_VARIANT;
+                }
 
-                    const elevationDiv = type === ComponentSelection.DOORS ? null :
-                        <div>Wys. od podł.: {convertFromAppUnitsToCm(component.elevation)}</div>;
+                const elevationDiv = type === ComponentSelection.DOORS ? null : (
+                    <div>Wys. od podł.: {convertFromAppUnitsToCm(component.elevation)}</div>
+                );
+
+                const header = wallsTooSmall ? "Za niska wysokość ścian dla komponentu" : component.name;
+                const onClickEvent = wallsTooSmall ? () => {} : () => handleIndexSelection(index);
 
                 return (
-                        <Button
-                            key={index}
-                            onClick={() => handleIndexSelection(index)}
-                            variant={buttonVariant}
-                            className="btn-sm small"
-                        >
-                            <div className="side-by-side-parent">
-                                <div className="side-by-side-child">
-                                    <div>{component.name}</div>
-                                    <div>Szer.: {convertFromAppUnitsToCm(component.width)}</div>
-                                    <div>Wys.: {convertFromAppUnitsToCm(component.height)}</div>
-                                    {elevationDiv}
-                                </div>
-                                <div className="side-by-side-child">
-                                    <img src={component.thumbnail} alt={component.name} height="100px"/>
-                                </div>
+                    <Button
+                        key={index}
+                        onClick={onClickEvent}
+                        variant={buttonVariant}
+                        className="btn-sm small"
+                    >
+                        <div className="side-by-side-parent">
+                            <div className="side-by-side-child">
+                                <div>{header}</div>
+                                <div>Szer.: {convertFromAppUnitsToCm(component.width)}</div>
+                                <div>Wys.: {convertFromAppUnitsToCm(component.height)}</div>
+                                {elevationDiv}
                             </div>
-                        </Button>
-                    );
-                }
-            )}
+                            <div className="side-by-side-child">
+                                <img src={component.thumbnail} alt={component.name} height="100px"/>
+                            </div>
+                        </div>
+                    </Button>
+                );
+            })}
         </div>
     );
 };
