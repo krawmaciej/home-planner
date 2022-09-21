@@ -23,6 +23,9 @@ import {Direction} from "../wall/Direction";
 import {PlacedWall} from "../wall/PlacedWall";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {createComponentPropsLabel} from "../../components/Labels";
+import windowHoleThumbnail from "../../../../defaultComponentThumbnails/windowHole.png";
+import doorHoleThumbnail from "../../../../defaultComponentThumbnails/doorHole.png";
+import {CommonMathOperations} from "../../../common/components/CommonMathOperations";
 
 const DEFAULT_MATERIAL = new LineBasicMaterial({
     color: 0x333333,
@@ -96,7 +99,7 @@ const NO_OBJECT = undefined;
 
 export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
     name: "Otwór",
-    thumbnail: "hole_thumbnail.jpg",
+    thumbnail: windowHoleThumbnail,
     fileIndex: NO_FILE_INDEX,
     object3d: NO_OBJECT,
     width: 6,
@@ -108,7 +111,7 @@ export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
 
 export const DEFAULT_MUTABLE_DOOR_PROPS: ComponentProps = {
     name: "Otwór",
-    thumbnail: "hole_thumbnail.jpg",
+    thumbnail: doorHoleThumbnail,
     fileIndex: NO_FILE_INDEX,
     object3d: NO_OBJECT,
     width: 8,
@@ -296,6 +299,11 @@ export class WallComponent implements IMovingWallComponent, IPlacedWallComponent
         this.window.localToWorld(second);
         this.window.localToWorld(third);
         this.window.localToWorld(fourth);
+
+        CommonMathOperations.roundVector3(first);
+        CommonMathOperations.roundVector3(second);
+        CommonMathOperations.roundVector3(third);
+        CommonMathOperations.roundVector3(fourth);
 
         switch (this.orientation) {
             case Direction.DOWN:

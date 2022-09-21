@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import {Vector3} from "three";
 import {CommonMathOperations} from "../../common/components/CommonMathOperations";
 
 export type LiangBarskyResult = {
@@ -8,21 +8,17 @@ export type LiangBarskyResult = {
 }
 
 export enum CollisionType {
-    NONE = 0,
-    NORMAL = 1,
-    EDGE = 2, // only edge should not happen, use normal edge
-    POINT = 4, // only point should not happen, use normal point
-    NORMAL_EDGE = NORMAL | EDGE,
-    NORMAL_POINT = NORMAL | POINT,
-    EDGE_POINT = EDGE | POINT, // should not happen, use all instead
-    ALL = NORMAL | EDGE | POINT
+    NONE,
+    NORMAL,
+    EDGE,
+    POINT,
 }
 
 export class LiangBarsky {
 
     private tN = 0.0;
     private tF = 1.0;
-    private edgeCollision = CollisionType.NONE;
+    private collisionType = CollisionType.NONE;
 
     public static checkCollision(p0: Vector3, p1: Vector3, min: Vector3, max: Vector3): LiangBarskyResult {
         return new LiangBarsky().clip2DLine(p0, p1, min, max);
@@ -40,7 +36,9 @@ export class LiangBarsky {
                     if (this.calculateNewTs(-dz, p0.z - max.z)) {
                         let np0 = p0;
                         let np1 = p1;
-                        let collisionType = CollisionType.NORMAL;
+                        if (this.collisionType !== CollisionType.EDGE) {
+                            this.collisionType = CollisionType.NORMAL;
+                        }
 
                         if (this.tF < 1.0) {
                             np1 = new Vector3(
@@ -57,12 +55,12 @@ export class LiangBarsky {
                             );
                         }
                         if (CommonMathOperations.areNumbersEqual(this.tN, this.tF)) { // single point collision
-                            collisionType |= CollisionType.POINT;
+                            this.collisionType = CollisionType.POINT;
                         }
-                        return { 
+                        return {
                             p0: np0,
                             p1: np1,
-                            type: collisionType | this.edgeCollision
+                            type: this.collisionType
                         };
                     }
                 }
@@ -78,7 +76,7 @@ export class LiangBarsky {
     private resetState() {
         this.tN = 0.0;
         this.tF = 1.0;
-        this.edgeCollision = CollisionType.NONE;
+        this.collisionType = CollisionType.NONE;
     }
 
     private calculateNewTs(denom: number, number: number): boolean {
@@ -93,7 +91,7 @@ export class LiangBarsky {
             const t = number / denom;
             if (t < this.tN) {
                 return false;
-            } else if (t < this.tF) { // todo: fix this by adding else if (t < this.tL)
+            } else if (t < this.tF) {
                 this.tF = t;
             }
         } else if (number > 0) {
@@ -102,7 +100,7 @@ export class LiangBarsky {
         // denom is delta, if delta is 0 then two points lay on same x or y coordinate
         // and if any of the points matches with any of the box edges then number will be equal to 0
         else if (CommonMathOperations.areNumbersEqual(number, 0.0)) {
-            this.edgeCollision = CollisionType.EDGE;
+            this.collisionType = CollisionType.EDGE;
         }
         return true;
     }

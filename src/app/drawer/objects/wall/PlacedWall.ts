@@ -91,10 +91,10 @@ export class PlacedWall implements ISceneObject, IObjectPointsOnScene {
     }
 
     /**
-     * Returns new wall with collisions applied. Breaks old {@link this.wallSides}.
+     * Returns new wall with adjacent props applied. Breaks old {@link this.wallSides}.
      * @param adjacentWallProps
      */
-    public collidedWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
+    public adjacentWithWall(adjacentWallProps: AdjacentWallProps): PlacedWall {
         const wallComponentsToReAdd = [...this.wallComponents];
         wallComponentsToReAdd.forEach(component => this.removeComponent(component));
         this.wallSides.putHole(adjacentWallProps.toSide, adjacentWallProps.points);

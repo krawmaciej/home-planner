@@ -121,7 +121,7 @@ export class WallDrawer {
             if (collision.adjacentObjects.length !== 1) {
                 throw new Error("Collided wall should also collide with new wall but did not!");
             }
-            const replaced = aw.adjacent.collidedWithWall(collision.adjacentObjects[0]);
+            const replaced = aw.adjacent.adjacentWithWall(collision.adjacentObjects[0]);
 
             aw.adjacent.removeFrom(this.scene);
             replaced.addTo(this.scene);

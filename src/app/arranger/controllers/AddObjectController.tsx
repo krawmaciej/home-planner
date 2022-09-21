@@ -4,6 +4,7 @@ import {Button} from "react-bootstrap";
 import {InteriorArrangerContext} from "./InteriorArrangerMainController";
 import {ObjectAdder} from "../components/ObjectAdder";
 import {PRIMARY_VARIANT, SELECTED_VARIANT, SECONDARY_VARIANT} from "../constants/Types";
+import {convertFromAppUnitsToCm} from "../../drawer/components/DisplayPrecision";
 
 type Props = {
     className?: string
@@ -82,7 +83,17 @@ const SelectObjects = ({
                             variant={buttonVariant}
                             className="btn-sm small"
                         >
-                            {object.name}
+                            <div className="side-by-side-parent">
+                                <div className="side-by-side-child">
+                                    <div>{object.name}</div>
+                                    <div>Dług.: {convertFromAppUnitsToCm(object.width)}</div>
+                                    <div>Szer.: {convertFromAppUnitsToCm(object.thickness)}</div>
+                                    <div>Wys.: {convertFromAppUnitsToCm(object.height)}</div>
+                                </div>
+                                <div className="side-by-side-child">
+                                    <img src={object.thumbnail} alt={object.name} height="100px"/>
+                                </div>
+                            </div>
                         </Button>
                     );
                 }

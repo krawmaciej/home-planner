@@ -22,8 +22,8 @@ export type MiddlePoints = {
 export class DrawerMath {
 
     public static isPointBetweenMinMaxPoints(point: Vector3, min: Vector3, max: Vector3): boolean {
-        if (point.x >= min.x && point.z >= min.z) {
-            if (point.x <= max.x && point.z <= max.z) {
+        if (point.x > min.x && point.z > min.z) {
+            if (point.x < max.x && point.z < max.z) {
                 return true;
             }
         }

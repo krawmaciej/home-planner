@@ -105,8 +105,8 @@ describe("Test shape props builder", () => {
 
         const expected = [
             new Vector2(3, 7),
-            new Vector2(-2, 7),
-            new Vector2(-2, 2),
+            new Vector2(8, 7),
+            new Vector2(8, 2),
             new Vector2(3, 2),
             new Vector2(3, 7),
         ];

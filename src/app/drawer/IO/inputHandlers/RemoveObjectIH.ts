@@ -4,11 +4,10 @@ import {IObjectRemover} from "../../components/IObjectRemover";
 
 export class RemoveObjectIH implements IInputHandler {
 
-    private readonly floorsRemover: IObjectRemover;
+    private readonly objectRemover: IObjectRemover;
 
-    public constructor(floorsRemover: IObjectRemover) {
-        this.floorsRemover = floorsRemover;
-
+    public constructor(objectRemover: IObjectRemover) {
+        this.objectRemover = objectRemover;
     }
 
     public handleCancel(): void {
@@ -16,10 +15,10 @@ export class RemoveObjectIH implements IInputHandler {
     }
 
     public handleClick({ unprojected }: InputPoint): void {
-        this.floorsRemover.removeAt(unprojected);
+        this.objectRemover.removeAt(unprojected);
     }
 
     public handleMovement({ unprojected }: InputPoint): void {
-        this.floorsRemover.selectAt(unprojected);
+        this.objectRemover.selectAt(unprojected);
     }
 }

@@ -38,7 +38,7 @@ type PersistedSceneObjectsState = {
     objectList: Array<PersistedObjectProps>,
 }
 
-export const saveFile = (sceneObjectsState: SceneObjectsState): string => {
+export const saveData = (sceneObjectsState: SceneObjectsState): string => {
 
     const wallToComponentsList = sceneObjectsState.placedWalls.map(pw => {
         const wall: PersistedPlacedWall = persistPlacedWall(pw);
@@ -60,7 +60,7 @@ export const saveFile = (sceneObjectsState: SceneObjectsState): string => {
         floorList,
         objectList,
     };
-    return JSON.stringify(persistedSceneObjectsState); //todo: might cause errors with thumbnail urls
+    return JSON.stringify(persistedSceneObjectsState);
 };
 
 export const loadData = (

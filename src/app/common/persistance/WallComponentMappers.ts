@@ -4,7 +4,6 @@ import {Object3D} from "three";
 import {IPlacedWallComponent} from "../../drawer/objects/component/IPlacedWallComponent";
 
 export type PersistedComponentProps = {
-    thumbnail: string,
     name: string,
     modelFileIndex: number | undefined,
     width: number,
@@ -32,12 +31,14 @@ export type PersistedWallComponent = {
 
 export const toComponentProps = (persisted: PersistedComponentProps, modelDefinitions: Array<ComponentProps>): ComponentProps => {
     let object3d: Object3D | undefined = undefined;
+    let thumbnail = "";
     if (persisted.modelFileIndex !== undefined) {
-        const loadedObject = modelDefinitions.at(persisted.modelFileIndex)?.object3d;
-        if (loadedObject === undefined) {
-            throw new Error(`Model for ${JSON.stringify(persisted)} does not exist in model definitions.`);
+        const loadedDefinition = modelDefinitions.at(persisted.modelFileIndex);
+        if (loadedDefinition === undefined) {
+            throw new Error(`Definition for ${JSON.stringify(persisted)} does not exist.`);
         }
-        object3d = loadedObject;
+        object3d = loadedDefinition.object3d;
+        thumbnail = loadedDefinition.thumbnail;
     }
 
     return {
@@ -46,7 +47,7 @@ export const toComponentProps = (persisted: PersistedComponentProps, modelDefini
         mutableFields: persisted.mutableFields,
         name: persisted.name,
         thickness: persisted.thickness,
-        thumbnail: persisted.thumbnail,
+        thumbnail: thumbnail,
         fileIndex: persisted.modelFileIndex,
         object3d: object3d,
         width: persisted.width,
@@ -60,7 +61,6 @@ export const persistComponentProps = (cp: ComponentProps): PersistedComponentPro
         mutableFields: cp.mutableFields,
         name: cp.name,
         thickness: cp.thickness,
-        thumbnail: cp.thumbnail,
         modelFileIndex: cp.fileIndex,
         width: cp.width,
     };

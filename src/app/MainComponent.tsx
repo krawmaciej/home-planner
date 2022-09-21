@@ -21,7 +21,7 @@ import {FloorPlanState, InteriorArrangerState} from "../App";
 import {ICameraHandler} from "./common/canvas/ICameraHandler";
 import {LoadedTexture} from "./common/models/TextureDefinition";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
-import {loadData, saveFile} from "./common/persistance/Persistance";
+import {loadData, saveData} from "./common/persistance/Persistance";
 import spinner from "../loading-spinner.gif";
 
 type Props = {
@@ -157,7 +157,7 @@ export const MainComponent: React.FC<Props> = ({ renderer, labelRenderer, floorP
     };
 
     const handleSave = () => {
-        const serialized = saveFile(sceneObjectsState);
+        const serialized = saveData(sceneObjectsState);
         const file = new Blob([serialized], {type: JSON_MIME});
         const element = document.createElement("a");
         document.body.appendChild(element);

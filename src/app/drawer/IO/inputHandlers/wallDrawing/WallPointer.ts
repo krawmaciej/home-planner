@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 
 export enum DrawingState {
-    NONE, DRAWING, DRAW
+    NONE, DRAWING, DRAW,
 }
 
 export class WallPointer {

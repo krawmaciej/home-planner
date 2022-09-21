@@ -3,7 +3,8 @@ import {Vector2, Vector3} from "three";
 export const RADIAN_MULTIPLIER = Math.PI / 180.0;
 export const HOLE_OFFSET_FIX = 0.0001;
 
-const TOLERANCE = 1e-4;
+const PRECISION = 10000;
+const TOLERANCE = 1 / PRECISION;
 
 export class CommonMathOperations {
 
@@ -21,5 +22,11 @@ export class CommonMathOperations {
 
     public static areNumbersEqual(n1: number, n2: number): boolean {
         return Math.abs( n1 - n2) < TOLERANCE;
+    }
+
+    public static roundVector3(vector3: Vector3): void {
+        vector3.x = Math.round((vector3.x) * PRECISION) / PRECISION;
+        vector3.y = Math.round((vector3.y) * PRECISION) / PRECISION;
+        vector3.z = Math.round((vector3.z) * PRECISION) / PRECISION;
     }
 }

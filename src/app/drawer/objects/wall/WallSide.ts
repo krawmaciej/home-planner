@@ -198,7 +198,7 @@ export class WallSide {
         while (iterator !== undefined) {
             const componentPoint = componentAttributes.secondPoint[strategyKey];
             const sideNodePoint = iterator.point[strategyKey];
-            if (componentPoint <= sideNodePoint ||
+            if (componentPoint < sideNodePoint ||
                 CommonMathOperations.areNumbersEqual(componentPoint, sideNodePoint)
             ) {
                 // put in connection between iterator and beforeIterator

@@ -56,16 +56,6 @@ export const FloorPlanStateParent: React.FC<Props> = ({
         };
     }, [sceneObjects, canvasState]);
 
-    // const [cameraZoomObserver] = useState(new CameraZoomToGridDivisionsObserver(floorPlanState, canvasState.scene));
-    //
-    // useEffect(() => {
-    //     registerObserver(canvasState.observers, cameraZoomObserver);
-    //     return () => {
-    //         deregisterObserver(canvasState.observers, cameraZoomObserver);
-    //     };
-    // }, [cameraZoomObserver]);
-    //
-
     const [, setInputWallHeight] = useState<number>();
 
     const updateSceneWallHeight = (value: number) => {

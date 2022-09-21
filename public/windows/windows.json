@@ -2,7 +2,7 @@
     {
         "name": "Zwykłe okno",
         "file": "residential_window/scene.gltf",
-        "thumbnail": "residential_window/thumbnail.jpg",
+        "thumbnail": "residential_window/thumbnail.png",
         "elevation": 90,
         "dimensions": {
             "width": 90
@@ -21,7 +21,7 @@
     {
         "name": "Przesuwane okno",
         "file": "sliding_window/scene.gltf",
-        "thumbnail": "sliding_window/thumbnail.jpg",
+        "thumbnail": "sliding_window/thumbnail.png",
         "elevation": 90,
         "dimensions": {
             "width": 100

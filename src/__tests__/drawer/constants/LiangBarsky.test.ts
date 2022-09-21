@@ -15,7 +15,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_EDGE);
+    expect(result.type).toBe(CollisionType.EDGE);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -32,7 +32,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_EDGE);
+    expect(result.type).toBe(CollisionType.EDGE);
     expect(result.p0).toBe(p0);
     expect(result.p1).toStrictEqual(new Vector3(10, 0, 0));
   });
@@ -49,7 +49,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_EDGE);
+    expect(result.type).toBe(CollisionType.EDGE);
     expect(result.p0).toStrictEqual(new Vector3(0, 0, 0));
     expect(result.p1).toBe(p1);
   });
@@ -66,7 +66,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_EDGE);
+    expect(result.type).toBe(CollisionType.EDGE);
     expect(result.p0).toStrictEqual(new Vector3(0, 0, 0));
     expect(result.p1).toStrictEqual(new Vector3(10, 0, 0));
   });
@@ -83,7 +83,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_EDGE);
+    expect(result.type).toBe(CollisionType.EDGE);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -100,7 +100,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_EDGE);
+    expect(result.type).toBe(CollisionType.EDGE);
     expect(result.p0).toBe(p0);
     expect(result.p1).toBe(p1);
   });
@@ -169,7 +169,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_POINT);
+    expect(result.type).toBe(CollisionType.POINT);
     expect(result.p0).toStrictEqual(p0);
     expect(result.p1).toStrictEqual(p0);
   });
@@ -186,7 +186,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_POINT);
+    expect(result.type).toBe(CollisionType.POINT);
     expect(result.p0).toStrictEqual(p0);
     expect(result.p1).toStrictEqual(p0);
   });
@@ -203,7 +203,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_POINT);
+    expect(result.type).toBe(CollisionType.POINT);
     expect(result.p0).toStrictEqual(p1);
     expect(result.p1).toStrictEqual(p1);
   });
@@ -220,7 +220,7 @@ describe("Test Liang LiangBarsky clipping", () => {
     const result = LiangBarsky.checkCollision(p0, p1, min, max);
 
     // then
-    expect(result.type).toBe(CollisionType.NORMAL_POINT);
+    expect(result.type).toBe(CollisionType.POINT);
     expect(result.p0).toStrictEqual(p1);
     expect(result.p1).toStrictEqual(p1);
   });

@@ -3,7 +3,7 @@ import {CollisionDetector} from "../CollisionDetector";
 import {FloorCeiling} from "../../objects/floor/FloorCeiling";
 import {IObjectRemover} from "../IObjectRemover";
 
-export class FloorsRemover implements IObjectRemover{
+export class FloorsRemover implements IObjectRemover {
 
     private readonly scene: Scene;
     private readonly collisionDetector: CollisionDetector;

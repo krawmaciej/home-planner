@@ -81,10 +81,10 @@ export class CollisionDetector {
         otherSceneObjects: Array<T>,
         checkedSides: CheckedSides,
     ): Collision<T> {
-        const topLeft = points[ObjectPoint.BOTTOM_LEFT];
-        const topRight = points[ObjectPoint.BOTTOM_RIGHT];
-        const bottomRight = points[ObjectPoint.TOP_RIGHT];
-        const bottomLeft = points[ObjectPoint.TOP_LEFT];
+        const bottomLeft = points[ObjectPoint.BOTTOM_LEFT];
+        const bottomRight = points[ObjectPoint.BOTTOM_RIGHT];
+        const topRight = points[ObjectPoint.TOP_RIGHT];
+        const topLeft = points[ObjectPoint.TOP_LEFT];
 
         const adjacentObjects = new Array<AdjacentObject<T>>();
 
@@ -96,8 +96,8 @@ export class CollisionDetector {
 
             let check;
             if (checkedSides.top) {
-                check = CollisionDetector.checkLineCollision(topLeft, topRight, checkedAgainstObjectPoints);
-                if ( check.type === CollisionType.NORMAL_EDGE ) {
+                check = CollisionDetector.checkLineCollision(bottomLeft, bottomRight, checkedAgainstObjectPoints);
+                if ( check.type === CollisionType.EDGE ) {
                     edgeCollisionsCount++;
                     wallSideType = ObjectSideOrientation.BOTTOM;
                     collisionPoints.push(check.p0);
@@ -108,8 +108,8 @@ export class CollisionDetector {
             }
 
             if (checkedSides.right) {
-                check = CollisionDetector.checkLineCollision(bottomRight, topRight, checkedAgainstObjectPoints);
-                if ( check.type === CollisionType.NORMAL_EDGE ) {
+                check = CollisionDetector.checkLineCollision(topRight, bottomRight, checkedAgainstObjectPoints);
+                if ( check.type === CollisionType.EDGE ) {
                     edgeCollisionsCount++;
                     wallSideType = ObjectSideOrientation.RIGHT;
                     collisionPoints.push(check.p0);
@@ -120,8 +120,8 @@ export class CollisionDetector {
             }
 
             if (checkedSides.bottom) {
-                check = CollisionDetector.checkLineCollision(bottomLeft, bottomRight, checkedAgainstObjectPoints);
-                if ( check.type === CollisionType.NORMAL_EDGE ) {
+                check = CollisionDetector.checkLineCollision(topLeft, topRight, checkedAgainstObjectPoints);
+                if ( check.type === CollisionType.EDGE ) {
                     edgeCollisionsCount++;
                     wallSideType = ObjectSideOrientation.TOP;
                     collisionPoints.push(check.p0);
@@ -132,8 +132,8 @@ export class CollisionDetector {
             }
 
             if (checkedSides.left) {
-                check = CollisionDetector.checkLineCollision(bottomLeft, topLeft, checkedAgainstObjectPoints);
-                if ( check.type === CollisionType.NORMAL_EDGE ) {
+                check = CollisionDetector.checkLineCollision(topLeft, bottomLeft, checkedAgainstObjectPoints);
+                if ( check.type === CollisionType.EDGE ) {
                     edgeCollisionsCount++;
                     wallSideType = ObjectSideOrientation.LEFT;
                     collisionPoints.push(check.p0);

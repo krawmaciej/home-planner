@@ -9,29 +9,29 @@ export type InputPoint = {
 
 /**
  * It is stateful because it is shared in canvas.
- * (Is not a delegate itself to not allow nesting.)
+ * (Does not implement IInputHandler itself to not allow nesting.)
  */
 export class MainInputHandler {
 
-    private delegate: IInputHandler;
+    private inputHandler: IInputHandler;
 
     public constructor() {
-        this.delegate = new VoidIH();
+        this.inputHandler = new VoidIH();
     }
 
     public changeHandlingStrategy(inputHandler: IInputHandler) {
-        this.delegate = inputHandler;
+        this.inputHandler = inputHandler;
     }
 
     public handleMovement(point: InputPoint): void {
-        this.delegate.handleMovement(point);
+        this.inputHandler.handleMovement(point);
     }
     
     public handleClick(point: InputPoint): void {
-        this.delegate.handleClick(point);
+        this.inputHandler.handleClick(point);
     }
 
     public detachCurrentHandler() {
-        this.delegate = new VoidIH();
+        this.inputHandler = new VoidIH();
     }
 }
