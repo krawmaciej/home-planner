@@ -1,6 +1,6 @@
 [
 	{
-        "name": "Biurko",
+        "name": "Desk",
         "file": "desk/desk.gltf",
         "thumbnail": "desk/thumbnail.png",
         "dimensions": {
@@ -18,7 +18,7 @@
         }
     },
 	{
-        "name": "Krzesło",
+        "name": "Seat",
         "file": "seat/seat.gltf",
         "thumbnail": "seat/thumbnail.png",
         "dimensions": {

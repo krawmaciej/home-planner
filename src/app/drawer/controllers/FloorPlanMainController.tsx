@@ -35,10 +35,10 @@ type Props = {
 }
 
 export enum MainControllerType {
-    WALLS = "Ściany",
-    WINDOWS_AND_DOORS = "Okna i drzwi",
-    FLOORS = "Podłogi i sufity",
-    SELECT = "Rysunek planu 2D",
+    WALLS = "Walls",
+    WINDOWS_AND_DOORS = "Windows and doors",
+    FLOORS = "Floors and ceiling",
+    SELECT = "2D View",
 }
 
 type FloorPlanContextType = {

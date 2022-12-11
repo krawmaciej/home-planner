@@ -124,7 +124,7 @@ export const AddWallComponentController: React.FC<AddWallComponentProps> = ({ go
 
         const components = getComponentsToDisplay(componentSelection);
 
-        let distance = "Brak wybranej ściany";
+        let distance = "No wall selected";
         if (componentToWindowDistance !== undefined) {
             distance = convertFromAppUnitsToCm(componentToWindowDistance);
         }
@@ -139,14 +139,14 @@ export const AddWallComponentController: React.FC<AddWallComponentProps> = ({ go
                                 variant={windowButtonVariant}
                                 className="side-by-side-child btn-sm"
                             >
-                                Okna
+                                Windows
                             </Button>
                             <Button
                                 onClick={() => handleComponentSelection(ComponentSelection.DOORS)}
                                 variant={doorButtonVariant}
                                 className="side-by-side-child btn-sm"
                             >
-                                Drzwi
+                                Doors
                             </Button>
                         </div>
                         <SelectComponents
@@ -157,7 +157,7 @@ export const AddWallComponentController: React.FC<AddWallComponentProps> = ({ go
                         />
                     </div>
                     <div className="side-by-side-child small">
-                        Odległość lewego dolnego rogu komponentu od lewego dolnego rogu ściany: {distance}.
+                        Distance between component&apos;s bottom-left point and wall&apos;s bottom-left point: {distance}.
                     </div>
                 </div>
             </>
@@ -168,10 +168,10 @@ export const AddWallComponentController: React.FC<AddWallComponentProps> = ({ go
         <>
             <div className="side-by-side-parent">
                 <Button onClick={goBack} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
-                    Powrót
+                    Back
                 </Button>
                 <Button onClick={cancelAddingComponent} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
-                    Anuluj
+                    Cancel
                 </Button>
             </div>
             { display() }
@@ -212,10 +212,10 @@ const SelectComponents = ({
                 }
 
                 const elevationDiv = type === ComponentSelection.DOORS ? null : (
-                    <div>Wys. od podł.: {convertFromAppUnitsToCm(component.elevation)}</div>
+                    <div>Elevation: {convertFromAppUnitsToCm(component.elevation)}</div>
                 );
 
-                const header = wallsTooSmall ? "Za niska wysokość ścian dla komponentu" : component.name;
+                const header = wallsTooSmall ? "Walls height too small for component" : component.name;
                 const onClickEvent = wallsTooSmall ? () => {} : () => handleIndexSelection(index);
 
                 return (
@@ -228,8 +228,8 @@ const SelectComponents = ({
                         <div className="side-by-side-parent">
                             <div className="side-by-side-child">
                                 <div>{header}</div>
-                                <div>Szer.: {convertFromAppUnitsToCm(component.width)}</div>
-                                <div>Wys.: {convertFromAppUnitsToCm(component.height)}</div>
+                                <div>Length: {convertFromAppUnitsToCm(component.width)}</div>
+                                <div>Height: {convertFromAppUnitsToCm(component.height)}</div>
                                 {elevationDiv}
                             </div>
                             <div className="side-by-side-child">

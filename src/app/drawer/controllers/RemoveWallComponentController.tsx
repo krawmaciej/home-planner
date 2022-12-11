@@ -38,7 +38,7 @@ export const RemoveWallComponentController: React.FC<RemoveWallComponentProps> =
         <div className="side-by-side-parent">
             <Button onClick={goBack} variant={PRIMARY_VARIANT}
                     className="side-by-side-child btn-sm">
-                Powrót
+                Back
             </Button>
         </div>
     );

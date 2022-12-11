@@ -35,8 +35,8 @@ enum UISelection {
     FLOOR_PLAN, INTERIOR_ARRANGER,
 }
 
-const SAVED_PROJECT_FILE_NAME = "zapisProjektu.json";
-const RENDERED_CANVAS_FILE_NAME = "zrzutEkranu.jpg";
+const SAVED_PROJECT_FILE_NAME = "savedProject.json";
+const RENDERED_CANVAS_FILE_NAME = "viewCapture.jpg";
 const JSON_MIME = 'application/json';
 const PNG_MIME = "image/jpeg";
 const OCTET_STREAM_MIME = "image/octet-stream";

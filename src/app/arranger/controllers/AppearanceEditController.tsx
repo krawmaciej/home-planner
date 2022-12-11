@@ -81,7 +81,7 @@ export const AppearanceEditController: React.FC<Props> = ({ editableObject, text
         setTextureIndex(undefined);
     };
 
-    const buttonText = highlightToggle.highlighted ? "Wyłącz podświetlenie obiektu" : "Włącz podświetlenie obiektu";
+    const buttonText = highlightToggle.highlighted ? "Disable highlighting" : "Enable highlighting";
 
     return (
         <div className="side-by-side-parent">
@@ -89,13 +89,13 @@ export const AppearanceEditController: React.FC<Props> = ({ editableObject, text
                 {buttonText}
             </Button>
             <Dropdown drop="up" className="side-by-side-child-only-flex">
-                <Dropdown.Toggle variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">Wybierz kolor</Dropdown.Toggle>
+                <Dropdown.Toggle variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">Select color</Dropdown.Toggle>
                 <Dropdown.Menu>
                     <ChromePicker color={color} onChange={value => setColor(value.hex)}/>
                 </Dropdown.Menu>
             </Dropdown>
             <Dropdown drop="up" className="side-by-side-child-only-flex">
-                <Dropdown.Toggle variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">Wybierz teksturę</Dropdown.Toggle>
+                <Dropdown.Toggle variant={SECONDARY_VARIANT} className="side-by-side-child btn-sm">Select texture</Dropdown.Toggle>
                 <Dropdown.Menu>
                     <TextureList
                         setTextureIndex={setTextureIndex}
@@ -124,7 +124,7 @@ export const TextureList: React.FC<TextureListProps> = ({setTextureIndex, textur
                 variant={SECONDARY_VARIANT}
                 className="btn-sm small"
             >
-                Wyłącz teksturę
+                Disable texture
             </Button>
             {texturePromises.map((loadedTexture, index) => {
                     return (
@@ -168,7 +168,7 @@ export const TextureRotation: React.FC<TextureRotationProps> = ({ currentRotatio
     return (
         <Form.Group>
             <Form.Label size="sm" className="small">
-                Rotacja tekstury °
+                Texture rotation °
             </Form.Label>
             <Form.Control size="sm" type="text" onChange={event => changeRotation(event.target.value)} value={currentRotation}/>
         </Form.Group>

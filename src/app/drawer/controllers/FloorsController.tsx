@@ -9,8 +9,8 @@ import {VoidIH} from "../../common/canvas/inputHandler/VoidIH";
 import {RemoveObjectIH} from "../IO/inputHandlers/RemoveObjectIH";
 
 enum Menu {
-    ADD = "Dodaj podłogę wraz z sufitem",
-    DELETE = "Usuń podgłogę wraz z sufitem",
+    ADD = "Add floor along with ceiling",
+    DELETE = "Remove floor along with ceiling",
 }
 
 export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack }) => {
@@ -54,14 +54,14 @@ export const FloorsController: React.FC<FactorySubcomponentProps> = ({ goBack })
 
     const cancelButton = menu !== Menu.ADD ? null :
         <Button onClick={handleCancel} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
-            Anuluj
+            Cancel
         </Button>;
 
     return (
         <>
             <div className="side-by-side-parent">
                 <Button onClick={goBack} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
-                    Powrót
+                    Back
                 </Button>
                 {cancelButton}
             </div>

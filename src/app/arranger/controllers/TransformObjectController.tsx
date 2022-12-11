@@ -26,7 +26,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
     const [indexSelection, setIndexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
-        context.changeMenuName("Edytuj dodane obiekty");
+        context.changeMenuName("Edit 3D objects");
     }, [context.changeMenuName]);
 
     useEffect(() => {
@@ -91,7 +91,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
                 variant={PRIMARY_VARIANT}
                 className="side-by-side-child btn-sm"
             >
-                Edytuj inny obiekt
+                Edit another 3D object
             </Button>
         );
     }
@@ -104,7 +104,7 @@ export const TransformObjectController: React.FC<Props> = ({selectDefaultMenu, i
                     variant={PRIMARY_VARIANT}
                     className="side-by-side-child btn-sm"
                 >
-                    Powrót
+                    Back
                 </Button>
                 {cancelButton}
             </div>
@@ -134,7 +134,7 @@ const SelectObjects: React.FC<SelectObjectProps> = ({
                            handleIndexSelection,
 }) => {
     if (placedObjects.length === 0) {
-        return (<p>Brak obiektów do edycji, dodaj obiekt.</p>);
+        return (<p>It&apos;s required to add at least one 3D object to allow editing.</p>);
     }
 
     return (
@@ -178,35 +178,35 @@ const TransformMode: React.FC<TransformModeProps> = ({ objectTransformer, indexS
                     variant={SECONDARY_VARIANT}
                     className="btn-sm side-by-side-child"
                 >
-                    Przesuwanie
+                    Change position
                 </Button>
                 <Button
                     onClick={() => objectTransformer.setToRotateMode()}
                     variant={SECONDARY_VARIANT}
                     className="btn-sm side-by-side-child"
                 >
-                    Obracanie
+                    Change rotation
                 </Button>
                 <Button
                     onClick={() => objectTransformer.resetTranslate()}
                     variant={SECONDARY_VARIANT}
                     className="btn-sm side-by-side-child"
                 >
-                    Resetuj pozycje do początkowej
+                    Reset position
                 </Button>
                 <Button
                     onClick={() => objectTransformer.resetRotation()}
                     variant={SECONDARY_VARIANT}
                     className="btn-sm side-by-side-child"
                 >
-                    Resetuj rotacje do początkowej
+                    Reset rotation
                 </Button>
                 <Button
                     onClick={() => deleteObject(indexSelection)}
                     variant={SECONDARY_VARIANT}
                     className="btn-sm side-by-side-child"
                 >
-                    Usuń obiekt
+                    Remove selected 3D object
                 </Button>
             </div>
         </>
