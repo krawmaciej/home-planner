@@ -81,7 +81,7 @@ export const InteriorArrangerStateParent: React.FC<Props> = ({
     }, [sceneObjects, canvasState]);
 
     if (sceneObjects.wallHeight === undefined) {
-        return (<div className="h-100 d-flex justify-content-center align-items-center">Ustaw wysokość ścian dla rysunku planu 2D.</div>);
+        return (<div className="h-100 d-flex justify-content-center align-items-center">It&apos;s required to first set wall height in the 2D View.</div>);
     }
 
     if (convertedObjects === undefined) {

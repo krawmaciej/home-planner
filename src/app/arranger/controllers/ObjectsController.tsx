@@ -42,7 +42,7 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
     }
 
     useEffect(() => {
-        context.changeMenuName("Dodaj lub edytuj obiekty");
+        context.changeMenuName("Add or edit 3D objects");
     }, [context.changeMenuName]);
 
     return (
@@ -50,17 +50,17 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
             <div className="side-by-side-parent">
                 <Button onClick={upperSelectDefaultMenu} variant={PRIMARY_VARIANT}
                     className="side-by-side-child btn-sm">
-                    Powrót
+                    Back
                 </Button>
             </div>
             <div className="side-by-side-parent">
                 <Button onClick={() => changeSelection(Selection.ADD)} variant={SECONDARY_VARIANT}
                         className="btn-sm side-by-side-child">
-                    Dodaj obiekt
+                    Add 3D object
                 </Button>
                 <Button onClick={() => changeSelection(Selection.TRANSFORM)} variant={SECONDARY_VARIANT}
                         className="btn-sm side-by-side-child">
-                    Edytuj dodane obiekty
+                    Edit another 3D object
                 </Button>
             </div>
         </>

@@ -1,6 +1,6 @@
 [
     {
-        "name": "Białe drzwi",
+        "name": "White door",
         "file": "white-door/scene.gltf",
         "thumbnail": "white-door/thumbnail.png",
         "doubleSided": true,
@@ -21,7 +21,7 @@
         }
     },
     {
-        "name": "Zwykłe drzwi",
+        "name": "Standard door",
         "file": "simple_door/scene.gltf",
         "thumbnail": "simple_door/thumbnail.png",
         "dimensions": {

@@ -22,7 +22,7 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, addObje
     const [indexSelection] = useState<number | undefined>(undefined);
 
     useEffect(() => {
-        context.changeMenuName("Dodaj obiekt");
+        context.changeMenuName("Add 3D Object");
     }, [context.changeMenuName]);
 
     useEffect(() => {
@@ -42,7 +42,7 @@ export const AddObjectController: React.FC<Props> = ({selectDefaultMenu, addObje
         <>
             <div className="side-by-side-parent">
                 <Button onClick={selectDefaultMenu} variant={PRIMARY_VARIANT} className="side-by-side-child btn-sm">
-                    Powrót
+                    Back
                 </Button>
             </div>
             <SelectObjects
@@ -86,9 +86,9 @@ const SelectObjects = ({
                             <div className="side-by-side-parent">
                                 <div className="side-by-side-child">
                                     <div>{object.name}</div>
-                                    <div>Dług.: {convertFromAppUnitsToCm(object.width)}</div>
-                                    <div>Szer.: {convertFromAppUnitsToCm(object.thickness)}</div>
-                                    <div>Wys.: {convertFromAppUnitsToCm(object.height)}</div>
+                                    <div>Length: {convertFromAppUnitsToCm(object.width)}</div>
+                                    <div>Width: {convertFromAppUnitsToCm(object.thickness)}</div>
+                                    <div>Height: {convertFromAppUnitsToCm(object.height)}</div>
                                 </div>
                                 <div className="side-by-side-child">
                                     <img src={object.thumbnail} alt={object.name} height="100px"/>

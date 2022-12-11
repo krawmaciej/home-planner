@@ -38,12 +38,12 @@ type Props = {
 
 enum Selection {
     DEFAULT= "",
-    OBJECTS = "Dodaj lub edytuj obiekty",
-    WALLS = "Edytuj wygląd ścian",
-    FRAMES = "Edytuj wygląd ościeży",
-    FLOORS = "Edytuj wygląd podłóg",
-    CEILINGS = "Edytuj wygląd sufitów",
-    ALL_PLANNER_OBJECTS = "Edytuj wygląd ścian, ościeży, podłóg i sufitów"
+    OBJECTS = "Add or edit 3D objects",
+    WALLS = "Edit wall appearance",
+    FRAMES = "Edit jamb appearance",
+    FLOORS = "Edit floor appearance",
+    CEILINGS = "Edit ceiling appearance",
+    ALL_PLANNER_OBJECTS = "Edit appearance of walls, jambs, floors or ceilings"
 }
 
 type DisplayMenuProps = {
@@ -71,7 +71,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             return (
                 <ObjectsAppearanceController
                     selectDefaultMenu={selectDefaultMenu}
-                    texts={{ controllerName: Selection.WALLS, unselectText: "Edytuj inną ścianę" }}
+                    texts={{ controllerName: Selection.WALLS, unselectText: "Select another wall" }}
                     editableObjects={convertedObjects.wallFaces}
                 />
             );
@@ -79,7 +79,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             return (
                 <ObjectsAppearanceController
                     selectDefaultMenu={selectDefaultMenu}
-                    texts={{ controllerName: Selection.FRAMES, unselectText: "Edytuj inne ościeże" }}
+                    texts={{ controllerName: Selection.FRAMES, unselectText: "Select another jambs" }}
                     editableObjects={convertedObjects.wallFrames}
                 />
             );
@@ -87,7 +87,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             return (
                 <ObjectsAppearanceController
                     selectDefaultMenu={selectDefaultMenu}
-                    texts={{ controllerName: Selection.FLOORS, unselectText: "Edytuj inną podłogę" }}
+                    texts={{ controllerName: Selection.FLOORS, unselectText: "Select another floor" }}
                     editableObjects={convertedObjects.floors}
                 />
             );
@@ -95,7 +95,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             return (
                 <ObjectsAppearanceController
                     selectDefaultMenu={selectDefaultMenu}
-                    texts={{ controllerName: Selection.CEILINGS, unselectText: "Edytuj inny sufit" }}
+                    texts={{ controllerName: Selection.CEILINGS, unselectText: "Select another ceiling" }}
                     editableObjects={convertedObjects.ceilings}
                 />
             );
@@ -103,7 +103,7 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
             return (
                 <ObjectsAppearanceController
                     selectDefaultMenu={selectDefaultMenu}
-                    texts={{ controllerName: Selection.ALL_PLANNER_OBJECTS, unselectText: "Edytuj inną ścianę, ościeże, sufit lub podłogę" }}
+                    texts={{ controllerName: Selection.ALL_PLANNER_OBJECTS, unselectText: "Select another wall, jamb, floor or ceiling" }}
                     editableObjects={[
                         ...convertedObjects.wallFaces,
                         ...convertedObjects.wallFrames,
@@ -118,11 +118,11 @@ const DisplayMenu: React.FC<DisplayMenuProps> = ({ currentSelection, selectDefau
 const Default: React.FC<ChangeMenuProps> = ({ changeSelection }) => {
     const context = useContext(InteriorArrangerContext);
     if (context === undefined) {
-        throw new Error("Context in Interrior Arranger's Default is undefined.");
+        throw new Error("Context in Interior Arranger's Default is undefined.");
     }
 
     useEffect(() => {
-        context.changeMenuName("Rzut 3D");
+        context.changeMenuName("3D View");
     }, [context.changeMenuName]);
 
     return (

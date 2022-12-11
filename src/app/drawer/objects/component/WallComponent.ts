@@ -98,7 +98,7 @@ const NO_FILE_INDEX = undefined;
 const NO_OBJECT = undefined;
 
 export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
-    name: "Otwór",
+    name: "Hole",
     thumbnail: windowHoleThumbnail,
     fileIndex: NO_FILE_INDEX,
     object3d: NO_OBJECT,
@@ -110,7 +110,7 @@ export const DEFAULT_MUTABLE_WINDOW_PROPS: ComponentProps = {
 };
 
 export const DEFAULT_MUTABLE_DOOR_PROPS: ComponentProps = {
-    name: "Otwór",
+    name: "Hole",
     thumbnail: doorHoleThumbnail,
     fileIndex: NO_FILE_INDEX,
     object3d: NO_OBJECT,

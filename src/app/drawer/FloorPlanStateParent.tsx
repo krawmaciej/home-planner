@@ -112,12 +112,12 @@ const WallHeightInputHandler: React.FC<WallHeightInputHandlerProps> = ({ onConfi
         <>
             <Form.Group className="side-by-side-parent">
                 <Form.Label className="side-by-side-child">
-                    Ustaw wysokość wszystkich ścian w centymetrach (od {MIN_ALLOWED_HEIGHT}cm do {MAX_ALLOWED_HEIGHT}cm):
+                    Set height for all walls (between {MIN_ALLOWED_HEIGHT}cm and {MAX_ALLOWED_HEIGHT}cm):
                 </Form.Label>
                 <Form.Control className="side-by-side-child" type="text" onChange={event => changeHeight(event.target.value)} value={height}/>
             </Form.Group>
             <Button className="side-by-side-parent" variant={PRIMARY_VARIANT} onClick={() => onConfirm(height / 10)}>
-                Potwierdź
+                Confirm
             </Button>
         </>
     );

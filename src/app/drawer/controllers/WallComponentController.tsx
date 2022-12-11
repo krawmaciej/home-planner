@@ -7,9 +7,9 @@ import {AddWallComponentController} from "./AddWallComponentController";
 import {RemoveWallComponentController} from "./RemoveWallComponentController";
 
 export enum WallComponentMenu {
-    DEFAULT = "Okna i drzwi",
-    ADD = "Dodaj okna i drzwi",
-    DELETE = "Usuń okna i drzwi",
+    DEFAULT = "Windows and doors",
+    ADD = "Add windows and doors",
+    DELETE = "Remove windows and doors",
 }
 
 type DefaultProps = {
@@ -36,7 +36,7 @@ const Default: React.FC<DefaultProps> = ({ changeMenu, upperSelectDefaultMenu })
             <div className="side-by-side-parent">
                 <Button onClick={upperSelectDefaultMenu} variant={PRIMARY_VARIANT}
                         className="side-by-side-child btn-sm">
-                    Powrót
+                    Back
                 </Button>
             </div>
             <div className="side-by-side-parent">

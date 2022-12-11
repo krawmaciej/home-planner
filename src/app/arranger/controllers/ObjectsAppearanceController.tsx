@@ -82,7 +82,7 @@ export const ObjectsAppearanceController: React.FC<Props> = ({ selectDefaultMenu
                     variant={PRIMARY_VARIANT}
                     className="side-by-side-child btn-sm"
                 >
-                    Powrót
+                    Back
                 </Button>
                 {unselectButton}
             </div>
