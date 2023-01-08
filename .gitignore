@@ -29,4 +29,4 @@ yarn-error.log*
 *.iws
 
 # markdown readme
-public/markdown/generated/readme.html
+public/markdown/generated/*
