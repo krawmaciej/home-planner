@@ -1,56 +1,131 @@
-# Proj
+# Interior Planner WebApp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Current version of the application can be found [here](https://home-planner-deployed.vercel.app/).
 
-## Available Scripts
+---
 
-First install LTS version of Node.js https://nodejs.org/en/download/ (it contains node package manager - npm).
+## How to use
 
-In the project directory, you can run:
+Functionalities described below allow for drawing of a 
+2D plan of an apartment from a top-down view.
 
-### `npm install`
 
-Installs all needed packages into the project directory.
-All the below scripts can only be run after the installation step is done.
+### Setting height for all walls
 
-### `npm audit`
+To set height for all walls that will be drawn in the plan, type in the height in centimeters and click **Confirm**.
 
-Checks whether there are any issues with the dependencies this project is using.
+![Setting height for all walls](/readme-images/walls-height.png)
 
-### `npm audit --production`
 
-Same as npm audit but checks only whether the production build dependencies.
+### Drawing walls
 
-### `npm run eslint`
+To draw wall click on **Walls** button and then click on **Add wall** button.  
 
-Checks whether there are any linter errors/warnings in the application code.
+Drawing a wall requires clicking once in desired starting place on the grid, after that a wall will appear on the grid but will not yet be added into the plan.  
+Moving cursor around changes length and direction of drawn wall.  
+To confirm drawn wall and add it to the plan simply click once again.
 
-### `npm run eslint-fix`
+![Drawing walls](/readme-images/drawing-walls.gif)
 
-Tries fixing linter errors/warnings automatically.
 
-### `npm start`
+### Removing walls
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To remove walls click on **Walls** button and then click on **Remove wall** button.  
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+To remove a single wall hover over it, after it gets highlighted clicking on it will remove it from the plan.
 
-### `npm test`
+![Removing walls](/readme-images/removing-walls.gif)
 
-Run jest framework unit tests. 
 
-### `npm run build`
+### Adding windows and doors
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+To add a window or a door click on **Windows and doors**, then click on **Add window and doors** and then select desired option by clicking on either **Windows** or **Doors**.  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Click on button with representation of a component and move cursor onto the plan.
+Hovering on a wall with a component and then clicking will add this component to that wall.  
+Arrow indicates which way component will open to, clicking once again will confirm rotation and add component into the plan.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![Adding windows and doors](/readme-images/adding-windows-and-doors.gif)
 
-### `serve -s build`
 
-After building the production version with `npm run build` deploys the production version of the application to locally hosted server.
+### Removing windows and doors
+
+To remove windows and doors click on **Windows and doors**, then click on **Remove window and doors**.  
+
+To remove window or door hover over it, after it gets highlighted clicking on it will remove it from the plan.
+
+![Removing windows and doors](/readme-images/removing-windows-and-doors.gif)
+
+
+### Adding floors and ceilings
+
+To add floors along with ceilings click on **Floors and ceilings**, then click on **Add floor along with ceiling**.  
+
+To start drawing a floor click on desired place on the grid, then after creating a desired shape click once again to add the floor into the plan.
+
+![Adding floors and ceilings](/readme-images/adding-floors.gif)
+
+
+### Removing floors and ceilings
+
+To remove floors along with ceilings click on **Floors and ceilings**, then click on **Remove floor along with ceiling**.
+
+To remove floor along with ceiling hover over it, after it gets highlighted clicking on it will remove it from the plan.
+
+![Removing floors and ceilings](/readme-images/removing-floors.gif)
+
+
+---
+
+### Changing views between 3D and 2D
+
+Plan created in 2D view can be rendered in a 3D view by clicking on dropdown button **View** and selecting **3D View**.  
+It is also possible to change back from 3D view to 2D view in case there is a need to make some changes or add more things.
+
+![Changing views between 3D and 2D](/readme-images/3d-2d-swap.gif)
+
+
+---
+
+Functionalities described below concern 3D view and allow adding 3D objects
+and changing appearance of components that were created in a 2D view.
+
+### Adding other 3D objects
+
+To add an object in 3D view click on **Add or edit 3D objects** and then click on **Add 3D object**.
+
+After an object is selected from the list it is added to the scene and can be moved into desired position.
+
+![Adding other 3D objects](/readme-images/adding-3d-object.gif)
+
+### Selecting 3D object to edit
+
+To select an object in 3D view click on **Add or edit 3D objects** and then click on **Edit 3D object**.  
+
+There are two ways of selecting an object:
+ - clicking on it in the 3D scene,
+ - selecting its name from the list.
+
+![Selecting 3D object to edit](/readme-images/selecting-3d-object.gif)
+
+
+### Editing 3D object
+
+Selected object can be moved around, rotated and removed from scene.  
+To move an object click on **Change position**, after that it's possible to drag an object around.  
+To rotate an object click on **Change rotation**, after that it's possible to rotate object around its center.  
+To remove an object click on **Remove selected 3D object**.  
+It's also possible to reset position and rotation to initial values by clicking on **Reset position** or **Reset rotation**.
+
+![Editing 3D object](/readme-images/editing-3d-object.gif)
+
+
+### Editing appearance of walls, jambs, floors or ceilings
+
+To edit appearance of a wall, jamb, floor or a ceiling click on any button corresponding to this action 
+or click on a button **Edit appearance of walls, jambs, floors or ceilings**, which aggregates all of those options.  
+
+Clicking on a desired component to edit in scene view will bring up a menu that allows for changing color, texture and texture rotation.  
+Selected component will be highlighted making its color much brighter, clicking on **Disable highlighting** will remove highlighting from the color.
+
+![Editing appearance of walls, jambs, floors or ceilings](/readme-images/editing-walls-etc.gif)
