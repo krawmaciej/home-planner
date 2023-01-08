@@ -8,6 +8,7 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {ObjectElevation} from "./app/drawer/constants/Types";
+import {ReadmePopup} from "./app/ReadmePopup";
 
 export type FloorPlanState = {
     cameraHandler: OrthographicCameraHandler,
@@ -85,6 +86,8 @@ export const App: React.FC = () => {
     const [floorPlanState, setFloorPlanState] = useState<FloorPlanState | undefined>();
     const [interiorArrangerState, setInteriorArrangerState] = useState<InteriorArrangerState | undefined>();
 
+    const [isReadmePopupDisplayed, setIsReadmePopupDisplayed] = useState(true);
+
     useEffect(() => {
         setFloorPlanState(initialFloorPlanState(labelRenderer));
         setInteriorArrangerState(initialInteriorArrangerState(labelRenderer));
@@ -95,11 +98,17 @@ export const App: React.FC = () => {
     }
 
     return (
-        <MainComponent
-            renderer={renderer}
-            labelRenderer={labelRenderer}
-            floorPlanState={floorPlanState}
-            interiorArrangerState={interiorArrangerState}
-        />
+        <>
+            <ReadmePopup
+                isDisplayed={isReadmePopupDisplayed}
+                hide={() => setIsReadmePopupDisplayed(false)}
+            />
+            <MainComponent
+                renderer={renderer}
+                labelRenderer={labelRenderer}
+                floorPlanState={floorPlanState}
+                interiorArrangerState={interiorArrangerState}
+            />
+        </>
     );
 };
