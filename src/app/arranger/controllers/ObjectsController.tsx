@@ -60,7 +60,7 @@ const Default: React.FC<Pick<DisplayMenuProps, "changeSelection" | "upperSelectD
                 </Button>
                 <Button onClick={() => changeSelection(Selection.TRANSFORM)} variant={SECONDARY_VARIANT}
                         className="btn-sm side-by-side-child">
-                    Edit another 3D object
+                    Edit 3D object
                 </Button>
             </div>
         </>
