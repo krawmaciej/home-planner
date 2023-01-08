@@ -37,22 +37,22 @@ export const ObjectsAppearanceController: React.FC<Props> = ({ selectDefaultMenu
         return editableObject;
     };
 
-    const selectEditableObject = (index: number) => {
-        setSelectedIndex(index);
-    };
-
     useEffect(() => {
-        const selectObjectIH = new SelectObjectIH(
-            context.interiorArrangerState.cameraHandler.getCamera(),
-            editableObjects,
-            selectEditableObject,
-        );
-        context.canvasState.mainInputHandler.changeHandlingStrategy(selectObjectIH);
+        if (selectedIndex === undefined) {
+            const selectObjectIH = new SelectObjectIH(
+                context.interiorArrangerState.cameraHandler.getCamera(),
+                editableObjects,
+                index => setSelectedIndex(index),
+            );
+            context.canvasState.mainInputHandler.changeHandlingStrategy(selectObjectIH);
+        } else {
+            context.canvasState.mainInputHandler.detachCurrentHandler();
+        }
 
         return () => {
             context.canvasState.mainInputHandler.detachCurrentHandler();
         };
-    }, [context.interiorArrangerState, editableObjects, context.canvasState]);
+    }, [context.interiorArrangerState, editableObjects, context.canvasState, selectedIndex]);
 
     let unselectButton = null;
     let appearanceEdit = null;
