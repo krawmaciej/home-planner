@@ -60,7 +60,7 @@
     "eslint": "eslint . --ext .ts --ext .tsx --ext .js",
     "eslint-fix": "eslint . --ext .ts --ext .tsx --ext .js --fix",
     "readme": "npx marked -i README.md -o public/markdown/generated/readme.html",
-    "postreadme": "npx replace '/public' '' public/markdown/generated/readme.html"
+    "postreadme": "npx replace '/public' '' public/markdown/generated/readme.html --quiet"
   },
   "eslintConfig": {
     "extends": [
